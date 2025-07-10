@@ -88,9 +88,13 @@ const DeliveryreportRcs = () => {
   const [summaryData, setSummaryData] = useState({
     fromDate: new Date(),
     toDate: new Date(),
-    isMonthWise: false,
+    isMonthWise: 0,
     selectedUser: "0",
   });
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
+  const [selectedYear, setSelectedYear] = useState(
+    new Date().getFullYear().toString()
+  );
   const [summaryTableData, setSummaryTableData] = useState([]);
 
   // scheduleState
@@ -208,19 +212,83 @@ const DeliveryreportRcs = () => {
   };
 
   //fetchSummaryData
+  // const handleSummarySearch = async () => {
+  //   if (user.role === "RESELLER" && !selectedUser) {
+  //     toast.error("Please select a user first.");
+  //     return;
+  //   }
+  //   if (!summaryData.fromDate || !summaryData.toDate) {
+  //     toast.error("Please select from and to date.");
+  //   }
+  //   const data = {
+  //     fromDate: moment(summaryData.fromDate).format("YYYY-MM-DD"),
+  //     toDate: moment(summaryData.toDate).format("YYYY-MM-DD"),
+  //     summaryType: "rcs,date,user",
+  //     isMonthWise: Number(summaryData.isMonthWise),
+  //     selectedUserId: campaignData.selectedUser ?? "0",
+  //   };
+
+  //   try {
+  //     setIsFetching(true);
+  //     const res = await fetchSummaryReport(data);
+  //     setSummaryTableData(res);
+  //   } catch (e) {
+  //     toast.error("Something went wrong.");
+  //   } finally {
+  //     setIsFetching(false);
+  //   }
+  // };
+
   const handleSummarySearch = async () => {
     if (user.role === "RESELLER" && !selectedUser) {
       toast.error("Please select a user first.");
       return;
     }
-    if (!summaryData.fromDate || !summaryData.toDate) {
-      toast.error("Please select from and to date.");
+    let FinalFromDate, FinalToDate;
+
+    // Case 1: Use selectedMonth if isMonthWise is enabled
+    if (selectedMonth && Number(summaryData.isMonthWise) === 1) {
+      const year = selectedYear;
+      const month = String(selectedMonth).padStart(2, "0");
+
+      const firstDayOfMonth = `${year}-${month}-01`;
+
+      FinalFromDate = moment(firstDayOfMonth)
+        .startOf("month")
+        .format("YYYY-MM-DD");
+      FinalToDate = moment(firstDayOfMonth).endOf("month").format("YYYY-MM-DD");
     }
+
+    // Case 2: No selectedMonth, but isMonthWise is true — fallback to fromDate
+    else if (Number(summaryData.isMonthWise) === 1 && summaryData.fromDate) {
+      const fallbackMonth = summaryData.fromDate;
+      FinalFromDate = moment(fallbackMonth)
+        .startOf("month")
+        .format("YYYY-MM-DD");
+      FinalToDate = moment(fallbackMonth).endOf("month").format("YYYY-MM-DD");
+      setSelectedMonth(null);
+    }
+
+    // Case 3: Manual date range mode
+    else if (
+      Number(summaryData.isMonthWise) !== 1 &&
+      summaryData.fromDate &&
+      summaryData.toDate
+    ) {
+      FinalFromDate = moment(summaryData.fromDate).format("YYYY-MM-DD");
+      FinalToDate = moment(summaryData.toDate).format("YYYY-MM-DD");
+      setSelectedMonth(null);
+    }
+
+    // Invalid case
+    else {
+      toast.error("Please select a valid date range or month.");
+      return;
+    }
+
     const data = {
-      fromDate: moment(summaryData.fromDate).format("YYYY-MM-DD"),
-      toDate: moment(summaryData.toDate).format("YYYY-MM-DD"),
-      // fromDate: "2022-10-01",
-      // toDate: "2025-02-26",
+      fromDate: FinalFromDate,
+      toDate: FinalToDate,
       summaryType: "rcs,date,user",
       isMonthWise: Number(summaryData.isMonthWise),
       selectedUserId: campaignData.selectedUser ?? "0",
@@ -232,6 +300,7 @@ const DeliveryreportRcs = () => {
       setSummaryTableData(res);
     } catch (e) {
       toast.error("Something went wrong.");
+      console.error("Summary Search Error:", e);
     } finally {
       setIsFetching(false);
     }
@@ -560,7 +629,7 @@ const DeliveryreportRcs = () => {
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
             <div className="flex flex-wrap items-end w-full gap-2 mb-5">
-              <div className="w-full sm:w-56">
+              {/* <div className="w-full sm:w-56">
                 <UniversalDatePicker
                   label="From Date"
                   id="fromDate"
@@ -611,6 +680,129 @@ const DeliveryreportRcs = () => {
                 <label htmlFor="isMonthWise" className="text-md">
                   Month Wise
                 </label>
+              </div> */}
+              {summaryData.isMonthWise === 1 ? (
+                <>
+                  {/* Month Dropdown */}
+                  <div className="w-full sm:w-56">
+                    <AnimatedDropdown
+                      id="monthSelect"
+                      name="monthSelect"
+                      label="Select Month"
+                      tooltipContent="Select Month"
+                      tooltipPlacement="right"
+                      options={[
+                        { value: 1, label: "January" },
+                        { value: 2, label: "February" },
+                        { value: 3, label: "March" },
+                        { value: 4, label: "April" },
+                        { value: 5, label: "May" },
+                        { value: 6, label: "June" },
+                        { value: 7, label: "July" },
+                        { value: 8, label: "August" },
+                        { value: 9, label: "September" },
+                        { value: 10, label: "October" },
+                        { value: 11, label: "November" },
+                        { value: 12, label: "December" },
+                      ]}
+                      value={selectedMonth}
+                      onChange={(value) => setSelectedMonth(value)}
+                      placeholder="Select Month"
+                    />
+                  </div>
+
+                  {/* Year Dropdown */}
+                  <div className="w-full sm:w-56">
+                    <AnimatedDropdown
+                      id="yearSelect"
+                      name="yearSelect"
+                      label="Select Year"
+                      tooltipContent="Select Year"
+                      tooltipPlacement="right"
+                      options={Array.from(
+                        { length: 2025 - 1990 + 1 },
+                        (_, i) => {
+                          const year = 1990 + i;
+                          return { value: String(year), label: String(year) };
+                        }
+                      ).reverse()}
+                      value={selectedYear}
+                      onChange={(value) => setSelectedYear(value)}
+                      placeholder="Select Year"
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* From Date */}
+                  <div className="w-full sm:w-56">
+                    <UniversalDatePicker
+                      id="manageFromDate"
+                      name="manageFromDate"
+                      label="From Date"
+                      // value={fromDate}
+                      // onChange={(newValue) => setfromDate(newValue)}
+                      value={setSummaryData.fromDate}
+                      onChange={(e) => {
+                        setSummaryData({
+                          ...summaryData,
+                          fromDate: e,
+                        });
+                      }}
+                      placeholder="Pick a start date"
+                      tooltipContent="Select the start date"
+                      tooltipPlacement="right"
+                      // error={!fromDate}
+                      minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                      maxDate={new Date()}
+                      errorText="Please select a valid date"
+                    />
+                  </div>
+
+                  {/* To Date */}
+                  <div className="w-full sm:w-56">
+                    <UniversalDatePicker
+                      id="manageToDate"
+                      name="manageToDate"
+                      label="To Date"
+                      value={setSummaryData.toDate}
+                      onChange={(e) => {
+                        setSummaryData({
+                          ...summaryData,
+                          toDate: e,
+                        });
+                      }}
+                      placeholder="Pick an end date"
+                      tooltipContent="Select the end date"
+                      tooltipPlacement="right"
+                      // error={!toDate}
+                      minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                      maxDate={new Date()}
+                      errorText="Please select a valid date"
+                    />
+                  </div>
+                </>
+              )}
+              <div className="w-full sm:w-56">
+                <AnimatedDropdown
+                  id="nameSearchType"
+                  name="nameSearchType"
+                  label="Search Type"
+                  tooltipContent="Select Search Type"
+                  tooltipPlacement="right"
+                  options={[
+                    { value: 0, label: "Custom" },
+                    { value: 1, label: "Monthly" },
+                  ]}
+                  value={summaryData.isMonthWise}
+                  onChange={(e) => {
+                    setSummaryData({
+                      ...summaryData,
+                      isMonthWise: e,
+                    });
+                  }}
+                  placeholder="Search Type"
+                />
               </div>
               <div className="w-full sm:w-56">
                 <UniversalButton

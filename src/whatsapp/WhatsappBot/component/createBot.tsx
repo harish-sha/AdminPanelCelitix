@@ -54,6 +54,8 @@ import {
   transformNodesById,
 } from "./components/helper/convertToReactFlow";
 import { Url } from "./components/url";
+import { HiOutlineTemplate } from "react-icons/hi";
+import { TemplateNode } from "./components/template";
 
 const initialNodes = [];
 const initialEdges = [];
@@ -67,6 +69,7 @@ function NodeComponent({
   connectionType,
   setNodesInputData,
   nodesInputData,
+  isBtnDisable = false,
 }: {
   id: string;
   data: any;
@@ -76,6 +79,7 @@ function NodeComponent({
   connectionType: string;
   setNodesInputData: any;
   nodesInputData?: any;
+  isBtnDisable?: boolean;
 }) {
   const options = nodesInputData?.[id]?.options || [];
   const buttonTexts = nodesInputData?.[id]?.buttonTexts || [];
@@ -127,6 +131,7 @@ function NodeComponent({
         onClick={() => {
           setIsVisible(true);
         }}
+        disabled={isBtnDisable}
       >
         <SettingsOutlinedIcon fontSize="small" />
       </button>
@@ -143,6 +148,7 @@ function NodeComponent({
         {data.type === "list" && <p>List Node ({id})</p>}
         {data.type === "button" && <p>Button Node ({id})</p>}
         {data.type === "urlbutton" && <p>Url Node ({id})</p>}
+        {data.type === "template" && <p>Template Node ({id})</p>}
       </div>
       {data?.type !== "list" && data?.type !== "button" && (
         <Handle
@@ -272,6 +278,8 @@ const CreateWhatsAppBot = () => {
   const [connectionType, setConnectionType] = useState("");
   const [lastPosition, setLastPosition] = useState({ x: 50, y: 50 });
 
+  const [isSettingBtnDisables, setIsSettingBtnDisables] = useState(true);
+
   const [nodesInputData, setNodesInputData] = useState(data);
   const [allVariables, setAllVariables] = useState([]);
 
@@ -319,6 +327,7 @@ const CreateWhatsAppBot = () => {
           selected: state?.wabaNumber || "",
           name: state?.botName ?? "",
         }));
+        setIsSettingBtnDisables(false);
       } catch (e) {
         return toast.error("Error fetching Waba");
       }
@@ -579,8 +588,20 @@ const CreateWhatsAppBot = () => {
           setNodesInputData={setNodesInputData}
         />
       ),
+      template: (node: any) => (
+        <NodeComponent
+          id={node.id}
+          data={node.data}
+          onDelete={deleteNode}
+          isConnecting={isConnecting}
+          setIsVisible={setIsVisible}
+          connectionType={connectionType}
+          setNodesInputData={setNodesInputData}
+          isBtnDisable={isSettingBtnDisables}
+        />
+      ),
     }),
-    [deleteNode, isConnecting, nodesInputData]
+    [deleteNode, isConnecting, nodesInputData, isSettingBtnDisables]
   );
 
   const onNodeClick = (_event: any, node: any) => {
@@ -663,6 +684,7 @@ const CreateWhatsAppBot = () => {
         buttonTexts: [],
       },
       urlbutton: {},
+      template: {},
     };
     const nodeData = nodesInputData[selectedNodeId];
     const requiredFields = data[type];
@@ -809,6 +831,7 @@ const CreateWhatsAppBot = () => {
         buttonTexts: [],
       },
       urlbutton: {},
+      template: {},
     };
 
     let name = "";
@@ -1059,6 +1082,16 @@ const CreateWhatsAppBot = () => {
             </Button>
             <Button
               draggable
+              onDragStart={(event) => handleDragStart(event, "template")}
+              onClick={() => addNode("template")}
+              className={commonButtonClass}
+              disabled={!details.selected}
+            >
+              <HiOutlineTemplate className="size-6" />
+              Template
+            </Button>
+            <Button
+              draggable
               onDragStart={(event) => handleDragStart(event, "answer")}
               onClick={() => addNode("answer")}
               className={commonButtonClass}
@@ -1077,6 +1110,7 @@ const CreateWhatsAppBot = () => {
             details={details}
             handleSubmit={handleSubmit}
             isUpdate={state ?? false}
+            setIsSettingBtnDisables={setIsSettingBtnDisables}
           />
         </div>
       </div>
@@ -1171,6 +1205,13 @@ const CreateWhatsAppBot = () => {
               id={selectedNodeId}
               nodesInputData={nodesInputData}
               setNodesInputData={setNodesInputData}
+            />
+          ) : type === "template" ? (
+            <TemplateNode
+              id={selectedNodeId}
+              nodesInputData={nodesInputData}
+              setNodesInputData={setNodesInputData}
+              details={details}
             />
           ) : null}
 

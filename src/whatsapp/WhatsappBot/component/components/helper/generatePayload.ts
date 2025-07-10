@@ -119,21 +119,20 @@ function generateBotPayload(
         (entry["answerText"] = nodeInput?.variableId),
         (entry["answerVariable"] = "-1");
     }
-    // if (finalType === "urlbutton") {
+    if (finalType === "template") {
+      entry["templateSrno"] = nodeInput?.templateSrno;
+      entry["json"] = nodeInput?.json;
+    }
 
-    //   //      "position_left": "698px",
-    //   // "position_top": "683px",
-    //   // "prevNode": "text_9",
-    //   // "type": "urlbutton",
-    (entry["urlbuttonbody"] = nodeInput?.urlbuttonbody),
-      (entry["urlbuttonFooter"] = nodeInput?.urlbuttonFooter),
-      (entry["urlbuttonMediaUrl"] = nodeInput?.fileUrl),
-      (entry["urlbuttonText"] = nodeInput?.urlbuttonText),
-      (entry["urlbuttonType"] = nodeInput?.urlbuttonType),
-      (entry["urlbuttonUrl"] = nodeInput?.urlbuttonUrl),
-      //   // "value": "urlbutton_10"
-      // }
-      (entry["selectedOption"] = nodeInput?.selectedOption || "");
+    if (finalType === "urlbutton") {
+      (entry["urlbuttonbody"] = nodeInput?.urlbuttonbody),
+        (entry["urlbuttonFooter"] = nodeInput?.urlbuttonFooter),
+        (entry["urlbuttonMediaUrl"] = nodeInput?.fileUrl),
+        (entry["urlbuttonText"] = nodeInput?.urlbuttonText),
+        (entry["urlbuttonType"] = nodeInput?.urlbuttonType),
+        (entry["urlbuttonUrl"] = nodeInput?.urlbuttonUrl),
+        (entry["selectedOption"] = nodeInput?.selectedOption || "");
+    }
 
     if (prevNode) entry["prevNode"] = prevNode;
 

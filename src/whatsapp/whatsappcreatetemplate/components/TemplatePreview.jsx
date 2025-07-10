@@ -2,6 +2,7 @@ import { WhatsApp } from "@mui/icons-material";
 import { FaReply } from "react-icons/fa6";
 import { BsTelephoneFill } from "react-icons/bs";
 import { FaExternalLinkAlt } from "react-icons/fa";
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import { FaLinkSlash } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 
@@ -18,6 +19,7 @@ const TemplatePreview = ({
   urlTitle,
   quickReplies,
   variables, // Pass variables from parentz
+  flowTemplateState
 }) => {
   const extractCoordinates = (url) => {
     let regex = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
@@ -81,7 +83,7 @@ const TemplatePreview = ({
 
   return (
     <div
-      className={" sm:w-[20rem] md:w-[30rem] lg:w-[30rem] h-auto overflow-y-auto z-50 p-4 transition-all duration-300 bg-white border border-gray-400 rounded-md shadow-lg"}
+      className={" sm:w-[20rem] md:w-[30rem] lg:w-[30rem] h-auto overflow-y-auto z-50 p-3 transition-all duration-300 bg-white border border-gray-400 rounded-md shadow-lg"}
     >
       <div className="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t-md">
         <h2 className="text-lg font-semibold">Template Preview</h2>
@@ -91,7 +93,7 @@ const TemplatePreview = ({
       </div>
 
       <div className="p-4 bg-white shadow-inner rounded-b-md">
-        {/* {header && (
+        {header && (
           <div
             className="w-full px-3 py-2 mb-4 text-sm text-gray-900 break-words bg-green-100 rounded-md max-h-20"
             id="templateHeaderPreview"
@@ -99,7 +101,7 @@ const TemplatePreview = ({
           >
             <strong className="text-lg font-semibold">{header}</strong>
           </div>
-        )} */}
+        )}
 
         {imageUrl && (
           <div className="mb-4">
@@ -213,6 +215,16 @@ const TemplatePreview = ({
             >
               <FaExternalLinkAlt className="mr-2" />
               {urlTitle}
+            </button>
+          )}
+          {flowTemplateState.title && (
+            <button
+              className="flex items-center justify-center px-4 py-2 text-white bg-gray-400 rounded-md"
+              id="templateUrlBtnPreview"
+              name="templateUrlBtnPreview"
+            >
+              <AssignmentOutlinedIcon className="mr-2" />
+              {flowTemplateState.title}
             </button>
           )}
         </div>

@@ -19,6 +19,8 @@ import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay.jsx";
 import TerminalOutlinedIcon from "@mui/icons-material/TerminalOutlined";
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+
 import {
   deleteWabaTemplate,
   getWabaTemplate,
@@ -397,6 +399,7 @@ const DataTable = ({
   //     action: 'True',
   // }));
 
+
   const rows = data?.map((item, index) => ({
     id: item.templateSrno,
     sn: index + 1,
@@ -487,6 +490,8 @@ const DataTable = ({
         return "bg-blue-500 text-white";
       case "QUICK_REPLY":
         return "text-gray-800 bg-gray-200";
+      case "FLOW":
+        return "text-white bg-gray-400";
       default:
         return "bg-green-500 text-white";
     }
@@ -498,6 +503,8 @@ const DataTable = ({
         return <BsTelephoneFill className="mr-2" />;
       case "QUICK_REPLY":
         return <FaReply className="mr-2" />;
+      case "FLOW":
+        return <AssignmentOutlinedIcon className="mr-2" />;
       default:
         return <FaExternalLinkAlt className="mr-2" />;
     }
@@ -509,6 +516,8 @@ const DataTable = ({
         return `Contact us: ${phone}`;
       case "QUICK_REPLY":
         return `View more: ${text}`;
+      case "FLOW":
+        return `${text}`;
       default:
         return `Visit us: ${url}`;
     }
@@ -533,6 +542,13 @@ const DataTable = ({
       //   await fetchTemplateData();
       //   return;
       // }
+      // error temp code start
+      if (res?.error === false) {
+        toast.error(res?.msg || "Failed to delete template.");
+        setVisible(false);
+        return
+      }
+      // error temp code end
       if (res?.success === true) {
         toast.success(res?.msg || "Template deleted successfully.");
         setVisible(false);

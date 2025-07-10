@@ -18,6 +18,7 @@ import CarouselInteractiveActions from "../whatsappcreatetemplate/components/Car
 import Loader from "../components/Loader.jsx";
 import {
   getWabaList,
+  getWhatsappFlow,
   sendTemplatetoApi,
   uploadImageFile,
 } from "../../apis/whatsapp/whatsapp.js";
@@ -78,6 +79,14 @@ const WhatsappCreateTemplate = () => {
   const [headerVariable, setHeaderVariable] = useState([]);
   const [headerVariableValue, setHeaderVariableValue] = useState("");
 
+  const [flowTemplateState, setFlowTemplateState] = useState({
+    title: "",
+    flow_id: "",
+  });
+
+  const [allFlows, setAllFlows] = useState([]);
+
+
   const [expiryTime, setExpiryTime] = useState(10);
   const handlePreviewUpdate = (updatedPreview) => {
     setTemplatePreview(updatedPreview);
@@ -133,6 +142,7 @@ const WhatsappCreateTemplate = () => {
       setUrl("");
       setUrlTitle("");
       setQuickReplies([]);
+      setFlowTemplateState({})
     }
   }, [interactiveAction]);
 
@@ -229,6 +239,21 @@ const WhatsappCreateTemplate = () => {
       setPhoneNumber(value);
     }
   };
+  useEffect(() => {
+    async function handleFetchAllFlow() {
+      try {
+        const res = await getWhatsappFlow();
+        const publishedFlows = res.filter(
+          (flow) => flow.status === "PUBLISHED"
+        );
+        setAllFlows(publishedFlows);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    handleFetchAllFlow();
+  }, []);
 
   // Submit Function
   const handleSubmit = async () => {
@@ -280,12 +305,25 @@ const WhatsappCreateTemplate = () => {
       return variable.value;
     });
 
+    const flowScreen = allFlows?.find(
+      (flow) => flow.flowId === flowTemplateState?.flow_id
+    )?.screensId;
+
     const btns = [];
     if (phoneTitle && phoneNumber) {
       btns.push({
         type: "PHONE_NUMBER",
         text: phoneTitle,
         phone_number: phoneNumber,
+      });
+    }
+    if (flowTemplateState) {
+      btns.push({
+        type: "FLOW",
+        text: flowTemplateState?.title,
+        flow_id: flowTemplateState?.flow_id,
+        navigate_screen: flowScreen,
+        flow_action: "navigate",
       });
     }
     if (url && urlTitle) {
@@ -980,6 +1018,9 @@ const WhatsappCreateTemplate = () => {
                               addQuickReply={addQuickReply}
                               removeQuickReply={removeQuickReply}
                               setUrlVariables={setUrlVariables}
+                              setFlowTemplateState={setFlowTemplateState}
+                              flowTemplateState={flowTemplateState}
+                              allFlows={allFlows}
                             />
                           </>
                         )}
@@ -1019,6 +1060,8 @@ const WhatsappCreateTemplate = () => {
                             phoneTitle={phoneTitle}
                             urlTitle={urlTitle}
                             quickReplies={quickReplies}
+                            setFlowTemplateState={setFlowTemplateState}
+                            flowTemplateState={flowTemplateState}
                           />
                         </>
                       )}
