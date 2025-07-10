@@ -5,6 +5,7 @@ import { RadioButton } from "primereact/radiobutton";
 import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../../whatsapp/components/UniversalButton";
 import { saveSMPP } from "@/apis/admin/admin";
+import toast from "react-hot-toast";
 
 const AddService = () => {
   const [versionaddStatus, setVersionAddStatus] = useState("disable");
@@ -293,7 +294,11 @@ const AddService = () => {
       // };
 
       const res = await saveSMPP(data);
-      console.log(res);
+      if(!res?.status){
+        toast.error(res?.msg);
+        return
+      }
+      toast.success(res?.msg);
     } catch (e) {
       console.log(e);
     }
