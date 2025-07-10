@@ -8,6 +8,9 @@ import InputField from "../../components/InputField";
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
 import { MdSettings, MdClose } from "react-icons/md";
 import toast from "react-hot-toast";
+import EditIcon from "@mui/icons-material/Edit";
+import CloseIcon from "@mui/icons-material/Close";
+import Chip from "@mui/material/Chip";
 import {
   Switch,
   FormControl,
@@ -43,16 +46,12 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
   const [thenBranchText, setThenBranchText] = useState("");
   const [elseBranchText, setElseBranchText] = useState("");
   const [selectedFlowItem, setSelectedFlowItem] = useState("");
-  console.log("selectedFlowItem", selectedFlowItem);
   const flowItems = useSelector((state) => state.flows.canvasItems);
-
-  console.log("flowItems", flowItems);
 
   //------------- input components start-------------------
 
   const [thenInputLabel, setThenInputLabel] = useState("");
   const [thenInputType, setThenInputType] = useState("");
-  console.log("thenInputLabel", thenInputLabel);
   const [thenInputPlaceholder, setThenInputPlaceholder] = useState("");
   const [thenInputError, setThenInputError] = useState("");
   const [thenMinLength, setThenMinLength] = useState("");
@@ -72,7 +71,6 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
   //------------------text area components start---------------------
 
   const [thenTextAreaLabel, setThenTextAreaLabel] = useState("");
-  console.log("thenTextAreaLabel", thenTextAreaLabel);
   const [thenTextAreaPlaceholder, setThenTextAreaPlaceholder] = useState("");
   const [thenTextAreaError, setThenTextAreaError] = useState("");
   const [thenTextAreaRequired, setThenTextAreaRequired] = useState(false);
@@ -96,7 +94,6 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     image: "",
   });
   const [thenCheckboxEditIdx, setThenCheckboxEditIdx] = useState(null);
-
   const [elseMainLabelCheckbox, setElseMainLabelCheckbox] = useState("");
   const [elseCheckBoxes, setElseCheckBoxes] = useState([]);
   const [elseCheckboxRequired, setElseCheckboxRequired] = useState(false);
@@ -189,6 +186,15 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
 
   const [thenEmbeddedLinkUrl, setThenEmbeddedLinkUrl] = useState("");
   const [elseEmbeddedLinkUrl, setElseEmbeddedLinkUrl] = useState("");
+
+  const allscreenName = useSelector((state) => state.flows.screenName) || {};
+
+  const optScreenNameOptions = Object.values(allscreenName).map(
+    (screen, index) => ({
+      label: screen.screenName || `Screen ${index + 1}`,
+      value: screen.screenName || `Screen ${index + 1}`,
+    })
+  );
 
   //------------------ embeddedLink Component ends-------------------
 
@@ -289,6 +295,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
   };
 
   const dispatch = useDispatch();
+
   const handleIfElseSave = () => {
     if (!selectedCondition) {
       toast.error("Please Enter condition first");
@@ -332,7 +339,6 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     };
 
     onSave(updatedData);
-
     toast.success("Then branch saved successfully.");
   };
 
@@ -347,7 +353,6 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     };
 
     onSave(updatedData);
-
     toast.success("Else branch saved successfully.");
   };
 
@@ -357,7 +362,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     { label: "Text Body", value: "TextBody" },
     { label: "Text Caption", value: "TextCaption" },
     { label: "Text Input", value: "TextInput" },
-    { label: "Text Area", value: "TextInput" },
+    { label: "Text Area", value: "TextArea" },
     { label: "Checkbox", value: "CheckboxGroup" },
     { label: "Dropdown", value: "Dropdown" },
     { label: "Date Picker", value: "DatePicker" },
@@ -385,8 +390,9 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
       return (
         <div className="mt-3 w-1/2">
           <InputField
-            placeholder={`${branchType === "then" ? "Then" : "Else"
-              } branch text`}
+            placeholder={`${
+              branchType === "then" ? "Then" : "Else"
+            } branch text`}
             className="w-full p-1 rounded text-black"
             value={branchText}
             onChange={(e) => setBranchText(e.target.value)}
@@ -398,63 +404,105 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     return null;
   };
 
-  const CustomNode = ({ id, data }) => {
-    return (
-      <div className="bg-white border rounded shadow p-2 relative min-w-[150px] text-center">
-        <div>{data.label}</div>
-        <div className="text-xs text-gray-500">
-          Type: {data.details?.type}
-        </div>
-        <div className="text-xs text-gray-500">
-          Text: {data.details?.text}
-        </div>
-        <div className="absolute top-0 right-1 flex gap-1 z-20">
-          <MdSettings
-            className="text-blue-500 cursor-pointer hover:text-blue-700"
-            onClick={() => data?.onSettings?.(id)}
-          />
-          <MdClose
-            className="text-red-500 cursor-pointer hover:text-red-700"
-            onClick={() => data?.onDelete?.(id)}
-          />
-        </div>
-        {/* <button
-          onClick={() => data.onDelete(id)}
-          className="absolute top-1 right-1 text-red-500 font-bold"
-        >
-          ×
-        </button> */}
-        <Handle type="source" position={Position.Bottom} />
-        <Handle type="target" position={Position.Top} />
-      </div>
-    );
-  };
-
   // const CustomNode = ({ id, data }) => {
   //   return (
-  //     <div className="bg-white p-2 rounded shadow-md border w-[10px] text-center relative">
-  //       <div className="absolute top-0 right-1 flex gap-1 z-20">
-  //         <MdSettings
-  //           className="text-blue-500 cursor-pointer hover:text-blue-700"
-  //           onClick={() => data?.onSettings?.(id)}
-  //         />
-  //         <MdClose
-  //           className="text-red-500 cursor-pointer hover:text-red-700"
-  //           onClick={() => data?.onDelete?.(id)}
-  //         />
-  //       </div>
-  //       <div className="mt-4">
-  //         {data?.icon && <div className="text-2xl">{data.icon}</div>}
-  //         <div className="text-sm font-medium">{data.label}</div>
-  //       </div>
+  //     <div
+  //       className="bg-white rounded-md relative border border-gray-300 shadow"
+  //       style={{ minWidth: "140px", textAlign: "center", padding: "6px 12px" }}
+  //     >
+  //       {/* Settings icon on left */}
+  //       <button
+  //         onClick={() => data.onSettings(id)}
+  //         className="absolute -top-2 -left-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
+  //       >
+  //         <MdSettings size={14} />
+  //       </button>
+
+  //       {/* Close icon on right */}
+  //       <button
+  //         onClick={() => data.onDelete(id)}
+  //         className="absolute -right-2 -top-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
+  //       >
+  //         <MdClose size={14} />
+  //       </button>
+
+  //       {/* Label */}
+  //       <div className="font-medium">{data.label}</div>
+
+  //       <Handle type="target" position="top" />
+  //       <Handle type="source" position="bottom" />
   //     </div>
   //   );
   // };
 
+  const CustomNode = ({ id, data }) => {
+    return (
+      <div
+        className="bg-white rounded shadow relative border border-gray-300 p-2"
+        style={{ minWidth: "180px", textAlign: "left" }}
+      >
+        {/* Icons */}
+        <button
+          onClick={() => data.onSettings(id)}
+          className="absolute -top-2 -left-2 bg-gray-200 p-1 rounded-full hover:bg-gray-100"
+        >
+          <MdSettings size={16} />
+        </button>
+        <button
+          onClick={() => data.onDelete(id)}
+          className="absolute -top-2 -right-2 bg-gray-200 p-1 rounded-full hover:bg-gray-100"
+        >
+          <MdClose size={16} />
+        </button>
+
+        {/* Node label */}
+        <div className="font-semibold mb-2 text-center">{data.label}</div>
+
+        {/* Render each option row with its own handle */}
+        {data.options && data.options.length > 0 ? (
+          data.options.map((option, idx) => (
+            <div
+              key={idx}
+              className="flex items-center bg-gray-100 rounded p-1 m-1 text-sm relative"
+            >
+              <div className="flex-1">{option.title}</div>
+
+              {/* Handle next to each option */}
+              <Handle
+                type="source"
+                position="right"
+                id={`option-${idx}`}
+                style={{
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  right: "-15px",
+                  background: "#555",
+                }}
+              />
+            </div>
+          ))
+        ) : (
+          <Handle
+            type="source"
+            position="right"
+            id="single"
+            style={{
+              top: "50%",
+              transform: "translateY(-50%)",
+              right: "-6px",
+              background: "#555",
+            }}
+          />
+        )}
+
+        <Handle type="target" position="left" />
+      </div>
+    );
+  };
+
   const nodeTypes = {
     customNode: CustomNode,
   };
-
 
   const renderTextInputBranch = (branchType) => {
     const selectedComponent =
@@ -485,7 +533,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     const setMaxLength =
       branchType === "then" ? setThenMaxLength : setElseMaxLength;
 
-    if (["textInput"].includes(selectedComponent)) {
+    if (["TextInput"].includes(selectedComponent)) {
       return (
         <div className="mt-3 space-y-3 w-1/2">
           <InputField
@@ -565,7 +613,6 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
       branchType === "then" ? thenTextAreaLabel : elseTextAreaLabel;
     const setAreaLabel =
       branchType === "then" ? setThenTextAreaLabel : setElseTextAreaLabel;
-    console.log("areaLabel", areaLabel);
     const areaPlaceholder =
       branchType === "then" ? thenTextAreaPlaceholder : elseTextAreaPlaceholder;
     const setAreaPlaceholder =
@@ -583,7 +630,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     const setAreaRequired =
       branchType === "then" ? setThenTextAreaRequired : setElseTextAreaRequired;
 
-    if (["textArea"].includes(selectedComponent)) {
+    if (["TextArea"].includes(selectedComponent)) {
       return (
         <div className="mt-3 space-y-3 w-1/2">
           <InputField
@@ -667,7 +714,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     const setEditIdx =
       branchType === "then" ? setThenCheckboxEditIdx : setElseCheckboxEditIdx;
 
-    if (["checkBox"].includes(selectedComponent)) {
+    if (["CheckboxGroup"].includes(selectedComponent)) {
       return (
         <FormControl fullWidth>
           <div className="mb-2 mt-3 space-y-3 w-1/2">
@@ -912,7 +959,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     const setOptScreenName =
       branchType === "then" ? setThenOptScreenName : setElseOptScreenName;
 
-    if (selectedComponent === "optin") {
+    if (selectedComponent === "OptIn") {
       return (
         <div className="space-y-3 mt-3 w-1/2">
           <InputField
@@ -1201,7 +1248,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     };
 
     // ──────────────
-    if (selectedComponent === "dropDown") {
+    if (selectedComponent === "Dropdown") {
       return (
         <FormControl fullWidth>
           <div className="mb-2 mt-3 space-y-3 w-1/2">
@@ -1420,7 +1467,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
       });
     };
 
-    if (selectedComponent === "embeddedlink") {
+    if (selectedComponent === "EmbeddedLink") {
       return (
         <div className="mt-5 w-1/2">
           <div className="mb-2">
@@ -1531,7 +1578,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
       });
     };
 
-    if (selectedComponent === "date") {
+    if (selectedComponent === "DatePicker") {
       return (
         <div className="space-y-3 mt-3 w-1/2">
           <InputField
@@ -1635,7 +1682,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
       });
     };
 
-    if (selectedComponent === "footerbutton") {
+    if (selectedComponent === "Footer") {
       return (
         <div className="mb-2 text-lg space-y-3 mt-3 w-1/2">
           <InputField
@@ -1683,13 +1730,15 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     return null;
   };
 
-  const flowItemsOptions = flowItems.map((item) => {
-    const label = item.data.text || item.data.type || item.id;
-    return {
-      label,
-      value: item.id,
-    };
-  });
+  const flowItemsOptions = flowItems
+    .filter((item) => item.data.type !== "ifelse")
+    .map((item) => {
+      const label = item.data.text || item.data.type || item.id;
+      return {
+        label,
+        value: item.id,
+      };
+    });
 
   const flowItem = flowItems.find((item) => item.id === selectedFlowItem);
 
@@ -1711,19 +1760,20 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     }
   };
 
+  console.log("flowItem", flowItem);
+
   useEffect(() => {
-    if (selectedFlowItem) {
-      console.log("selectedFlowItem", selectedFlowItem)
+    if (selectedFlowItem && flowItem.data["data-source"]) {
       const newNode = {
         id: `node-${selectedFlowItem}`,
         type: "customNode",
-        position: { x: Math.random() * 250, y: Math.random() * 250 },
+        position: { x: 300, y: 100 },
         data: {
           label: flowItem.data.text || flowItem.data.type || flowItem.id,
-          details: flowItem.data,
-          onDelete: handleDeleteNode
+          options: flowItem.data["data-source"], // Pass options array
+          onDelete: handleDeleteNode,
+          onSettings: handleSettingsClick,
         },
-
       };
 
       setNodes((nds) => [...nds.filter((n) => n.id !== newNode.id), newNode]);
@@ -1755,6 +1805,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
   }, [selectedElseComponent]);
 
   const [openThenEditDialog, setOpenThenEditDialog] = useState(false);
+  console.log("openThenEditDialog", openThenEditDialog);
   const [openElseEditDialog, setOpenElseEditDialog] = useState(false);
 
   const handleSettingsClick = (id) => {
@@ -1779,13 +1830,13 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
       >
         <div className="">
           <div className="flex items-start justify-center gap-2 w-full">
-
             <div className="w-full h-180 bg-white rounded shadow">
               <ReactFlow
                 nodes={nodes}
                 edges={edges}
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
+                nodeTypes={nodeTypes}
                 onConnect={(params) => setEdges((eds) => addEdge(params, eds))}
                 fitView
               >
@@ -1828,7 +1879,8 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
               </div>
 
               <div className="flex items-center gap-4 w-full">
-                <div className="h-15 flex-1 bg-gray-400 flex items-center justify-center rounded-md shadow-md cursor-pointer hover:shadow-xl"
+                <div
+                  className="h-15 flex-1 bg-gray-400 flex items-center justify-center rounded-md shadow-md cursor-pointer hover:shadow-xl"
                   onClick={() => {
                     const newNode = {
                       id: "then-node",
@@ -1841,12 +1893,18 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                         onSettings: handleSettingsClick,
                       },
                     };
-                    setNodes((nds) => [...nds.filter((n) => n.id !== newNode.id), newNode]);
+                    setNodes((nds) => [
+                      ...nds.filter((n) => n.id !== newNode.id),
+                      newNode,
+                    ]);
                   }}
                 >
-                  <span className="text-sm font-medium tracking-wider text-white">Add Then</span>
+                  <span className="text-sm font-medium tracking-wider text-white">
+                    Add Then
+                  </span>
                 </div>
-                <div className="h-15 flex-1 bg-gray-400 flex items-center justify-center rounded-md shadow-md cursor-pointer hover:shadow-xl"
+                <div
+                  className="h-15 flex-1 bg-gray-400 flex items-center justify-center rounded-md shadow-md cursor-pointer hover:shadow-xl"
                   onClick={() => {
                     const newNode = {
                       id: "else-node",
@@ -1859,10 +1917,15 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                         onSettings: handleSettingsClick,
                       },
                     };
-                    setNodes((nds) => [...nds.filter((n) => n.id !== newNode.id), newNode]);
+                    setNodes((nds) => [
+                      ...nds.filter((n) => n.id !== newNode.id),
+                      newNode,
+                    ]);
                   }}
                 >
-                  <span className="text-sm font-medium tracking-wider text-white">Add Else</span>
+                  <span className="text-sm font-medium tracking-wider text-white">
+                    Add Else
+                  </span>
                 </div>
               </div>
 
@@ -1932,15 +1995,14 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                 {renderDateBranchInput("then")}
                 {renderFooterBranchInput("then")}
 
-                <div className="mt-4 flex justify-left gap-4">
+                {/* <div className="mt-4 flex justify-left gap-4">
                   <UniversalButton
                     label="Save Then Branch"
                     onClick={handleThenBranchSave}
                   />
-                </div>
+                </div> */}
               </Dialog>
               {/* Then Dialog End */}
-
 
               {/* Else Dialog Start */}
               <Dialog
@@ -1980,15 +2042,14 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                 {renderEmbeddedLinkBranchInput("else")}
                 {renderDateBranchInput("else")}
                 {renderFooterBranchInput("else")}
-                <div className="mt-4 flex justify-left gap-4">
+                {/* <div className="mt-4 flex justify-left gap-4">
                   <UniversalButton
                     label="Save Else Branch"
                     onClick={handleElseBranchSave}
                   />
-                </div>
+                </div> */}
               </Dialog>
               {/* Else Dialog End */}
-
 
               {/* <div className="">
                 <AnimatedDropdown
@@ -2028,9 +2089,9 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
               </div> */}
             </div>
 
-            {/* <div className="flex justify-center mt-6">
+            <div className="flex justify-center mt-6">
               <UniversalButton label="Save" onClick={handleIfElseSave} />
-            </div> */}
+            </div>
           </div>
 
           {/* <div className="mt-4">

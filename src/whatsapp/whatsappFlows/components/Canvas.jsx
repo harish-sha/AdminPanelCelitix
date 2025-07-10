@@ -20,6 +20,7 @@ import InputField from "../../components/InputField";
 import IfElseBlock from "./IfElseBlock";
 import EditPanel from "./EditPanel";
 import TabView from "./TabView";
+import SwitchFlow from "./SwitchFlow";
 
 const Canvas = ({
   items,
@@ -80,6 +81,8 @@ const Canvas = ({
       setTabs(allTabs);
     },
   }));
+
+  const [openSwitch, setOpenSwitch] = useState(false); 
 
   const getDynamicFieldValue = (tabs, activeIndex, item, field = "label") => {
     if (!tabs?.[activeIndex]?.payload) return "";
@@ -1134,11 +1137,22 @@ const Canvas = ({
     const [selectedItem, setSelectedItem] = useState(null);
     const [editDialogVisible, setEditDialogVisible] = useState(false);
 
+    // const handleEdit = (index, item) => {
+    //   setSelectedItem({ ...item, index });
+    //   // setEditDialogVisible(true);
+    //   setOpenIfElse(true);
+    //   setOpenSwitch(true);
+    // };
+
     const handleEdit = (index, item) => {
-      setSelectedItem({ ...item, index });
-      // setEditDialogVisible(true);
+    setSelectedItem({ ...item, index });
+
+    if (item.type === "ifelse") {
       setOpenIfElse(true);
-    };
+    } else if (item.type === "switch") {
+      setOpenSwitch(true);
+    }
+  };
 
     const content = getDynamicFieldValue(
       tabs,
@@ -1178,7 +1192,7 @@ const Canvas = ({
             {getLabel(item.type)}
           </label>
           <Box>
-            <IconButton
+            {/* <IconButton
               size="small"
               // onClick={() => {
               //   if (item.type === "ifelse") {
@@ -1189,7 +1203,28 @@ const Canvas = ({
               // }}
               onClick={() => {
                 console.log("item in onClick", item);
+                if (item.type === "ifelse" || item.type === "switch") {
+                  handleEdit(index, item);
+                } else {
+                  onEdit(index, item);
+                }
+              }}
+            >
+              <EditOutlinedIcon
+                style={{ cursor: "pointer" }}
+                fontSize="small"
+              />
+            </IconButton> */}
+
+            <IconButton
+              size="small"
+              onClick={() => {
+                console.log("item in onClick", item);
                 if (item.type === "ifelse") {
+                  setSelectedItem(item);
+                  handleEdit(index, item);
+                } else if (item.type === "switch") {
+                  setSelectedItem(item);
                   handleEdit(index, item);
                 } else {
                   onEdit(index, item);
@@ -1201,6 +1236,21 @@ const Canvas = ({
                 fontSize="small"
               />
             </IconButton>
+
+            {/* <IconButton
+              onClick={() => {
+                if (item.type === "switch") {
+                  handleEdit(index, item);
+                }else {
+                   onEdit(index, item);
+                }
+              }}
+            >
+              <EditOutlinedIcon
+                style={{ cursor: "pointer" }}
+                fontSize="small"
+              />
+            </IconButton>   */}
             <IconButton onClick={() => handleDelete(index, item)} size="small">
               <DeleteForeverOutlinedIcon
                 fontSize="small"
@@ -1248,6 +1298,24 @@ const Canvas = ({
             selectedItem={selectedItem}
           />
         )}
+
+       
+         {selectedItem?.type === "switch" && openSwitch && (
+        <SwitchFlow
+          openSwitch={openSwitch}
+          setOpenSwitch={setOpenSwitch}
+          selectedItem={selectedItem}
+          onSave={(payload) => {
+            const updatedItem = {
+              ...selectedItem,
+              ...payload,
+            };
+            console.log("Updated Switch Item", updatedItem);
+            setOpenSwitch(false);
+          }}
+        />
+      )}
+
       </Paper>
       // </motion.div>
     );

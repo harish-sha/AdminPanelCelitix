@@ -37,7 +37,7 @@ import AnimatedDropdown from "../../components/AnimatedDropdown";
 import UniversalButton from "../../components/UniversalButton";
 import InputField from "../../components/InputField";
 import RichTextEditor from "./Editor.jsx";
-import SwitchFlow from "./SwitchFlow";
+// import SwitchFlow from "./SwitchFlow";
 
 const EditPanel = ({
   selectedItem,
@@ -64,6 +64,9 @@ const EditPanel = ({
   onUpdate,
   editPanelRef,
   setSelectedItem,
+  openSwitch,
+  setOpenSwitch
+  
 }) => {
   // const [options, setOptions] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -3869,7 +3872,7 @@ const EditPanel = ({
             {/* ImageCarousel ends here */}
 
             {/* Switch Component Start */}
-            {selectedItem?.type === "switch" && (
+            {/* {selectedItem?.type === "switch" && (
               <>
                 <SwitchFlow
                   selectedItem={selectedItem}
@@ -3882,7 +3885,7 @@ const EditPanel = ({
                   }}
                 />
               </>
-            )}
+            )} */}
             {/* Switch Component End */}
 
             {/* Date Componenet Start */}

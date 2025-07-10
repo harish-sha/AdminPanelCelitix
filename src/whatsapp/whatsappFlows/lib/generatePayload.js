@@ -450,7 +450,7 @@ export const generatePayload = (data) => {
         };
       }
 
-      console.log("pay", pay);
+      console.log("payyyyyyyyyyyy", pay.condition);
       if (type === "ifelse") {
         const componentName = lastCreatedComponentName;
         // const expectedValue = getExpectedValueBasedOnType(componentName);

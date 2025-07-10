@@ -418,8 +418,6 @@ const FlowCreationPage = () => {
     });
     setSelectedItem(null);
 
-    console.log("updatedData", updatedData);
-
     dispatch(
       updateCanvasItem({
         id: updatedData.storeId,
