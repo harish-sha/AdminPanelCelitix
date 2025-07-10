@@ -257,8 +257,11 @@ const WhatsappCreateTemplate = () => {
     async function handleFetchAllFlow() {
       try {
         const res = await getWhatsappFlow();
-        console.log(res);
-        setAllFlows(res);
+
+        const publishedFlows = res.filter(
+          (flow) => flow.status === "PUBLISHED"
+        );
+        setAllFlows(publishedFlows);
       } catch (e) {
         console.log(e);
       }
@@ -317,6 +320,10 @@ const WhatsappCreateTemplate = () => {
       return variable.value;
     });
 
+    const flowScreen = allFlows?.find(
+      (flow) => flow.flowId === flowTemplateState?.flow_id
+    )?.screensId;
+
     const btns = [];
     if (phoneTitle && phoneNumber) {
       btns.push({
@@ -330,6 +337,8 @@ const WhatsappCreateTemplate = () => {
         type: "FLOW",
         text: flowTemplateState?.title,
         flow_id: flowTemplateState?.flow_id,
+        navigate_screen: flowScreen,
+        flow_action: "navigate",
       });
     }
     if (url && urlTitle) {
