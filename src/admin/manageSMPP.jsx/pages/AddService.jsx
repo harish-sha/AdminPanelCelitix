@@ -21,7 +21,6 @@ const AddService = () => {
   };
 
   const servicetypeoption = [
-    { label: "Select Service Type", value: "" },
     { label: "Transactional", value: "Transactional" },
     { label: "Promotional", value: "Promotional" },
     { label: "Both", value: "Both" },
@@ -33,7 +32,12 @@ const AddService = () => {
 
   const dataencodingoption = [
     { label: "Default", value: "default" },
-    { label: "GSM", value: "gsm3" },
+    { label: "SMSC Default Alphabet [0Bit]", value: "gsm7" },
+    { label: "IA5 (CCITT T.50)/ASCII[1Bit]", value: "1" },
+    { label: "LATIN 1 (ISO-8859-1) [3Bit]", value: "3" },
+    { label: "OCTET [4BiT]", value: "4" },
+    { label: "UCS2 (ISO-IEC-10646) [8Bit]", value: "8" },
+    { label: "EXTENDED KANJI JIS (X 0212-1990) [13Bit]", value: "13" },
   ];
 
   const handleAddDataEncoding = (data) => {
@@ -41,9 +45,9 @@ const AddService = () => {
   };
 
   const bindmodeoption = [
-    { label: "Transmitter", value: "Transmitter" },
-    { label: "Receiver", value: "Receiver" },
-    { label: "Transceiver", value: "Transceiver" },
+    { label: "Transmitter", value: "0" },
+    { label: "Receiver", value: "2" },
+    { label: "Transceiver", value: "1" },
   ];
 
   const handleAddBindMode = (bind) => {
@@ -51,9 +55,14 @@ const AddService = () => {
   };
 
   const totalsocketsaddoption = [
-    { label: "Transmitter", value: "Transmitter" },
-    { label: "Receiver", value: "Receiver" },
-    { label: "Transceiver", value: "Transceiver" },
+    { label: "1", value: "1" },
+    { label: "2", value: "2" },
+    { label: "3", value: "3" },
+    { label: "4", value: "4" },
+    { label: "5", value: "5" },
+    { label: "6", value: "6" },
+    { label: "7", value: "7" },
+    { label: "8", value: "8" },
   ];
 
   const handleAddTotalSockets = (sockets) => {
@@ -61,36 +70,196 @@ const AddService = () => {
   };
 
   const sourceoption = [
-    { label: "Transmitter", value: "Transmitter" },
-    { label: "Receiver", value: "Receiver" },
-    { label: "Transceiver", value: "Transceiver" },
+    { label: "ton-0;npi-0", value: "ton-0;npi-0" },
+    { label: "ton-0;npi-1", value: "ton-0;npi-1" },
+    { label: "ton-0;npi-2", value: "ton-0;npi-2" },
+    { label: "ton-0;npi-3", value: "ton-0;npi-3" },
+    { label: "ton-0;npi-6", value: "ton-0;npi-6" },
+    { label: "ton-0;npi-8", value: "ton-0;npi-8" },
+    { label: "ton-0;npi-9", value: "ton-0;npi-9" },
+    { label: "ton-0;npi-10", value: "ton-0;npi-10" },
+    { label: "ton-0;npi-13", value: "ton-0;npi-13" },
+    { label: "ton-0;npi-18", value: "ton-0;npi-18" },
+
+    //second ton start
+    { label: "ton-1;npi-0", value: "ton-1;npi-0" },
+    { label: "ton-1;npi-1", value: "ton-1;npi-1" },
+    { label: "ton-1;npi-2", value: "ton-1;npi-2" },
+    { label: "ton-1;npi-3", value: "ton-1;npi-3" },
+    { label: "ton-1;npi-6", value: "ton-1;npi-6" },
+    { label: "ton-1;npi-8", value: "ton-1;npi-8" },
+    { label: "ton-1;npi-9", value: "ton-1;npi-9" },
+    { label: "ton-1;npi-10", value: "ton-1;npi-10" },
+    { label: "ton-1;npi-13", value: "ton-1;npi-13" },
+    { label: "ton-1;npi-18", value: "ton-1;npi-18" },
+
+    //third ton start
+    { label: "ton-2;npi-0", value: "ton-2;npi-0" },
+    { label: "ton-2;npi-1", value: "ton-2;npi-1" },
+    { label: "ton-2;npi-2", value: "ton-2;npi-2" },
+    { label: "ton-2;npi-3", value: "ton-2;npi-3" },
+    { label: "ton-2;npi-6", value: "ton-2;npi-6" },
+    { label: "ton-2;npi-8", value: "ton-2;npi-8" },
+    { label: "ton-2;npi-9", value: "ton-2;npi-9" },
+    { label: "ton-2;npi-10", value: "ton-2;npi-10" },
+    { label: "ton-2;npi-13", value: "ton-2;npi-13" },
+    { label: "ton-2;npi-18", value: "ton-2;npi-18" },
+
+    //fourth ton start
+    { label: "ton-3;npi-0", value: "ton-3;npi-0" },
+    { label: "ton-3;npi-1", value: "ton-3;npi-1" },
+    { label: "ton-3;npi-2", value: "ton-3;npi-2" },
+    { label: "ton-3;npi-3", value: "ton-3;npi-3" },
+    { label: "ton-3;npi-6", value: "ton-3;npi-6" },
+    { label: "ton-3;npi-8", value: "ton-3;npi-8" },
+    { label: "ton-3;npi-9", value: "ton-3;npi-9" },
+    { label: "ton-3;npi-10", value: "ton-3;npi-10" },
+    { label: "ton-3;npi-13", value: "ton-3;npi-13" },
+    { label: "ton-3;npi-18", value: "ton-3;npi-18" },
+
+    //fifth ton start
+    { label: "ton-4;npi-0", value: "ton-4;npi-0" },
+    { label: "ton-4;npi-1", value: "ton-4;npi-1" },
+    { label: "ton-4;npi-2", value: "ton-4;npi-2" },
+    { label: "ton-4;npi-3", value: "ton-4;npi-3" },
+    { label: "ton-4;npi-6", value: "ton-4;npi-6" },
+    { label: "ton-4;npi-8", value: "ton-4;npi-8" },
+    { label: "ton-4;npi-9", value: "ton-4;npi-9" },
+    { label: "ton-4;npi-10", value: "ton-4;npi-10" },
+    { label: "ton-4;npi-13", value: "ton-4;npi-13" },
+    { label: "ton-4;npi-18", value: "ton-4;npi-18" },
+
+    //sixth ton start
+    { label: "ton-5;npi-0", value: "ton-5;npi-0" },
+    { label: "ton-5;npi-1", value: "ton-5;npi-1" },
+    { label: "ton-5;npi-2", value: "ton-5;npi-2" },
+    { label: "ton-5;npi-3", value: "ton-5;npi-3" },
+    { label: "ton-5;npi-6", value: "ton-5;npi-6" },
+    { label: "ton-5;npi-8", value: "ton-5;npi-8" },
+    { label: "ton-5;npi-9", value: "ton-5;npi-9" },
+    { label: "ton-5;npi-10", value: "ton-5;npi-10" },
+    { label: "ton-5;npi-13", value: "ton-5;npi-13" },
+    { label: "ton-5;npi-18", value: "ton-5;npi-18" },
+    { label: "ton-6;npi-0", value: "ton-6;npi-0" },
+    { label: "ton-6;npi-1", value: "ton-6;npi-1" },
+    { label: "ton-6;npi-2", value: "ton-6;npi-2" },
+    { label: "ton-6;npi-3", value: "ton-6;npi-3" },
+    { label: "ton-6;npi-6", value: "ton-6;npi-6" },
+    { label: "ton-6;npi-8", value: "ton-6;npi-8" },
+    { label: "ton-6;npi-9", value: "ton-6;npi-9" },
+    { label: "ton-6;npi-10", value: "ton-6;npi-10" },
+    { label: "ton-6;npi-13", value: "ton-6;npi-13" },
+    { label: "ton-6;npi-18", value: "ton-6;npi-18" },
   ];
 
   const handleAddSource = (source) => {
     // console.log(source);
   };
   const destinationoption = [
-    { label: "Transmitter", value: "Transmitter" },
-    { label: "Receiver", value: "Receiver" },
-    { label: "Transceiver", value: "Transceiver" },
+    { label: "ton-0;npi-0", value: "ton-0;npi-0" },
+    { label: "ton-0;npi-1", value: "ton-0;npi-1" },
+    { label: "ton-0;npi-2", value: "ton-0;npi-2" },
+    { label: "ton-0;npi-3", value: "ton-0;npi-3" },
+    { label: "ton-0;npi-6", value: "ton-0;npi-6" },
+    { label: "ton-0;npi-8", value: "ton-0;npi-8" },
+    { label: "ton-0;npi-9", value: "ton-0;npi-9" },
+    { label: "ton-0;npi-10", value: "ton-0;npi-10" },
+    { label: "ton-0;npi-13", value: "ton-0;npi-13" },
+    { label: "ton-0;npi-18", value: "ton-0;npi-18" },
+
+    //second ton start
+    { label: "ton-1;npi-0", value: "ton-1;npi-0" },
+    { label: "ton-1;npi-1", value: "ton-1;npi-1" },
+    { label: "ton-1;npi-2", value: "ton-1;npi-2" },
+    { label: "ton-1;npi-3", value: "ton-1;npi-3" },
+    { label: "ton-1;npi-6", value: "ton-1;npi-6" },
+    { label: "ton-1;npi-8", value: "ton-1;npi-8" },
+    { label: "ton-1;npi-9", value: "ton-1;npi-9" },
+    { label: "ton-1;npi-10", value: "ton-1;npi-10" },
+    { label: "ton-1;npi-13", value: "ton-1;npi-13" },
+    { label: "ton-1;npi-18", value: "ton-1;npi-18" },
+
+    //third ton start
+    { label: "ton-2;npi-0", value: "ton-2;npi-0" },
+    { label: "ton-2;npi-1", value: "ton-2;npi-1" },
+    { label: "ton-2;npi-2", value: "ton-2;npi-2" },
+    { label: "ton-2;npi-3", value: "ton-2;npi-3" },
+    { label: "ton-2;npi-6", value: "ton-2;npi-6" },
+    { label: "ton-2;npi-8", value: "ton-2;npi-8" },
+    { label: "ton-2;npi-9", value: "ton-2;npi-9" },
+    { label: "ton-2;npi-10", value: "ton-2;npi-10" },
+    { label: "ton-2;npi-13", value: "ton-2;npi-13" },
+    { label: "ton-2;npi-18", value: "ton-2;npi-18" },
+
+    //fourth ton start
+    { label: "ton-3;npi-0", value: "ton-3;npi-0" },
+    { label: "ton-3;npi-1", value: "ton-3;npi-1" },
+    { label: "ton-3;npi-2", value: "ton-3;npi-2" },
+    { label: "ton-3;npi-3", value: "ton-3;npi-3" },
+    { label: "ton-3;npi-6", value: "ton-3;npi-6" },
+    { label: "ton-3;npi-8", value: "ton-3;npi-8" },
+    { label: "ton-3;npi-9", value: "ton-3;npi-9" },
+    { label: "ton-3;npi-10", value: "ton-3;npi-10" },
+    { label: "ton-3;npi-13", value: "ton-3;npi-13" },
+    { label: "ton-3;npi-18", value: "ton-3;npi-18" },
+
+    //fifth ton start
+    { label: "ton-4;npi-0", value: "ton-4;npi-0" },
+    { label: "ton-4;npi-1", value: "ton-4;npi-1" },
+    { label: "ton-4;npi-2", value: "ton-4;npi-2" },
+    { label: "ton-4;npi-3", value: "ton-4;npi-3" },
+    { label: "ton-4;npi-6", value: "ton-4;npi-6" },
+    { label: "ton-4;npi-8", value: "ton-4;npi-8" },
+    { label: "ton-4;npi-9", value: "ton-4;npi-9" },
+    { label: "ton-4;npi-10", value: "ton-4;npi-10" },
+    { label: "ton-4;npi-13", value: "ton-4;npi-13" },
+    { label: "ton-4;npi-18", value: "ton-4;npi-18" },
+
+    //sixth ton start
+    { label: "ton-5;npi-0", value: "ton-5;npi-0" },
+    { label: "ton-5;npi-1", value: "ton-5;npi-1" },
+    { label: "ton-5;npi-2", value: "ton-5;npi-2" },
+    { label: "ton-5;npi-3", value: "ton-5;npi-3" },
+    { label: "ton-5;npi-6", value: "ton-5;npi-6" },
+    { label: "ton-5;npi-8", value: "ton-5;npi-8" },
+    { label: "ton-5;npi-9", value: "ton-5;npi-9" },
+    { label: "ton-5;npi-10", value: "ton-5;npi-10" },
+    { label: "ton-5;npi-13", value: "ton-5;npi-13" },
+    { label: "ton-5;npi-18", value: "ton-5;npi-18" },
+    { label: "ton-6;npi-0", value: "ton-6;npi-0" },
+    { label: "ton-6;npi-1", value: "ton-6;npi-1" },
+    { label: "ton-6;npi-2", value: "ton-6;npi-2" },
+    { label: "ton-6;npi-3", value: "ton-6;npi-3" },
+    { label: "ton-6;npi-6", value: "ton-6;npi-6" },
+    { label: "ton-6;npi-8", value: "ton-6;npi-8" },
+    { label: "ton-6;npi-9", value: "ton-6;npi-9" },
+    { label: "ton-6;npi-10", value: "ton-6;npi-10" },
+    { label: "ton-6;npi-13", value: "ton-6;npi-13" },
+    { label: "ton-6;npi-18", value: "ton-6;npi-18" },
   ];
 
   const handleAddDestination = (destination) => {
     // console.log(destination);
   };
   const registereddeliveryoption = [
-    { label: "Transmitter", value: "Transmitter" },
-    { label: "Receiver", value: "Receiver" },
-    { label: "Transceiver", value: "Transceiver" },
+    { label: "Default [null]", value: "Default" },
+    { label: "No SMSC Delivery Receipt Requested", value: "Default" },
+    { label: "Delivery Success or Failure", value: "Default" },
+    { label: "Delivery Failure", value: "Default" },
   ];
 
   const handleAddRegisteredDelivery = (delivery) => {
     // console.log(delivery);
   };
   const windowsizeoption = [
-    { label: "Transmitter", value: "Transmitter" },
-    { label: "Receiver", value: "Receiver" },
-    { label: "Transceiver", value: "Transceiver" },
+    { label: "10", value: 10 },
+    { label: "25", value: 25 },
+    { label: "50", value: 50 },
+    { label: "100", value: 100 },
+    { label: "150", value: 150 },
+    { label: "200", value: 200 },
+    { label: "250", value: 250 },
+    { label: "500", value: 500 },
   ];
 
   const handleAddWindowSize = (windows) => {
@@ -99,10 +268,6 @@ const AddService = () => {
 
   async function handleSave() {
     try {
-      const payload = {
-        ...data,
-        ExpiryTime: "null",
-      };
       // const payload = {
       //   bindMode: "0",
       //   DataCoding: "gsm7",
@@ -127,7 +292,7 @@ const AddService = () => {
       //   winndowSize: "50",
       // };
 
-      const res = await saveSMPP(payload);
+      const res = await saveSMPP(data);
       console.log(res);
     } catch (e) {
       console.log(e);
@@ -290,7 +455,7 @@ const AddService = () => {
           onChange={(e) => setData({ ...data, numOfReceivers: e.target.value })}
         />
         <AnimatedDropdown
-          label="Source"
+          label="Source TON-NPI"
           id="sourceadd"
           name="sourceadd"
           options={sourceoption}
@@ -300,7 +465,7 @@ const AddService = () => {
           }}
         />
         <AnimatedDropdown
-          label="Destination"
+          label="Destination TON-NPI"
           id="destinationadd"
           name="destinationadd"
           options={destinationoption}
@@ -327,11 +492,28 @@ const AddService = () => {
           value={data.senderPrefix}
           onChange={(e) => setData({ ...data, senderPrefix: e.target.value })}
         />
+        <InputField
+          label="Expiry Time "
+          id="expiryTime"
+          name="expiryTime"
+          placeholder="Enter Expiry Time"
+          value={data.ExpiryTime}
+          onChange={(e) => setData({ ...data, ExpiryTime: e.target.value })}
+        />
+        <AnimatedDropdown
+          label="Window Size"
+          id="windowsizeadd"
+          name="windowsizeadd"
+          placeholder="Enter Window Size"
+          options={windowsizeoption}
+          onChange={(e) => setData({ ...data, winndowSize: e })}
+          value={data.winndowSize}
+        />
         <div className="flex flex-col">
           <div className="">
             <UniversalLabel text="TPS" id="tpadd" name="tpadd" />
           </div>
-          <div className="flex gap-4 mt-3">
+          <div className="flex gap-4 mt-3 w-1/3">
             {/* Option 1 */}
             <div className="flex items-center gap-2">
               <RadioButton
@@ -407,15 +589,6 @@ const AddService = () => {
           onChange={(e) =>
             setData({ ...data, triggerQueueSize: e.target.value })
           }
-        />
-        <AnimatedDropdown
-          label="Window Size"
-          id="windowsizeadd"
-          name="windowsizeadd"
-          placeholder="Enter Window Size"
-          options={windowsizeoption}
-          onChange={(e) => setData({ ...data, winndowSize: e })}
-          value={data.winndowSize}
         />
       </div>
       <div className="">

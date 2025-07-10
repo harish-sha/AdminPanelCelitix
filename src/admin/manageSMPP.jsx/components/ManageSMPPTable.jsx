@@ -83,6 +83,8 @@ const ManageSMPPTable = ({ id, name }) => {
     pageSize: 10,
   });
 
+  // const
+
   const handleChangeVersionEditStatus = (event) => {
     setVersionEditStatus(event.target.value);
   };

@@ -153,3 +153,9 @@ export const saveSMPP = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
+export const getSMPP = async () => {
+  return await fetchWithAuth(`/smpp/showSmppRecords`, {
+    method: "POST",
+  });
+};
