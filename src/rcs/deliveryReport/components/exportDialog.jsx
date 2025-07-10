@@ -916,10 +916,10 @@ export const ExportDialog = ({
                 <AnimatedDropdown
                   label="Select Delivery Status"
                   options={[
-                    { value: "DELIVERED", label: "Delivered" },
+                    { value: "DELIVRD", label: "Delivered" },
+                    { value: "READ", label: "Read" },
                     { value: "FAILED", label: "Failed" },
-                    { value: "UNDELIVERED", label: "Undelivered" },
-                    { value: "BLOCKED", label: "Blocked" },
+                    // { value: "BLOCKED", label: "Blocked" },
                   ]}
                   value={dataToExport.deliveryStatus}
                   onChange={(e) =>

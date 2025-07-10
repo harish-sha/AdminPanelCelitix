@@ -110,6 +110,12 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
     { field: "failed", headerName: "Failed", flex: 1, minWidth: 120 },
     { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 120 },
     { field: "sent", headerName: "Sent", flex: 1, minWidth: 120 },
+    {
+      field: "readCount",
+      headerName: "Read Count",
+      flex: 1,
+      minWidth: 120,
+    },
     { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 120 },
     {
       field: "notDelivered",
@@ -143,6 +149,7 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
         delivered: item.delivered,
         notDelivered: item.not_delivered,
         drnotAvailable: item.dr_not_available,
+        readCount: item.readCount,
         others: item.others,
       }))
       : [];
@@ -161,6 +168,7 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
         delivered: item.delivered,
         notDelivered: item.not_delivered,
         drnotAvailable: item.dr_not_available,
+        readCount: item.readCount,
         others: item.others,
       }))
       : [];

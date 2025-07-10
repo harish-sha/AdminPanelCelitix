@@ -8,8 +8,10 @@ export const Details = ({
   details,
   handleSubmit,
   isUpdate,
+  setIsSettingBtnDisables,
 }: {
   setDetails: React.Dispatch<React.SetStateAction<any>>;
+  setIsSettingBtnDisables: React.Dispatch<React.SetStateAction<any>>;
   details: any;
   handleSubmit: () => void;
   isUpdate: Boolean;
@@ -33,6 +35,11 @@ export const Details = ({
             ...prev,
             selected: e,
           }));
+          setIsSettingBtnDisables(false);
+
+          if (!e) {
+            setIsSettingBtnDisables(true);
+          }
         }}
       />
       <InputField

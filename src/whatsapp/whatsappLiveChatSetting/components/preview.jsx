@@ -3,6 +3,8 @@ import { BsTelephoneFill } from "react-icons/bs";
 import { TbLocationShare } from "react-icons/tb";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { FaReply } from "react-icons/fa6";
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+
 
 export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
   const getBtnIcon = (type) => {
@@ -11,6 +13,8 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
         return <BsTelephoneFill className="mr-2" />;
       case "replyButtons":
         return <FaReply className="mr-2" />;
+      case "FLOW":
+        return <AssignmentOutlinedIcon className="mr-2" />;
       default:
         return <FaExternalLinkAlt className="mr-2" />;
     }
@@ -22,6 +26,8 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
         return "bg-blue-500 text-white";
       case "replyButtons":
         return "text-gray-800 bg-gray-200";
+      case "FLOW":
+        return "text-white bg-gray-400";
       default:
         return "bg-green-500 text-white";
     }
@@ -33,6 +39,8 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
         return `Contact us: ${phone}`;
       case "replyButtons":
         return `View more: ${text}`;
+      case "FLOW":
+        return `${text}`;
       default:
         return `Visit us: ${url}`;
     }

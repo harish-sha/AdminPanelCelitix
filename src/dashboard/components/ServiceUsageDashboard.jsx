@@ -260,9 +260,9 @@ export default function ServiceUsageDashboard() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 rounded-2xl bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 p-2">
+      <div className="flex gap-3 rounded-2xl bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 p-2 h-147">
         {/* Sidebar */}
-        <div className="lg:col-span-1 bg-white p-2 rounded-2xl shadow-md h-full lg:sticky top-4 space-y-4 border-2 border-dashed border-gray-200">
+        <div className=" bg-white p-2 rounded-2xl shadow-md h-full space-y-4 border-1  border-gray-200 w-50">
           {/* Services Filter */}
           <span className="text-xl font-semibold text-gray-800 tracking-wide playf">
             Filter Services
@@ -297,11 +297,11 @@ export default function ServiceUsageDashboard() {
                   "bg-yellow-50",
                 ],
               }[service.toLowerCase()] || [
-                "from-gray-100",
-                "to-gray-300",
-                "text-black-600",
-                "bg-gray-50",
-              ];
+                  "from-gray-100",
+                  "to-gray-300",
+                  "text-black-600",
+                  "bg-gray-50",
+                ];
 
               const [from, to, txt, bg] = palette;
 
@@ -316,26 +316,24 @@ export default function ServiceUsageDashboard() {
                     )
                   }
                   className={`
-                    flex items-center gap-2 w-full px-2 py-2 rounded-lg transition
-                         ${
-                           selected
-                             ? `bg-gradient-to-r ${from} ${to} ${txt} shadow-md`
-                             : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                         }
+                    flex items-center gap-2 w-full px-2 py-2 rounded-lg transition cursor-pointer
+                         ${selected
+                      ? `bg-gradient-to-r ${from} ${to} ${txt} shadow-md`
+                      : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                    }
                     `}
                 >
                   <span
                     className={`
                     flex-shrink-0 p-2 rounded-full transition
-                      ${selected ? "bg-white" : bg} ${
-                      selected ? txt : "text-gray-400"
-                    }
+                      ${selected ? "" : bg} ${selected ? txt : "text-gray-400"
+                      }
                        `}
                   >
                     {icons[service] || "🔧"}
                   </span>
 
-                  <span className="flex-1 text-left font-medium capitalize">
+                  <span className="flex-1 text-sm text-left font-medium lowercase">
                     {service}
                   </span>
                 </button>
@@ -351,9 +349,8 @@ export default function ServiceUsageDashboard() {
               <button
                 key={type}
                 onClick={() => setChartType(type)}
-                className={`flex items-center justify-center gap-2 px-3 py-1 rounded-md ${
-                  chartType === type ? "bg-blue-600 text-white" : "bg-gray-100"
-                }`}
+                className={`flex items-center justify-center gap-2 px-3 py-1 rounded-md ${chartType === type ? "bg-[#687efa] text-white" : "bg-gray-100"
+                  }`}
               >
                 {ICON_MAP[type] || <span className="w-5" />}
                 {/* label */}
@@ -362,56 +359,63 @@ export default function ServiceUsageDashboard() {
             ))}
           </div>
         </div>
+        
 
         {/* Main Content */}
-        <div className="lg:col-span-4 bg-gradient-to-tr from-blue-50 via-white to-blue-100 p-3 rounded-2xl shadow-md border-2 border-dashed">
-          <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-medium mb-4 playf">Service Usage Overview</h2>
+        <div className="flex-1 bg-gradient-to-tr from-blue-50 via-white to-blue-100 p-3 rounded-2xl shadow-md">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-3xl font-medium playf">Service Usage Overview</h2>
 
-          {/* Filter Buttons */}
-          <div className="flex flex-wrap gap-4 items-center mb-6">
-            {FILTERS.map((item) => (
-              <button
-                key={item}
-                onClick={() => setFilter(item)}
-                className={`px-4 py-1.5 rounded-full border ${
-                  filter === item ? "bg-blue-600 text-white" : "bg-gray-100"
-                }`}
-              >
-                {item}
-              </button>
-            ))}
-
-            {filter === "Custom" && (
-              <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200">
-                <div>
-                  <DateInputWithCalendar
-                    selected={startDate}
-                    onChange={(date) => setStartDate(date)}
-                    value={startDate}
-                    label="From Date"
-                    maxDate={endDate}
-                  />
-                </div>
-                <div>
-                  <DateInputWithCalendar
-                    onChange={(date) => setEndDate(date)}
-                    value={endDate}
-                    label="To Date"
-                    minDate={startDate}
-                    maxDate={new Date()}
-                  />
-                </div>
-
-                <button
-                  onClick={fetchServiceUsage}
-                  className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition"
+            {/* Filter Buttons */}
+            <div className="flex flex-wrap gap-4 items-center">
+              {FILTERS.map((item) => (
+                <div
+                  key={item}
+                  onClick={() => setFilter(item)}
+                  className={`relative px-4 py-1.5 rounded-full border cursor-pointer overflow-hidden transition-colors duration-300 ${filter === item ? "text-white scale-105" : "bg-white text-gray-700"
+                    }`}
                 >
-                  Apply
-                </button>
-              </div>
-            )}
-          </div>
+                  <span className="relative z-10">{item}</span>
+                  <span
+                    className={`absolute inset-0 rounded-full transition-transform duration-300 ease-in-out bg-gradient-to-r from-[#687efa] to-[#687efa] z-0
+        ${filter === item ? "translate-y-0" : "translate-y-full"}`}
+                    style={{ transformOrigin: "bottom" }}
+                  ></span>
+                </div>
+              ))}
+
+              {/* background: linear-gradient(to right, #2b40b0, #8447c6, #36bae2); */}
+
+              {filter === "Custom" && (
+                <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200">
+                  <div>
+                    <DateInputWithCalendar
+                      selected={startDate}
+                      onChange={(date) => setStartDate(date)}
+                      value={startDate}
+                      label="From Date"
+                      maxDate={endDate}
+                    />
+                  </div>
+                  <div>
+                    <DateInputWithCalendar
+                      onChange={(date) => setEndDate(date)}
+                      value={endDate}
+                      label="To Date"
+                      minDate={startDate}
+                      maxDate={new Date()}
+                    />
+                  </div>
+
+                  <button
+                    onClick={fetchServiceUsage}
+                    className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition"
+                  >
+                    Apply
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
 
@@ -441,25 +445,25 @@ export default function ServiceUsageDashboard() {
                 key={service.name}
                 whileHover={{ backgroundColor: "#f9fafb" }}
                 transition={{ duration: 0.2 }}
-                className="flex items-center justify-between border border-gray-300 rounded-md p-3 hover:border-indigo-300 transition w-full"
+                className="flex items-center justify-between border border-gray-300 rounded-xl p-2 hover:border-indigo-300 transition w-full"
               >
                 {/* Icon */}
-                <div className="flex-shrink-0 bg-indigo-50 text-indigo-600 rounded-full p-3 text-2xl">
+                <div className="flex-shrink-0 bg-indigo-50 text-indigo-600 rounded-full p-2 text-2xl">
                   {icons[service.name]}
                 </div>
 
                 {/* Service Name + Sent */}
-                <div className="flex-1 px-4">
-                  <p className="text-sm font-semibold text-gray-800 capitalize">
+                <div className="flex-1 px-2">
+                  <p className="text-md font-semibold text-gray-800 lowercase">
                     {service.name}
                   </p>
-                  <p className="text-base font-bold text-gray-900">
+                  <p className="text-sm font-bold text-gray-900">
                     {service.totalSent} Sent
                   </p>
                 </div>
 
                 {/* Charge */}
-                <p className="text-sm text-gray-500 whitespace-nowrap">
+                <p className="text-sm text-gray-700 font-semibold whitespace-nowrap">
                   ₹{service.totalCharge.toFixed(2)}
                 </p>
               </motion.div>
@@ -467,8 +471,8 @@ export default function ServiceUsageDashboard() {
           </div>
 
           {/* Graph */}
-          <div className="mt-5 p-6 rounded-2xl bg-white border-2 border-dashed">
-            <h3 className="text-lg font-semibold mb-4">Usage Analytics</h3>
+          <div className="mt-3 p-3 rounded-2xl bg-white border-2 border-dashed">
+            <h3 className="text-lg font-semibold mb-2">Usage Analytics</h3>
             <ResponsiveContainer width="100%" height={350}>
               {renderChart()}
             </ResponsiveContainer>

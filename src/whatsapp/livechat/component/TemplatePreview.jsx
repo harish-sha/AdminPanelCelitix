@@ -4,6 +4,7 @@ import { BsTelephoneFill } from "react-icons/bs";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { Carousel } from "react-responsive-carousel";
 import { useMemo } from "react";
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { components } from "react-select";
 
@@ -15,6 +16,8 @@ const getBtnIcon = (type) => {
       return <BsTelephoneFill className="mr-2" />;
     case "QUICK_REPLY":
       return <FaReply className="mr-2" />;
+    case "FLOW":
+      return <AssignmentOutlinedIcon className="mr-2" />;
     default:
       return <FaExternalLinkAlt className="mr-2" />;
   }
@@ -26,6 +29,8 @@ const getBtnCss = (type) => {
       return "bg-blue-500 text-white";
     case "QUICK_REPLY":
       return "text-gray-800 bg-gray-200";
+    case "FLOW":
+      return "text-white bg-gray-400";
     default:
       return "bg-green-500 text-white";
   }
@@ -37,11 +42,12 @@ const getBtnTitle = (type, phone, url, text) => {
       return `Contact us: ${phone}`;
     case "QUICK_REPLY":
       return `View more: ${text}`;
+    case "FLOW":
+      return `${text}`;
     default:
       return `Visit us: ${url}`;
   }
 };
-
 
 
 const MediaRenderer = ({ format, fileUrl, fallbackUrl }) => {

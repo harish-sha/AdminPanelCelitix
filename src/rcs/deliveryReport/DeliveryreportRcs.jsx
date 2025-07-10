@@ -193,8 +193,6 @@ const DeliveryreportRcs = () => {
         .startOf("month")
         .format("YYYY-MM-DD");
       FinalToDate = moment(fallbackMonth).endOf("month").format("YYYY-MM-DD");
-
-      // Clear selectedMonth ONLY in fallback case
       setSelectedMonth(null);
     }
 
@@ -206,12 +204,9 @@ const DeliveryreportRcs = () => {
     ) {
       FinalFromDate = moment(summaryData.fromDate).format("YYYY-MM-DD");
       FinalToDate = moment(summaryData.toDate).format("YYYY-MM-DD");
-
-      // Optional: clear selectedMonth if switching to manual
       setSelectedMonth(null);
     }
 
-    // Invalid case
     else {
       toast.error("Please select a valid date range or month.");
       return;
@@ -223,8 +218,6 @@ const DeliveryreportRcs = () => {
       summaryType: "rcs,date,user",
       isMonthWise: Number(summaryData.isMonthWise),
     };
-
-    console.log("dataaaaaaaaaaaaaaaaaa", data);
 
     try {
       setIsFetching(true);
