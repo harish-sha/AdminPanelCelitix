@@ -73,7 +73,7 @@ const CustomPagination = ({
     </Box>
   );
 };
-const ManageSMPPTable = ({ id, name }) => {
+const ManageSMPPTable = ({ id, name, data }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [addserviceedit, setAddServiceedit] = useState(false);
   const [versioneditStatus, setVersionEditStatus] = useState("disable");
@@ -172,38 +172,33 @@ const ManageSMPPTable = ({ id, name }) => {
   const handleEdit = () => {
     setAddServiceedit(true);
   };
-
-  const rows = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    sn: i + 1,
-    servicename: "Service",
-    username: "Ashima",
-    host: "66.249.70.162",
-    sendingport: "12345",
-    receiverport: "56789",
-    sockets: "5",
-    connectivity: "Start",
-    status: "pending",
-  }));
+  console.log("data", data);
+  const rows = Array.isArray(data)
+    ? data?.map((item, i) => ({
+        id: i + 1,
+        sn: i + 1,
+        ...item,
+      }))
+    : [];
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
     {
-      field: "servicename",
+      field: "serviceName",
       headerName: "Service Name",
       flex: 1,
       minWidth: 130,
     },
-    { field: "username", headerName: "User Name", flex: 1, minWidth: 120 },
+    { field: "userName", headerName: "User Name", flex: 1, minWidth: 120 },
     { field: "host", headerName: "Host", flex: 1, minWidth: 120 },
     {
-      field: "sendingport",
+      field: "sendingPort",
       headerName: "Sending Port",
       flex: 1,
       minWidth: 120,
     },
     {
-      field: "receiverport",
+      field: "receiverPort",
       headerName: "Receiver Port",
       flex: 1,
       minWidth: 120,
@@ -215,7 +210,23 @@ const ManageSMPPTable = ({ id, name }) => {
       flex: 1,
       minWidth: 120,
     },
-    { field: "status", headerName: "Status", flex: 1, minWidth: 80 },
+    {
+      field: "status",
+      headerName: "Status",
+      flex: 1,
+      minWidth: 80,
+      renderCell: (params) => (
+        <div className="py-2">
+          <div
+            className={`text-white text-xs px-2 py-1 border rounded-md text-center ${
+              params.row.status ? "bg-green-500" : "bg-red-500"
+            }`}
+          >
+            {params.row.status ? "Active" : "Inactive"}
+          </div>
+        </div>
+      ),
+    },
     {
       field: "action",
       headerName: "Action",

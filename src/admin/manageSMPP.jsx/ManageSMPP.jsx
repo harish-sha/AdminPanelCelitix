@@ -82,7 +82,6 @@ const ManageSMPP = () => {
   async function handleFetchSmppDetails() {
     try {
       const res = await getSMPP();
-      console.log(res);
       setData(res);
     } catch (e) {
       console.log(e);
@@ -119,7 +118,7 @@ const ManageSMPP = () => {
           </div>
         ) : (
           <div className="w-full">
-            <ManageSMPPTable id="manageSMPPTable" name="manageSMPPTable" />
+            <ManageSMPPTable id="manageSMPPTable" name="manageSMPPTable" data={data} />
           </div>
         )}
       </div>
