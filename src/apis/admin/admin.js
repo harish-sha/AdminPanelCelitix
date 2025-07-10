@@ -159,3 +159,10 @@ export const getSMPP = async () => {
     method: "POST",
   });
 };
+
+
+export const getWabaList = async () => {
+  return await fetchWithAuth("/getWabaDetails", {
+    method: "GET",
+  });
+};
