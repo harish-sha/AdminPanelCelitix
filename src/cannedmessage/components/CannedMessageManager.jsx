@@ -1232,7 +1232,7 @@ export default function CannedMessageManager() {
                         <h3 className="text-sm font-semibold text-gray-800">
                           {msg.cannedMessageName}
                         </h3>
-                        <pre className="text-xs text-gray-600 mt-1 whitespace-pre-wrap">
+                        <pre className="text-xs text-gray-600 mt-1 whitespace-pre-wrap text-wrap break-words">
                           {msg.textBody}
                         </pre>
                       </div>

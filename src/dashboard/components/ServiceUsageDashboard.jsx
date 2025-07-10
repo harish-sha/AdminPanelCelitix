@@ -260,13 +260,13 @@ export default function ServiceUsageDashboard() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 rounded-2xl bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 p-2">
         {/* Sidebar */}
-        <div className="lg:col-span-1 bg-white p-2 rounded-2xl shadow-xl h-fit lg:sticky top-4 space-y-4 border-2">
+        <div className="lg:col-span-1 bg-white p-2 rounded-2xl shadow-md h-full lg:sticky top-4 space-y-4 border-2 border-dashed border-gray-200">
           {/* Services Filter */}
-          <h3 className="text-lg font-semibold text-gray-800 tracking-wide">
+          <span className="text-xl font-semibold text-gray-800 tracking-wide playf">
             Filter Services
-          </h3>
+          </span>
           <div className="space-y-2">
             {activeServices.map((service) => {
               const selected = selectedServices.includes(service);
@@ -297,11 +297,11 @@ export default function ServiceUsageDashboard() {
                   "bg-yellow-50",
                 ],
               }[service.toLowerCase()] || [
-                  "from-gray-100",
-                  "to-gray-300",
-                  "text-black-600",
-                  "bg-gray-50",
-                ];
+                "from-gray-100",
+                "to-gray-300",
+                "text-black-600",
+                "bg-gray-50",
+              ];
 
               const [from, to, txt, bg] = palette;
 
@@ -316,17 +316,20 @@ export default function ServiceUsageDashboard() {
                     )
                   }
                   className={`
-                    flex items-center gap-2 w-full px-2 py-2 rounded-lg transition 
-                         ${selected
-                      ? `bg-gradient-to-r ${from} ${to} ${txt} shadow-md`
-                      : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                    }
-                    `}>
+                    flex items-center gap-2 w-full px-2 py-2 rounded-lg transition
+                         ${
+                           selected
+                             ? `bg-gradient-to-r ${from} ${to} ${txt} shadow-md`
+                             : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                         }
+                    `}
+                >
                   <span
                     className={`
                     flex-shrink-0 p-2 rounded-full transition
-                      ${selected ? "bg-white" : bg} ${selected ? txt : "text-gray-400"
-                      }
+                      ${selected ? "bg-white" : bg} ${
+                      selected ? txt : "text-gray-400"
+                    }
                        `}
                   >
                     {icons[service] || "🔧"}
@@ -341,15 +344,16 @@ export default function ServiceUsageDashboard() {
           </div>
 
           {/* Chart Type */}
-          <h3 className="font-semibold">Chart Type</h3>
+          <span className="font-semibold text-xl playf">Chart Type</span>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col  gap-2">
             {CHART_TYPES.map((type) => (
               <button
                 key={type}
                 onClick={() => setChartType(type)}
-                className={`flex items-center justify-center gap-2 px-3 py-1 rounded-md ${chartType === type ? "bg-blue-600 text-white" : "bg-gray-100"
-                  }`}
+                className={`flex items-center justify-center gap-2 px-3 py-1 rounded-md ${
+                  chartType === type ? "bg-blue-600 text-white" : "bg-gray-100"
+                }`}
               >
                 {ICON_MAP[type] || <span className="w-5" />}
                 {/* label */}
@@ -360,8 +364,9 @@ export default function ServiceUsageDashboard() {
         </div>
 
         {/* Main Content */}
-        <div className="lg:col-span-4 bg-white p-3 rounded-2xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Service Usage Overview</h2>
+        <div className="lg:col-span-4 bg-gradient-to-tr from-blue-50 via-white to-blue-100 p-3 rounded-2xl shadow-md border-2 border-dashed">
+          <div className="flex items-center justify-between">
+          <h2 className="text-3xl font-medium mb-4 playf">Service Usage Overview</h2>
 
           {/* Filter Buttons */}
           <div className="flex flex-wrap gap-4 items-center mb-6">
@@ -369,8 +374,9 @@ export default function ServiceUsageDashboard() {
               <button
                 key={item}
                 onClick={() => setFilter(item)}
-                className={`px-4 py-1.5 rounded-full border ${filter === item ? "bg-blue-600 text-white" : "bg-gray-100"
-                  }`}
+                className={`px-4 py-1.5 rounded-full border ${
+                  filter === item ? "bg-blue-600 text-white" : "bg-gray-100"
+                }`}
               >
                 {item}
               </button>
@@ -406,6 +412,8 @@ export default function ServiceUsageDashboard() {
               </div>
             )}
           </div>
+          </div>
+
 
           {/* Usage Cards */}
           {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -427,7 +435,7 @@ export default function ServiceUsageDashboard() {
           ))}
         </div> */}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 w-full">
             {filteredData.map((service) => (
               <motion.div
                 key={service.name}
@@ -459,7 +467,7 @@ export default function ServiceUsageDashboard() {
           </div>
 
           {/* Graph */}
-          <div className="mt-5 p-6 rounded-2xl bg-white shadow-md">
+          <div className="mt-5 p-6 rounded-2xl bg-white border-2 border-dashed">
             <h3 className="text-lg font-semibold mb-4">Usage Analytics</h3>
             <ResponsiveContainer width="100%" height={350}>
               {renderChart()}
