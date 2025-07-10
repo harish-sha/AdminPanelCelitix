@@ -302,6 +302,7 @@ const ManageContacts = () => {
         anniversaryDate: addContactDetails.mariageDate
           ? new Date(addContactDetails.mariageDate).toLocaleDateString("en-GB")
           : "",
+        filePath: filePath,
       };
       const res = await importContact(payload);
       toast.success("Contact imported successfully.");
@@ -2055,16 +2056,6 @@ const ManageContacts = () => {
                   </div>
                 )}
               </div>
-            </div>
-
-            <div className="flex justify-center mt-2">
-              <UniversalButton
-                id="ImportConcat"
-                name="ImportConcat"
-                label="Submit"
-                variant="primary"
-                onClick={handleAllAddContact}
-              />
             </div>
           </div>
         </div>

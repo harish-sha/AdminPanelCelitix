@@ -83,7 +83,7 @@ export const TemplateNode = ({
           value: template.templateSrno,
           label: template.templateName,
         }))}
-        onChange={(e) => {
+        onChange={(e: string) => {
           setNodesInputData((prev) => ({
             ...prev,
             [id]: {
