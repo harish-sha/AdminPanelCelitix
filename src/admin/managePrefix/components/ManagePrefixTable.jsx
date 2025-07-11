@@ -89,7 +89,12 @@ const ManagePrefixTable = ({ id, name, data = [] }) => {
       flex: 1,
       minWidth: 80,
     },
-    { field: "operatorSrno", headerName: "Operator Number", flex: 1, minWidth: 120 },
+    {
+      field: "operatorSrno",
+      headerName: "Operator Number",
+      flex: 1,
+      minWidth: 120,
+    },
     { field: "circleSrno", headerName: "Circle Number", flex: 1, minWidth: 90 },
     {
       field: "countrycode",
