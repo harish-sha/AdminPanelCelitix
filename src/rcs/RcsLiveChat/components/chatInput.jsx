@@ -18,7 +18,10 @@ export const ChatInput = ({
   inputRef,
   fileInputRef,
   isSpeedDialOpen,
-  setIsSpeedDialOpen
+  setIsSpeedDialOpen,
+
+  isTemplateMessage,
+  setIsTemplateMessage,
 }) => {
   // const [isSpeedDialOpen, setIsSpeedDialOpen] = React.useState(false);
 
@@ -48,7 +51,7 @@ export const ChatInput = ({
       label: "Template",
       icon: <BsJournalArrowDown style={{ color: "#3F51B5" }} />,
       command: () => {
-        setSendMessageDialogVisible(true);
+        setIsTemplateMessage(true);
       },
     },
     {

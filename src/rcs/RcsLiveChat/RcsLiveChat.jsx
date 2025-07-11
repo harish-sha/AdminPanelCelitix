@@ -1,7 +1,9 @@
 import {
   fetchAllBotsList,
   fetchAllConvo,
+  fetchAllTemplates,
   fetchSpecificConvo,
+  fetchTemplateDetails,
   sendRCSMessage,
   sendRCSTemplateMessage,
 } from "@/apis/rcs/rcs";
@@ -12,6 +14,7 @@ import { Sidebar } from "./components/sidebar";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChatScreen } from "./components/chatScreen";
 import moment from "moment";
+import { TemplateDialog } from "./components/templateDialog";
 
 const RcsLiveChat = () => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -39,6 +42,20 @@ const RcsLiveChat = () => {
   const fileInputRef = React.useRef(null);
 
   const [isSpeedDialOpen, setIsSpeedDialOpen] = React.useState(false);
+
+  const [isTemplateMessage, setIsTemplateMessage] = React.useState(false);
+  const [templateState, setTemplateState] = React.useState({
+    all: [],
+    selected: "",
+  });
+  const [templateDetails, setTemplateDetails] = React.useState({});
+  const [templateSendData, setTemplateSendData] = React.useState({});
+
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  const [varLength, setVarLength] = React.useState(0);
+  const [varList, setVarList] = React.useState([]);
+  const [inputVariables, setInputVariables] = React.useState([]);
 
   async function handleFetchAgents() {
     try {
@@ -176,6 +193,29 @@ const RcsLiveChat = () => {
     }
   }
 
+  async function handleFetchTemplates() {
+    try {
+      if (!agentState?.id) return;
+      const res = await fetchAllTemplates(agentState?.id);
+      setTemplateState({
+        all: res?.Data,
+        selected: "",
+      });
+    } catch (e) {
+      toast.error("Error fetching templates");
+    }
+  }
+
+  async function handleFetchTemplateDetails() {
+    if (!templateState.selected) return;
+    try {
+      const res = await fetchTemplateDetails(templateState.selected);
+      setTemplateDetails(res);
+    } catch (e) {
+      toast.error("Error fetching templates");
+    }
+  }
+
   async function sendMessage() {
     if (!chatState.active) return;
     if (!input) return;
@@ -254,6 +294,14 @@ const RcsLiveChat = () => {
   useEffect(() => {
     handleFetchSpecificConvo();
   }, [chatState?.active]);
+
+  useEffect(() => {
+    handleFetchTemplates();
+  }, [isTemplateMessage]);
+
+  useEffect(() => {
+    handleFetchTemplateDetails();
+  }, [templateState?.selected]);
 
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
@@ -389,11 +437,27 @@ const RcsLiveChat = () => {
               chatState={chatState}
               setIsSpeedDialOpen={setIsSpeedDialOpen}
               isSpeedDialOpen={isSpeedDialOpen}
+              isTemplateMessage={isTemplateMessage}
+              setIsTemplateMessage={setIsTemplateMessage}
               // specificConversation={specificConversation}
             />
           </motion.div>
         )}
       </AnimatePresence>
+
+      {isTemplateMessage && (
+        <TemplateDialog
+          isTemplateMessage={isTemplateMessage}
+          setIsTemplateMessage={setIsTemplateMessage}
+          templateState={templateState}
+          setTemplateState={setTemplateState}
+          templateDetails={templateDetails}
+          setTemplateDetails={setTemplateDetails}
+          selectedIndex={selectedIndex}
+          setSelectedIndex={setSelectedIndex}
+          inputVariables={inputVariables}
+        />
+      )}
     </div>
   );
 };
