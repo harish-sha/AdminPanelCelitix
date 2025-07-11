@@ -2,6 +2,7 @@ import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import { Dialog } from "primereact/dialog";
 import React from "react";
 import { Preview } from "./templatePreview";
+import UniversalButton from "@/components/common/UniversalButton";
 
 export const TemplateDialog = ({
   isTemplateMessage,
@@ -13,6 +14,7 @@ export const TemplateDialog = ({
   selectedIndex,
   setSelectedIndex,
   inputVariables,
+  handleSendTemplateMessage,
 }) => {
   return (
     <Dialog
@@ -37,9 +39,18 @@ export const TemplateDialog = ({
               setTemplateState((prev) => ({
                 ...prev,
                 selected: e,
+                templateName: templateState.all.find((item) => item.srno === e)
+                  .templateName,
               }));
             }}
             value={templateState.selected}
+          />
+
+          <UniversalButton
+            id="sendTemplateMessage"
+            name="sendTemplateMessage"
+            label="Send Template Message"
+            onClick={handleSendTemplateMessage}
           />
         </div>
 

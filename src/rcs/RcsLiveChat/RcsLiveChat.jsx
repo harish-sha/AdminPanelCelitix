@@ -243,19 +243,25 @@ const RcsLiveChat = () => {
     }
   }
 
-  async function sendTemplateMessage() {
+  async function handleSendTemplateMessage() {
+    // if (!agentState.id || !chatState.active || templateState.templateName) return;
     try {
       const payload = {
         contentMessage: {
           templateMessage: {
-            templateCode: "dovesoftinfo",
+            templateCode: templateState.templateName,
           },
           mobileno: chatState.active.mobileNo,
           botId: agentState.id,
         },
       };
       const res = await sendRCSTemplateMessage(payload);
-      console.log(res);
+      if (!res?.status) {
+        toast.error(res?.message);
+        return;
+      }
+
+      toast.success("Template message sent successfully");
     } catch (e) {
       toast.error("Error sending Template message");
     }
@@ -456,6 +462,7 @@ const RcsLiveChat = () => {
           selectedIndex={selectedIndex}
           setSelectedIndex={setSelectedIndex}
           inputVariables={inputVariables}
+          handleSendTemplateMessage={handleSendTemplateMessage}
         />
       )}
     </div>
