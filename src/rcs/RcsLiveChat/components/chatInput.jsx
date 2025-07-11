@@ -3,9 +3,62 @@ import { motion } from "framer-motion";
 import React from "react";
 import { flushSync } from "react-dom";
 import { FiSend } from "react-icons/fi";
+import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+import TableChartOutlinedIcon from "@mui/icons-material/TableChartOutlined";
+import FilePresentOutlinedIcon from "@mui/icons-material/FilePresentOutlined";
+import { BsJournalArrowDown } from "react-icons/bs";
+import { FaReply } from "react-icons/fa6";
+import { FaPlus } from "react-icons/fa";
 
-export const ChatInput = ({ input, setInput, sendMessage }) => {
-  const inputRef = React.useRef(null);
+export const ChatInput = ({
+  input,
+  setInput,
+  sendMessage,
+  inputRef,
+  fileInputRef,
+  isSpeedDialOpen,
+  setIsSpeedDialOpen
+}) => {
+  // const [isSpeedDialOpen, setIsSpeedDialOpen] = React.useState(false);
+
+  const items = [
+    {
+      label: "Attachment",
+      icon: <AttachmentOutlinedIcon style={{ color: "#4CAF50" }} />,
+      command: () => {
+        fileInputRef.current.click();
+      },
+    },
+    {
+      label: "Document",
+      icon: <FilePresentOutlinedIcon />,
+      command: () => {
+        fileInputRef.current.click();
+      },
+    },
+    {
+      label: "Photos & Videos",
+      icon: <ImageOutlinedIcon style={{ color: "#FF9800" }} />, // Orange
+      command: () => {
+        fileInputRef.current.click();
+      },
+    },
+    {
+      label: "Template",
+      icon: <BsJournalArrowDown style={{ color: "#3F51B5" }} />,
+      command: () => {
+        setSendMessageDialogVisible(true);
+      },
+    },
+    {
+      label: "Excel",
+      icon: <TableChartOutlinedIcon style={{ color: "#009688" }} />, // Teal
+      command: () => {
+        fileInputRef.current.click();
+      },
+    },
+  ];
 
   // function sendMessage() {}
 
@@ -67,6 +120,36 @@ export const ChatInput = ({ input, setInput, sendMessage }) => {
                   buttonStyle={{ width: "2rem", height: "2rem" }}
                   className="right-19 bottom-1 speeddial-bottom-right"
                 /> */}
+      </div>
+
+      <div className="relative ml-4">
+        <button
+          onClick={() => setIsSpeedDialOpen(!isSpeedDialOpen)}
+          className={`flex items-center justify-center w-8 h-8 cursor-pointer bg-[#22577E] text-white rounded-full shadow-md transition-transform ${
+            isSpeedDialOpen ? "rotate-45" : ""
+          }`}
+        >
+          <FaPlus />
+        </button>
+        {isSpeedDialOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.2 }}
+            className="absolute bottom-15 right-0 mt-2 bg-white shadow-lg rounded-lg p-3 w-56"
+          >
+            {items.map((item, index) => (
+              <button
+                key={index}
+                onClick={item.command}
+                className="flex items-center gap-2 w-full p-2 text-left hover:bg-gray-100 rounded-md cursor-pointer"
+              >
+                {item.icon}
+                <span className="text-sm font-medium">{item.label}</span>
+              </button>
+            ))}
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );

@@ -35,6 +35,10 @@ const RcsLiveChat = () => {
     // isReply: false,
   });
   const [input, setInput] = React.useState("");
+  const inputRef = React.useRef(null);
+  const fileInputRef = React.useRef(null);
+
+  const [isSpeedDialOpen, setIsSpeedDialOpen] = React.useState(false);
 
   async function handleFetchAgents() {
     try {
@@ -373,7 +377,8 @@ const RcsLiveChat = () => {
               // deleteImages={deleteImages}
               // handleAttachmentDownload={handleAttachmentDownload}
               // insertEmoji={insertEmoji}
-              // inputRef={inputRef}
+              inputRef={inputRef}
+              fileInputRef={fileInputRef}
               sendMessage={sendMessage}
               // items={items}
               // visibleRight={visibleRight}
@@ -382,6 +387,8 @@ const RcsLiveChat = () => {
               // setSendMessageDialogVisible={setSendMessageDialogVisible}
               setChatState={setChatState}
               chatState={chatState}
+              setIsSpeedDialOpen={setIsSpeedDialOpen}
+              isSpeedDialOpen={isSpeedDialOpen}
               // specificConversation={specificConversation}
             />
           </motion.div>

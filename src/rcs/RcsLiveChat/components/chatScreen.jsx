@@ -16,6 +16,10 @@ export const ChatScreen = ({
   sendMessage,
   input,
   setInput,
+  inputRef,
+  fileInputRef,
+  isSpeedDialOpen,
+  setIsSpeedDialOpen,
 }) => {
   const [replyingMessageId, setReplyingMessageId] = useState(null);
   const messageRef = useRef(null);
@@ -431,6 +435,10 @@ export const ChatScreen = ({
           input={input}
           setInput={setInput}
           sendMessage={sendMessage}
+          inputRef={inputRef}
+          fileInputRef={fileInputRef}
+          setIsSpeedDialOpen={setIsSpeedDialOpen}
+          isSpeedDialOpen={isSpeedDialOpen}
         />
       ) : (
         "arihant"
