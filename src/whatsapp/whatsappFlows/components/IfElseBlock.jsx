@@ -40,12 +40,74 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
   const [selectedElseComponent, setSelectedElseComponent] = useState();
   const [value, setValue] = useState("");
   const [condition, setCondition] = useState();
-  const [thenComponents, setThenComponents] = useState();
-  const [elseComponents, setElseComponents] = useState();
+  // const [thenComponents, setThenComponents] = useState();
+  // const [elseComponents, setElseComponents] = useState();
   const [componentTree, setComponentTree] = useState({});
   const [thenBranchText, setThenBranchText] = useState("");
   const [elseBranchText, setElseBranchText] = useState("");
   const [selectedFlowItem, setSelectedFlowItem] = useState("");
+
+  const [thenComponents, setThenComponents] = useState([]);
+  const [elseComponents, setElseComponents] = useState([]);
+
+  console.log("thenComponents", thenComponents);
+
+  const handleAddThenItem = () => {
+    setThenComponents((prev) => [...prev, { value: "", text: "" }]);
+  };
+
+  const handleAddElseItem = () => {
+    setElseComponents((prev) => [...prev, { value: "", text: "" }]);
+  };
+
+  const handleThenTextChange = (index, newText) => {
+    setThenComponents((prev) => {
+      const updated = [...prev];
+      updated[index].text = newText;
+      return updated;
+    });
+  };
+
+  const handleElseTextChange = (index, newText) => {
+    setElseComponents((prev) => {
+      const updated = [...prev];
+      updated[index].text = newText;
+      return updated;
+    });
+  };
+
+  const handleThenChange = (index, newValue) => {
+    setThenComponents((prev) => {
+      const updated = [...prev];
+      updated[index].value = newValue;
+      return updated;
+    });
+  };
+
+  const handleElseChange = (index, newValue) => {
+    setElseComponents((prev) => {
+      const updated = [...prev];
+      updated[index].value = newValue;
+      return updated;
+    });
+  };
+
+  const handleThenComponentChange = (index, field, value) => {
+    setThenComponents((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+  };
+
+  const handleElseComponentChange = (index, field, value) => {
+    setElseComponents((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+  };
+
   const flowItems = useSelector((state) => state.flows.canvasItems);
 
   //------------- input components start-------------------
@@ -230,68 +292,177 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
 
   //------------------ footer Component ends-------------------
 
+  const [radioDraft, setRadioDraft] = useState({
+    title: "",
+    description: "",
+    metadata: "",
+    image: "",
+  });
+  const [radioEditOptionIdx, setRadioEditOptionIdx] = useState(null);
+  const radioImageInputRef = useRef();
+
+  // const generateBranchPayload = (branchType) => {
+  //   const type =
+  //     branchType === "then" ? selectedThenComponent : selectedElseComponent;
+  //   let payload = { type };
+
+  //   // Text components
+  //   if (
+  //     ["TextHeading", "TextSubheading", "TextBody", "TextCaption"].includes(
+  //       type
+  //     )
+  //   ) {
+  //     payload.text = branchType === "then" ? thenBranchText : elseBranchText;
+  //   }
+
+  //   // TextArea
+  //   else if (type === "textArea") {
+  //     payload.label =
+  //       branchType === "then" ? thenTextAreaLabel : elseTextAreaLabel;
+  //     payload.placeholder =
+  //       branchType === "then"
+  //         ? thenTextAreaPlaceholder
+  //         : elseTextAreaPlaceholder;
+  //     payload.error =
+  //       branchType === "then" ? thenTextAreaError : elseTextAreaError;
+  //     payload.required =
+  //       branchType === "then" ? thenTextAreaRequired : elseTextAreaRequired;
+  //   }
+
+  //   // CheckBox
+  //   else if (type === "checkBox") {
+  //     payload.mainLabel =
+  //       branchType === "then" ? thenMainLabelCheckbox : elseMainLabelCheckbox;
+  //     payload.options = branchType === "then" ? thenCheckBoxes : elseCheckBoxes;
+  //     payload.required =
+  //       branchType === "then" ? thenCheckboxRequired : elseCheckboxRequired;
+  //   }
+
+  //   // Dropdown
+  //   else if (type === "dropDown") {
+  //     payload.mainLabel =
+  //       branchType === "then" ? thenMainLabelDropdown : elseMainLabelDropdown;
+  //     payload.options = branchType === "then" ? thenOptions : elseOptions;
+  //     payload.required =
+  //       branchType === "then" ? thenDropdownRequired : elseDropdownRequired;
+  //   }
+
+  //   // Optin
+  //   else if (type === "optin") {
+  //     payload.label = branchType === "then" ? thenOptLabel : elseOptLabel;
+  //     payload.required =
+  //       branchType === "then" ? thenOptInRequired : elseOptInRequired;
+  //     payload.action = branchType === "then" ? thenOptAction : elseOptAction;
+  //     payload.url = branchType === "then" ? thenOptUrl : elseOptUrl;
+  //     payload.screenName =
+  //       branchType === "then"
+  //         ? thenOptSelectedScreenName
+  //         : elseOptSelectedScreenName;
+  //   }
+
+  //   // You can keep adding cases for other types as needed (image, date, footerbutton, etc.)
+
+  //   return payload;
+  // };
+
+  
+  const handleRadioBtnAddNew = () => {
+  const newOption = {
+    id: Date.now(),
+    title: "New Option",
+    description: "",
+    metadata: "",
+    image: "",
+  };
+
+  handleComponentChange(index, "radioButtonOptions", (prev = []) => [
+    ...prev,
+    newOption,
+  ]);
+};
+
   const generateBranchPayload = (branchType) => {
-    const type =
-      branchType === "then" ? selectedThenComponent : selectedElseComponent;
-    let payload = { type };
+    const components = branchType === "then" ? thenComponents : elseComponents;
 
-    // Text components
-    if (
-      ["TextHeading", "TextSubheading", "TextBody", "TextCaption"].includes(
-        type
-      )
-    ) {
-      payload.text = branchType === "then" ? thenBranchText : elseBranchText;
-    }
+    return components.map((item) => {
+      console.log("item", item);
+      const payload = {
+        type: item.value,
+      };
 
-    // TextArea
-    else if (type === "textArea") {
-      payload.label =
-        branchType === "then" ? thenTextAreaLabel : elseTextAreaLabel;
-      payload.placeholder =
-        branchType === "then"
-          ? thenTextAreaPlaceholder
-          : elseTextAreaPlaceholder;
-      payload.error =
-        branchType === "then" ? thenTextAreaError : elseTextAreaError;
-      payload.required =
-        branchType === "then" ? thenTextAreaRequired : elseTextAreaRequired;
-    }
+      // Text components
+      if (
+        ["TextHeading", "TextSubheading", "TextBody", "TextCaption"].includes(
+          item.value
+        )
+      ) {
+        payload.text = item.text;
+      }
 
-    // CheckBox
-    else if (type === "checkBox") {
-      payload.mainLabel =
-        branchType === "then" ? thenMainLabelCheckbox : elseMainLabelCheckbox;
-      payload.options = branchType === "then" ? thenCheckBoxes : elseCheckBoxes;
-      payload.required =
-        branchType === "then" ? thenCheckboxRequired : elseCheckboxRequired;
-    }
+      // TextInput
+      else if (item.value === "TextInput") {
+        payload.label = item.inputLabel;
+        payload.inputType = item.inputType;
+        payload.placeholder = item.inputPlaceholder;
+        payload.error = item.inputError;
+        payload.minLength = item.minLength;
+        payload.maxLength = item.maxLength;
+        payload.required = item.required;
+      }
 
-    // Dropdown
-    else if (type === "dropDown") {
-      payload.mainLabel =
-        branchType === "then" ? thenMainLabelDropdown : elseMainLabelDropdown;
-      payload.options = branchType === "then" ? thenOptions : elseOptions;
-      payload.required =
-        branchType === "then" ? thenDropdownRequired : elseDropdownRequired;
-    }
+      // TextArea
+      else if (item.value === "TextArea") {
+        payload.label = item.areaLabel;
+        payload.placeholder = item.areaPlaceholder;
+        payload.error = item.areaError;
+        payload.text = item.text;
+      }
 
-    // Optin
-    else if (type === "optin") {
-      payload.label = branchType === "then" ? thenOptLabel : elseOptLabel;
-      payload.required =
-        branchType === "then" ? thenOptInRequired : elseOptInRequired;
-      payload.action = branchType === "then" ? thenOptAction : elseOptAction;
-      payload.url = branchType === "then" ? thenOptUrl : elseOptUrl;
-      payload.screenName =
-        branchType === "then"
-          ? thenOptSelectedScreenName
-          : elseOptSelectedScreenName;
-    }
+      // Checkbox
+      else if (item.value === "CheckboxGroup") {
+        payload.mainLabel = item.mainLabel;
+        payload.options = item.options;
+      }
 
-    // You can keep adding cases for other types as needed (image, date, footerbutton, etc.)
+      // Dropdown
+      else if (item.value === "Dropdown") {
+        payload.mainLabel = item.mainLabel;
+        payload.options = item.options;
+      }
 
-    return payload;
+      // Optin
+      else if (item.value === "OptIn") {
+        payload.label = item.label;
+        payload.action = item.action;
+        payload.screenName = item.screenName;
+      }
+
+      // Image
+      else if (item.value === "Image") {
+        payload.imageUrl = item.imageUrl;
+        payload.altText = item.altText;
+      }
+
+      // Date
+      else if (item.value === "DatePicker") {
+        payload.dateLabel = item.dateLabel;
+        payload.datePlaceholder = item.datePlaceholder;
+        payload.maxDate = item.maxDate;
+        payload.minDate = item.minDate;
+        payload.unavailableDate = item.unavailableDate;
+      }
+
+      // Footer button
+      else if (item.value === "FooterButton") {
+        payload.centerCaption = item.centerCaption;
+        payload.footerButtonLabel = item.footerButtonLabel;
+        payload.nextAction = item.nextAction;
+      }
+
+      // Extend for other types similarly!
+
+      return payload;
+    });
   };
 
   const dispatch = useDispatch();
@@ -303,8 +474,8 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     }
     const payload = {
       condition: selectedCondition,
-      then: [generateBranchPayload("then")],
-      else: [generateBranchPayload("else")],
+      then: generateBranchPayload("then"),
+      else: generateBranchPayload("else"),
     };
 
     console.log("payload", payload);
@@ -369,24 +540,23 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     { label: "Embedded Link", value: "EmbeddedLink" },
     { label: "Image", value: "Image" },
     { label: "Opt-in", value: "OptIn" },
+    { label: "RadioButtons", value: "RadioButtonsGroup" },
     { label: "Switch", value: "Switch" },
     { label: "Footer Button", value: "Footer" },
     { label: "If-Else", value: "If" },
   ];
 
   // components start
-  const renderTextBranchInput = (branchType) => {
-    const selectedComponent =
-      branchType === "then" ? selectedThenComponent : selectedElseComponent;
-    const branchText = branchType === "then" ? thenBranchText : elseBranchText;
-    const setBranchText =
-      branchType === "then" ? setThenBranchText : setElseBranchText;
-
+  const renderTextBranchInput = (item, index, branchType) => {
     if (
       ["TextHeading", "TextSubheading", "TextBody", "TextCaption"].includes(
-        selectedComponent
+        item.value
       )
     ) {
+      const value = item.text;
+      const setValue =
+        branchType === "then" ? handleThenTextChange : handleElseTextChange;
+
       return (
         <div className="mt-3 w-1/2">
           <InputField
@@ -394,8 +564,8 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
               branchType === "then" ? "Then" : "Else"
             } branch text`}
             className="w-full p-1 rounded text-black"
-            value={branchText}
-            onChange={(e) => setBranchText(e.target.value)}
+            value={value}
+            onChange={(e) => setValue(index, e.target.value)}
           />
         </div>
       );
@@ -403,37 +573,6 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
 
     return null;
   };
-
-  // const CustomNode = ({ id, data }) => {
-  //   return (
-  //     <div
-  //       className="bg-white rounded-md relative border border-gray-300 shadow"
-  //       style={{ minWidth: "140px", textAlign: "center", padding: "6px 12px" }}
-  //     >
-  //       {/* Settings icon on left */}
-  //       <button
-  //         onClick={() => data.onSettings(id)}
-  //         className="absolute -top-2 -left-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
-  //       >
-  //         <MdSettings size={14} />
-  //       </button>
-
-  //       {/* Close icon on right */}
-  //       <button
-  //         onClick={() => data.onDelete(id)}
-  //         className="absolute -right-2 -top-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
-  //       >
-  //         <MdClose size={14} />
-  //       </button>
-
-  //       {/* Label */}
-  //       <div className="font-medium">{data.label}</div>
-
-  //       <Handle type="target" position="top" />
-  //       <Handle type="source" position="bottom" />
-  //     </div>
-  //   );
-  // };
 
   const CustomNode = ({ id, data }) => {
     return (
@@ -504,36 +643,14 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     customNode: CustomNode,
   };
 
-  const renderTextInputBranch = (branchType) => {
-    const selectedComponent =
-      branchType === "then" ? selectedThenComponent : selectedElseComponent;
+  const renderTextInputBranch = (item, index, branchType) => {
+    if (item.value === "TextInput") {
+      // Choose the correct handler based on branch type
+      const handleComponentChange =
+        branchType === "then"
+          ? handleThenComponentChange
+          : handleElseComponentChange;
 
-    const inputLabel = branchType === "then" ? thenInputLabel : elseInputLabel;
-    const setInputLabel =
-      branchType === "then" ? setThenInputLabel : setElseInputLabel;
-
-    const inputType = branchType === "then" ? thenInputType : elseInputType;
-    const setInputType =
-      branchType === "then" ? setThenInputType : setElseInputType;
-
-    const inputPlaceholder =
-      branchType === "then" ? thenInputPlaceholder : elseInputPlaceholder;
-    const setInputPlaceholder =
-      branchType === "then" ? setThenInputPlaceholder : setElseInputPlaceholder;
-
-    const inputError = branchType === "then" ? thenInputError : elseInputError;
-    const setInputError =
-      branchType === "then" ? setThenInputError : setElseInputError;
-
-    const minLength = branchType === "then" ? thenMinLength : elseMinLength;
-    const setMinLength =
-      branchType === "then" ? setThenMinLength : setElseMinLength;
-
-    const maxLength = branchType === "then" ? thenMaxLength : elseMaxLength;
-    const setMaxLength =
-      branchType === "then" ? setThenMaxLength : setElseMaxLength;
-
-    if (["TextInput"].includes(selectedComponent)) {
       return (
         <div className="mt-3 space-y-3 w-1/2">
           <InputField
@@ -542,15 +659,19 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             tooltipContent="Enter input label"
             tooltipPlacement="right"
             className="w-full p-1 rounded text-black"
-            value={inputLabel}
-            onChange={(e) => setInputLabel(e.target.value)}
+            value={item.inputLabel || ""}
+            onChange={(e) =>
+              handleComponentChange(index, "inputLabel", e.target.value)
+            }
           />
           <AnimatedDropdown
             label="Select Input Type"
             tooltipContent="Select input type (select text for default)"
             tooltipPlacement="right"
-            value={inputType}
-            onChange={setInputType}
+            value={item.inputType}
+            onChange={(value) =>
+              handleComponentChange(index, "inputType", value)
+            }
             placeholder="Select Type"
           />
           <InputField
@@ -559,16 +680,20 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             placeholder="Enter helper text"
             tooltipContent="Enter helper text"
             tooltipPlacement="right"
-            value={inputPlaceholder}
-            onChange={(e) => setInputPlaceholder(e.target.value)}
+            value={item.inputPlaceholder || ""}
+            onChange={(e) =>
+              handleComponentChange(index, "inputPlaceholder", e.target.value)
+            }
           />
           <InputField
             label="Error Message"
             placeholder="Enter error message"
             tooltipContent="Enter error message"
             tooltipPlacement="right"
-            value={inputError}
-            onChange={(e) => setInputError(e.target.value)}
+            value={item.inputError || ""}
+            onChange={(e) =>
+              handleComponentChange(index, "inputError", e.target.value)
+            }
           />
           <div className="flex gap-2">
             <InputField
@@ -577,8 +702,10 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
               placeholder="Min Length"
               tooltipContent="Enter minimum length"
               tooltipPlacement="right"
-              value={minLength}
-              onChange={(e) => setMinLength(e.target.value)}
+              value={item.minLength || ""}
+              onChange={(e) =>
+                handleComponentChange(index, "minLength", e.target.value)
+              }
             />
             <InputField
               label="Max Length"
@@ -586,8 +713,10 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
               placeholder="Max Length"
               tooltipContent="Enter maximum length"
               tooltipPlacement="right"
-              value={maxLength}
-              onChange={(e) => setMaxLength(e.target.value)}
+              value={item.maxLength || ""}
+              onChange={(e) =>
+                handleComponentChange(index, "maxLength", e.target.value)
+              }
             />
           </div>
           <div className="flex items-center gap-2">
@@ -598,39 +727,29 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
               tooltipContent="Set required field for TextInput"
               tooltipPlacement="top"
             />
+            <input
+              type="checkbox"
+              checked={item.required || false}
+              onChange={(e) =>
+                handleComponentChange(index, "required", e.target.checked)
+              }
+            />
           </div>
         </div>
       );
     }
+
     return null;
   };
 
-  const renderTextAreaBranch = (branchType) => {
-    const selectedComponent =
-      branchType === "then" ? selectedThenComponent : selectedElseComponent;
+  const renderTextAreaBranch = (item, index, branchType) => {
+    if (item.value === "TextArea") {
+      // Use your unified handler
+      const handleComponentChange =
+        branchType === "then"
+          ? handleThenComponentChange
+          : handleElseComponentChange;
 
-    const areaLabel =
-      branchType === "then" ? thenTextAreaLabel : elseTextAreaLabel;
-    const setAreaLabel =
-      branchType === "then" ? setThenTextAreaLabel : setElseTextAreaLabel;
-    const areaPlaceholder =
-      branchType === "then" ? thenTextAreaPlaceholder : elseTextAreaPlaceholder;
-    const setAreaPlaceholder =
-      branchType === "then"
-        ? setThenTextAreaPlaceholder
-        : setElseTextAreaPlaceholder;
-
-    const areaError =
-      branchType === "then" ? thenTextAreaError : elseTextAreaError;
-    const setAreaError =
-      branchType === "then" ? setThenTextAreaError : setElseTextAreaError;
-
-    const areaRequired =
-      branchType === "then" ? thenTextAreaRequired : elseTextAreaRequired;
-    const setAreaRequired =
-      branchType === "then" ? setThenTextAreaRequired : setElseTextAreaRequired;
-
-    if (["TextArea"].includes(selectedComponent)) {
       return (
         <div className="mt-3 space-y-3 w-1/2">
           <InputField
@@ -638,9 +757,11 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             placeholder="Enter TextArea Label"
             tooltipContent="Edit TextArea Label"
             tooltipPlacement="right"
-            value={areaLabel}
+            value={item.areaLabel || ""}
             maxLength={50}
-            onChange={(e) => setAreaLabel(e.target.value)}
+            onChange={(e) =>
+              handleComponentChange(index, "areaLabel", e.target.value)
+            }
           />
           <InputField
             label="Helper Text"
@@ -648,17 +769,21 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             placeholder="Enter placeholder for TextArea"
             tooltipContent="Enter placeholder"
             tooltipPlacement="right"
-            value={areaPlaceholder}
+            value={item.areaPlaceholder || ""}
             maxLength={100}
-            onChange={(e) => setAreaPlaceholder(e.target.value)}
+            onChange={(e) =>
+              handleComponentChange(index, "areaPlaceholder", e.target.value)
+            }
           />
           <InputField
             label="Error Message"
             placeholder="Enter Error Message"
             tooltipContent="Enter error message for TextArea"
             tooltipPlacement="right"
-            value={areaError}
-            onChange={(e) => setAreaError(e.target.value)}
+            value={item.areaError || ""}
+            onChange={(e) =>
+              handleComponentChange(index, "areaError", e.target.value)
+            }
           />
 
           <div className="flex items-end gap-2">
@@ -671,11 +796,15 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             />
             <div className="flex items-center">
               <Switch
-                checked={areaRequired}
-                onChange={(e) => setAreaRequired(e.target.checked)}
+                checked={item.areaRequired || false}
+                onCheckedChange={(checked) =>
+                  handleComponentChange(index, "areaRequired", checked)
+                }
                 id="textarea_required"
               />
-              <span className="text-sm">{areaRequired ? "True" : "False"}</span>
+              <span className="text-sm">
+                {item.areaRequired ? "True" : "False"}
+              </span>
             </div>
           </div>
         </div>
@@ -685,36 +814,22 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     return null;
   };
 
-  const renderCheckBoxBranch = (branchType) => {
-    const selectedComponent =
-      branchType === "then" ? selectedThenComponent : selectedElseComponent;
+  const renderCheckBoxBranch = (item, index, branchType) => {
+    if (item.value === "CheckboxGroup") {
+      const handleComponentChange =
+        branchType === "then"
+          ? handleThenComponentChange
+          : handleElseComponentChange;
 
-    const mainLabel =
-      branchType === "then" ? thenMainLabelCheckbox : elseMainLabelCheckbox;
-    const setMainLabel =
-      branchType === "then"
-        ? setThenMainLabelCheckbox
-        : setElseMainLabelCheckbox;
+      const options = item.options || [];
+      const draft = item.draft || {
+        title: "",
+        description: "",
+        metadata: "",
+        image: "",
+      };
+      const editIdx = item.editIdx ?? null;
 
-    const options = branchType === "then" ? thenCheckBoxes : elseCheckBoxes;
-    const setOptions =
-      branchType === "then" ? setThenCheckBoxes : setElseCheckBoxes;
-
-    const required =
-      branchType === "then" ? thenCheckboxRequired : elseCheckboxRequired;
-    const setRequired =
-      branchType === "then" ? setThenCheckboxRequired : setElseCheckboxRequired;
-
-    const draft = branchType === "then" ? thenDraftCheckbox : elseDraftCheckbox;
-    const setDraft =
-      branchType === "then" ? setThenDraftCheckbox : setElseDraftCheckbox;
-
-    const editIdx =
-      branchType === "then" ? thenCheckboxEditIdx : elseCheckboxEditIdx;
-    const setEditIdx =
-      branchType === "then" ? setThenCheckboxEditIdx : setElseCheckboxEditIdx;
-
-    if (["CheckboxGroup"].includes(selectedComponent)) {
       return (
         <FormControl fullWidth>
           <div className="mb-2 mt-3 space-y-3 w-1/2">
@@ -722,9 +837,11 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
               label="Checkbox Group Label"
               tooltipContent="Enter Checkbox Group Label"
               tooltipPlacement="right"
-              value={mainLabel}
+              value={item.mainLabel || ""}
               maxLength={30}
-              onChange={(e) => setMainLabel(e.target.value)}
+              onChange={(e) =>
+                handleComponentChange(index, "mainLabel", e.target.value)
+              }
               placeholder="Enter label"
               fullWidth
             />
@@ -738,11 +855,13 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
               />
               <div className="flex items-center gap-2">
                 <Switch
-                  checked={required}
-                  onChange={(e) => setRequired(e.target.checked)}
-                  id="required"
+                  checked={item.required || false}
+                  onCheckedChange={(checked) =>
+                    handleComponentChange(index, "required", checked)
+                  }
+                  id="checkbox_required"
                 />
-                <span>{required ? "True" : "False"}</span>
+                <span>{item.required ? "True" : "False"}</span>
               </div>
             </div>
           </div>
@@ -769,9 +888,10 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                       tooltipPlacement="right"
                       value={draft.title}
                       maxLength={30}
-                      onChange={(e) =>
-                        setDraft((d) => ({ ...d, title: e.target.value }))
-                      }
+                      onChange={(e) => {
+                        const newDraft = { ...draft, title: e.target.value };
+                        handleComponentChange(index, "draft", newDraft);
+                      }}
                       fullWidth
                     />
                     <InputField
@@ -781,9 +901,13 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                       tooltipPlacement="right"
                       value={draft.description}
                       maxLength={300}
-                      onChange={(e) =>
-                        setDraft((d) => ({ ...d, description: e.target.value }))
-                      }
+                      onChange={(e) => {
+                        const newDraft = {
+                          ...draft,
+                          description: e.target.value,
+                        };
+                        handleComponentChange(index, "draft", newDraft);
+                      }}
                       fullWidth
                     />
                     <InputField
@@ -793,9 +917,10 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                       tooltipPlacement="right"
                       value={draft.metadata}
                       maxLength={20}
-                      onChange={(e) =>
-                        setDraft((d) => ({ ...d, metadata: e.target.value }))
-                      }
+                      onChange={(e) => {
+                        const newDraft = { ...draft, metadata: e.target.value };
+                        handleComponentChange(index, "draft", newDraft);
+                      }}
                       fullWidth
                     />
 
@@ -808,12 +933,15 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                         tooltipContent="Upload Image"
                         tooltipPlacement="right"
                         onChange={(e) => {
-                          // update draft image on file change
                           const file = e.target.files[0];
                           if (file) {
                             const reader = new FileReader();
                             reader.onload = () => {
-                              setDraft((d) => ({ ...d, image: reader.result }));
+                              const newDraft = {
+                                ...draft,
+                                image: reader.result,
+                              };
+                              handleComponentChange(index, "draft", newDraft);
                             };
                             reader.readAsDataURL(file);
                           }
@@ -841,20 +969,30 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                         onClick={() => {
                           const updatedOptions = [...options];
                           updatedOptions[idx] = { ...draft };
-                          setOptions(updatedOptions);
-                          setEditIdx(null);
-                        }}
-                      />
-                      <UniversalButton
-                        label="Cancel"
-                        onClick={() => {
-                          setDraft({
+                          handleComponentChange(
+                            index,
+                            "options",
+                            updatedOptions
+                          );
+                          handleComponentChange(index, "editIdx", null);
+                          handleComponentChange(index, "draft", {
                             title: "",
                             description: "",
                             metadata: "",
                             image: "",
                           });
-                          setEditIdx(null);
+                        }}
+                      />
+                      <UniversalButton
+                        label="Cancel"
+                        onClick={() => {
+                          handleComponentChange(index, "editIdx", null);
+                          handleComponentChange(index, "draft", {
+                            title: "",
+                            description: "",
+                            metadata: "",
+                            image: "",
+                          });
                         }}
                       />
                     </Box>
@@ -866,8 +1004,8 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                     <Box
                       sx={{ flexGrow: 1, minWidth: 0 }}
                       onClick={() => {
-                        setDraft({ ...opt });
-                        setEditIdx(idx);
+                        handleComponentChange(index, "draft", { ...opt });
+                        handleComponentChange(index, "editIdx", idx);
                       }}
                     >
                       <Typography variant="subtitle1">{opt.title}</Typography>
@@ -883,8 +1021,8 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                     </Box>
                     <IconButton
                       onClick={() => {
-                        setDraft({ ...opt });
-                        setEditIdx(idx);
+                        handleComponentChange(index, "draft", { ...opt });
+                        handleComponentChange(index, "editIdx", idx);
                       }}
                     >
                       <EditIcon />
@@ -894,7 +1032,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                         const updatedOptions = options.filter(
                           (_, i) => i !== idx
                         );
-                        setOptions(updatedOptions);
+                        handleComponentChange(index, "options", updatedOptions);
                       }}
                     >
                       <CloseIcon />
@@ -909,15 +1047,16 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             <UniversalButton
               label="Add Option"
               onClick={() => {
-                setOptions((prev) => [
-                  ...prev,
+                const newOptions = [
+                  ...options,
                   {
                     title: "New Option",
                     description: "",
                     metadata: "",
                     image: "",
                   },
-                ]);
+                ];
+                handleComponentChange(index, "options", newOptions);
               }}
             />
             <UniversalButton
@@ -934,32 +1073,13 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     return null;
   };
 
-  const renderOptInBranchInput = (branchType) => {
-    const selectedComponent =
-      branchType === "then" ? selectedThenComponent : selectedElseComponent;
+  const renderOptInBranchInput = (item, index, branchType) => {
+    if (item.value === "OptIn") {
+      const handleComponentChange =
+        branchType === "then"
+          ? handleThenComponentChange
+          : handleElseComponentChange;
 
-    const optLabel = branchType === "then" ? thenOptLabel : elseOptLabel;
-    const setOptLabel =
-      branchType === "then" ? setThenOptLabel : setElseOptLabel;
-
-    const optAction = branchType === "then" ? thenOptAction : elseOptAction;
-    const setOptAction =
-      branchType === "then" ? setThenOptAction : setElseOptAction;
-
-    const optUrl = branchType === "then" ? thenOptUrl : elseOptUrl;
-    const setOptUrl = branchType === "then" ? setThenOptUrl : setElseOptUrl;
-
-    const optRequired =
-      branchType === "then" ? thenOptRequired : elseOptRequired;
-    const setOptRequired =
-      branchType === "then" ? setThenOptRequired : setElseOptRequired;
-
-    const optScreenName =
-      branchType === "then" ? thenOptScreenName : elseOptScreenName;
-    const setOptScreenName =
-      branchType === "then" ? setThenOptScreenName : setElseOptScreenName;
-
-    if (selectedComponent === "OptIn") {
       return (
         <div className="space-y-3 mt-3 w-1/2">
           <InputField
@@ -968,10 +1088,14 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             type="text"
             maxLength={120}
             tooltipContent="Enter label text shown in screen (max 120)"
-            value={optLabel}
-            onChange={(e) => setOptLabel(e.target.value)}
+            value={item.label || ""}
+            onChange={(e) =>
+              handleComponentChange(index, "label", e.target.value)
+            }
           />
-          <p className="text-gray-600 text-xs">Chars: {optLabel.length}/120</p>
+          <p className="text-gray-600 text-xs">
+            Chars: {item.label ? item.label.length : 0}/120
+          </p>
 
           <div className="mt-2 flex items-end">
             <UniversalLabel
@@ -983,11 +1107,15 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             />
             <div className="flex items-center">
               <Switch
-                checked={optRequired}
-                onChange={(e) => setOptRequired(e.target.checked)}
+                checked={item.required || false}
+                onCheckedChange={(checked) =>
+                  handleComponentChange(index, "required", checked)
+                }
                 id="required"
               />
-              <span className="text-sm">{optRequired ? "True" : "False"}</span>
+              <span className="text-sm">
+                {item.required ? "True" : "False"}
+              </span>
             </div>
           </div>
 
@@ -999,30 +1127,34 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
               { value: "open_url", label: "Open URL" },
             ]}
             tooltipContent="[navigate = screen navigation], [open_url = URL link]"
-            value={optAction}
-            onChange={setOptAction}
+            value={item.action || ""}
+            onChange={(value) => handleComponentChange(index, "action", value)}
           />
 
-          {optAction === "navigate" && (
+          {item.action === "navigate" && (
             <AnimatedDropdown
               id="screen-name"
               label="List Of Screen Name"
               tooltipContent="List Of Screen Name"
               tooltipPlacement="right"
               options={optScreenNameOptions}
-              value={optScreenName}
-              onChange={setOptScreenName}
+              value={item.screenName || ""}
+              onChange={(value) =>
+                handleComponentChange(index, "screenName", value)
+              }
             />
           )}
 
-          {optAction === "open_url" && (
+          {item.action === "open_url" && (
             <InputField
               label="URL"
               placeholder="Enter the URL to open"
               type="text"
               tooltipContent="Provide URL to open when user clicks opt-in"
-              value={optUrl}
-              onChange={(e) => setOptUrl(e.target.value)}
+              value={item.url || ""}
+              onChange={(e) =>
+                handleComponentChange(index, "url", e.target.value)
+              }
             />
           )}
         </div>
@@ -1032,57 +1164,40 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     return null;
   };
 
-  const renderImageBranchInput = (branchType) => {
-    const selectedComponent =
-      branchType === "then" ? selectedThenComponent : selectedElseComponent;
+  const renderImageBranchInput = (item, index, branchType) => {
+    if (item.value === "image") {
+      const handleComponentChange =
+        branchType === "then"
+          ? handleThenComponentChange
+          : handleElseComponentChange;
 
-    const imageFile = branchType === "then" ? thenImageFile : elseImageFile;
-    const setImageFile =
-      branchType === "then" ? setThenImageFile : setElseImageFile;
+      const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            handleComponentChange(index, "imageFile", reader.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      };
 
-    const scaleType = branchType === "then" ? thenScaleType : elseScaleType;
-    const setScaleType =
-      branchType === "then" ? setThenScaleType : setElseScaleType;
+      const handleImageDelete = () => {
+        handleComponentChange(index, "imageFile", null);
+      };
 
-    const imgAltText = branchType === "then" ? thenImgAltText : elseImgAltText;
-    const setImgAltText =
-      branchType === "then" ? setThenImgAltText : setElseImgAltText;
-
-    const imageInputRef =
-      branchType === "then" ? thenImageInputRef : elseImageInputRef;
-
-    const handleImageChange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          setImageFile(reader.result);
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-
-    const handleImageDelete = () => {
-      setImageFile(null);
-      if (imageInputRef.current) {
-        imageInputRef.current.value = "";
-      }
-    };
-
-    if (selectedComponent === "image") {
       return (
         <div className="space-y-3 mt-3 w-1/2">
           <div className="flex justify-center items-center gap-2">
             <InputField
               label="Upload Image"
               type="file"
-              id="file-upload"
+              id={`file-upload-${index}`}
               accept=".png, .jpeg"
               tooltipContent="Upload Image"
               tooltipPlacement="right"
               required={true}
               onChange={handleImageChange}
-              ref={imageInputRef}
             />
 
             <button onClick={handleImageDelete}>
@@ -1096,7 +1211,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             </button>
           </div>
 
-          {imageFile && (
+          {item.imageFile && (
             <p className="text-green-600 text-sm font-medium mt-1">
               Image uploaded
             </p>
@@ -1106,12 +1221,14 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             label="Scale-Type"
             tooltipContent="Select Scale-Type"
             tooltipPlacement="right"
-            value={scaleType}
+            value={item.scaleType || ""}
             options={[
               { value: "contain", label: "Contain" },
               { value: "cover", label: "Cover" },
             ]}
-            onChange={setScaleType}
+            onChange={(value) =>
+              handleComponentChange(index, "scaleType", value)
+            }
           />
 
           <InputField
@@ -1119,9 +1236,11 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             placeholder="Enter Alt-Text"
             tooltipContent="Alt-Text"
             tooltipPlacement="right"
-            value={imgAltText}
+            value={item.imgAltText || ""}
             type="text"
-            onChange={(e) => setImgAltText(e.target.value)}
+            onChange={(e) =>
+              handleComponentChange(index, "imgAltText", e.target.value)
+            }
           />
         </div>
       );
@@ -1130,136 +1249,43 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     return null;
   };
 
-  const renderDropdownBranchInput = (branchType) => {
-    const selectedComponent =
-      branchType === "then" ? selectedThenComponent : selectedElseComponent;
+  const renderDropdownBranchInput = (item, index, branchType) => {
+    if (item.value === "Dropdown") {
+      const handleComponentChange =
+        branchType === "then"
+          ? handleThenComponentChange
+          : handleElseComponentChange;
 
-    const mainLabel =
-      branchType === "then" ? thenMainLabelDropdown : elseMainLabelDropdown;
-    const setMainLabel =
-      branchType === "then"
-        ? setThenMainLabelDropdown
-        : setElseMainLabelDropdown;
-
-    const required =
-      branchType === "then" ? thenDropdownRequired : elseDropdownRequired;
-    const setRequired =
-      branchType === "then" ? setThenDropdownRequired : setElseDropdownRequired;
-
-    const options = branchType === "then" ? thenOptions : elseOptions;
-    const setOptions = branchType === "then" ? setThenOptions : setElseOptions;
-
-    const editingIdx = branchType === "then" ? thenEditingIdx : elseEditingIdx;
-    const setEditingIdx =
-      branchType === "then" ? setThenEditingIdx : setElseEditingIdx;
-
-    const draftTitle = branchType === "then" ? thenDraftTitle : elseDraftTitle;
-    const setDraftTitle =
-      branchType === "then" ? setThenDraftTitle : setElseDraftTitle;
-
-    const draftDescription =
-      branchType === "then" ? thenDraftDescription : elseDraftDescription;
-    const setDraftDescription =
-      branchType === "then" ? setThenDraftDescription : setElseDraftDescription;
-
-    const draftMetadata =
-      branchType === "then" ? thenDraftMetadata : elseDraftMetadata;
-    const setDraftMetadata =
-      branchType === "then" ? setThenDraftMetadata : setElseDraftMetadata;
-
-    const currentOption =
-      branchType === "then" ? thenCurrentOption : elseCurrentOption;
-    const setCurrentOption =
-      branchType === "then" ? setThenCurrentOption : setElseCurrentOption;
-
-    const dropImageInputRef =
-      branchType === "then" ? thenDropImageInputRef : elseDropImageInputRef;
-
-    // ──────────────
-    const handleDropdownImageChange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          setCurrentOption((prev) => ({ ...prev, image: reader.result }));
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-
-    const handleDropdownFileDelete = () => {
-      setCurrentOption((prev) => ({ ...prev, image: "" }));
-      if (dropImageInputRef.current) {
-        dropImageInputRef.current.value = "";
-      }
-    };
-
-    const handleStartEdit = (idx) => {
-      const option = options[idx];
-      setDraftTitle(option.title || "");
-      setDraftDescription(option.description || "");
-      setDraftMetadata(option.metadata || "");
-      setCurrentOption(option);
-      setEditingIdx(idx);
-    };
-
-    const handleCancelInline = () => {
-      setDraftTitle("");
-      setDraftDescription("");
-      setDraftMetadata("");
-      setCurrentOption({});
-      setEditingIdx(null);
-    };
-
-    const handleSaveInline = () => {
-      const updatedOptions = [...options];
-      updatedOptions[editingIdx] = {
-        title: draftTitle,
-        description: draftDescription,
-        metadata: draftMetadata,
-        image: currentOption.image,
+      // ──────────────
+      const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            handleComponentChange(index, "image", reader.result);
+          };
+          reader.readAsDataURL(file);
+        }
       };
-      setOptions(updatedOptions);
-      handleCancelInline();
-    };
 
-    const handleRemove = (idx) => {
-      const updatedOptions = options.filter((_, i) => i !== idx);
-      setOptions(updatedOptions);
-      if (editingIdx === idx) {
-        handleCancelInline();
-      }
-    };
+      const handleFileDelete = () => {
+        handleComponentChange(index, "image", "");
+      };
 
-    const handleAddNew = () => {
-      setOptions([
-        ...options,
-        {
-          title: "New Option",
-          description: "",
-          metadata: "",
-          image: "",
-        },
-      ]);
-    };
-
-    const handleSaveDropdown = () => {
-      console.log("Saved Dropdown Options:", options);
-    };
-
-    // ──────────────
-    if (selectedComponent === "Dropdown") {
+      // ──────────────
       return (
         <FormControl fullWidth>
           <div className="mb-2 mt-3 space-y-3 w-1/2">
             <InputField
               label="Label"
               id="mainlabel"
-              tooltipContent="Enter MainLabel"
+              tooltipContent="Enter Main Label"
               tooltipPlacement="right"
               maxLength={20}
-              value={mainLabel}
-              onChange={(e) => setMainLabel(e.target.value)}
+              value={item.mainLabel || ""}
+              onChange={(e) =>
+                handleComponentChange(index, "mainLabel", e.target.value)
+              }
               placeholder="Enter label"
               type="text"
               fullWidth
@@ -1267,7 +1293,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
 
             <div>
               <UniversalLabel
-                htmlFor="dropDown_required"
+                htmlFor={`dropdown_required_${index}`}
                 className="text-sm font-medium text-gray-700"
                 tooltipContent="Select if required"
                 tooltipPlacement="top"
@@ -1275,21 +1301,23 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
               />
               <div className="flex items-center gap-2">
                 <Switch
-                  checked={required}
-                  onChange={(e) => setRequired(e.target.checked)}
-                  id="required"
+                  checked={item.required || false}
+                  onChange={(e) =>
+                    handleComponentChange(index, "required", e.target.checked)
+                  }
+                  id={`dropdown_required_${index}`}
                 />
-                <span>{required ? "True" : "False"}</span>
+                <span>{item.required ? "True" : "False"}</span>
               </div>
             </div>
           </div>
 
-          {options.map((opt, idx) => {
-            const isEditing = idx === editingIdx;
+          {(item.options || []).map((opt, optIdx) => {
+            const isEditing = optIdx === item.editingIdx;
 
             return (
               <Box
-                key={idx}
+                key={optIdx}
                 sx={{
                   mb: 1,
                   p: 1,
@@ -1307,8 +1335,15 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                       tooltipContent="Enter Title"
                       tooltipPlacement="right"
                       maxLength={30}
-                      value={draftTitle}
-                      onChange={(e) => setDraftTitle(e.target.value)}
+                      value={opt.title || ""}
+                      onChange={(e) => {
+                        const updatedOptions = [...item.options];
+                        updatedOptions[optIdx] = {
+                          ...updatedOptions[optIdx],
+                          title: e.target.value,
+                        };
+                        handleComponentChange(index, "options", updatedOptions);
+                      }}
                       placeholder="Enter title"
                       type="text"
                       fullWidth
@@ -1319,24 +1354,38 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                       tooltipContent="Enter Description"
                       tooltipPlacement="right"
                       maxLength={300}
-                      value={draftDescription}
-                      onChange={(e) => setDraftDescription(e.target.value)}
+                      value={opt.description || ""}
+                      onChange={(e) => {
+                        const updatedOptions = [...item.options];
+                        updatedOptions[optIdx] = {
+                          ...updatedOptions[optIdx],
+                          description: e.target.value,
+                        };
+                        handleComponentChange(index, "options", updatedOptions);
+                      }}
                       placeholder="Enter description"
                       type="text"
                       fullWidth
                     />
                     <InputField
                       label="Metadata"
-                      tooltipContent="Enter MetaData"
+                      tooltipContent="Enter Metadata"
                       tooltipPlacement="right"
                       maxLength={20}
-                      value={draftMetadata}
-                      required
-                      onChange={(e) => setDraftMetadata(e.target.value)}
-                      placeholder="Enter Metadata"
+                      value={opt.metadata || ""}
+                      onChange={(e) => {
+                        const updatedOptions = [...item.options];
+                        updatedOptions[optIdx] = {
+                          ...updatedOptions[optIdx],
+                          metadata: e.target.value,
+                        };
+                        handleComponentChange(index, "options", updatedOptions);
+                      }}
+                      placeholder="Enter metadata"
                       type="text"
                       fullWidth
                     />
+
                     <Box sx={{ display: "flex", mb: 1 }}>
                       <InputField
                         label="Upload Image"
@@ -1344,11 +1393,10 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                         accept=".png, .jpeg"
                         tooltipContent="Upload Image"
                         tooltipPlacement="right"
-                        onChange={handleDropdownImageChange}
-                        ref={dropImageInputRef}
+                        onChange={handleImageChange}
                       />
 
-                      <button onClick={handleDropdownFileDelete}>
+                      <button onClick={handleFileDelete}>
                         <DeleteOutlineIcon
                           sx={{
                             fontSize: "23px",
@@ -1358,27 +1406,26 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                         />
                       </button>
                     </Box>
-                    {currentOption.image && (
+
+                    {opt.image && (
                       <p className="text-green-600 text-sm font-medium mt-1">
                         Image uploaded
                       </p>
                     )}
-                    <Box
-                      sx={{
-                        display: "flex",
-                        gap: 1,
-                        mt: 2,
-                        justifyContent: "left",
-                      }}
-                    >
+
+                    <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
                       <UniversalButton
-                        label="Save Option"
-                        onClick={handleSaveInline}
-                        disabled={!draftTitle.trim() || !draftMetadata.trim()}
+                        label="Save"
+                        onClick={() => {
+                          handleComponentChange(index, "editingIdx", null);
+                        }}
+                        disabled={!opt.title.trim() || !opt.metadata.trim()}
                       />
                       <UniversalButton
                         label="Cancel"
-                        onClick={handleCancelInline}
+                        onClick={() => {
+                          handleComponentChange(index, "editingIdx", null);
+                        }}
                       />
                     </Box>
                   </Box>
@@ -1386,7 +1433,9 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                   <>
                     <Box
                       sx={{ flexGrow: 1, cursor: "pointer", minWidth: 0 }}
-                      onClick={() => handleStartEdit(idx)}
+                      onClick={() =>
+                        handleComponentChange(index, "editingIdx", optIdx)
+                      }
                     >
                       <Typography variant="subtitle1">{opt.title}</Typography>
                       {opt.description && (
@@ -1403,11 +1452,21 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                     </Box>
                     <IconButton
                       size="small"
-                      onClick={() => handleStartEdit(idx)}
+                      onClick={() =>
+                        handleComponentChange(index, "editingIdx", optIdx)
+                      }
                     >
                       <EditIcon fontSize="small" />
                     </IconButton>
-                    <IconButton size="small" onClick={() => handleRemove(idx)}>
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        const updatedOptions = item.options.filter(
+                          (_, i) => i !== optIdx
+                        );
+                        handleComponentChange(index, "options", updatedOptions);
+                      }}
+                    >
                       <CloseIcon fontSize="small" />
                     </IconButton>
                   </>
@@ -1418,12 +1477,20 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
 
           <div className="flex justify-center items-center gap-2">
             <Box sx={{ mt: 1 }}>
-              <UniversalButton label="Add Option" onClick={handleAddNew} />
-            </Box>
-            <Box sx={{ mt: 1 }}>
               <UniversalButton
-                label="Save Dropdown"
-                onClick={handleSaveDropdown}
+                label="Add Option"
+                onClick={() => {
+                  const updatedOptions = [
+                    ...(item.options || []),
+                    {
+                      title: "New Option",
+                      description: "",
+                      metadata: "",
+                      image: "",
+                    },
+                  ];
+                  handleComponentChange(index, "options", updatedOptions);
+                }}
               />
             </Box>
           </div>
@@ -1434,97 +1501,89 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     return null;
   };
 
-  const renderEmbeddedLinkBranchInput = (branchType) => {
-    const selectedComponent =
-      branchType === "then" ? selectedThenComponent : selectedElseComponent;
+  const renderEmbeddedLinkBranchInput = (item, index, branchType) => {
+    if (item.value === "EmbeddedLink") {
+      const handleComponentChange =
+        branchType === "then"
+          ? handleThenComponentChange
+          : handleElseComponentChange;
 
-    const text = branchType === "then" ? thenText : elseText;
-    const setText = branchType === "then" ? setThenText : setElseText;
+      const handleSave = () => {
+        console.log("Saved Embedded Link:", {
+          text: item.text,
+          onClickAction: item.onClickAction,
+          selectedScreenName: item.selectedScreenName,
+          embeddedLinkUrl: item.embeddedLinkUrl,
+        });
+      };
 
-    const onClickAction =
-      branchType === "then" ? thenOnClickAction : elseOnClickAction;
-    const setOnClickAction =
-      branchType === "then" ? setThenOnClickAction : setElseOnClickAction;
-
-    const selectedScreenName =
-      branchType === "then" ? thenSelectedScreenName : elseSelectedScreenName;
-    const setSelectedScreenName =
-      branchType === "then"
-        ? setThenSelectedScreenName
-        : setElseSelectedScreenName;
-
-    const embeddedLinkUrl =
-      branchType === "then" ? thenEmbeddedLinkUrl : elseEmbeddedLinkUrl;
-    const setEmbeddedLinkUrl =
-      branchType === "then" ? setThenEmbeddedLinkUrl : setElseEmbeddedLinkUrl;
-
-    const handleSave = () => {
-      console.log("Saved Embedded Link:", {
-        text,
-        onClickAction,
-        selectedScreenName,
-        embeddedLinkUrl,
-      });
-    };
-
-    if (selectedComponent === "EmbeddedLink") {
       return (
         <div className="mt-5 w-1/2">
           <div className="mb-2">
             <InputField
               label="Text"
-              type="url"
+              type="text"
               maxLength={25}
-              value={text}
-              tooltipContent="Enter label which display in the screen max length 25"
+              value={item.text || ""}
+              tooltipContent="Enter label which displays on screen (max 25 chars)"
               tooltipPlacement="right"
               placeholder="Button Embedded Link"
-              onChange={(e) => setText(e.target.value)}
+              onChange={(e) =>
+                handleComponentChange(index, "text", e.target.value)
+              }
             />
           </div>
-          <p className="text-gray-600 text-xs mb-2">Chars: {text.length}/25</p>
+          <p className="text-gray-600 text-xs mb-2">
+            Chars: {(item.text || "").length}/25
+          </p>
 
           <div className="mb-2">
             <AnimatedDropdown
-              id="next-action"
+              id={`next-action-${index}`}
               label="Next Action"
-              tooltipContent="[navigate = ensure there is screen created where user can navigate],[Open_url = paste or enter url link where user can redirect to page]"
+              tooltipContent="[navigate = ensure screen exists to navigate to],[open_url = enter URL to redirect]"
               tooltipPlacement="right"
               options={[
                 { value: "navigate", label: "Navigate" },
-                { value: "open_url", label: "Open_url" },
+                { value: "open_url", label: "Open URL" },
               ]}
-              value={onClickAction}
-              onChange={(value) => setOnClickAction(value)}
+              value={item.onClickAction || ""}
+              onChange={(value) =>
+                handleComponentChange(index, "onClickAction", value)
+              }
             />
           </div>
 
-          {onClickAction === "navigate" && (
+          {item.onClickAction === "navigate" && (
             <>
               <AnimatedDropdown
-                id="screen-name"
-                label="List Of Screen Name"
-                tooltipContent="Create a screen where you want to navigate the user"
+                id={`screen-name-${index}`}
+                label="List of Screen Name"
+                tooltipContent="Select screen where you want to navigate the user"
                 tooltipPlacement="right"
                 options={screenNameOptions}
-                value={selectedScreenName}
-                onChange={(value) => setSelectedScreenName(value)}
+                value={item.selectedScreenName || ""}
+                onChange={(value) =>
+                  handleComponentChange(index, "selectedScreenName", value)
+                }
               />
               <span className="text-xs">
-                NOTE: Create a screen or select where you want to navigate the
+                NOTE: Create or select a screen where you want to navigate the
                 user
               </span>
             </>
           )}
 
-          {onClickAction === "open_url" && (
+          {item.onClickAction === "open_url" && (
             <InputField
               label="URL"
               placeholder="Enter the URL to open"
               type="text"
               tooltipContent="Provide the URL to open when user clicks Read more"
-              value={embeddedLinkUrl}
-              onChange={(e) => setEmbeddedLinkUrl(e.target.value)}
+              value={item.embeddedLinkUrl || ""}
+              onChange={(e) =>
+                handleComponentChange(index, "embeddedLinkUrl", e.target.value)
+              }
             />
           )}
 
@@ -1538,47 +1597,39 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     return null;
   };
 
-  const renderDateBranchInput = (branchType) => {
-    const selectedComponent =
-      branchType === "then" ? selectedThenComponent : selectedElseComponent;
+  const renderDateBranchInput = (item, index, branchType) => {
+    if (item.value === "DatePicker") {
+      const handleComponentChange =
+        branchType === "then"
+          ? handleThenComponentChange
+          : handleElseComponentChange;
 
-    const dateLabel = branchType === "then" ? thenDateLabel : elseDateLabel;
-    const setDateLabel =
-      branchType === "then" ? setThenDateLabel : setElseDateLabel;
+      const handleAddUnavailableDate = (value) => {
+        if (value) {
+          handleComponentChange(index, "unavailableDate", [
+            ...(item.unavailableDate || []),
+            value,
+          ]);
+        }
+      };
 
-    const datePlaceholder =
-      branchType === "then" ? thenDatePlaceholder : elseDatePlaceholder;
-    const setDatePlaceholder =
-      branchType === "then" ? setThenDatePlaceholder : setElseDatePlaceholder;
+      const handleDeleteUnavailableDate = (i) => {
+        const updatedDates = (item.unavailableDate || []).filter(
+          (_, idx) => idx !== i
+        );
+        handleComponentChange(index, "unavailableDate", updatedDates);
+      };
 
-    const minDate = branchType === "then" ? thenMinDate : elseMinDate;
-    const setMinDate = branchType === "then" ? setThenMinDate : setElseMinDate;
+      const handleSave = () => {
+        console.log("Saved Date config:", {
+          dateLabel: item.dateLabel,
+          datePlaceholder: item.datePlaceholder,
+          minDate: item.minDate,
+          maxDate: item.maxDate,
+          unavailableDate: item.unavailableDate,
+        });
+      };
 
-    const maxDate = branchType === "then" ? thenMaxDate : elseMaxDate;
-    const setMaxDate = branchType === "then" ? setThenMaxDate : setElseMaxDate;
-
-    const unavailableDate =
-      branchType === "then" ? thenUnavailableDate : elseUnavailableDate;
-    const setUnavailableDate =
-      branchType === "then" ? setThenUnavailableDate : setElseUnavailableDate;
-
-    const handleAddUnavailableDate = (value) => {
-      if (value) {
-        setUnavailableDate((prev) => [...prev, value]);
-      }
-    };
-
-    const handleSave = () => {
-      console.log("Saved Date config:", {
-        dateLabel,
-        datePlaceholder,
-        minDate,
-        maxDate,
-        unavailableDate,
-      });
-    };
-
-    if (selectedComponent === "DatePicker") {
       return (
         <div className="space-y-3 mt-3 w-1/2">
           <InputField
@@ -1587,8 +1638,10 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             tooltipContent="Enter Date Label"
             tooltipPlacement="right"
             maxLength={40}
-            value={dateLabel}
-            onChange={(e) => setDateLabel(e.target.value)}
+            value={item.dateLabel || ""}
+            onChange={(e) =>
+              handleComponentChange(index, "dateLabel", e.target.value)
+            }
           />
 
           <InputField
@@ -1596,26 +1649,28 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             placeholder="Enter Placeholder for Date"
             tooltipContent="Enter Placeholder for Date"
             tooltipPlacement="right"
-            value={datePlaceholder}
-            onChange={(e) => setDatePlaceholder(e.target.value)}
+            value={item.datePlaceholder || ""}
+            onChange={(e) =>
+              handleComponentChange(index, "datePlaceholder", e.target.value)
+            }
           />
 
           <UniversalDatePicker
             label="Min-Date"
             tooltipContent="Select Min-Date"
             tooltipPlacement="right"
-            value={minDate}
-            onChange={setMinDate}
+            value={item.minDate || null}
+            onChange={(value) => handleComponentChange(index, "minDate", value)}
           />
 
           <UniversalDatePicker
             label="Max-Date"
             tooltipContent="Select Max-Date"
             tooltipPlacement="right"
-            value={maxDate}
-            onChange={setMaxDate}
-            minDate={minDate}
-            disabled={!minDate}
+            value={item.maxDate || null}
+            onChange={(value) => handleComponentChange(index, "maxDate", value)}
+            minDate={item.minDate}
+            disabled={!item.minDate}
           />
 
           <UniversalDatePicker
@@ -1624,22 +1679,18 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             tooltipPlacement="right"
             value={null}
             onChange={handleAddUnavailableDate}
-            disabled={!minDate || !maxDate}
-            minDate={minDate}
-            maxDate={maxDate}
+            disabled={!item.minDate || !item.maxDate}
+            minDate={item.minDate}
+            maxDate={item.maxDate}
           />
 
-          <div className="flex flex-wrap gap-2 mt-2 ">
-            {unavailableDate.map((date, index) => (
+          <div className="flex flex-wrap gap-2 mt-2">
+            {(item.unavailableDate || []).map((date, i) => (
               <Chip
+                key={i}
                 sx={{ padding: 1 }}
-                key={index}
                 label={new Date(date).toLocaleDateString()}
-                onDelete={() =>
-                  setUnavailableDate((prev) =>
-                    prev.filter((_, i) => i !== index)
-                  )
-                }
+                onDelete={() => handleDeleteUnavailableDate(i)}
               />
             ))}
           </div>
@@ -1654,35 +1705,21 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     return null;
   };
 
-  const renderFooterBranchInput = (branchType) => {
-    const selectedComponent =
-      branchType === "then" ? selectedThenComponent : selectedElseComponent;
+  const renderFooterBranchInput = (item, index, branchType) => {
+    if (item.value === "Footer") {
+      const handleComponentChange =
+        branchType === "then"
+          ? handleThenComponentChange
+          : handleElseComponentChange;
 
-    const footerButtonLabel =
-      branchType === "then" ? thenFooterButtonLabel : elseFooterButtonLabel;
-    const setFooterButtonLabel =
-      branchType === "then"
-        ? setThenFooterButtonLabel
-        : setElseFooterButtonLabel;
+      const handleSave = () => {
+        console.log("Saved Footer Button config:", {
+          footerButtonLabel: item.footerButtonLabel,
+          centerCaption: item.centerCaption,
+          nextAction: item.nextAction,
+        });
+      };
 
-    const centerCaption =
-      branchType === "then" ? thenCenterCaption : elseCenterCaption;
-    const setCenterCaption =
-      branchType === "then" ? setThenCenterCaption : setElseCenterCaption;
-
-    const nextAction = branchType === "then" ? thenNextAction : elseNextAction;
-    const setNextAction =
-      branchType === "then" ? setThenNextAction : setElseNextAction;
-
-    const handleSave = () => {
-      console.log("Saved Footer Button config:", {
-        footerButtonLabel,
-        centerCaption,
-        nextAction,
-      });
-    };
-
-    if (selectedComponent === "Footer") {
       return (
         <div className="mb-2 text-lg space-y-3 mt-3 w-1/2">
           <InputField
@@ -1692,8 +1729,10 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             tooltipPlacement="right"
             maxLength={35}
             id="footer-button-label"
-            value={footerButtonLabel}
-            onChange={(e) => setFooterButtonLabel(e.target.value)}
+            value={item.footerButtonLabel || ""}
+            onChange={(e) =>
+              handleComponentChange(index, "footerButtonLabel", e.target.value)
+            }
           />
 
           <InputField
@@ -1703,8 +1742,10 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             tooltipPlacement="right"
             maxLength={15}
             id="center-caption"
-            value={centerCaption}
-            onChange={(e) => setCenterCaption(e.target.value)}
+            value={item.centerCaption || ""}
+            onChange={(e) =>
+              handleComponentChange(index, "centerCaption", e.target.value)
+            }
           />
 
           <AnimatedDropdown
@@ -1716,8 +1757,8 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
               { value: "complete", label: "Complete" },
               { value: "navigate", label: "Navigate" },
             ]}
-            value={nextAction}
-            onChange={(val) => setNextAction(val)}
+            value={item.nextAction || ""}
+            onChange={(val) => handleComponentChange(index, "nextAction", val)}
           />
 
           <div className="flex justify-center">
@@ -1728,6 +1769,212 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     }
 
     return null;
+  };
+
+  const renderRadioButtonBranch = (item, index, branchType) => {
+    if (item.value !== "RadioButtonsGroup") return null;
+
+    const handleComponentChange =
+      branchType === "then"
+        ? handleThenComponentChange
+        : handleElseComponentChange;
+
+    const handleRadioBtnAddNew = () => {
+      handleComponentChange(index, "radioButtonOptions", (prev = []) => [
+        ...prev,
+        {
+          id: Date.now(), // unique id
+          title: "New Option",
+          description: "",
+          metadata: "",
+          image: "",
+        },
+      ]);
+    };
+
+    const isOptEditing = (optIdx) => optIdx === radioEditOptionIdx;
+
+    return (
+      <FormControl fullWidth key={index}>
+        <div className="mb-2 mt-3 space-y-3 w-1/2">
+          <InputField
+            label="Radio Group Label"
+            tooltipContent="Enter Radio Group Label"
+            tooltipPlacement="right"
+            maxLength={30}
+            value={item.radioBtnLabel || ""}
+            onChange={(e) =>
+              handleComponentChange(index, "radioBtnLabel", e.target.value)
+            }
+            placeholder="Enter label"
+            fullWidth
+          />
+
+          <div className="mt-2">
+            <UniversalLabel
+              htmlFor="radio_required"
+              className="text-sm font-medium text-gray-700"
+              tooltipContent="Select an option which is required."
+              tooltipPlacement="top"
+              text="Required"
+            />
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={item.radioRequired || false}
+                onCheckedChange={(checked) =>
+                  handleComponentChange(index, "radioRequired", checked)
+                }
+                id="radio_required"
+              />
+              <span>{item.radioRequired ? "True" : "False"}</span>
+            </div>
+          </div>
+        </div>
+
+        {item?.radioButtonOptions?.map((opt, optIdx) => {
+          const editing = isOptEditing(optIdx);
+
+          return (
+            <Box
+              key={opt.id}
+              sx={{
+                mb: 1,
+                p: 1,
+                border: "1px solid #ccc",
+                borderRadius: 1,
+                bgcolor: editing ? "#f5f5f5" : "white",
+              }}
+            >
+              {editing ? (
+                <div className="space-y-3">
+                  <InputField
+                    label="Title"
+                    placeholder="Enter Title"
+                    tooltipContent="Enter Title"
+                    tooltipPlacement="right"
+                    maxLength={30}
+                    value={radioDraft.title}
+                    onChange={(e) =>
+                      setRadioDraft((d) => ({ ...d, title: e.target.value }))
+                    }
+                    fullWidth
+                  />
+                  <InputField
+                    label="Description"
+                    placeholder="Enter Description"
+                    tooltipContent="Enter Description"
+                    tooltipPlacement="right"
+                    maxLength={300}
+                    value={radioDraft.description}
+                    onChange={(e) =>
+                      setRadioDraft((d) => ({
+                        ...d,
+                        description: e.target.value,
+                      }))
+                    }
+                    fullWidth
+                  />
+                  <InputField
+                    label="Metadata"
+                    placeholder="Enter Metadata"
+                    tooltipContent="Enter Metadata"
+                    tooltipPlacement="right"
+                    required
+                    maxLength={20}
+                    value={radioDraft.metadata.trim()}
+                    onChange={(e) =>
+                      setRadioDraft((d) => ({ ...d, metadata: e.target.value }))
+                    }
+                    fullWidth
+                  />
+
+                  <Box sx={{ display: "flex", mb: 1 }}>
+                    <InputField
+                      label="Upload Image"
+                      type="file"
+                      id="file-upload"
+                      accept=".png, .jpeg"
+                      tooltipContent="Upload Image"
+                      tooltipPlacement="right"
+                      required
+                      onChange={handleRadioImageChange}
+                      ref={radioImageInputRef}
+                    />
+                    <button onClick={handleDeleteRadioFile}>
+                      <DeleteOutlineIcon
+                        sx={{
+                          fontSize: "23px",
+                          marginTop: 3,
+                          color: "#ef4444",
+                        }}
+                      />
+                    </button>
+                  </Box>
+
+                  {radioDraft.image && (
+                    <p className="text-green-600 text-sm font-medium mt-1">
+                      Image uploaded
+                    </p>
+                  )}
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: 2,
+                      marginTop: 2,
+                      justifyContent: "center",
+                    }}
+                  >
+                    <UniversalButton
+                      label="Save"
+                      disabled={!radioDraft.metadata.trim()}
+                      onClick={() => handleSaveInlineRadio(index, branchType)}
+                    />
+                    <UniversalButton
+                      label="Cancel"
+                      onClick={handleCancelInlineRadio}
+                    />
+                  </Box>
+                </div>
+              ) : (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Box
+                    sx={{ flexGrow: 1, minWidth: 0 }}
+                    onClick={() => handleRadioBtnEdit(optIdx, item)}
+                  >
+                    <Typography variant="subtitle1">{opt.title}</Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        wordWrap: "break-word",
+                        overflowWrap: "break-word",
+                      }}
+                    >
+                      {opt.description}
+                    </Typography>
+                  </Box>
+                  <IconButton onClick={() => handleRadioBtnEdit(optIdx, item)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton onClick={() => handleRemoveRadio(optIdx)}>
+                    <CloseIcon />
+                  </IconButton>
+                </Box>
+              )}
+            </Box>
+          );
+        })}
+
+        <div className="flex flex-row justify-center items-center gap-2 py-1 px-2">
+          <UniversalButton label="Add Options" onClick={handleRadioBtnAddNew} />
+        </div>
+      </FormControl>
+    );
   };
 
   const flowItemsOptions = flowItems
@@ -1954,7 +2201,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
               )} */}
 
               {/* Else Dialog Start */}
-              <Dialog
+              {/* <Dialog
                 visible={openThenEditDialog}
                 onHide={() => setOpenThenEditDialog(false)}
                 header="Edit THEN Branch Component"
@@ -1968,14 +2215,8 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                     tooltipPlacement="right"
                     value={selectedThenComponent}
                     options={allowedComponents}
-                    // onChange={(value) => setSelectedThenComponent(value)}
                     onChange={(value) => {
                       setSelectedThenComponent(value);
-                      // if (value === "ifelse") {
-                      //   setNestedIf(true); // ✅ Set your flag here
-                      // } else {
-                      //   setNestedIf(false); // optionally reset
-                      // }
                     }}
                   />
                 </div>
@@ -1995,13 +2236,71 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                 {renderDateBranchInput("then")}
                 {renderFooterBranchInput("then")}
 
-                {/* <div className="mt-4 flex justify-left gap-4">
+
+                {thenComponents.map((item, index) => (
+                  <div key={index} className="mt-2 flex justify-left gap-4">
+                    <AnimatedDropdown
+                      label={`Then Branch ${index + 1}`}
+                      tooltipContent="Select Then Branch"
+                      tooltipPlacement="right"
+                      value={item.value}
+                      options={allowedComponents}
+                      onChange={(value) => handleThenChange(index, value)}
+                    />
+                  </div>
+                ))}
+
+                <div className="mt-2 flex justify-left gap-4">
+                  <UniversalButton label="Add Item" onClick={handleAddThenItem}/>
+                </div>
+              </Dialog> */}
+
+              <Dialog
+                visible={openThenEditDialog}
+                onHide={() => setOpenThenEditDialog(false)}
+                header="Edit THEN Branch Component"
+                style={{ width: "400px" }}
+                modal
+              >
+                {thenComponents.map((item, index) => (
+                  <div key={index} className="mt-2 flex flex-col gap-2">
+                    <AnimatedDropdown
+                      label={`Then Branch ${index + 1}`}
+                      tooltipContent="Select Then Branch"
+                      tooltipPlacement="right"
+                      value={item.value}
+                      options={allowedComponents}
+                      onChange={(value) => handleThenChange(index, value)}
+                    />
+
+                    {item.value && (
+                      <p className="my-1 font-semibold text-sm text-gray-700">
+                        Then Component - {item.value}
+                      </p>
+                    )}
+
+                    {renderTextBranchInput(item, index, "then")}
+                    {renderTextInputBranch(item, index, "then")}
+                    {renderTextAreaBranch(item, index, "then")}
+                    {renderCheckBoxBranch(item, index, "then")}
+                    {renderOptInBranchInput(item, index, "then")}
+                    {renderImageBranchInput(item, index, "then")}
+                    {renderDropdownBranchInput(item, index, "then")}
+                    {renderEmbeddedLinkBranchInput(item, index, "then")}
+                    {renderDateBranchInput(item, index, "then")}
+                    {renderFooterBranchInput(item, index, "then")}
+                    {renderRadioButtonBranch(item, index, "then")}
+                  </div>
+                ))}
+
+                <div className="mt-4 flex justify-left gap-4">
                   <UniversalButton
-                    label="Save Then Branch"
-                    onClick={handleThenBranchSave}
+                    label="Add Item"
+                    onClick={handleAddThenItem}
                   />
-                </div> */}
+                </div>
               </Dialog>
+
               {/* Then Dialog End */}
 
               {/* Else Dialog Start */}
@@ -2012,42 +2311,44 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
                 style={{ width: "400px" }}
                 modal
               >
-                <AnimatedDropdown
-                  label="Else Branch"
-                  tooltipContent="Select Else Branch"
-                  tooltipPlacement="right"
-                  value={selectedElseComponent}
-                  options={allowedComponents}
-                  onChange={(value) => {
-                    setSelectedElseComponent(value);
-                    // if (value === "ifelse") {
-                    //   setNestedElse(true); // ✅ Set your flag here
-                    // } else {
-                    //   setNestedElse(false); // optionally reset
-                    // }
-                  }}
-                />
-                {selectedElseComponent && (
-                  <p className="my-2 font-semibold">
-                    Else component - {selectedElseComponent}
-                  </p>
-                )}
-                {renderTextBranchInput("else")}
-                {renderTextInputBranch("else")}
-                {renderTextAreaBranch("else")}
-                {renderCheckBoxBranch("else")}
-                {renderOptInBranchInput("else")}
-                {renderImageBranchInput("else")}
-                {renderDropdownBranchInput("else")}
-                {renderEmbeddedLinkBranchInput("else")}
-                {renderDateBranchInput("else")}
-                {renderFooterBranchInput("else")}
-                {/* <div className="mt-4 flex justify-left gap-4">
+                {elseComponents.map((item, index) => (
+                  <div key={index} className="mt-2 flex flex-col gap-2">
+                    <AnimatedDropdown
+                      label={`Else Branch ${index + 1}`}
+                      tooltipContent="Select Else Branch"
+                      tooltipPlacement="right"
+                      value={item.value}
+                      options={allowedComponents}
+                      onChange={(value) => handleElseChange(index, value)}
+                    />
+
+                    {item.value && (
+                      <p className="my-1 font-semibold text-sm text-gray-700">
+                        Else Component - {item.value}
+                      </p>
+                    )}
+
+                    {renderTextBranchInput(item, index, "else")}
+                    {renderTextInputBranch(item, index, "else")}
+                    {renderTextAreaBranch(item, index, "else")}
+                    {renderCheckBoxBranch(item, index, "else")}
+                    {renderOptInBranchInput(item, index, "else")}
+                    {renderImageBranchInput(item, index, "else")}
+                    {renderDropdownBranchInput(item, index, "else")}
+                    {renderEmbeddedLinkBranchInput(item, index, "else")}
+                    {renderDateBranchInput(item, index, "else")}
+                    {renderFooterBranchInput(item, index, "else")}
+                    {renderRadioButtonBranch(item, index, "else")}
+
+                    {/* Add other render functions here, passing item and index if needed */}
+                  </div>
+                ))}
+                <div className="mt-4 flex justify-left gap-4">
                   <UniversalButton
-                    label="Save Else Branch"
-                    onClick={handleElseBranchSave}
+                    label="Add Item"
+                    onClick={handleAddElseItem}
                   />
-                </div> */}
+                </div>
               </Dialog>
               {/* Else Dialog End */}
 

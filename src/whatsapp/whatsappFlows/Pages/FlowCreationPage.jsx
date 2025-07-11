@@ -396,6 +396,7 @@ const FlowCreationPage = () => {
   console.log("selectedItem", selectedItem);
 
   const handleSave = (updatedData) => {
+    console.log("updatedData from flow", updatedData)
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
       if (

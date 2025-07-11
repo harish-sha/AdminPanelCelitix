@@ -17,6 +17,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import UniversalDatePicker from "../../components/UniversalDatePicker";
 import { Dialog } from "primereact/dialog";
 import { MdSettings, MdClose } from "react-icons/md";
+import toast from "react-hot-toast";
 
 import {
   ReactFlow,
@@ -31,6 +32,8 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { updateFlowItem } from "../redux/features/FlowSlice";
 
 const allowedTypes = [
   "TextHeading",
@@ -64,6 +67,9 @@ export default function SwitchFlow({
   console.log("cases", cases);
   const [switchComponents, setSwitchComponents] = useState([]);
   const [showValidationError, setShowValidationError] = useState(false);
+  const [selectedValue, setSelectedValue] = useState(
+    selectedItem?.data?.value || ""
+  );
 
   const [newCaseKey, setNewCaseKey] = useState("");
   const [addMode, setAddMode] = useState("");
@@ -104,9 +110,8 @@ export default function SwitchFlow({
   };
 
   const handleNodeSettings = (nodeId) => {
-  console.log("⚙️ Open settings for node:", nodeId);
- 
-};
+    console.log("⚙️ Open settings for node:", nodeId);
+  };
 
   // const CustomNode = ({ id, data }) => {
   //   return (
@@ -133,89 +138,246 @@ export default function SwitchFlow({
   //       {/* Label */}
   //       <div className="font-medium">{data.label}</div>
 
-        
-
   //       <Handle type="target" position="top" />
   //       <Handle type="source" position="bottom" />
   //     </div>
   //   );
   // };
 
+  // const CustomNode = ({ id, data }) => {
+  //   const caseEntries = data?.cases ? Object.entries(data.cases) : [];
+
+  //   return (
+  //     <div
+  //       className="bg-white rounded-md relative border border-gray-300 shadow"
+  //       style={{ minWidth: "180px", textAlign: "center", padding: "6px 12px" }}
+  //     >
+  //       {/* Settings icon */}
+  //       <button
+  //         onClick={() => data.onSettings?.(id)}
+  //         className="absolute -top-2 -left-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
+  //       >
+  //         <MdSettings size={14} />
+  //       </button>
+
+  //       {/* Close icon */}
+  //       <button
+  //         onClick={() => data.onDelete?.(id)}
+  //         className="absolute -right-2 -top-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
+  //       >
+  //         <MdClose size={14} />
+  //       </button>
+
+  //       {/* Label */}
+  //       <div className="font-medium mb-2">{data.label}</div>
+
+  //       {/* Case Options */}
+  //       {data.cases && Object.keys(data.cases).length > 0 ? (
+  //         Object.entries(data.cases).map(([caseKey, components], idx) => (
+  //           <div
+  //             key={caseKey}
+  //             className="flex items-center bg-gray-100 rounded p-1 m-1 text-sm relative"
+  //           >
+  //             <div className="flex-1">{caseKey}</div>
+
+  //             {/* Dynamic handle per case */}
+  //             <Handle
+  //               type="source"
+  //               position="left"
+  //               id={`case-${idx}`}
+  //               style={{
+  //                 top: "50%",
+  //                 transform: "translateY(-50%)",
+  //                 right: "-15px",
+  //                 background: "#555",
+  //               }}
+  //             />
+  //           </div>
+  //         ))
+  //       ) : (
+  //         <Handle
+  //           type="source"
+  //           position="bottom"
+  //           id="single"
+  //           style={{
+  //             bottom: "-8px",
+  //             left: "50%",
+  //             transform: "translateX(-50%)",
+  //             background: "#555",
+  //           }}
+  //         />
+  //       )}
+
+  //       {/* Common handles */}
+  //     </div>
+  //   );
+  // };
 
   const CustomNode = ({ id, data }) => {
-  const caseEntries = data?.cases ? Object.entries(data.cases) : [];
+    console.log("data", data)
+    const caseEntries = data?.cases ? Object.entries(data.cases) : [];
 
-  return (
-    <div
-      className="bg-white rounded-md relative border border-gray-300 shadow"
-      style={{ minWidth: "180px", textAlign: "center", padding: "6px 12px" }}
-    >
-      {/* Settings icon */}
-      <button
-        onClick={() => data.onSettings?.(id)}
-        className="absolute -top-2 -left-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
+    return (
+      <div
+        className="bg-white rounded-md relative border border-gray-300 shadow"
+        style={{ minWidth: "180px", textAlign: "center", padding: "6px 12px" }}
       >
-        <MdSettings size={14} />
-      </button>
+        {/* Settings icon */}
+        <button
+          onClick={() => data.onSettings?.(id)}
+          className="absolute -top-2 -left-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
+        >
+          <MdSettings size={14} />
+        </button>
 
-      {/* Close icon */}
-      <button
-        onClick={() => data.onDelete?.(id)}
-        className="absolute -right-2 -top-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
-      >
-        <MdClose size={14} />
-      </button>
+        {/* Close icon */}
+        <button
+          onClick={() => data.onDelete?.(id)}
+          className="absolute -right-2 -top-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
+        >
+          <MdClose size={14} />
+        </button>
 
-      {/* Label */}
-      <div className="font-medium mb-2">{data.label}</div>
+        {/* Label */}
+        <div className="font-medium mb-2">{data.label}</div>
 
-      {/* Case Options */}
- {data.cases && Object.keys(data.cases).length > 0 ? (
-  Object.entries(data.cases).map(([caseKey, components], idx) => (
-    <div
-      key={caseKey}
-      className="flex items-center bg-gray-100 rounded p-1 m-1 text-sm relative"
-    >
-      <div className="flex-1">{caseKey}</div>
 
-      {/* Dynamic handle per case */}
-      <Handle
-        type="source"
-        position="left"
-        id={`case-${idx}`}
-        style={{
-          top: "50%",
-          transform: "translateY(-50%)",
-          right: "-15px",
-          background: "#555",
-        }}
-      />
-    </div>
-  ))
-) : (
-  <Handle
-    type="source"
-    position="right"
-    id="single"
-    style={{
-      top: "50%",
-      transform: "translateY(-50%)",
-      right: "-6px",
-      background: "#555",
-    }}
-  />
-)}
+        {data.details["data-source"] && data.details["data-source"].length > 0 ? (
+          data.details["data-source"].map((option, idx) => (
+            <div
+              key={idx}
+              className="flex items-center bg-gray-100 rounded p-1 m-1 text-sm relative"
+            >
+              <div className="flex-1">{option.title}</div>
 
-      {/* Common handles */}
-      {/* <Handle type="target" position="top" />
-      <Handle type="source" position="bottom" /> */}
-    </div>
-  );
-};
+              {/* Handle next to each option */}
+              <Handle
+                type="source"
+                position="right"
+                id={`option-${idx}`}
+                style={{
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  right: "-15px",
+                  background: "#555",
+                }}
+              />
+            </div>
+          ))
+        ) : (
+          <Handle
+            type="source"
+            position="right"
+            id="single"
+            style={{
+              top: "50%",
+              transform: "translateY(-50%)",
+              right: "-6px",
+              background: "#555",
+            }}
+          />
+        )}
 
+        {/* Case Options */}
+        {caseEntries.length > 0 ? (
+          caseEntries.map(([caseKey, components], idx) => (
+            <div
+              key={caseKey}
+              className="flex items-center bg-gray-100 rounded p-1 m-1 text-sm relative"
+            >
+              <div className="flex-1">{caseKey}</div>
+
+              {/* One source handle per case */}
+              <Handle
+                type="source"
+                position="left"
+                id={`case-${caseKey}`} // more meaningful than just idx
+                style={{
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  right: "-10px",
+                  background: "#555",
+                }}
+              />
+            </div>
+          ))
+        ) : (
+          // Fallback single output handle if no cases are defined
+          <Handle
+            type="source"
+            position="right"
+            id="default-out"
+            style={{
+              bottom: "-8px",
+              right: "-6px",
+              transform: "translateX(-50%)",
+              background: "#555",
+            }}
+          />
+        )}
+
+        {/* Optional target handle (for connecting into this node) */}
+        <Handle
+          type="target"
+          position="left"
+          id="input"
+          // style={{
+          //   top: "-8px",
+          //   left: "50%",
+          //   transform: "translateX(-50%)",
+          //   background: "#555",
+          // }}
+        />
+      </div>
+    );
+  };
+
+  // const DropdownNode = ({ id, data }) => {
+  //   const options = data.options || [];
+
+  //   return (
+  //     <div className="bg-white border rounded-md shadow p-2 relative min-w-[180px]">
+  //       <div className="font-semibold mb-1">{data.label}</div>
+
+  //       {options.map((opt, idx) => (
+  //         <div
+  //           key={opt.value || idx}
+  //           className="flex items-center bg-gray-100 rounded p-1 m-1 text-sm relative"
+  //         >
+  //           <div className="flex-1">{opt.title || opt.label}</div>
+
+  //           <Handle
+  //             type="source"
+  //             position="right"
+  //             id={`option-${opt.value || idx}`}
+  //             style={{
+  //               top: "50%",
+  //               transform: "translateY(-50%)",
+  //               right: "-10px",
+  //               background: "#555",
+  //             }}
+  //           />
+  //         </div>
+  //       ))}
+
+  //       <Handle
+  //         type="target"
+  //         position="top"
+  //         id="single"
+  //         style={{
+  //           top: "-8px",
+  //           left: "50%",
+  //           transform: "translateX(-50%)",
+  //           background: "#555",
+  //         }}
+  //       />
+  //     </div>
+  //   );
+  // };
 
   const nodeTypes = {
     customNode: CustomNode,
+    // dropdownNode: DropdownNode,
   };
 
   useEffect(() => {
@@ -235,8 +397,31 @@ export default function SwitchFlow({
     }
   }, [selectedFlowItem]);
 
-  
+  // useEffect(() => {
+  //   if (selectedFlowItem) {
+  //     const flowItem = flowItems.find((item) => item.id === selectedFlowItem);
 
+  //     if (!flowItem) return;
+
+  //     const isDropdown = flowItem.type === "Dropdown";
+
+  //     const newNode = {
+  //       id: `node-${selectedFlowItem}`,
+  //       type: isDropdown ? "dropdownNode" : "customNode", // 👈 differentiate by type
+  //       position: { x: Math.random() * 250, y: Math.random() * 250 },
+  //       data: {
+  //         label: flowItem.data?.text || flowItem.data?.type || flowItem.id,
+  //         options: isDropdown ? flowItem.data?.options || [] : undefined,
+  //         cases: !isDropdown ? flowItem.data?.cases || {} : undefined,
+  //         details: flowItem.data,
+  //         onDelete: handleDeleteNode,
+  //         onSettings: handleNodeSettings, 
+  //       },
+  //     };
+
+  //     setNodes((nds) => [...nds.filter((n) => n.id !== newNode.id), newNode]);
+  //   }
+  // }, [selectedFlowItem]);
 
   // **************************TextInput**********************************
   const OptionsTypeOptions = [
@@ -249,40 +434,93 @@ export default function SwitchFlow({
   const [caseKey] = useState(selectedItem?.caseKey);
 
   const handleSwitchSave = () => {
+    console.log("cases switch", cases)
     const payload = {
       cases,
     };
 
+    console.log("payload switch", payload)
+
     const updatedItem = {
       ...selectedItem,
       ...payload,
+      status: 1,
     };
 
-    if (onSave) onSave(updatedItem);
+    console.log("✅ Final Switch Payload 1", updatedItem);
 
-    console.log("✅ Final Switch Payload", updatedItem);
+    onSave(updatedItem);
+
+    console.log("✅ Final Switch Payload 2", updatedItem);
   };
 
+ 
 
-const handleCaseSave = () => {
- const newNodes = {
-    id: "switch-node",
-    type: "customNode", // your CustomNode component
-    position: { x: 100, y: 100 },
-    data: {
-      label: "Cases",
-      cases: { ...cases },
-      onSettings: handleNodeSettings,
-      onDelete: handleDeleteNode,
+  const dispatch = useDispatch();
+
+  const handleCaseSave = () => {
+    const newNodes = {
+      id: "switch-node",
+      type: "customNode", // your CustomNode component
+      position: { x: 100, y: 100 },
+      data: {
+        label: "Cases",
+        cases: { ...cases },
+        onSettings: handleNodeSettings,
+        onDelete: handleDeleteNode,
+      },
+    };
+
+    setNodes((prevNodes) => {
+  const filtered = prevNodes.filter((n) => n.id !== "switch-node");
+
+  return [
+    ...filtered,
+    {
+      id: "switch-node",
+      type: "customNode",
+      position: { x: 100, y: 100 },
+      data: {
+        label: "Cases",
+        cases: { ...cases },
+        onSettings: handleNodeSettings,
+        onDelete: handleDeleteNode,
+      },
     },
+  ];
+});
+
   };
 
+  const numberToWord = (num) => {
+    const words = [
+      "zero",
+      "one",
+      "two",
+      "three",
+      "four",
+      "five",
+      "six",
+      "seven",
+      "eight",
+      "nine",
+      "ten",
+      "eleven",
+      "twelve",
+      "thirteen",
+      "fourteen",
+      "fifteen",
+      "sixteen",
+      "seventeen",
+      "eighteen",
+      "nineteen",
+      "twenty",
+    ];
+    return words[num] || String(num);
+  };
 
-  setNodes([newNodes]);
-};
+  const newKey = `${numberToWord(dynamicCount)}`;
 
-
-  
   useEffect(() => {
     const keys = Object.keys(cases);
     const latestDynamic = keys.find(
@@ -328,21 +566,18 @@ const handleCaseSave = () => {
       type: "Switch",
       //   value: `\${data.${variableName}}`,
       cases,
-      data: {
-        [variableName]: {
-          type: "string",
-          __example__: exampleValue,
-        },
-      },
+      // data: {
+      //   [variableName]: {
+      //     type: "string",
+      //     __example__: exampleValue,
+      //   },
+      // },
     };
   };
 
   const isSwitchBlockValid = () => {
     return Object.keys(cases).length > 0;
   };
-
-
-
 
   return (
     <>
@@ -363,10 +598,6 @@ const handleCaseSave = () => {
                 onEdgesChange={onEdgesChange}
                 nodeTypes={nodeTypes}
                 onConnect={(params) => setEdges((eds) => addEdge(params, eds))}
-//                 onConnect={(params) => {
-//   console.log("Edge connected from:", params.sourceHandle);
-// }}
-
                 fitView
               >
                 <Background />
@@ -441,7 +672,6 @@ const handleCaseSave = () => {
                           setCases(updatedCases);
                         }
                         setNewCaseKey("");
-                        setAddMode("");
                       }}
                     />
                     <UniversalButton
@@ -459,13 +689,17 @@ const handleCaseSave = () => {
                       onClick={() => {
                         const key = `${dynamicCount}`;
 
-                        if (!cases[key]) {
+                        // setAddMode("");
+                        if (!cases[newKey]) {
                           const updatedCases = {
                             ...cases,
-                            [key]: [JSON.parse(JSON.stringify(emptyComponent))],
+                            [newKey]: [
+                              JSON.parse(JSON.stringify(emptyComponent)),
+                            ],
                           };
                           setCases(updatedCases);
                           setDynamicCount(dynamicCount + 1);
+                          setActiveCaseKey(newKey);
                         }
                       }}
                     />
@@ -522,22 +756,22 @@ const handleCaseSave = () => {
                         "TextSubheading",
                         "TextCaption",
                       ].includes(comp.type) && (
-                        <div className="mt-3">
-                          <InputField
-                            placeholder="Text"
-                            className="w-full p-1 rounded text-black"
-                            value={comp.text || ""}
-                            onChange={(e) =>
-                              updateComponent(
-                                caseKey,
-                                idx,
-                                "text",
-                                e.target.value
-                              )
-                            }
-                          />
-                        </div>
-                      )}
+                          <div className="mt-3">
+                            <InputField
+                              placeholder="Text"
+                              className="w-full p-1 rounded text-black"
+                              value={comp.text || ""}
+                              onChange={(e) =>
+                                updateComponent(
+                                  caseKey,
+                                  idx,
+                                  "text",
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </div>
+                        )}
 
                       {["TextInput"].includes(comp.type) && (
                         <div className="mt-3 space-y-3">

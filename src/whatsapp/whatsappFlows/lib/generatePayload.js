@@ -7,6 +7,8 @@ export const generatePayload = (data) => {
     screens: [],
   };
 
+  console.log("📦 incoming data to generatePayload", data); // ← renamed version of formBuilderData
+
   const typeCounters = {
     heading: 0,
     subheading: 0,
@@ -63,32 +65,7 @@ export const generatePayload = (data) => {
 
   data.forEach((screenData, index) => {
     const screenId = screenData.id;
-    let lastCreatedComponentName = ""; // Track last named component except ifelse
-    //     const getExpectedValueBasedOnType = (componentName) => {
-    //   const comp = allComponents.find((c) => c.name === componentName);
-
-    //   if (!comp) return `'value'`; // default
-
-    //   switch (comp.type) {
-    //     case "optin":
-    //       return "true"; // or false
-
-    //     case "dropDown":
-    //     case "textInput":
-    //     case "textArea":
-    //       return `'someText'`; // use string quotes
-
-    //     case "numberInput":
-    //       return `5`; // no quotes
-
-    //     case "checkbox":
-    //       // Can't use directly in If — skip or warn
-    //       return `'checkboxOptionId'`; // just for fallback
-
-    //     default:
-    //       return `'value'`;
-    //   }
-    // };
+    let lastCreatedComponentName = "";
 
     const layout = {
       type: "SingleColumnLayout",
@@ -97,7 +74,7 @@ export const generatePayload = (data) => {
     console.log(screenData?.payload);
 
     screenData?.payload?.forEach((pay) => {
-      console.log("pay", pay);
+      // console.log("pay", pay);
       // const type = pay.type;
       // typeCounters[type] = (typeCounters[type] || 0) + 1;
       // const name = `${String(type)}_${String(typeCounters[type])}`;
@@ -309,13 +286,17 @@ export const generatePayload = (data) => {
       }
 
       // if (type === "switch") {
+      //    const valueName = lastCreatedComponentName;
+
       //   component = {
       //     type: "Switch",
-      //     value:`${data.component?.textInput.name}`,
+      //    value: valueName ? `\${form.${valueName}}` : "",
       //     cases: pay.cases,
       //   };
       // }
+      // const pay = item.data || {};
 
+      console.log("pay switch", pay)
       if (type === "switch") {
         const valueName = lastCreatedComponentName;
 
@@ -324,6 +305,7 @@ export const generatePayload = (data) => {
           value: valueName ? `\${form.${valueName}}` : "",
           cases: pay.cases,
         };
+        console.log("pay.cases", pay.cases);
       }
 
       if (type === "imageCarousel") {
@@ -450,7 +432,7 @@ export const generatePayload = (data) => {
         };
       }
 
-      console.log("payyyyyyyyyyyy", pay.condition);
+      // console.log("payyyyyyyyyyyy", pay);
       if (type === "ifelse") {
         const componentName = lastCreatedComponentName;
         // const expectedValue = getExpectedValueBasedOnType(componentName);
@@ -466,18 +448,8 @@ export const generatePayload = (data) => {
           //   ? ` \${form.${componentName}} ${pay?.condition}`
           //   : "",
 
-          then: [
-            {
-              type: pay?.then?.[0]?.type,
-              text: pay?.then?.[0]?.text,
-            },
-          ],
-          else: [
-            {
-              type: pay?.else?.[0]?.type,
-              text: pay?.else?.[0]?.text,
-            },
-          ],
+          then: pay?.then?.map((item) => ({ ...item })),
+          else: pay?.else?.map((item) => ({ ...item })),
           // required: true,
         };
       }

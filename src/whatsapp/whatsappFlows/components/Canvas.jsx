@@ -21,6 +21,8 @@ import IfElseBlock from "./IfElseBlock";
 import EditPanel from "./EditPanel";
 import TabView from "./TabView";
 import SwitchFlow from "./SwitchFlow";
+import { updateFlowItem } from "../redux/features/FlowSlice";
+
 
 const Canvas = ({
   items,
@@ -82,7 +84,8 @@ const Canvas = ({
     },
   }));
 
-  const [openSwitch, setOpenSwitch] = useState(false); 
+  const [openSwitch, setOpenSwitch] = useState(false);
+
 
   const getDynamicFieldValue = (tabs, activeIndex, item, field = "label") => {
     if (!tabs?.[activeIndex]?.payload) return "";
@@ -1069,6 +1072,9 @@ const Canvas = ({
     return "";
   };
 
+  // const output = generatePayload(formBuilderData);
+
+
   const dispatch = useDispatch();
   const handleDelete = (index, item) => {
     setTabs((prevTabs) => {
@@ -1145,14 +1151,14 @@ const Canvas = ({
     // };
 
     const handleEdit = (index, item) => {
-    setSelectedItem({ ...item, index });
+      setSelectedItem({ ...item, index });
 
-    if (item.type === "ifelse") {
-      setOpenIfElse(true);
-    } else if (item.type === "switch") {
-      setOpenSwitch(true);
-    }
-  };
+      if (item.type === "ifelse") {
+        setOpenIfElse(true);
+      } else if (item.type === "switch") {
+        setOpenSwitch(true);
+      }
+    };
 
     const content = getDynamicFieldValue(
       tabs,
@@ -1299,23 +1305,14 @@ const Canvas = ({
           />
         )}
 
-       
-         {selectedItem?.type === "switch" && openSwitch && (
-        <SwitchFlow
-          openSwitch={openSwitch}
-          setOpenSwitch={setOpenSwitch}
-          selectedItem={selectedItem}
-          onSave={(payload) => {
-            const updatedItem = {
-              ...selectedItem,
-              ...payload,
-            };
-            console.log("Updated Switch Item", updatedItem);
-            setOpenSwitch(false);
-          }}
-        />
-      )}
-
+        {selectedItem?.type === "switch" && openSwitch && (
+          <SwitchFlow
+            openSwitch={openSwitch}
+            setOpenSwitch={setOpenSwitch}
+            selectedItem={selectedItem}
+            onSave={onSave}
+          />
+        )}
       </Paper>
       // </motion.div>
     );

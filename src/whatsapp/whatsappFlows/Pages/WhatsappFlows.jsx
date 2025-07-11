@@ -639,7 +639,7 @@ const WhatsappFlows = () => {
                     <CustomTooltip
                       title="Settings"
                       arrow
-                      tooltipPlacement="top"
+                      tooltipplacement="top"
                     >
                       <IconButton
                         ref={(el) => {
