@@ -861,6 +861,8 @@ import StorageIcon from "@mui/icons-material/Storage";
 import { CgUnblock } from "react-icons/cg";
 import { Datasource } from "./components/Datasource";
 import { Ai } from "./components/Ai";
+import CustomTooltip from "../components/CustomTooltip";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 
 const MotionPaper = motion(Paper);
 
@@ -1329,34 +1331,50 @@ const WhatsappLiveChatSettings = () => {
     {
       id: 1,
       name: "Welcome Message",
-      button: ["Configure Text"],
-      desc: "Automatically greet customers when they message you during off hours..",
+      button: ["Configure"],
+      desc: "Greets users automatically when they message for the first time. Helps create a quick and professional first response.",
       message: "",
       type: "Welcome_message",
+      tooltip:
+        "“Hi! 👋 Thanks for reaching out. Our team will connect with you shortly.”",
     },
     {
       id: 2,
       name: "Off Hours Message",
-      button: ["Configure Text", "Configure Time"],
-      desc: "Configure automated reply for user's first query during off hours.",
+      button: ["Configure", "Configure Time"],
+      desc: "Sends a reply to the user’s first message received outside business hours. Useful for informing users about support timing.",
       message: "",
       type: "off_hour_msg",
+      tooltip: (
+    <>
+      <div><b>What it does:</b> Sends a one-time auto-reply to the user’s first message after business hours.</div>
+      
+      <div><b>Example:</b> “Our team is unavailable now. We’ll reply during our shift, 10 AM–7 PM.”</div>
+    </>
+  )
     },
     {
       id: 3,
       name: "Agent-Change",
-      button: ["Configure Text"],
-      desc: "Automatically greet customers when they message you during off hours.",
+      button: ["Configure"],
+      desc: "Sends an automated message when a chat is reassigned or the agent becomes inactive. Keeps the user informed during off-hours.",
       message: "",
       type: "agent_assign_message",
+      tooltip: "“All agents are currently unavailable. We’ll reconnect soon.”",
     },
     {
       id: 4,
       name: "Inactive-Agent-Timings",
-      button: ["Configure Text"],
-      desc: "Automatically greet customers when they message you during off hours.",
+      button: ["Configure"],
+      desc: "Activates auto-replies during agent off-shift times. Ensures customers receive a response even when no one is online.",
       message: "",
       type: "inactive_agent_timing",
+      tooltip: (
+    <>
+      <div><b>What it does:</b> Auto-replies when no agent is online based on shift time settings.</div>
+      
+      <div><b>Example:</b> “No agents are online right now. We'll respond after 10 AM.”</div>
+    </>)
     },
     // { id: 4, name: "Agent-No-Response", button: ["Configure Text"], desc: "Automatically greet customers when they message you during off hours.", message: "", type: "agent_no_response" },
   ];
@@ -1570,20 +1588,20 @@ const WhatsappLiveChatSettings = () => {
         </Grid> */}
               <div className="bg-white rounded-2xl shadow-lg flex flex-col items-center justify-center h-auto p-5 border-3 border-dashed border-indigo-200">
                 {wabaState.selected ? (
-                  <div className=" flex flex-wrap justify-center items-center gap-5 space-y-8 mx-auto">
+                  <div className=" flex flex-wrap justify-center items-center gap-5  mx-auto">
                     {liveChatCards.map((card) => {
                       return (
                         <>
                           <div
                             key={card.id}
-                            className="relative flex w-90 flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md hover:shadow-xl transition-all duration-400 hover:-translate-y-1 mt-8"
+                            className="relative flex w-90 flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md hover:shadow-xl transition-all duration-400 hover:-translate-y-1"
                           >
-                            <div className="relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-blue-gray-500 bg-clip-border text-white shadow-lg shadow-blue-gray-500/40 bg-gradient-to-r from-green-100 to-green-50">
+                            <div className=" mx-3 mt-3 h-30 overflow-hidden rounded-xl bg-blue-gray-500 bg-clip-border text-white  shadow-blue-gray-500/40 bg-gradient-to-r from-green-100 to-green-50">
                               <Box
                                 display="flex"
                                 alignItems="center"
                                 justifyContent="space-between"
-                                marginTop={6}
+                                marginTop={4}
                               >
                                 <Box display="flex" alignItems="center" gap={2}>
                                   <Box
@@ -1628,9 +1646,18 @@ const WhatsappLiveChatSettings = () => {
                               </Box>
                             </div>
 
-                            <div className="p-4">
-                              <p className="mb-2 block font-sans text-sm  font-normal tracking-normal text-gray-600 antialiased">
+                            <div className="p-3">
+                              <p className="mb-2 flex font-sans text-sm  font-normal tracking-normal text-gray-600 antialiased">
                                 {card.desc}
+                                <CustomTooltip
+                                  title={card.tooltip}
+                                  placement="top"
+                                  arrow
+                                >
+                                  <span className="">
+                                    <AiOutlineInfoCircle className="text-gray-500 cursor-pointer" />
+                                  </span>
+                                </CustomTooltip>
                               </p>
                               <div className="border border-gray-300 rounded-md p-2 bg-gray-100 h-50 overflow-scroll text-wrap">
                                 <pre className="text-sm font-normal text-gray-600 text-wrap">
@@ -1664,7 +1691,7 @@ const WhatsappLiveChatSettings = () => {
                                         toast.error("Please select WABA");
                                         return;
                                       }
-                                      if (btnLabel === "Configure Text")
+                                      if (btnLabel === "Configure")
                                         handleConfigure(card.type);
                                       else if (btnLabel === "Configure Time")
                                         setWorkingHoursDialog(true);
@@ -1768,9 +1795,9 @@ const WhatsappLiveChatSettings = () => {
                           <Switch
                             sx={{
                               "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                              {
-                                backgroundColor: "#34C759",
-                              },
+                                {
+                                  backgroundColor: "#34C759",
+                                },
                               "& .MuiSwitch-switchBase.Mui-checked": {
                                 color: "#34C759",
                               },
@@ -2071,10 +2098,11 @@ const WhatsappLiveChatSettings = () => {
               <button
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center w-full px-4 py-3 mb-1 text-sm font-medium rounded-lg transition-colors hover:bg-gray-100 focus:outline-none ${activeTab === tab.key
+                className={`flex items-center w-full px-4 py-3 mb-1 text-sm font-medium rounded-lg transition-colors hover:bg-gray-100 focus:outline-none ${
+                  activeTab === tab.key
                     ? "bg-blue-100 text-blue-600"
                     : "text-gray-700"
-                  }`}
+                }`}
               >
                 <span className="mr-2">{tab.icon}</span>
                 {tab.label}
@@ -2087,10 +2115,11 @@ const WhatsappLiveChatSettings = () => {
                       key={opt.key}
                       type="button"
                       onClick={() => setActiveSub(opt.key)}
-                      className={`flex items-center w-full px-3 py-2 text-sm rounded-md transition-colors hover:bg-blue-50 focus:outline-none ${activeSub === opt.key
+                      className={`flex items-center w-full px-3 py-2 text-sm rounded-md transition-colors hover:bg-blue-50 focus:outline-none ${
+                        activeSub === opt.key
                           ? "bg-blue-50 text-blue-600 font-semibold"
                           : "text-gray-600"
-                        }`}
+                      }`}
                     >
                       <span className="mr-2">{opt.icon}</span>
                       {opt.label}

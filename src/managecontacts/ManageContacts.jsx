@@ -23,6 +23,7 @@ import UniversalSkeleton from "../whatsapp/components/UniversalSkeleton";
 import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
 import { RadioButton } from "primereact/radiobutton";
+import moment from "moment";
 import {
   addContact,
   addGrp,
@@ -104,6 +105,13 @@ const ManageContacts = () => {
   });
   const [selectedRows, setSelectedRows] = useState([]);
   const [idtoDelete, setIdToDelete] = useState([]);
+  const [confirmMultiDeleteVisible, setConfirmMultiDeleteVisible] =
+    useState(false);
+  const currentGroup = grpList?.find(
+    g => g.groupCode === selectedMultiGroupContact?.value
+  );
+  const groupNameDelete = currentGroup?.groupName || "";
+
   const [deleteContactDialogVisible, setDeleteContactDialogVisible] =
     useState(false);
   const [allowishes, setAllowishes] = useState("");
@@ -118,6 +126,9 @@ const ManageContacts = () => {
   useEffect(() => {
     getGrpListData();
   }, []);
+
+
+
 
   // const handleAddGroup = async () => {
   //   const res = await addGrp({
@@ -152,33 +163,6 @@ const ManageContacts = () => {
     }
   };
 
-  const multiGroup = [
-    { value: "Group 1", label: "Group 1" },
-    { value: "Group 2", label: "G2" },
-    { value: "Group 3", label: "Group 3" },
-    { value: "Group 4", label: "Group 4" },
-    { value: "Group 5", label: "Group 5" },
-  ];
-  const multiGroupContact = [
-    { name: "New York", code: "NY" },
-    { name: "Rome", code: "RM" },
-    { name: "London", code: "LDN" },
-    { name: "Istanbul", code: "IST" },
-    { name: "Paris", code: "PRS" },
-  ];
-
-  const manageGroups = [
-    { name: "Group1", code: "G1" },
-    { name: "Group2", code: "G2" },
-    { name: "Group3", code: "G3" },
-    { name: "Group4", code: "G4" },
-    { name: "Group5", code: "G5" },
-  ];
-
-  const addImportContact = [
-    { value: "option1", label: "Add Contact" },
-    { value: "option2", label: "Import Contacts" },
-  ];
 
   const handleOptionChange = (event) => {
     setSelectedAddImportContact(event.target.value);
@@ -201,7 +185,46 @@ const ManageContacts = () => {
     return <span>{props.placeholder}</span>;
   };
 
+  useEffect(() => {
+    if (!importContactvisible) {
+      // reset group selection
+      setSelectedMultiGroupContact(null);
+
+      // clear file upload state
+      setUploadedFile(null);
+      setIsUploaded(false);
+      setFilePath("");
+      setFileData([]);
+      setFileHeaders([]);
+      setTotalRecords(0);
+
+      // hide & clear the column-mapping form
+      setImportContactFormVisible(false);
+      setAddContactDetails({
+        firstName: "",
+        middleName: "",
+        lastName: "",
+        mobileNo: "",
+        emailId: "",
+        uniqueId: "",
+        birthDate: "",
+        mariageDate: "",
+        allowishes: "",
+        gender: "",
+      });
+    }
+  }, [importContactvisible]);
+
   async function handleImportContact() {
+    if (!selectedMultiGroupContact) {
+      return toast.error("Please select a group before importing.");
+    }
+    if (!isUploaded) {
+      return toast.error("Please upload the file before importing.");
+    }
+    if (!addContactDetails.mobileNo) {
+      return toast.error("Please map the Phone No. column before importing.");
+    }
     try {
       const payload = {
         groupSrNo: selectedMultiGroupContact,
@@ -209,36 +232,35 @@ const ManageContacts = () => {
         middleName: addContactDetails.middleName?.trim() || "",
         lastName: addContactDetails.lastName.trim(),
         gender: addContactDetails.gender,
-        mobileNo: addContactDetails.mobileNo.trim(),
-        emailId: addContactDetails.emailId.trim(),
-        uniqueId: addContactDetails.uniqueId?.trim() || "",
-        allowishes: addContactDetails.allowishes === "enable" ? 1 : 0,
+        mobile: addContactDetails.mobileNo.trim(),
+        email: addContactDetails.emailId.trim(),
+        extra: addContactDetails.uniqueId?.trim() || "",
+        allowishes: addContactDetails.allowishes?.trim() || "",
         status: 1,
-        birthDate: addContactDetails.birthDate
-          ? new Date(addContactDetails.birthDate).toLocaleDateString("en-GB")
-          : "",
-        anniversaryDate: addContactDetails.mariageDate
-          ? new Date(addContactDetails.mariageDate).toLocaleDateString("en-GB")
-          : "",
+        birth: addContactDetails.birthDate?.trim() || "",
+        marriage: addContactDetails.mariageDate?.trim() || "",
         filePath: filePath,
         fileData: [],
         noOfRow: -1,
       };
       const res = await importContact(payload);
+      setimportContactVisible(false);
       toast.success("Contact imported successfully.");
+      await getGrpList()
+      await handleSearchGroup();
+      getGrpListData()
+      setimportContactVisible(false);
     } catch (e) {
       console.log(e);
     }
   }
 
   const handleAllAddContact = async () => {
-    // Validate group selection
     if (!selectedMultiGroupContact) {
       toast.error("Please select a group.");
       return;
     }
 
-    // Validate required fields
     const requiredFields = [
       "firstName",
       //"lastName",
@@ -341,7 +363,8 @@ const ManageContacts = () => {
           status: Number(e),
         };
         const res = await updateContactStatus(data);
-        if (!res.message.includes("successfully")) return toast.error(res.message);
+        if (!res.message.includes("successfully"))
+          return toast.error(res.message);
         toast.success(res.message);
         await handleSearchGroup();
       } catch (e) {
@@ -366,230 +389,6 @@ const ManageContacts = () => {
         return;
       }
       setAllContacts(res);
-
-      // if (res.length > 0) {
-      //   //filter data name and ContactNumber
-      //   const filteredData =
-      //     res.filter(
-      //       (contact) =>
-      //         (contact?.firstName
-      //           ?.toLowerCase()
-      //           .includes(manageContactFirst.toLowerCase()) ||
-      //           contact?.lastName
-      //             ?.toLowerCase()
-      //             .includes(manageContactFirst.toLowerCase())) &&
-      //         contact?.mobileno
-      //           .toLowerCase()
-      //           .includes(manageContactMobile.toLowerCase())
-      //     ) ?? [];
-
-      //   setCols([
-      //     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-      //     {
-      //       field: "firstName",
-      //       headerName: "First Name",
-      //       flex: 1,
-      //       minWidth: 120,
-      //     },
-      //     {
-      //       field: "lastName",
-      //       headerName: "Last Name",
-      //       flex: 1,
-      //       minWidth: 120,
-      //     },
-      //     {
-      //       field: "mobileno",
-      //       headerName: "Mobile No",
-      //       flex: 1,
-      //       minWidth: 120,
-      //     },
-      //     {
-      //       field: "uniqueId",
-      //       headerName: "Unique ID",
-      //       flex: 1,
-      //       minWidth: 120,
-      //     },
-      //     {
-      //       field: "emailstatus",
-      //       headerName: "Email Status",
-      //       flex: 1,
-      //       minWidth: 120,
-      //     },
-      //     { field: "group", headerName: "Group", flex: 1, minWidth: 120 },
-      //     {
-      //       field: "status",
-      //       headerName: "Status",
-      //       flex: 1,
-      //       minWidth: 120,
-      //       renderCell: (params) => {
-      //         return (
-      //           <CustomTooltip arrow placement="top" title="Allow/ Disallow">
-      //             <Switch
-      //               checked={params.row.status === 1}
-      //               onChange={(e) => {
-      //                 handleStatusChange(e.target.checked, params.row.id);
-      //               }}
-      //               sx={{
-      //                 "& .MuiSwitch-switchBase.Mui-checked": {
-      //                   color: "#34C759",
-      //                 },
-      //                 "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-      //                 {
-      //                   backgroundColor: "#34C759",
-      //                 },
-      //               }}
-      //             />
-      //           </CustomTooltip>
-      //         );
-      //       },
-      //     },
-      //     // { field: 'totalAudience', headerName: 'Total Audience', flex: 1, minWidth: 120 },
-      //     {
-      //       field: "action",
-      //       headerName: "Action",
-      //       flex: 1,
-      //       minWidth: 150,
-      //       renderCell: (params) => (
-      //         <>
-      //           <IconButton
-      //             onClick={() => {
-      //               setUpdateContactVisible(true);
-      //               setUpdateContactDetails(params.row);
-      //             }}
-      //           >
-      //             <EditNoteIcon
-      //               sx={{
-      //                 fontSize: "1.2rem",
-      //                 color: "gray",
-      //               }}
-      //             />
-      //           </IconButton>
-      //           <IconButton
-      //             className="no-xs"
-      //             onClick={() => {
-      //               setDeleteContactDialogVisible(true);
-      //               setIdToDelete(params.row);
-      //             }}
-      //           >
-      //             <MdOutlineDeleteForever
-      //               className="text-red-500 cursor-pointer hover:text-red-600"
-      //               size={20}
-      //             />
-      //           </IconButton>
-      //         </>
-      //       ),
-      //     },
-      //   ]);
-      //   contactSetRows(
-      //     filteredData?.map((contact, index) => ({
-      //       id: contact.addSrno,
-      //       sn: index + 1,
-      //       firstName: contact.firstName ?? "-",
-      //       lastName: contact.lastName ?? "-",
-      //       mobileno: contact.mobileno ?? "-",
-      //       emailstatus: contact.status == 1 ? "Active" : "Inactive",
-      //       group: contact.groupName ?? "-",
-      //       status: contact.status == 1 ? "Active" : "Inactive",
-      //       action: "True",
-      //       srno: contact.addSrno,
-      //       gender: contact.gender,
-      //       ...contact,
-      //     }))
-      //   );
-
-      //   setFilterContacts(filteredData);
-      // } else {
-      //   setCols([
-      //     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-      //     {
-      //       field: "firstName",
-      //       headerName: "First Name",
-      //       flex: 1,
-      //       minWidth: 120,
-      //     },
-      //     {
-      //       field: "lastName",
-      //       headerName: "Last Name",
-      //       flex: 1,
-      //       minWidth: 120,
-      //     },
-      //     {
-      //       field: "mobileno",
-      //       headerName: "Mobile No",
-      //       flex: 1,
-      //       minWidth: 120,
-      //     },
-      //     {
-      //       field: "uniqueId",
-      //       headerName: "Unique ID",
-      //       flex: 1,
-      //       minWidth: 120,
-      //     },
-      //     {
-      //       field: "emailstatus",
-      //       headerName: "Email Status",
-      //       flex: 1,
-      //       minWidth: 120,
-      //     },
-      //     { field: "group", headerName: "Group", flex: 1, minWidth: 120 },
-      //     { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
-      //     // { field: 'totalAudience', headerName: 'Total Audience', flex: 1, minWidth: 120 },
-      //     {
-      //       field: "action",
-      //       headerName: "Action",
-      //       flex: 1,
-      //       minWidth: 150,
-      //       renderCell: (params) => (
-      //         <>
-      //           <IconButton
-      //             onClick={() => {
-      //               setUpdateContactVisible(true);
-      //               setUpdateContactDetails(params.row);
-      //             }}
-      //           >
-      //             <EditNoteIcon
-      //               sx={{
-      //                 fontSize: "1.2rem",
-      //                 color: "gray",
-      //               }}
-      //             />
-      //           </IconButton>
-      //           <IconButton
-      //             className="no-xs"
-      //             onClick={() => {
-      //               setDeleteContactDialogVisible(true);
-      //               setIdToDelete(params.row);
-      //             }}
-      //           >
-      //             <MdOutlineDeleteForever
-      //               className="text-red-500 cursor-pointer hover:text-red-600"
-      //               size={20}
-      //             />
-      //           </IconButton>
-      //         </>
-      //       ),
-      //     },
-      //   ]);
-      //   contactSetRows(
-      //     res?.map((contact, index) => ({
-      //       id: contact.addSrno,
-      //       sn: index + 1,
-      //       firstName: contact.firstName ?? "-",
-      //       lastName: contact.lastName ?? "-",
-      //       mobileno: contact.mobileno ?? "-",
-      //       emailstatus: contact.status == 1 ? "Active" : "Inactive",
-      //       group: contact.groupName ?? "-",
-      //       status: contact.status == 1 ? "Active" : "Inactive",
-      //       action: "True",
-      //       srno: contact.addSrno,
-      //       gender: contact.gender,
-      //       ...contact,
-      //     }))
-      //   );
-
-      //   setFilterContacts(res);
-      // }
-
 
       setCols([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -833,8 +632,6 @@ const ManageContacts = () => {
       allowishes: updatedContactDetails.allowishes || "",
     };
 
-    // console.log("update contact data", data);
-
     const res = await updateContactsDetails(data);
     if (!res?.message.includes("successfully")) {
       return toast.error(res?.message);
@@ -878,12 +675,42 @@ const ManageContacts = () => {
   };
 
   // Handle file removal
+  // const handleRemoveFile = () => {
+  //   setUploadedFile(null);
+  //   setIsUploaded(false);
+  //   // setAddCountryCode(false)
+  //   // setSelectedCountryCode('');
+  //   document.getElementById("fileInput").value = "";
+  //   toast.success("File removed successfully.");
+  // };
+
   const handleRemoveFile = () => {
+    // Clear the selected file and upload state
     setUploadedFile(null);
     setIsUploaded(false);
-    // setAddCountryCode(false)
-    // setSelectedCountryCode('');
-    document.getElementById("fileInput").value = "";
+
+    // Hide the column‐mapping form
+    setImportContactFormVisible(false);
+
+    // Optionally clear any column‐mapping selections:
+    setAddContactDetails((prev) => ({
+      ...prev,
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      mobileNo: "",
+      emailId: "",
+      uniqueId: "",
+      birthDate: "",
+      mariageDate: "",
+      allowishes: "",
+      gender: "",
+    }));
+
+    // Reset the file input element
+    const inputElem = document.getElementById("fileInput");
+    if (inputElem) inputElem.value = "";
+
     toast.success("File removed successfully.");
   };
 
@@ -1104,12 +931,12 @@ const ManageContacts = () => {
       }
       toast.success("Contact deleted successfully");
       setDeleteContactDialogVisible(false);
+      getGrpListData()
+      await getGrpList()
       await handleSearchGroup();
     } catch (e) {
       return toast.error("Something went wrong");
     }
-
-    // contact/deleteMultipleAddressBookContacts?addSrnoList=238&addSrnoList=240
   }
 
   async function handleMultipleContactDelete() {
@@ -1126,85 +953,15 @@ const ManageContacts = () => {
         return toast.error(res.message);
       }
       toast.success("Contact deleted successfully");
-      setDeleteContactDialogVisible(false);
+      getGrpListData()
+      // setDeleteContactDialogVisible(false);
+      setConfirmMultiDeleteVisible(false)
       await handleSearchGroup();
     } catch (e) {
       return toast.error("Something went wrong");
     }
-
-    // contact/deleteMultipleAddressBookContacts?addSrnoList=238&addSrnoList=240
   }
 
-  // setCols([
-  //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-  //   { field: "firstName", headerName: "First Name", flex: 1, minWidth: 120 },
-  //   { field: "lastName", headerName: "Last Name", flex: 1, minWidth: 120 },
-  //   { field: "mobileno", headerName: "Mobile No", flex: 1, minWidth: 120 },
-  //   { field: "uniqueId", headerName: "Unique ID", flex: 1, minWidth: 120 },
-  //   {
-  //     field: "emailstatus",
-  //     headerName: "Email Status",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   { field: "group", headerName: "Group", flex: 1, minWidth: 120 },
-  //   { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
-  //   // { field: 'totalAudience', headerName: 'Total Audience', flex: 1, minWidth: 120 },
-  //   {
-  //     field: "action",
-  //     headerName: "Action",
-  //     flex: 1,
-  //     minWidth: 150,
-  //     renderCell: (params) => (
-  //       <>
-  //         <IconButton
-  //           onClick={() => {
-  //             setUpdateContactVisible(true);
-  //             setUpdateContactDetails(params.row);
-  //           }}
-  //         >
-  //           <EditNoteIcon
-  //             sx={{
-  //               fontSize: "1.2rem",
-  //               color: "gray",
-  //             }}
-  //           />
-  //         </IconButton>
-  //         <IconButton
-  //           className="no-xs"
-  //           onClick={() => {
-  //             setDeleteContactDialogVisible(true);
-  //             setIdToDelete(params.row);
-  //           }}
-  //         >
-  //           <MdOutlineDeleteForever
-  //             className="text-red-500 cursor-pointer hover:text-red-600"
-  //             size={20}
-  //           />
-  //         </IconButton>
-  //       </>
-  //     ),
-  //   },
-  // ]);
-
-  // contactSetRows(
-  //   Array.isArray(allContacts)
-  //     ? allContacts?.map((contact, index) => ({
-  //         id: contact.addSrno,
-  //         sn: index + 1,
-  //         firstName: contact.firstName ?? "-",
-  //         lastName: contact.lastName ?? "-",
-  //         mobileno: contact.mobileno ?? "-",
-  //         emailstatus: contact.status == 1 ? "Active" : "Inactive",
-  //         group: contact.groupName ?? "-",
-  //         status: contact.status == 1 ? "Active" : "Inactive",
-  //         action: "True",
-  //         srno: contact.addSrno,
-  //         gender: contact.gender,
-  //         ...contact,
-  //       }))
-  //     : []
-  // );
   function handleExport() {
     if (!rows.length) return toast.error("No data to download");
     const col = cols.map((col) => col.field);
@@ -1219,11 +976,8 @@ const ManageContacts = () => {
   return (
     <div>
       <div className="flex flex-wrap items-end w-full gap-2 mb-4 justify-between">
-        <h1 className="text-xl font-semibold text-gray-700">
-          Manage Contacts
-        </h1>
+        <h1 className="text-xl font-semibold text-gray-700">Manage Contacts</h1>
         <div className="flex items-center gap-2">
-          {/* Name Input Field */}
           <div className="w-max-content">
             <UniversalButton
               id="addgroupbtn"
@@ -1258,7 +1012,6 @@ const ManageContacts = () => {
             />
           </div>
         </div>
-
       </div>
       <div className="flex flex-wrap items-end w-full gap-2 mb-5">
         <div className="w-full sm:w-48">
@@ -1326,12 +1079,18 @@ const ManageContacts = () => {
             disabled={isFetching}
           />
         </div>
-        <div className="w-max-content ">
+        <div className="w-max-content">
           <UniversalButton
             id="managegroupdeletebtn"
             name="managegroupdeletebtn"
-            label="Delete"
-            onClick={handleMultipleContactDelete}
+            label="Delete Multiple"
+            onClick={() => {
+              if (selectedRows.length === 0) {
+                toast.error("Please select at least one contact to delete.");
+              } else {
+                setConfirmMultiDeleteVisible(true);
+              }
+            }}
           />
         </div>
       </div>
@@ -1349,7 +1108,6 @@ const ManageContacts = () => {
         rows={contactRows}
       />
 
-      {/* <Button label="Show" icon="pi pi-external-link" onClick={() => setVisible(true)} /> */}
 
       {/* add group start */}
       <Dialog
@@ -1403,7 +1161,7 @@ const ManageContacts = () => {
                     // ]}
                     value={selectedmanageGroups}
                     onChange={(e) => setSelectedManageGroups(e)}
-                    optionLabel="name"
+                    label="Group List"
                     placeholder="Select Groups"
                     filter
                     valueTemplate={selectedManageGroups}
@@ -1420,7 +1178,6 @@ const ManageContacts = () => {
                   <DataGrid
                     id={"ManageGroup"}
                     name={"ManageGroup"}
-                    // rows={rows}
                     rows={filteredRows}
                     columns={contactColumns}
                     initialState={{ pagination: { paginationModel } }}
@@ -1495,6 +1252,7 @@ const ManageContacts = () => {
           <AnimatedDropdown
             className="custom-multiselect"
             placeholder="Select Groups"
+            label="Select Group"
             maxSelectedLabels={0}
             optionLabel="name"
             options={grpList?.map((item) => ({
@@ -1590,7 +1348,7 @@ const ManageContacts = () => {
             />
             <UniversalDatePicker
               label="Birth Date"
-              className="mb-0"
+              className="mb-0 w-full p-2 h-5 bg-slate-800 border-white"
               value={addContactDetails.birthDate}
               onChange={(e) =>
                 setAddContactDetails({
@@ -1780,10 +1538,11 @@ const ManageContacts = () => {
         visible={importContactvisible}
         draggable={false}
         className="lg:w-[40rem] md:w-[40rem] w-[20rem]"
-        onHide={() => {
-          if (!importContactvisible) return;
-          setimportContactVisible(false);
-        }}
+        // onHide={() => {
+        //   if (!importContactvisible) return;
+        //   setimportContactVisible(false);
+        // }}
+        onHide={() => setimportContactVisible(false)}
       >
         <div className="m-0">
           <AnimatedDropdown
@@ -2367,7 +2126,7 @@ const ManageContacts = () => {
       </Dialog>
       {/* edit contact details end */}
 
-      {/* delete contact start */}
+      {/* delete single contact start */}
       <Dialog
         header="Confirm Deletion"
         visible={deleteContactDialogVisible}
@@ -2379,11 +2138,6 @@ const ManageContacts = () => {
         draggable={false}
       >
         <div className="flex items-center justify-center">
-          {/* <ErrorOutlineOutlinedIcon
-                  sx={{
-                    fontSize: 64,
-                  }}
-                /> */}
           <CancelOutlinedIcon
             sx={{
               fontSize: 64,
@@ -2411,16 +2165,64 @@ const ManageContacts = () => {
           />
           <UniversalButton
             label="Delete"
-            style={
-              {
-                // backgroundColor: "red",
-              }
-            }
             onClick={handleContactDelete}
           />
         </div>
       </Dialog>
-      {/* delete contact end */}
+      {/* delete single contact end */}
+
+      {/* delete multiple contact end */}
+      <Dialog
+        header="Confirm Multi Deletion"
+        visible={confirmMultiDeleteVisible}
+        onHide={() => {
+          setConfirmMultiDeleteVisible(false);
+          // setIdToDelete(null);
+        }}
+        className="w-[30rem]"
+        draggable={false}
+      >
+        <div className="flex items-center justify-center">
+          <CancelOutlinedIcon
+            sx={{
+              fontSize: 64,
+              color: "#ff3f3f",
+            }}
+          />
+        </div>
+        <div className="p-4 text-center">
+          <p className="text-[1.1rem] text-gray-700 font-semibold">
+            Are you sure you want to delete the selected &nbsp;
+            <span className="font-bold text-red-500">
+              {selectedRows.length} contacts
+            </span>
+            {currentGroup ? (
+              <> from group <span className="text-green-500">{groupNameDelete}</span>?</>
+            ) : (
+              "?"
+            )}
+          </p>
+          <p className="mt-2 text-sm text-gray-500">
+            This action is irreversible.
+          </p>
+        </div>
+
+        <div className="flex justify-center gap-4 mt-2">
+          <UniversalButton
+            label="Cancel"
+            style={{
+              backgroundColor: "#090909",
+            }}
+            onClick={() => setConfirmMultiDeleteVisible(false)}
+          />
+          <UniversalButton
+            label="Delete"
+
+            onClick={handleMultipleContactDelete}
+          />
+        </div>
+      </Dialog>
+      {/* delete multiple contact end */}
     </div>
   );
 };

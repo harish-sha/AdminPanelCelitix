@@ -92,8 +92,8 @@ const ObdCreateCampaign = () => {
 
   const [mobilenums, setMobileNums] = useState("");
 
-  const [wavesurfer, setWavesurfer] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  // const [wavesurfer, setWavesurfer] = useState(null);
+  // const [isPlaying, setIsPlaying] = useState(false);
 
   const [allHeaders, setAllHeaders] = useState([]);
   const [variableValue, setVariableValue] = useState();
@@ -124,7 +124,7 @@ const ObdCreateCampaign = () => {
   // ai content end
 
   useEffect(() => {
-    ObdVariableList();
+    // ObdVariableList();
     ObdDynamicVoiceClip(1);
   }, []);
 
@@ -145,27 +145,27 @@ const ObdCreateCampaign = () => {
     }
   }, [fileHeaders, selectedOption]);
 
-  const onReady = (ws) => {
-    setWavesurfer(ws);
-    setIsPlaying(false);
-  };
+  // const onReady = (ws) => {
+  //   setWavesurfer(ws);
+  //   setIsPlaying(false);
+  // };
 
-  const handlePlayPause = () => {
-    if (!wavesurfer) return;
+  // const handlePlayPause = () => {
+  //   if (!wavesurfer) return;
 
-    if (isPlaying) {
-      wavesurfer.pause();
-    } else {
-      wavesurfer.play();
-    }
-  };
+  //   if (isPlaying) {
+  //     wavesurfer.pause();
+  //   } else {
+  //     wavesurfer.play();
+  //   }
+  // };
 
-  const handleRestart = () => {
-    if (wavesurfer) {
-      wavesurfer.seekTo(0);
-      wavesurfer.play();
-    }
-  };
+  // const handleRestart = () => {
+  //   if (wavesurfer) {
+  //     wavesurfer.seekTo(0);
+  //     wavesurfer.play();
+  //   }
+  // };
 
   const resetForm = () => {
     // Clear campaign fields
@@ -177,6 +177,8 @@ const ObdCreateCampaign = () => {
     setSelectedMBFiletwo("");
     setVoiceDBClip(null);
     setVoiceVariables([]);
+
+   
 
     // retry and interval
     setRetry(null);
@@ -197,7 +199,7 @@ const ObdCreateCampaign = () => {
     setMobileNums("");
     setSchedule(false);
     setScheduledDateTime(new Date());
-    fileInputRef && (fileInputRef.current.value = null)
+    // fileInputRef && (fileInputRef.current.value = null)
     setIsUploaded(false)
     setIsUploading(false)
     setColumns([])
@@ -494,7 +496,8 @@ const ObdCreateCampaign = () => {
       scheduleDateTime:
         schedule && scheduledDateTime ? formatDateTime(scheduledDateTime) : "0",
       dynamicVoiceCallSrno: slectedDynamicVoiceFile || "",
-      dynamicValueJson: JSON.stringify(formattedObj),
+      // dynamicValueJson: JSON.stringify(formattedObj),
+      dynamicValueJson: obdType === "dynamicbroadcast" ? JSON.stringify(formattedObj) : "",
       voiceCallSrno:
         obdType === "simplebroadcast"
           ? slectedSBVoiceFile || ""
@@ -507,20 +510,34 @@ const ObdCreateCampaign = () => {
 
     try {
       const response = await sendObdCampaign(data);
-      const msg = response?.msg?.toLowerCase() || "";
+      // const msg = response?.msg?.toLowerCase() || "";
 
-      if (msg.match(/\b(add|added|success|successfully)\b/)) {
+      // if (msg.includes("added")) {
+      //   resetForm();
+      //   setResetImportContact((prev) => !prev);
+      //   setVisibledialog(false);
+      //   toast.success(response.msg);
+      // } else if (msg.includes("failed")) {
+      //   setVisibledialog(false);
+
+      //   toast.error(response.msg);
+      // } else {
+      //   toast.error("Campaign launch failed.");
+      // }
+
+      if (response?.msg?.includes("Voice campaign added")) {
         resetForm();
         setResetImportContact((prev) => !prev);
         setVisibledialog(false);
         toast.success(response.msg);
-      } else if (msg.match(/\b(fail|failed|error|not)\b/)) {
-        setVisibledialog(false);
-
-        toast.error(response.msg);
-      } else {
-        toast.error("Campaign launch failed.");
       }
+
+      if (response?.msg?.includes("failed")) {
+        setVisibledialog(false);
+        toast.error(response.msg);
+      }
+
+
     } catch (error) {
       console.error("Error submitting campaign:", error);
       toast.error("Error launching campaign. Please try again.");
@@ -615,7 +632,9 @@ const ObdCreateCampaign = () => {
       const enrichedVariables = res.data.map((item) => ({
         sequence: item.sequence,
         variableSampleValue: item.variableSampleValue || "",
-        filePath: item.filePath
+        filePath: item.filePath,
+        fileTile: item.fileTitle
+
       }));
 
       setVoiceVariables(enrichedVariables);
@@ -721,6 +740,12 @@ const ObdCreateCampaign = () => {
                           setVoiceDBClip(null);
                           setRetry(null);
                           setInterval(null);
+                          setDynamicVariableValue("")
+                          setDynamicValueJson({})
+                          setVoiceDynamicURLPath("")
+                          // setDynamicVoiceListData([])
+                          // setSelectedDynamicVoiceFile(null)
+                          // setVoiceDBClip(null)
                         }}
                         placeholder="Select Template"
                         tooltipContent="Use a pre-defined template for your voice broadcast.
@@ -886,7 +911,8 @@ const ObdCreateCampaign = () => {
                                         if (el) variableRef.current[index] = el;
                                       }}
                                     />
-                                    <p className="text-sm font-medium text-gray-700 my-2" >Voice Clip Sequence &nbsp;{item.sequence}</p>
+                                    <p className="text-sm font-medium text-gray-700 my-2" >Voice Clip Sequence &nbsp;{item.sequence} - {item.fileTile}</p>
+
                                     <div className="mt-4">
                                       <audio src={`${BASE_AUDIO_URL}${item.filePath}`} controls></audio>
                                     </div>
@@ -958,7 +984,7 @@ const ObdCreateCampaign = () => {
                     resetImportContact={resetImportContact}
                     countryCode={handleCountryCheckBox}
                     onMobileDropdown={handleSelectMobilecolumn}
-                    fileInputRef={fileInputRef}
+                    // fileInputRef={fileInputRef}
                     uploadedFile={uploadedFile}
                     setUploadedFile={setUploadedFile}
                     isUploaded={isUploaded}
@@ -1071,16 +1097,18 @@ const ObdCreateCampaign = () => {
           >
             <div className="space-y-5">
               <div className="p-3 bg-gray-100 text-md text-gray-800 rounded-md shadow-lg space-y-2 grid grid-cols-2">
-                <span className="font-semibold font-m">OBD Type : </span>
+                <span className="font-semibold font-m">Campaign Type : </span>
                 <p className="">
                   {selectedOptionCampaign === "transactional"
-                    ? obdType || "N/A"
+                    ? "Transactional" || "N/A"
                     : selectedOptionCampaign === "promotional"
-                      ? obdType || "N/A"
+                      ? "Promotional" || "N/A"
                       : "N/A"}
                 </p>
                 <span className="font-semibold font-m">Campaign Name : </span>
                 <p className="">{campaignName || "N/A"}</p>
+                <span className="font-semibold font-m">OBD Type : </span>
+                <p className="">{obdType || "N/A"}</p>
 
                 <span className="font-semibold font-m">No. Of Retry : </span>
                 <p className="">{retry || "N/A"}</p>

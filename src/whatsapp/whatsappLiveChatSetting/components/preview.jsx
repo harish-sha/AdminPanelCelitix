@@ -118,7 +118,7 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
       </div>
 
       {specificTemplate && (
-        <div className="space-y-3 p-2 w-full bg-gray-100">
+        <div className="space-y-3 p-2 w-full bg-gray-100 " >
           <div>
             {["image", "video", "document"].includes(
               specificTemplate.templateType
@@ -132,7 +132,7 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
           </div>
 
           {specificTemplate?.message && (
-            <pre className="whitespace-pre-wrap">
+            <pre className="whitespace-pre-wrap text-sm overflow-y-auto h-50">
               {specificTemplate.message}
             </pre>
           )}

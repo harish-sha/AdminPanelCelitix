@@ -24,7 +24,7 @@ const RadioButtonLaunchCampaignObd = ({
   resetImportContact,
   countryCode,
   onMobileDropdown,
-  fileInputRef,
+  // fileInputRef,
   selectedOption,
   setSelectedOption,
   uploadedFile,
@@ -80,9 +80,9 @@ const RadioButtonLaunchCampaignObd = ({
     fetchCountryList();
   }, []);
 
-  useEffect(() => {
-    handleRemoveFile();
-  }, []);
+  // useEffect(() => {
+  //   handleRemoveFile();
+  // }, []);
 
   const handleChange = (event) => {
     const value = event.target.value;
@@ -237,9 +237,9 @@ const RadioButtonLaunchCampaignObd = ({
     setTotalRecords("");
     setXlsxPath("");
     setFileHeaders([]);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    // if (fileInputRef.current) {
+    //   fileInputRef.current.value = "";
+    // }
   };
 
   // Handle change in 'Add Country Code' checkbox
@@ -332,7 +332,7 @@ const RadioButtonLaunchCampaignObd = ({
           >
             <input
               type="file"
-              ref={fileInputRef}
+              // ref={fileInputRef}
               onChange={handleFileChange}
               className="hidden"
               id="fileInput"

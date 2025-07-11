@@ -23,7 +23,7 @@ const DropdownWithSearch = ({
         onChange(selectedOption ? selectedOption.value : "");
     };
 
-    const extendedOptions = [{ value: "no-selection", label: "-- No Selection --" }, ...options];
+    const extendedOptions = [{ value: "", label: "-- No Selection --" }, ...options];
 
     const customStyles = {
         control: (provided) => ({

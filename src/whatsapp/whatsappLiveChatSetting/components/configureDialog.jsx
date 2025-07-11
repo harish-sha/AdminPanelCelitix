@@ -45,6 +45,15 @@ export const ConfigureDialog = ({
     // setMinuteInput("");
   };
 
+
+   const templateOptions = [
+    // { value: null, label: "Please select a template", disabled: true, hidden: true },
+    ...(allTemplates?.map((template) => ({
+      value: template.value,
+      label: template.label,
+    })) || []),
+  ];
+
   useEffect(() => {
     async function handleFetchAgents() {
       try {
@@ -62,6 +71,7 @@ export const ConfigureDialog = ({
     handleFetchAgents();
   }, []);
 
+  
   return (
     <Dialog
       header="Configure"
@@ -135,32 +145,22 @@ export const ConfigureDialog = ({
         {basicDetails?.msgType === "2" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="w-full">
-              <DropdownWithSearch
-                id="templateMessage"
-                name="templateMessage"
-                label="Select Template"
-                options={allTemplates?.map((template) => ({
-                  value: template.value,
-                  label: template.label,
-                }))}
-                value={allTemplates?.find(
-                  (temp) => temp.value == basicDetails?.template
-                )}
-                onChange={(e) => {
-                  setBasicDetails((prev) => ({
-                    ...prev,
-                    template: e,
-                  }));
-                  setFileData({ url: "", file: "" });
-                  // fileRef ? (fileRef.current.value = "") : null;
-                  setVariablesData({
-                    length: 0,
-                    data: [],
-                    input: [],
-                  });
-                }}
-                className="w-full"
-              />
+               <DropdownWithSearch
+              id="templateMessage"
+              name="templateMessage"
+              label="Select Template"
+              options={templateOptions}
+              value={basicDetails.template ?? null}
+              onChange={(selected) => {
+                setBasicDetails((prev) => ({
+                  ...prev,
+                  template: selected,   // selected is the full {value,label} object
+                }));
+                setFileData({ url: "", file: "" });
+                setVariablesData({ length: 0, data: [], input: [] });
+              }}
+              className="w-full"
+            />
               {basicDetails?.template && (
                 <Variables
                   variablesData={variablesData}
