@@ -2,7 +2,7 @@ import { FaHome, FaSignOutAlt, FaWhatsapp } from "react-icons/fa";
 import { IoPersonOutline } from "react-icons/io5";
 import { SiGoogleauthenticator } from "react-icons/si";
 import { LuMessageSquareMore } from "react-icons/lu";
-import ScreenSearchDesktopOutlinedIcon from '@mui/icons-material/ScreenSearchDesktopOutlined';
+import ScreenSearchDesktopOutlinedIcon from "@mui/icons-material/ScreenSearchDesktopOutlined";
 import { FaListUl } from "react-icons/fa6";
 
 import rcsicon from "../../assets/icons/RCS02.svg";
@@ -50,6 +50,7 @@ export const resellerItems = [
     links: [
       { to: "/manageplan", label: "Manage Plan" },
       { to: "/manageprefix", label: "Manage Prefix" },
+      { to: "/addoperator", label: "Manage Prefix", isHide: true },
     ],
     roles: ["ADMIN"],
   },
@@ -109,6 +110,8 @@ export const resellerItems = [
       { to: "/manageSMPP", label: "Manage SMPP" },
       { to: "/managerouting", label: "Manage Routing" },
       { to: "/SMPPerrorcode", label: "SMPP Error Code" },
+      // { to: "/manageprefix", label: "Manage Prefix" },
+      // { to: "/addoperator", label: "Manage Prefix", isHide:true },
     ],
     roles: ["ADMIN"],
   },
@@ -118,9 +121,7 @@ export const resellerItems = [
     icon: <img src={rcsicon} className="w-4 h-4" />,
     label: "RCS Admin",
     type: "dropdown",
-    links: [
-      { to: "/rcsmanagebot", label: "Manage Bot" },
-    ],
+    links: [{ to: "/rcsmanagebot", label: "Manage Bot" }],
     roles: ["ADMIN"],
   },
   {

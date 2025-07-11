@@ -1,3 +1,4 @@
+import { data } from "react-router-dom";
 import { fetchWithAuth } from "../apiClient";
 
 // fetch all users
@@ -160,9 +161,27 @@ export const getSMPP = async () => {
   });
 };
 
-
 export const getWabaList = async () => {
   return await fetchWithAuth("/getWabaDetails", {
     method: "GET",
+  });
+};
+
+export const getOperatorList = async () => {
+  return await fetchWithAuth("/getOperatorList", {
+    method: "POST",
+  });
+};
+export const getPrefixList = async (data) => {
+  return await fetchWithAuth(
+    `/getPrefixList?countrySrno=${data.country}&operatorSrno=${data.operator}`,
+    {
+      method: "POST",
+    }
+  );
+};
+export const getCountryList = async () => {
+  return await fetchWithAuth(`getcountryList`, {
+    method: "POST",
   });
 };
