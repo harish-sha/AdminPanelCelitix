@@ -365,7 +365,8 @@ export default function WhatsappLiveChat() {
       });
       setChatState((prev) => ({
         ...prev,
-        allConversations: mappedConversations,
+        // allConversations: mappedConversations,
+        allConversations: [],
       }));
     } catch (e) {
       // console.log(e);
@@ -968,6 +969,7 @@ export default function WhatsappLiveChat() {
           setSelectedAgentList={setSelectedAgentList}
           selectedWaba={selectedWaba}
           setSelectedGroupList={setSelectedGroupList}
+          isLoading={isFetching}
         />
       </div>
 

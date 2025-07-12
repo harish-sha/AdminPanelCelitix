@@ -485,9 +485,11 @@ const ResellerDashboard = () => {
     handlegetOldApiKey();
   }, []);
 
-  const integrationUrl = `https://int.celitix.com/?user_id=${oldApiKey}&api_key=AIzaSyC0kAJahOWabdn2eiwVnBr3HXCHaTSnXzQ`;
+  const integrationUrl = `https://int.celitix.com/?user_id=${oldApiKey}&api_key=AIzaSyBqlfMk-_yK_3ICUUYej_nVUDXz0cP327Y`;
 
-  console.log("final integration url", integrationUrl);
+  // console.log("final integration url", integrationUrl);
+
+  // https://int.celitix.com/?user_id=22b917b78dXX&api_key=AIzaSyBqlfMk-_yK_3ICUUYej_nVUDXz0cP327Y
 
   // const integrations = [
   //   {

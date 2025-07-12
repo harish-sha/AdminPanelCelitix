@@ -178,7 +178,7 @@ const ObdCreateCampaign = () => {
     setVoiceDBClip(null);
     setVoiceVariables([]);
 
-   
+
 
     // retry and interval
     setRetry(null);
@@ -232,7 +232,7 @@ const ObdCreateCampaign = () => {
   const handleChangeOption = (event) => {
     const value = event.target.value;
     setSelectedOptionCampaign(value);
-    resetForm();
+    // resetForm();
   };
 
   // handle Review button
