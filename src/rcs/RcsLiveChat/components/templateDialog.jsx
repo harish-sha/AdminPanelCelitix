@@ -40,7 +40,7 @@ export const TemplateDialog = ({
                 ...prev,
                 selected: e,
                 templateName: templateState.all.find((item) => item.srno === e)
-                  .templateName,
+                  ?.templateName,
               }));
             }}
             value={templateState.selected}
