@@ -85,8 +85,10 @@ export default function SwitchFlow({
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
+  console.log("nodes",nodes)
+
   const flowItemsOptions = flowItems
-    .filter((item) => item.data.type !== "ifelse")
+    .filter((item) => item.data.type !== "ifelse" && item.data.type !== "switch")
     .map((item) => {
       const label = item.data.text || item.data.type || item.id;
       return {
@@ -113,36 +115,7 @@ export default function SwitchFlow({
     console.log("⚙️ Open settings for node:", nodeId);
   };
 
-  // const CustomNode = ({ id, data }) => {
-  //   return (
-  //     <div
-  //       className="bg-white rounded-md relative border border-gray-300 shadow"
-  //       style={{ minWidth: "140px", textAlign: "center", padding: "6px 12px" }}
-  //     >
-  //       {/* Settings icon on left */}
-  //       <button
-  //         onClick={() => data.onSettings(id)}
-  //         className="absolute -top-2 -left-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
-  //       >
-  //         <MdSettings size={14} />
-  //       </button>
 
-  //       {/* Close icon on right */}
-  //       <button
-  //         onClick={() => data.onDelete(id)}
-  //         className="absolute -right-2 -top-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
-  //       >
-  //         <MdClose size={14} />
-  //       </button>
-
-  //       {/* Label */}
-  //       <div className="font-medium">{data.label}</div>
-
-  //       <Handle type="target" position="top" />
-  //       <Handle type="source" position="bottom" />
-  //     </div>
-  //   );
-  // };
 
   // const CustomNode = ({ id, data }) => {
   //   const caseEntries = data?.cases ? Object.entries(data.cases) : [];
@@ -214,123 +187,99 @@ export default function SwitchFlow({
   // };
 
   const CustomNode = ({ id, data }) => {
-    console.log("data", data)
-    const caseEntries = data?.cases ? Object.entries(data.cases) : [];
+  // console.log("Received from:", data);
+  const caseEntries = data?.cases ? Object.entries(data.cases) : [];
 
-    return (
-      <div
-        className="bg-white rounded-md relative border border-gray-300 shadow"
-        style={{ minWidth: "180px", textAlign: "center", padding: "6px 12px" }}
+  const dataSource = data?.details && Array.isArray(data.details["data-source"])
+    ? data.details["data-source"]
+    : [];
+
+  return (
+    <div
+      className="bg-white rounded-md relative border border-gray-300 shadow"
+      style={{ minWidth: "180px", textAlign: "center", padding: "6px 12px" }}
+    >
+      {/* Settings icon */}
+      <button
+        onClick={() => data.onSettings?.(id)}
+        className="absolute -top-2 -left-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
       >
-        {/* Settings icon */}
-        <button
-          onClick={() => data.onSettings?.(id)}
-          className="absolute -top-2 -left-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
-        >
-          <MdSettings size={14} />
-        </button>
+        <MdSettings size={14} />
+      </button>
 
-        {/* Close icon */}
-        <button
-          onClick={() => data.onDelete?.(id)}
-          className="absolute -right-2 -top-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
-        >
-          <MdClose size={14} />
-        </button>
+      {/* Close icon */}
+      <button
+        onClick={() => data.onDelete?.(id)}
+        className="absolute -right-2 -top-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
+      >
+        <MdClose size={14} />
+      </button>
 
-        {/* Label */}
-        <div className="font-medium mb-2">{data.label}</div>
+      {/* Label */}
+      <div className="font-medium mb-2">{data.label}</div>
+
+      {/* Data source options */}
+      {dataSource.length > 0 &&
+        dataSource.map((option, idx) => (
+          <div
+            key={idx}
+            className="flex items-center bg-gray-100 rounded p-1 m-1 text-sm relative"
+          >
+            <div className="flex-1">{option.title}</div>
+            <Handle
+              type="target"
+              position="right"
+              id={`option-${idx}`}
+              style={{
+                top: "50%",
+                transform: "translateY(-50%)",
+                right: "-18px",
+                background: "#555",
+              }}
+            />
+          </div>
+        ))}
+
+      {/* Case entries */}
+      {caseEntries.length > 0 &&
+        caseEntries.map(([caseKey], idx) => (
+          <div
+            key={caseKey}
+            className="flex items-center bg-gray-100 rounded p-1 m-1 text-sm relative"
+          >
+            <div className="flex-1">{caseKey}</div>
+            <Handle
+              type="source"
+              position="left"
+              id={`case-${caseKey}`}
+              style={{
+                top: "50%",
+                transform: "translateY(-50%)",
+                left: "-20px",
+                background: "#555",
+              }}
+            />
+          </div>
+        ))}
+
+      {/* Target handle so this node can accept connections */}
+      {/* <Handle
+        type="target"
+        position="right"
+        id="input"
+        style={{
+          top: "50%",
+          transform: "translateY(-50%)",
+          left: "-6px",
+          background: "#555",
+        }}
+      /> */}
+    </div>
+  );
+};
 
 
-        {data.details["data-source"] && data.details["data-source"].length > 0 ? (
-          data.details["data-source"].map((option, idx) => (
-            <div
-              key={idx}
-              className="flex items-center bg-gray-100 rounded p-1 m-1 text-sm relative"
-            >
-              <div className="flex-1">{option.title}</div>
 
-              {/* Handle next to each option */}
-              <Handle
-                type="source"
-                position="right"
-                id={`option-${idx}`}
-                style={{
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  right: "-15px",
-                  background: "#555",
-                }}
-              />
-            </div>
-          ))
-        ) : (
-          <Handle
-            type="source"
-            position="right"
-            id="single"
-            style={{
-              top: "50%",
-              transform: "translateY(-50%)",
-              right: "-6px",
-              background: "#555",
-            }}
-          />
-        )}
-
-        {/* Case Options */}
-        {caseEntries.length > 0 ? (
-          caseEntries.map(([caseKey, components], idx) => (
-            <div
-              key={caseKey}
-              className="flex items-center bg-gray-100 rounded p-1 m-1 text-sm relative"
-            >
-              <div className="flex-1">{caseKey}</div>
-
-              {/* One source handle per case */}
-              <Handle
-                type="source"
-                position="left"
-                id={`case-${caseKey}`} // more meaningful than just idx
-                style={{
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  right: "-10px",
-                  background: "#555",
-                }}
-              />
-            </div>
-          ))
-        ) : (
-          // Fallback single output handle if no cases are defined
-          <Handle
-            type="source"
-            position="right"
-            id="default-out"
-            style={{
-              bottom: "-8px",
-              right: "-6px",
-              transform: "translateX(-50%)",
-              background: "#555",
-            }}
-          />
-        )}
-
-        {/* Optional target handle (for connecting into this node) */}
-        <Handle
-          type="target"
-          position="left"
-          id="input"
-          // style={{
-          //   top: "-8px",
-          //   left: "50%",
-          //   transform: "translateX(-50%)",
-          //   background: "#555",
-          // }}
-        />
-      </div>
-    );
-  };
 
   // const DropdownNode = ({ id, data }) => {
   //   const options = data.options || [];
@@ -377,7 +326,7 @@ export default function SwitchFlow({
 
   const nodeTypes = {
     customNode: CustomNode,
-    // dropdownNode: DropdownNode,
+    
   };
 
   useEffect(() => {
@@ -397,32 +346,8 @@ export default function SwitchFlow({
     }
   }, [selectedFlowItem]);
 
-  // useEffect(() => {
-  //   if (selectedFlowItem) {
-  //     const flowItem = flowItems.find((item) => item.id === selectedFlowItem);
-
-  //     if (!flowItem) return;
-
-  //     const isDropdown = flowItem.type === "Dropdown";
-
-  //     const newNode = {
-  //       id: `node-${selectedFlowItem}`,
-  //       type: isDropdown ? "dropdownNode" : "customNode", // 👈 differentiate by type
-  //       position: { x: Math.random() * 250, y: Math.random() * 250 },
-  //       data: {
-  //         label: flowItem.data?.text || flowItem.data?.type || flowItem.id,
-  //         options: isDropdown ? flowItem.data?.options || [] : undefined,
-  //         cases: !isDropdown ? flowItem.data?.cases || {} : undefined,
-  //         details: flowItem.data,
-  //         onDelete: handleDeleteNode,
-  //         onSettings: handleNodeSettings, 
-  //       },
-  //     };
-
-  //     setNodes((nds) => [...nds.filter((n) => n.id !== newNode.id), newNode]);
-  //   }
-  // }, [selectedFlowItem]);
-
+ 
+  
   // **************************TextInput**********************************
   const OptionsTypeOptions = [
     { value: "text", label: "Text" },
@@ -447,16 +372,45 @@ export default function SwitchFlow({
       status: 1,
     };
 
-    console.log("✅ Final Switch Payload 1", updatedItem);
+    
 
     onSave(updatedItem);
 
-    console.log("✅ Final Switch Payload 2", updatedItem);
+    console.log("✅ Final Switch Payload ", updatedItem);
   };
 
  
 
   const dispatch = useDispatch();
+
+  function handleConnect(params) {  
+  const { source, sourceHandle, target, targetHandle } = params;
+
+  setNodes((nds) =>
+    nds.map((node) => {
+      if (node.id === target) {
+        // Update target node data
+        const newData = {
+          ...node.data,
+          receivedFrom: {
+            sourceNodeId: source,
+            sourceHandle,
+          },
+        };
+        console.log("newData", newData)
+        return {
+          ...node,
+          data: newData,
+        };
+      }
+      return node;
+    })
+  );
+
+  // Then add the edge
+  setEdges((eds) => addEdge(params, eds));
+}
+
 
   const handleCaseSave = () => {
     const newNodes = {
@@ -564,14 +518,14 @@ export default function SwitchFlow({
   const getSchema = () => {
     return {
       type: "Switch",
-      //   value: `\${data.${variableName}}`,
+      value: `\${data.${variableName}}`,
       cases,
-      // data: {
-      //   [variableName]: {
-      //     type: "string",
-      //     __example__: exampleValue,
-      //   },
-      // },
+      data: {
+        [variableName]: {
+          type: "string",
+          __example__: exampleValue,
+        },
+      },
     };
   };
 
@@ -597,7 +551,8 @@ export default function SwitchFlow({
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 nodeTypes={nodeTypes}
-                onConnect={(params) => setEdges((eds) => addEdge(params, eds))}
+                onConnect={(params) =>  (params)}
+                // onConnect={(params) => setEdges((eds) => addEdge(params, eds))}
                 fitView
               >
                 <Background />

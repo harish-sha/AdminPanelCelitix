@@ -7,7 +7,7 @@ export const generatePayload = (data) => {
     screens: [],
   };
 
-  console.log("📦 incoming data to generatePayload", data); // ← renamed version of formBuilderData
+ 
 
   const typeCounters = {
     heading: 0,
@@ -33,7 +33,7 @@ export const generatePayload = (data) => {
     imageCarousel: 0,
     richText: 0,
     switch: 0,
-    // ifelse: 0,
+    ifelse: 0,
   };
 
   const numberToWord = (num) => {
@@ -273,7 +273,12 @@ export const generatePayload = (data) => {
           ),
         };
       }
+// ***************************************Media**************************************************************
 
+
+
+
+// ***************************************Media**************************************************************
       if (type === "media") {
         component = {
           name,
@@ -284,19 +289,11 @@ export const generatePayload = (data) => {
           "max-uploaded-photos": parseInt(pay["max-uploaded-photos"] ?? 0, 10),
         };
       }
+// ***************************************Media**************************************************************
 
-      // if (type === "switch") {
-      //    const valueName = lastCreatedComponentName;
+    
 
-      //   component = {
-      //     type: "Switch",
-      //    value: valueName ? `\${form.${valueName}}` : "",
-      //     cases: pay.cases,
-      //   };
-      // }
-      // const pay = item.data || {};
-
-      console.log("pay switch", pay)
+// ***************************************Switch**************************************************************
       if (type === "switch") {
         const valueName = lastCreatedComponentName;
 
@@ -307,7 +304,11 @@ export const generatePayload = (data) => {
         };
         console.log("pay.cases", pay.cases);
       }
+// ***************************************Switch**************************************************************
 
+
+
+// ***************************************ImageCarousel********************************************************
       if (type === "imageCarousel") {
         component = {
           type: "ImageCarousel",
@@ -329,7 +330,12 @@ export const generatePayload = (data) => {
           ],
         };
       }
+// ***************************************ImageCarousel********************************************************
 
+
+
+
+// ***************************************Date*****************************************************************
       if (type === "date") {
         component = {
           name,
@@ -345,7 +351,11 @@ export const generatePayload = (data) => {
           // "error-message":  pay.error_message,
         };
       }
+// ***************************************Date*****************************************************************
 
+
+
+// **************************************Calendar**************************************************************
       if (type === "calendar") {
         component = {
           name,
@@ -375,7 +385,12 @@ export const generatePayload = (data) => {
           component.required = pay.required ?? false;
         }
       }
+// **************************************Calendar**************************************************************
 
+
+
+
+// **************************************Optin*****************************************************************
       if (type === "optin") {
         const optActionName = pay["on-click-action"] || "";
         const nextScreenId = data[index + 1]?.id || null;
@@ -404,7 +419,12 @@ export const generatePayload = (data) => {
           "on-click-action": onClickAction,
         };
       }
+// **************************************Optin*****************************************************************
 
+
+
+
+// ***************************************Embeddedlink*********************************************************
       if (type === "embeddedlink") {
         const embeddedLinkActionName = pay["on-click-action"] || "";
         const nextScreenId = data[index + 1]?.id || null;
@@ -420,7 +440,6 @@ export const generatePayload = (data) => {
             name: nextScreenId,
           };
         }
-
         if (embeddedLinkActionName === "open_url") {
           onClickAction.url = pay.url;
         }
@@ -431,28 +450,30 @@ export const generatePayload = (data) => {
           "on-click-action": onClickAction,
         };
       }
+// ***************************************Embeddedlink**********************************************************
 
-      // console.log("payyyyyyyyyyyy", pay);
+
+
+// ****************************************IfElse***************************************************************
       if (type === "ifelse") {
         const componentName = lastCreatedComponentName;
-        // const expectedValue = getExpectedValueBasedOnType(componentName);
-
+       
         component = {
           type: "If",
           // condition: `\${data.value} ${pay?.condition} (\${form.${componentName}} == 'cat')`,
           condition: `(\${form.${componentName}} ${pay?.condition} 'cat')`,
 
           // condition: `(\${form.${componentName}} ${pay?.condition || '=='} ${expectedValue})`,
-
-          // condition: componentName
-          //   ? ` \${form.${componentName}} ${pay?.condition}`
-          //   : "",
-
           then: pay?.then?.map((item) => ({ ...item })),
           else: pay?.else?.map((item) => ({ ...item })),
           // required: true,
         };
       }
+// ****************************************IfElse****************************************************************
+
+
+
+// ********************************************FooterButton*******************************************************
 
       // if (type === "footerbutton") {
       //   const footerData = pay.footer || {};
@@ -502,7 +523,7 @@ export const generatePayload = (data) => {
           },
         };
       }
-
+// ********************************************FooterButton********************************************************
       if (name && type !== "switch") {
         lastCreatedComponentName = name;
       }

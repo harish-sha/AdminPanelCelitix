@@ -8,6 +8,51 @@ const initialState = {
   canvasItems: [],
 };
 
+// const numberToWord = (num) => {
+//   const ones = [
+//     "one",
+//     "two",
+//     "three",
+//     "four",
+//     "five",
+//     "six",
+//     "seven",
+//     "eight",
+//     "nine",
+//     "ten",
+//     "eleven",
+//     "twelve",
+//     "thirteen",
+//     "fourteen",
+//     "fifteen",
+//     "sixteen",
+//     "seventeen",
+//     "eighteen",
+//     "nineteen",
+//   ];
+//   const tens = [
+//     "",
+//     "",
+//     "twenty",
+//     "thirty",
+//     "forty",
+//     "fifty",
+//     "sixty",
+//     "seventy",
+//     "eighty",
+//     "ninety",
+//   ];
+
+//   if (num < 20) return ones[num];
+//   if (num < 100) {
+//     const ten = Math.floor(num / 10);
+//     const one = num % 10;
+//     return one === 0 ? tens[ten] : `${tens[ten]}-${ones[one]}`;
+//   }
+
+//   return `option-${num}`;
+// };
+
 const flowSlice = createSlice({
   name: "flows",
   initialState,
@@ -16,6 +61,7 @@ const flowSlice = createSlice({
       const { id, data } = action.payload;
       state.flowItems[id] = data;
     },
+
     addScreenName: (state, action) => {
       const { id, data } = action.payload;
       state.screenName[id] = data;

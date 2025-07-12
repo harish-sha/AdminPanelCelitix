@@ -1978,7 +1978,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
   };
 
   const flowItemsOptions = flowItems
-    .filter((item) => item.data.type !== "ifelse")
+    .filter((item) => item.data.type !== "ifelse" && item.data.type !== "switch")
     .map((item) => {
       const label = item.data.text || item.data.type || item.id;
       return {

@@ -1438,17 +1438,8 @@ const EditPanel = ({
 
   const dropImageInputRef = useRef(null);
 
-  // useEffect(() => {
-  //   if (selectedItem) {
-  //     setMainLabelDropdown(selectedItem.label || "");
-  //     setDraftTitle(selectedItem.title || "");
-  //     setDraftDescription(selectedItem.description || "");
-  //     setDraftMetaData(selectedItem.metadata || "");
-  //     setDropImageFile(selectedItem.image || "");
-  //     setDropdownRequired(selectedItem.required ?? false);
-  //   }
-  // }, [selectedItem]);
 
+ 
   useEffect(() => {
     if (selectedItem?.type === "dropDown") {
       setMainLabelDropdown(selectedItem.label || "");
@@ -1474,7 +1465,7 @@ const EditPanel = ({
     }
   }, [selectedItem]);
 
-  const currentOption = options[editingIdx] || {};
+  const currentOption = options[editingIdx] || {}
 
   const handleDropdownRequiredChange = () => {
     setDropdownRequired((prev) => !prev);
@@ -1608,6 +1599,8 @@ const EditPanel = ({
     setDropImageSrc(null);
   };
 
+  
+
   const handleSaveDropdown = () => {
     // 1) Filter out any options with an empty title
     const filteredOptions = options.filter((o) => o.title.trim());
@@ -1624,6 +1617,9 @@ const EditPanel = ({
       metadata: o.metadata.trim(),
       image: o.image || "",
     }));
+
+    
+
 
     // 3) Base payload (what used to be passed directly)
     const payload = {
