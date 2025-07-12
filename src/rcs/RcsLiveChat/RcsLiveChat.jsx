@@ -244,7 +244,8 @@ const RcsLiveChat = () => {
   }
 
   async function handleSendTemplateMessage() {
-    // if (!agentState.id || !chatState.active || templateState.templateName) return;
+    if (!agentState.id || !chatState.active || !templateState.templateName)
+      return;
     try {
       const payload = {
         contentMessage: {
@@ -255,6 +256,7 @@ const RcsLiveChat = () => {
           botId: agentState.id,
         },
       };
+
       const res = await sendRCSTemplateMessage(payload);
       if (!res?.status) {
         toast.error(res?.message);
