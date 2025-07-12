@@ -195,12 +195,12 @@ export const ChatSidebar = ({
             </motion.div>
           ))}
 
-      {chatState?.allConversations.length === 0 && (
+      {!isLoading && chatState?.allConversations.length === 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="text-sm font-normal text-gray-900 mb-2"
+          className="text-md font-normal text-gray-900 mb-2 flex items-center justify-center h-[90%]"
         >
           No conversation found
         </motion.div>
