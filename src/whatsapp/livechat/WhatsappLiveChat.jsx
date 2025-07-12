@@ -350,7 +350,7 @@ export default function WhatsappLiveChat() {
       // if (res?.unreadCounts?.length > 0) {
       //   const audio = new Audio("./receive-message.mp3");
       //   audio.play().catch((e) => {
-      //     // console.log("Audio play error:", e);
+      //     console.log("Audio play error:", e);
       //   });
       // }
 
@@ -365,7 +365,8 @@ export default function WhatsappLiveChat() {
       });
       setChatState((prev) => ({
         ...prev,
-        allConversations: mappedConversations,
+        // allConversations: mappedConversations,
+        allConversations: [],
       }));
     } catch (e) {
       // console.log(e);
@@ -862,12 +863,13 @@ export default function WhatsappLiveChat() {
       // });
       await handleFetchSpecificConversation();
     } catch (e) {
-      // console.log(e);
+      console.log(e);
     }
   }
   useEffect(() => {
     async function handleIsView() {
       if (!wabaState.selectedWaba || !chatState?.active) return;
+      if (!latestMessageData.srno) return
       try {
         const data = {
           mobile: chatState?.active.mobileNo,
@@ -876,7 +878,7 @@ export default function WhatsappLiveChat() {
         };
         await readMessage(data);
       } catch (e) {
-        // console.log(e);
+        console.log(e);
       }
     }
     // handleLoadNewChat();
@@ -884,7 +886,7 @@ export default function WhatsappLiveChat() {
     const intervalId = setInterval(() => {
       handleLoadNewChat();
       handleIsView();
-    }, 3000);
+    }, 5000);
     return () => clearInterval(intervalId);
   }, [latestMessageData]);
 
@@ -967,6 +969,7 @@ export default function WhatsappLiveChat() {
           setSelectedAgentList={setSelectedAgentList}
           selectedWaba={selectedWaba}
           setSelectedGroupList={setSelectedGroupList}
+          isLoading={isFetching}
         />
       </div>
 

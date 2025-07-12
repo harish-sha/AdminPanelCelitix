@@ -94,11 +94,13 @@ export const ChatSidebar = ({
   setSelectedAgentList,
   selectedWaba,
   setSelectedGroupList,
-  // isLoading
+  isLoading
 }) => {
-  const isLoading =
-    selectedWaba &&
-    (!chatState?.allConversations || chatState.allConversations.length === 0);
+  // const isLoading =
+  //   selectedWaba &&
+  //   (!chatState?.allConversations || chatState.allConversations.length === 0);
+
+  // const isLoading = selectedWaba && !chatState?.allConversations;
 
   // async function fetchAgentDetails(srno) {
   //   try {
@@ -141,7 +143,7 @@ export const ChatSidebar = ({
   };
 
   return (
-    <div className="mt-2 h-[66vh] max-h-full overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+    <div className="mt-2 h-[70vh] max-h-full overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
       {!selectedWaba && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -201,6 +203,7 @@ export const ChatSidebar = ({
         ))}
 
       {!isLoading &&
+        chatState?.allConversations.length > 0 &&
         chatState?.allConversations
           ?.slice()
           ?.sort((a, b) => new Date(b.insertTime) - new Date(a.insertTime))
@@ -270,6 +273,16 @@ export const ChatSidebar = ({
               </div>
             </motion.div>
           ))}
+      {!isLoading && chatState?.allConversations.length === 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="text-md font-normal text-gray-900 mb-2 flex items-center justify-center h-[90%]"
+        >
+          No conversation found
+        </motion.div>
+      )}
     </div>
   );
 };
