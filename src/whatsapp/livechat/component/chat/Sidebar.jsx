@@ -94,11 +94,11 @@ export const ChatSidebar = ({
   setSelectedAgentList,
   selectedWaba,
   setSelectedGroupList,
-  isLoading
+  // isLoading
 }) => {
-  // const isLoading =
-  //   selectedWaba &&
-  //   (!chatState?.allConversations || chatState.allConversations.length === 0);
+  const isLoading =
+    selectedWaba &&
+    (!chatState?.allConversations || chatState.allConversations.length === 0);
 
   // const isLoading = selectedWaba && !chatState?.allConversations;
 
@@ -273,7 +273,7 @@ export const ChatSidebar = ({
               </div>
             </motion.div>
           ))}
-      {!isLoading && chatState?.allConversations.length === 0 && (
+      {/* {!isLoading && chatState?.allConversations.length === 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -282,7 +282,7 @@ export const ChatSidebar = ({
         >
           No conversation found
         </motion.div>
-      )}
+      )} */}
     </div>
   );
 };

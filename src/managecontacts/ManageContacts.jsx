@@ -108,7 +108,7 @@ const ManageContacts = () => {
   const [confirmMultiDeleteVisible, setConfirmMultiDeleteVisible] =
     useState(false);
   const currentGroup = grpList?.find(
-    g => g.groupCode === selectedMultiGroupContact?.value
+    (g) => g.groupCode === selectedMultiGroupContact?.value
   );
   const groupNameDelete = currentGroup?.groupName || "";
 
@@ -126,9 +126,6 @@ const ManageContacts = () => {
   useEffect(() => {
     getGrpListData();
   }, []);
-
-
-
 
   // const handleAddGroup = async () => {
   //   const res = await addGrp({
@@ -162,7 +159,6 @@ const ManageContacts = () => {
       toast.error(res.message ?? "Something went wrong");
     }
   };
-
 
   const handleOptionChange = (event) => {
     setSelectedAddImportContact(event.target.value);
@@ -245,11 +241,28 @@ const ManageContacts = () => {
       };
       const res = await importContact(payload);
       setimportContactVisible(false);
-      toast.success("Contact imported successfully.");
-      await getGrpList()
+
+      // toast.success("Contact imported successfully.");
+      // Handle response safely
+      if (res && typeof res === "object") {
+        const {
+          duplicateContacts = 0,
+          totalContacts = 0,
+          invalidContacts = 0,
+          totalContactsAdded = 0,
+          message = "Contact import completed.",
+        } = res;
+        toast(
+          `${message}\n\nTotal: ${totalContacts}\nAdded: ${totalContactsAdded}\nDuplicate: ${duplicateContacts}\nInvalid: ${invalidContacts}`,
+          { duration: 6000 }
+        );
+      } else {
+        toast.success("Contact imported, but no detailed response received.");
+      }
+
+      await getGrpList();
       await handleSearchGroup();
-      getGrpListData()
-      setimportContactVisible(false);
+      getGrpListData();
     } catch (e) {
       console.log(e);
     }
@@ -310,6 +323,12 @@ const ManageContacts = () => {
       if (response.flag) {
         // Success
         toast.success("Contact added successfully.");
+        // await getContactListByGrpId({
+        //   groupSrNo: selectedMultiGroup,
+        //   status: selectedStatus,
+        // })
+        await handleSearchGroup();
+        await getGrpList();
         setAddContactDetails({
           firstName: "",
           middleName: "",
@@ -460,8 +479,13 @@ const ManageContacts = () => {
             <>
               <IconButton
                 onClick={() => {
+                  const { birthDate: b, mariageDate: m, ...rest } = params.row;
                   setUpdateContactVisible(true);
-                  setUpdateContactDetails(params.row);
+                  setUpdateContactDetails({
+                    ...rest,
+                    birthDate: b ? new Date(b) : null,
+                    mariageDate: m ? new Date(m) : null,
+                  });
                 }}
               >
                 <EditNoteIcon
@@ -512,6 +536,9 @@ const ManageContacts = () => {
         action: "True",
         srno: contact.addSrno,
         gender: contact.gender,
+        mariageDate: contact.anniversaryDate
+          ? new Date(contact.anniversaryDate)
+          : null,
         ...contact,
       }));
 
@@ -625,17 +652,24 @@ const ManageContacts = () => {
       emailId: updateContactDetails.email || "",
       uniqueId: updateContactDetails.uniqueId || "",
       gender: updateContactDetails.gender || "",
-      activeStatus: updatedContactDetails.status || "",
+      // 
+      activeStatus: updateContactDetails.status,
       // key should check
-      birthDate: updatedContactDetails.birthDate || "",
-      anniversaryDate: updatedContactDetails.mariageDate || "",
-      allowishes: updatedContactDetails.allowishes || "",
+      birthDate: moment(updateContactDetails.birthDate).format("DD-MM-YYYY") || "",
+      anniversaryDate: moment(updateContactDetails.mariageDate).format("DD-MM-YYYY") || "",
+      // allowishes: updatedContactDetails.allowishes || "",
+      allowishes: updateContactDetails.allowishes,
     };
 
     const res = await updateContactsDetails(data);
     if (!res?.message.includes("successfully")) {
       return toast.error(res?.message);
     }
+    await getContactListByGrpId({
+      groupSrNo: selectedMultiGroup,
+      status: selectedStatus,
+    })
+    await handleSearchGroup();
     toast.success(res?.message);
     setUpdateContactVisible(false);
   };
@@ -931,8 +965,8 @@ const ManageContacts = () => {
       }
       toast.success("Contact deleted successfully");
       setDeleteContactDialogVisible(false);
-      getGrpListData()
-      await getGrpList()
+      getGrpListData();
+      await getGrpList();
       await handleSearchGroup();
     } catch (e) {
       return toast.error("Something went wrong");
@@ -953,9 +987,9 @@ const ManageContacts = () => {
         return toast.error(res.message);
       }
       toast.success("Contact deleted successfully");
-      getGrpListData()
+      getGrpListData();
       // setDeleteContactDialogVisible(false);
-      setConfirmMultiDeleteVisible(false)
+      setConfirmMultiDeleteVisible(false);
       await handleSearchGroup();
     } catch (e) {
       return toast.error("Something went wrong");
@@ -1107,7 +1141,6 @@ const ManageContacts = () => {
         columns={cols}
         rows={contactRows}
       />
-
 
       {/* add group start */}
       <Dialog
@@ -2028,26 +2061,24 @@ const ManageContacts = () => {
               <UniversalDatePicker
                 label="Birth Date"
                 className="mb-0"
-                value={updateContactDetails?.birthDate}
-                onChange={(e) =>
+                value={updateContactDetails.birthDate}
+                onChange={(date) =>
                   setUpdateContactDetails({
                     ...updateContactDetails,
-                    birthDate: e,
+                    birthDate: date,
                   })
                 }
-                required={true}
               />
               <UniversalDatePicker
                 label="Anniversary Date"
                 className="mb-0"
-                value={updateContactDetails?.mariageDate}
-                onChange={(e) =>
+                value={updateContactDetails.mariageDate}
+                onChange={(date) =>
                   setUpdateContactDetails({
                     ...updateContactDetails,
-                    mariageDate: e,
+                    mariageDate: date,
                   })
                 }
-                required={true}
               />
             </div>
             <div className="flex items-center gap-5 flex-wrap lg:flex-nowrap">
@@ -2163,10 +2194,7 @@ const ManageContacts = () => {
             }}
             onClick={() => setDeleteContactDialogVisible(false)}
           />
-          <UniversalButton
-            label="Delete"
-            onClick={handleContactDelete}
-          />
+          <UniversalButton label="Delete" onClick={handleContactDelete} />
         </div>
       </Dialog>
       {/* delete single contact end */}
@@ -2197,7 +2225,11 @@ const ManageContacts = () => {
               {selectedRows.length} contacts
             </span>
             {currentGroup ? (
-              <> from group <span className="text-green-500">{groupNameDelete}</span>?</>
+              <>
+                {" "}
+                from group{" "}
+                <span className="text-green-500">{groupNameDelete}</span>?
+              </>
             ) : (
               "?"
             )}
@@ -2217,7 +2249,6 @@ const ManageContacts = () => {
           />
           <UniversalButton
             label="Delete"
-
             onClick={handleMultipleContactDelete}
           />
         </div>

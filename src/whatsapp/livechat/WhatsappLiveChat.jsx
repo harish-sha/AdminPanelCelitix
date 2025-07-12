@@ -365,8 +365,8 @@ export default function WhatsappLiveChat() {
       });
       setChatState((prev) => ({
         ...prev,
-        // allConversations: mappedConversations,
-        allConversations: [],
+        allConversations: mappedConversations,
+        // allConversations: [],
       }));
     } catch (e) {
       // console.log(e);
