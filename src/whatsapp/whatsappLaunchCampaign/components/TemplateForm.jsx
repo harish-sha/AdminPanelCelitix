@@ -10,6 +10,7 @@ import CustomTooltip from "../../../components/common/CustomTooltip.jsx";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { Carousel } from "react-responsive-carousel";
 import { RadioButton } from "primereact/radiobutton";
+import InputField from "@/whatsapp/components/InputField";
 
 // Function to extract variables from text (e.g., {{1}})
 const extractVariablesFromText = (text) => {
@@ -39,9 +40,18 @@ const TemplateForm = ({
   fileData,
   marketingType,
   setMarketingType,
+  setLocationData,
+  locationData,
+  selectedTemplate,
+  templateOptions,
 }) => {
   const [inputValues, setInputValues] = useState({});
-  // const [selectedVariable, setSelectedVariable] = useState("");
+
+  const templateType =
+    templateOptions?.find(
+      (option) => option.vendorTemplateId === selectedTemplate
+    )?.type || "N/A";
+
   const [urlIndex, setUrlIndex] = useState(null);
 
   const fileRef = useRef(null);
@@ -628,7 +638,65 @@ const TemplateForm = ({
           </div>
         )}
       </div>
-      
+
+      {templateType === "location" && (
+        <div className="p-2 clear-both space-y-2 bg-gray-50 rounded-b-xl">
+          <div className="flex items-center gap-2">
+            <InputField
+              id="latitude"
+              name="latitude"
+              label={"Latitude"}
+              onChange={(e) => {
+                setLocationData((prev) => ({
+                  ...prev,
+                  latitude: e.target.value,
+                }));
+              }}
+              value={locationData.latitude}
+              placeholder="Enter Latitude value"
+            />
+            <InputField
+              id="longitude"
+              name="longitude"
+              label={"Longitude"}
+              onChange={(e) => {
+                setLocationData((prev) => ({
+                  ...prev,
+                  longitude: e.target.value,
+                }));
+              }}
+              value={locationData.longitude}
+              placeholder="Enter longitude value"
+            />
+          </div>
+          <InputField
+            id="name"
+            name="name"
+            label={"name"}
+            onChange={(e) => {
+              setLocationData((prev) => ({
+                ...prev,
+                name: e.target.value,
+              }));
+            }}
+            value={locationData.name}
+            placeholder="Enter A name for the location"
+          />
+          <InputField
+            id="address"
+            name="address"
+            label={"address"}
+            onChange={(e) => {
+              setLocationData((prev) => ({
+                ...prev,
+                address: e.target.value,
+              }));
+            }}
+            value={locationData.address}
+            placeholder="Enter address"
+          />
+        </div>
+      )}
     </div>
   );
 };
