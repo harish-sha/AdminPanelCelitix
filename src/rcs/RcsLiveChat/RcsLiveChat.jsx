@@ -57,6 +57,19 @@ const RcsLiveChat = () => {
   const [varList, setVarList] = React.useState([]);
   const [inputVariables, setInputVariables] = React.useState([]);
 
+  //btnVar
+  const [btnvarLength, setBtnVarLength] = React.useState(0);
+  const [btnvarList, setBtnVarList] = React.useState([]);
+  const [btninputVariables, setBtnInputVariables] = React.useState([]);
+
+  const [carVar, setCarVar] = React.useState({
+    length: 0,
+    data: {},
+  });
+  const [carVarInput, setCarVarInput] = React.useState([]);
+
+  const [finalVarList, setFinalVarList] = React.useState([]);
+
   async function handleFetchAgents() {
     try {
       const res = await fetchAllBotsList();
@@ -210,6 +223,7 @@ const RcsLiveChat = () => {
     if (!templateState.selected) return;
     try {
       const res = await fetchTemplateDetails(templateState.selected);
+      extractVariable(res);
       setTemplateDetails(res);
     } catch (e) {
       toast.error("Error fetching templates");
@@ -288,6 +302,47 @@ const RcsLiveChat = () => {
       },
     },
   };
+
+  function extractVariable(data) {
+    if (!data || !Array.isArray(data)) return;
+
+    if (data.length === 1) {
+      let matchLength = 0;
+      let matchBtnList = [];
+      const content = data[0]?.content || "";
+      const suggestionVar = data[0]?.suggestions?.map((item) => {
+        if (item?.type === "website") {
+          const match = item?.suggestionValue.match(/{#(.+?)#}/g) || [];
+          matchLength += match.length;
+          matchBtnList = [...matchBtnList, ...match];
+        }
+      });
+
+      setBtnVarLength(matchLength);
+      setBtnVarList(matchBtnList);
+      const matches = content.match(/{#(.+?)#}/g) || [];
+
+      setVarLength(matches.length);
+      setVarList(matches);
+    }
+
+    if (data.length > 1) {
+      const result = data.reduce(
+        (acc, item, index) => {
+          const content = item?.content || "";
+          const matches = content.match(/{#(.+?)#}/g) || [];
+
+          acc.totalLength += matches.length;
+          acc.data[index] = matches;
+
+          return acc;
+        },
+        { totalLength: 0, data: {} }
+      );
+
+      setCarVar({ length: result.totalLength, data: result.data });
+    }
+  }
 
   //useEffect
 
@@ -461,10 +516,22 @@ const RcsLiveChat = () => {
           setTemplateState={setTemplateState}
           templateDetails={templateDetails}
           setTemplateDetails={setTemplateDetails}
+          handleSendTemplateMessage={handleSendTemplateMessage}
+          varLength={varLength}
+          setVarList={setVarList}
+          varList={varList}
+          setInputVariables={setInputVariables}
+          inputVariables={inputVariables}
+          carVar={carVar}
           selectedIndex={selectedIndex}
           setSelectedIndex={setSelectedIndex}
-          inputVariables={inputVariables}
-          handleSendTemplateMessage={handleSendTemplateMessage}
+          carVarInput={carVarInput}
+          setCarVarInput={setCarVarInput}
+          btnvarLength={btnvarLength}
+          setBtnVarList={setBtnVarList}
+          btnvarList={btnvarList}
+          setBtnInputVariables={setBtnInputVariables}
+          btninputVariables={btninputVariables}
         />
       )}
     </div>
