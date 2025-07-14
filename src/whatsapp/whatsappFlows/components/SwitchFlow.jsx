@@ -64,7 +64,6 @@ export default function SwitchFlow({
   const [variableName, setVariableName] = useState("");
   const [exampleValue, setExampleValue] = useState("");
   const [cases, setCases] = useState({});
-  console.log("cases", cases);
   const [switchComponents, setSwitchComponents] = useState([]);
   const [showValidationError, setShowValidationError] = useState(false);
   const [selectedValue, setSelectedValue] = useState(
@@ -85,10 +84,13 @@ export default function SwitchFlow({
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  console.log("nodes",nodes)
+  console.log("edges", edges);
+  console.log("nodes", nodes);
 
   const flowItemsOptions = flowItems
-    .filter((item) => item.data.type !== "ifelse" && item.data.type !== "switch")
+    .filter(
+      (item) => item.data.type !== "ifelse" && item.data.type !== "switch"
+    )
     .map((item) => {
       const label = item.data.text || item.data.type || item.id;
       return {
@@ -114,8 +116,6 @@ export default function SwitchFlow({
   const handleNodeSettings = (nodeId) => {
     console.log("⚙️ Open settings for node:", nodeId);
   };
-
-
 
   // const CustomNode = ({ id, data }) => {
   //   const caseEntries = data?.cases ? Object.entries(data.cases) : [];
@@ -187,99 +187,84 @@ export default function SwitchFlow({
   // };
 
   const CustomNode = ({ id, data }) => {
-  // console.log("Received from:", data);
-  const caseEntries = data?.cases ? Object.entries(data.cases) : [];
+    const caseEntries = data?.cases ? Object.entries(data.cases) : [];
 
-  const dataSource = data?.details && Array.isArray(data.details["data-source"])
-    ? data.details["data-source"]
-    : [];
+    const dataSource =
+      data?.details && Array.isArray(data.details["data-source"])
+        ? data.details["data-source"]
+        : [];
 
-  return (
-    <div
-      className="bg-white rounded-md relative border border-gray-300 shadow"
-      style={{ minWidth: "180px", textAlign: "center", padding: "6px 12px" }}
-    >
-      {/* Settings icon */}
-      <button
-        onClick={() => data.onSettings?.(id)}
-        className="absolute -top-2 -left-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
+    return (
+      <div
+        className="bg-white rounded-md relative border border-gray-300 shadow"
+        style={{ minWidth: "180px", textAlign: "center", padding: "6px 12px" }}
       >
-        <MdSettings size={14} />
-      </button>
+        {/* Settings icon */}
+        <button
+          onClick={() => data.onSettings?.(id)}
+          className="absolute -top-2 -left-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
+        >
+          <MdSettings size={14} />
+        </button>
 
-      {/* Close icon */}
-      <button
-        onClick={() => data.onDelete?.(id)}
-        className="absolute -right-2 -top-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
-      >
-        <MdClose size={14} />
-      </button>
+        {/* Close icon */}
+        <button
+          onClick={() => data.onDelete?.(id)}
+          className="absolute -right-2 -top-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-100 shadow cursor-pointer"
+        >
+          <MdClose size={14} />
+        </button>
 
-      {/* Label */}
-      <div className="font-medium mb-2">{data.label}</div>
+        {/* Label */}
+        <div className="font-medium mb-2">{data.label}</div>
 
-      {/* Data source options */}
-      {dataSource.length > 0 &&
-        dataSource.map((option, idx) => (
-          <div
-            key={idx}
-            className="flex items-center bg-gray-100 rounded p-1 m-1 text-sm relative"
-          >
-            <div className="flex-1">{option.title}</div>
-            <Handle
-              type="target"
-              position="right"
-              id={`option-${idx}`}
-              style={{
-                top: "50%",
-                transform: "translateY(-50%)",
-                right: "-18px",
-                background: "#555",
-              }}
-            />
-          </div>
-        ))}
+        {/* Data source options */}
+        {dataSource.length > 0 &&
+          dataSource.map((option, idx) => (
+            <div
+              key={idx}
+              className="flex items-center bg-gray-100 rounded p-1 m-1 text-sm relative"
+            >
+              <div className="flex-1">{option.title}</div>
+              <Handle
+                type="target"
+                position="right"
+                // id={`option-${idx}`}
+                id={`option-${option.id}`}
+                style={{
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  right: "-18px",
+                  background: "#555",
+                }}
+              />
+            </div>
+          ))}
 
-      {/* Case entries */}
-      {caseEntries.length > 0 &&
-        caseEntries.map(([caseKey], idx) => (
-          <div
-            key={caseKey}
-            className="flex items-center bg-gray-100 rounded p-1 m-1 text-sm relative"
-          >
-            <div className="flex-1">{caseKey}</div>
-            <Handle
-              type="source"
-              position="left"
-              id={`case-${caseKey}`}
-              style={{
-                top: "50%",
-                transform: "translateY(-50%)",
-                left: "-20px",
-                background: "#555",
-              }}
-            />
-          </div>
-        ))}
-
-      {/* Target handle so this node can accept connections */}
-      {/* <Handle
-        type="target"
-        position="right"
-        id="input"
-        style={{
-          top: "50%",
-          transform: "translateY(-50%)",
-          left: "-6px",
-          background: "#555",
-        }}
-      /> */}
-    </div>
-  );
-};
-
-
-
+        {/* Case entries */}
+        {caseEntries.length > 0 &&
+          caseEntries.map(([caseKey], idx) => (
+            <div
+              key={caseKey}
+              className="flex items-center bg-gray-100 rounded p-1 m-1 text-sm relative"
+            >
+              <div className="flex-1">{caseKey}</div>
+              <Handle
+                type="source"
+                position="left"
+                id={`case-${caseKey}`}
+                style={{
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  left: "-20px",
+                  background: "#555",
+                }}
+              />
+            </div>
+          ))}
+      </div>
+    );
+  };
 
   // const DropdownNode = ({ id, data }) => {
   //   const options = data.options || [];
@@ -326,7 +311,6 @@ export default function SwitchFlow({
 
   const nodeTypes = {
     customNode: CustomNode,
-    
   };
 
   useEffect(() => {
@@ -346,8 +330,6 @@ export default function SwitchFlow({
     }
   }, [selectedFlowItem]);
 
- 
-  
   // **************************TextInput**********************************
   const OptionsTypeOptions = [
     { value: "text", label: "Text" },
@@ -359,12 +341,12 @@ export default function SwitchFlow({
   const [caseKey] = useState(selectedItem?.caseKey);
 
   const handleSwitchSave = () => {
-    console.log("cases switch", cases)
+    console.log("cases switch", cases);
     const payload = {
       cases,
     };
 
-    console.log("payload switch", payload)
+    console.log("payload switch", payload);
 
     const updatedItem = {
       ...selectedItem,
@@ -372,45 +354,42 @@ export default function SwitchFlow({
       status: 1,
     };
 
-    
-
     onSave(updatedItem);
 
     console.log("✅ Final Switch Payload ", updatedItem);
   };
 
- 
-
   const dispatch = useDispatch();
 
-  function handleConnect(params) {  
-  const { source, sourceHandle, target, targetHandle } = params;
+    function handleConnect(params) {
+    const { source, sourceHandle, target, targetHandle } = params;
 
-  setNodes((nds) =>
-    nds.map((node) => {
-      if (node.id === target) {
-        // Update target node data
-        const newData = {
-          ...node.data,
-          receivedFrom: {
-            sourceNodeId: source,
-            sourceHandle,
-          },
-        };
-        console.log("newData", newData)
-        return {
-          ...node,
-          data: newData,
-        };
-      }
-      return node;
-    })
-  );
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.id === target) {
+          // Update target node data
+          const newData = {
+            ...node.data,
+            receivedFrom: {
+              sourceNodeId: source,
+              sourceHandle,
+            },
+          };
+          console.log("newData", newData)
+          return {
+            ...node,
+            data: newData,
+           };
+        } 
+        return node;
+      })
+    );
 
-  // Then add the edge
-  setEdges((eds) => addEdge(params, eds));
-}
+    // Then add the edge
+    setEdges((eds) => addEdge(params, eds));
+  }
 
+  
 
   const handleCaseSave = () => {
     const newNodes = {
@@ -420,30 +399,29 @@ export default function SwitchFlow({
       data: {
         label: "Cases",
         cases: { ...cases },
-        onSettings: handleNodeSettings,
+        // onSettings: handleNodeSettings,
         onDelete: handleDeleteNode,
       },
     };
 
     setNodes((prevNodes) => {
-  const filtered = prevNodes.filter((n) => n.id !== "switch-node");
+      const filtered = prevNodes.filter((n) => n.id !== "switch-node");
 
-  return [
-    ...filtered,
-    {
-      id: "switch-node",
-      type: "customNode",
-      position: { x: 100, y: 100 },
-      data: {
-        label: "Cases",
-        cases: { ...cases },
-        onSettings: handleNodeSettings,
-        onDelete: handleDeleteNode,
-      },
-    },
-  ];
-});
-
+      return [
+        ...filtered,
+        {
+          id: "switch-node",
+          type: "customNode",
+          position: { x: 100, y: 100 },
+          data: {
+            label: "Cases",
+            cases: { ...cases },
+            onSettings: handleNodeSettings,
+            onDelete: handleDeleteNode,
+          },
+        },
+      ];
+    });
   };
 
   const numberToWord = (num) => {
@@ -533,6 +511,8 @@ export default function SwitchFlow({
     return Object.keys(cases).length > 0;
   };
 
+
+  
   return (
     <>
       <Dialog
@@ -551,8 +531,8 @@ export default function SwitchFlow({
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 nodeTypes={nodeTypes}
-                onConnect={(params) =>  (params)}
-                // onConnect={(params) => setEdges((eds) => addEdge(params, eds))}
+                onConnect={(params) => setEdges((eds) => addEdge(params, eds))}
+                // onConnect={handleConnect}
                 fitView
               >
                 <Background />
@@ -711,22 +691,22 @@ export default function SwitchFlow({
                         "TextSubheading",
                         "TextCaption",
                       ].includes(comp.type) && (
-                          <div className="mt-3">
-                            <InputField
-                              placeholder="Text"
-                              className="w-full p-1 rounded text-black"
-                              value={comp.text || ""}
-                              onChange={(e) =>
-                                updateComponent(
-                                  caseKey,
-                                  idx,
-                                  "text",
-                                  e.target.value
-                                )
-                              }
-                            />
-                          </div>
-                        )}
+                        <div className="mt-3">
+                          <InputField
+                            placeholder="Text"
+                            className="w-full p-1 rounded text-black"
+                            value={comp.text || ""}
+                            onChange={(e) =>
+                              updateComponent(
+                                caseKey,
+                                idx,
+                                "text",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </div>
+                      )}
 
                       {["TextInput"].includes(comp.type) && (
                         <div className="mt-3 space-y-3">

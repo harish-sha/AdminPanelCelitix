@@ -27,7 +27,7 @@ import { ApiCampaignInfo } from "@/whatsapp/whatsappManageCampaign/components/pa
 import WhatsappFlows from "@/whatsapp/whatsappFlows/Pages/WhatsappFlows";
 import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
 import SelfRecharge from "@/whatsapp/SelfRecharge/SelfRecharge";
-import {EditFlow} from "@/whatsapp/whatsappFlows/Pages/FlowEditPage";
+import { EditFlow } from "@/whatsapp/whatsappFlows/Pages/FlowEditPage";
 
 
 // manage funds
@@ -118,6 +118,17 @@ import AuthenticatorSetting from "@/appauthenticator/authenticatorsettings/Authe
 import EmailReport from "@/email/emailreport/EmailReport";
 import EmailTemplate from "@/email/emailtemplate/EmailTemplate";
 
+// LeadManager
+import LeadManager from "@/LeadManager/LeadManager";
+import Analytics from "@/LeadManager/pages/Analytics";
+import LeadDash from "@/LeadManager/pages/leaddash/LeadDash";
+import LeadSettings from "@/LeadManager/pages/LeadSettings";
+import LeadReports from "@/LeadManager/pages/LeadReports";
+import LeadTags from "@/LeadManager/pages/LeadTags";
+import LeadMain from "@/LeadManager/pages/LeadMain";
+import LeadForms from "@/LeadManager/pages/LeadForms";
+import Details from "@/LeadManager/pages/details/Details";
+
 // Number Lookup
 import HlrLookup from "@/numberlookup/hlrlookup/HlrLookup";
 import HlrLookupReports from "@/numberlookup/hlrlookupreports/HlrLookupReports";
@@ -198,7 +209,7 @@ const Approutes = () => {
         <Route path="wmanageoptin" element={<WhatsappManageOptin />} />
         <Route path="wchatwidget" element={<WhatsappChatWidget />} />
         <Route path="wqrcode" element={<WhatsappQrCode />} />
-        <Route path="selfrecharge" element={<SelfRecharge/>} />
+        <Route path="selfrecharge" element={<SelfRecharge />} />
         <Route path="wlcsetting" element={<WhatsappLiveChatSettings />} />
         <Route path="wmanagewaba" element={<WhatsappManageWaba />} />
         <Route
@@ -286,6 +297,18 @@ const Approutes = () => {
         {/* Email */}
         <Route path="/emailtemplate" element={<EmailTemplate />} />
         <Route path="/emailreports" element={<EmailReport />} />
+
+        {/* Lead Manager */}
+        <Route path="leadmanagement" element={<LeadManager />} >
+          <Route path="leaddash" element={<LeadDash />} />
+          <Route path="leadanalytics" element={<Analytics />} />
+          <Route path="leadforms" element={<LeadForms />} />
+          <Route path="leadsettings" element={<LeadSettings />} />
+          <Route path="leadreports" element={<LeadReports />} />
+          <Route path="leadtags" element={<LeadTags />} />
+          <Route path="leadmain" element={<LeadMain />} />
+          <Route path="leaddash/details" element={<Details />} />
+        </Route>
       </Route>
 
       <Route path="dummy" element={<Dummy />} />
@@ -293,8 +316,8 @@ const Approutes = () => {
 
       <Route path="*" element={<PageNotFound />} />
 
-      <Route path="/reseller" element={<ResellerDashboard/>} />
-     
+      <Route path="/reseller" element={<ResellerDashboard />} />
+
     </Routes>
   );
 };

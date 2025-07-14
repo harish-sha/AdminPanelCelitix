@@ -75,6 +75,11 @@ export const PermissionRoute = ({ children }) => {
       roles: ["ADMIN"],
     },
     {
+      name: "Leadmanagement",
+      links: ["/leadmanagement/leaddash", "/leadmanagement/leadanalytics", "/leadmanagement/leadforms", "/leadmanagement/leadsettings", "/leadmanagement/leadreports", "/leadmanagement/leadtags", "/leadmanagement/leadmain", "/leadmanagement/leaddash/details"],
+      roles: ["ADMIN"],
+    },
+    {
       name: "OBD",
       links: [
         "/obdcreatecampaign",
@@ -207,6 +212,9 @@ export const PermissionRoute = ({ children }) => {
         allowedServices.push(item);
       }
       if (item.name === "Manage Contacts") {
+        allowedServices.push(item);
+      }
+      if (item.name === "Leadmanagement") {
         allowedServices.push(item);
       }
     });

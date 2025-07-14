@@ -15,7 +15,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Divider from "@mui/material/Divider";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
-
+import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
 import rcsicon from "../../assets/icons/RCS02.svg";
 import twoway from "../../assets/icons/TWOWAY.svg";
 import callback from "../../assets/icons/Callback02.svg";
@@ -376,6 +376,18 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "Wish Management",
       type: "single",
       to: "/smswishmanagement",
+      roles: ["ADMIN"],
+    },
+    {
+      id: "",
+      name: "Leadmanagement",
+      icon: <LeaderboardOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
+      label: "Lead Management",
+      type: "single",
+      to: "/leadmanagement/leaddash",
+      // links: [
+      //   to: "/leadmanagement/leaddash"
+      // ]
       roles: ["ADMIN"],
     },
     // {

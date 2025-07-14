@@ -66,7 +66,7 @@ const EditPanel = ({
   setSelectedItem,
   openSwitch,
   setOpenSwitch
-  
+
 }) => {
   // const [options, setOptions] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -1439,7 +1439,7 @@ const EditPanel = ({
   const dropImageInputRef = useRef(null);
 
 
- 
+
   useEffect(() => {
     if (selectedItem?.type === "dropDown") {
       setMainLabelDropdown(selectedItem.label || "");
@@ -1599,7 +1599,7 @@ const EditPanel = ({
     setDropImageSrc(null);
   };
 
-  
+
 
   const handleSaveDropdown = () => {
     // 1) Filter out any options with an empty title
@@ -1618,7 +1618,7 @@ const EditPanel = ({
       image: o.image || "",
     }));
 
-    
+
 
 
     // 3) Base payload (what used to be passed directly)
