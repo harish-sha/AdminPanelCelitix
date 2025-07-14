@@ -332,7 +332,7 @@ const WhatsappCreateTemplate = () => {
         phone_number: phoneNumber,
       });
     }
-    if (flowTemplateState) {
+    if (flowTemplateState?.title && flowTemplateState?.flow_id) {
       btns.push({
         type: "FLOW",
         text: flowTemplateState?.title,
@@ -659,6 +659,8 @@ const WhatsappCreateTemplate = () => {
         setCarouselMediaType("");
         setTemplateName("");
         setFileUploadUrl("");
+        setFlowTemplateState({});
+        setAllFlows([]);
         setCards([
           {
             mediaType: "image",
