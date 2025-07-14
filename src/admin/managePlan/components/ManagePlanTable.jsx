@@ -18,6 +18,7 @@ import { Dialog } from "primereact/dialog";
 import InputField from "../../../whatsapp/components/InputField";
 import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../../whatsapp/components/UniversalButton";
+import toast from "react-hot-toast";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -112,7 +113,21 @@ const ManagePlanTable = ({ id, name, data = [] }) => {
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
     { field: "serviceName", headerName: "Plan Name", flex: 1, minWidth: 80 },
-    { field: "planType", headerName: "Plan Type", flex: 1, minWidth: 100 },
+    {
+      field: "planType",
+      headerName: "Plan Type",
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params) => {
+        return params.value === 1 ? (
+          <span>Transactional</span>
+        ) : params.value === 2 ? (
+          <span>Promotional</span>
+        ) : (
+          <span>International</span>
+        );
+      },
+    },
     {
       field: "status",
       headerName: "Status",
@@ -197,6 +212,14 @@ const ManagePlanTable = ({ id, name, data = [] }) => {
       ),
     },
   ];
+
+  async function handleDelete(row) {
+    try {
+    } catch (e) {
+      console.error("Error deleting plan:", e);
+      toast.error("Failed to delete plan");
+    }
+  }
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
   const CustomFooter = () => {
