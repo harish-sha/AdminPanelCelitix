@@ -249,7 +249,7 @@ const WhatsappCreateTemplate = () => {
     }
     const blob = await response.blob();
     console.log("blob", blob);
-    const imageuploadfile = await uploadImageFile(blob, 1);
+    const imageuploadfile = 12;
     console.log("imageuploadfile", imageuploadfile);
   }
 
@@ -392,7 +392,11 @@ const WhatsappCreateTemplate = () => {
       }
       return variable.value;
     });
-    if (selectedTemplateType === "text" && allHeadersVariable.length > 0) {
+    if (
+      selectedTemplateType === "text" &&
+      allHeadersVariable.length > 0 &&
+      templateHeader
+    ) {
       data.components.push({
         type: "HEADER",
         format: "TEXT",
@@ -401,7 +405,7 @@ const WhatsappCreateTemplate = () => {
           header_text: allHeadersVariable,
         },
       });
-    } else {
+    } else if (selectedTemplateType === "text" && templateHeader) {
       data.components.push({
         type: "HEADER",
         format: "TEXT",
@@ -448,7 +452,7 @@ const WhatsappCreateTemplate = () => {
     let fileUploadUrl = "";
 
     if (selectedTemplateType != "carousel" && selectedTemplateType != "text") {
-      const fileUrl = "/whatsapp_video_default.webm";
+      const fileUrl = "/blurImage.jpg";
       // return (
       //   <div className="border">
       //     <img src={"https://localhost:5173/whatsapp_default.jpg"} alt="sad" />
@@ -456,7 +460,7 @@ const WhatsappCreateTemplate = () => {
       // );
       const url = uploadMedia(fileUrl, 1);
       // console.log(url)
-      return;
+      // return;
       // if (!fileUploadUrl) {
       //   toast.error("Please upload a file");
       //   return;
