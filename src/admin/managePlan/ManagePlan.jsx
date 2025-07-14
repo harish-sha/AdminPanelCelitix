@@ -183,6 +183,7 @@ const ManagePlan = () => {
               id="managePlanTable"
               name="managePlanTable"
               data={data}
+              handleFetchAllPlans={handleFetchAllPlans}
             />
           </div>
         )}

@@ -19,6 +19,12 @@ import InputField from "../../../whatsapp/components/InputField";
 import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../../whatsapp/components/UniversalButton";
 import toast from "react-hot-toast";
+import {
+  updateNdncStatus,
+  updateOpenContentStatus,
+  updateOpenMobileStatus,
+  updateServiceStatus,
+} from "@/apis/admin/admin";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -80,7 +86,7 @@ const CustomPagination = ({
   );
 };
 
-const ManagePlanTable = ({ id, name, data = [] }) => {
+const ManagePlanTable = ({ id, name, data = [], handleFetchAllPlans }) => {
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
@@ -134,10 +140,17 @@ const ManagePlanTable = ({ id, name, data = [] }) => {
       flex: 1,
       minWidth: 100,
       renderCell: (params) => {
-        return params.value === 1 ? (
-          <span className="text-green-500">Active</span>
-        ) : (
-          <span className="text-red-500">Inactive</span>
+        return (
+          <button
+            className="border border-gray-400 rounded-md px-2 py-1 hover:bg-gray-200"
+            onClick={() => handleUpdateServiceStatus(params.row)}
+          >
+            {params.value === 1 ? (
+              <span className="text-green-500">Active</span>
+            ) : (
+              <span className="text-red-500">Inactive</span>
+            )}
+          </button>
         );
       },
     },
@@ -147,10 +160,17 @@ const ManagePlanTable = ({ id, name, data = [] }) => {
       flex: 1,
       minWidth: 100,
       renderCell: (params) => {
-        return params.value === 1 ? (
-          <span className="text-green-500">Active</span>
-        ) : (
-          <span className="text-red-500">Inactive</span>
+        return (
+          <button
+            className="border border-gray-400 rounded-md px-2 py-1 hover:bg-gray-200"
+            onClick={() => handleUpdateNdncStatus(params.row)}
+          >
+            {params.value === 1 ? (
+              <span className="text-green-500">Active</span>
+            ) : (
+              <span className="text-red-500">Inactive</span>
+            )}
+          </button>
         );
       },
     },
@@ -160,10 +180,17 @@ const ManagePlanTable = ({ id, name, data = [] }) => {
       flex: 1,
       minWidth: 100,
       renderCell: (params) => {
-        return params.value === 1 ? (
-          <span className="text-green-500">Active</span>
-        ) : (
-          <span className="text-red-500">Inactive</span>
+        return (
+          <button
+            className="border border-gray-400 rounded-md px-2 py-1 hover:bg-gray-200"
+            onClick={() => handleUpdateOpenContentStatus(params.row)}
+          >
+            {params.value === 1 ? (
+              <span className="text-green-500">Active</span>
+            ) : (
+              <span className="text-red-500">Inactive</span>
+            )}
+          </button>
         );
       },
     },
@@ -173,44 +200,51 @@ const ManagePlanTable = ({ id, name, data = [] }) => {
       flex: 1,
       minWidth: 100,
       renderCell: (params) => {
-        return params.value === 1 ? (
-          <span className="text-green-500">Active</span>
-        ) : (
-          <span className="text-red-500">Inactive</span>
+        return (
+          <button
+            className="border border-gray-400 rounded-md px-2 py-1 hover:bg-gray-200"
+            onClick={() => handleUpdateOpenMobileStatus(params.row)}
+          >
+            {params.value === 1 ? (
+              <span className="text-green-500">Active</span>
+            ) : (
+              <span className="text-red-500">Inactive</span>
+            )}
+          </button>
         );
       },
     },
-    {
-      field: "action",
-      headerName: "Action",
-      flex: 1,
-      minWidth: 100,
-      renderCell: (params) => (
-        <>
-          <CustomTooltip title="Edit Plan" placement="top" arrow>
-            <IconButton onClick={() => handleEdit(params.row)}>
-              <EditNoteIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip title="Delete Plan" placement="top" arrow>
-            <IconButton
-              className="no-xs"
-              onClick={() => handleDelete(params.row)}
-            >
-              <MdOutlineDeleteForever
-                className="text-red-500 cursor-pointer hover:text-red-600"
-                size={20}
-              />
-            </IconButton>
-          </CustomTooltip>
-        </>
-      ),
-    },
+    // {
+    //   field: "action",
+    //   headerName: "Action",
+    //   flex: 1,
+    //   minWidth: 100,
+    //   renderCell: (params) => (
+    //     <>
+    //       <CustomTooltip title="Edit Plan" placement="top" arrow>
+    //         <IconButton onClick={() => handleEdit(params.row)}>
+    //           <EditNoteIcon
+    //             sx={{
+    //               fontSize: "1.2rem",
+    //               color: "gray",
+    //             }}
+    //           />
+    //         </IconButton>
+    //       </CustomTooltip>
+    //       <CustomTooltip title="Delete Plan" placement="top" arrow>
+    //         <IconButton
+    //           className="no-xs"
+    //           onClick={() => handleDelete(params.row)}
+    //         >
+    //           <MdOutlineDeleteForever
+    //             className="text-red-500 cursor-pointer hover:text-red-600"
+    //             size={20}
+    //           />
+    //         </IconButton>
+    //       </CustomTooltip>
+    //     </>
+    //   ),
+    // },
   ];
 
   async function handleDelete(row) {
@@ -218,6 +252,78 @@ const ManagePlanTable = ({ id, name, data = [] }) => {
     } catch (e) {
       console.error("Error deleting plan:", e);
       toast.error("Failed to delete plan");
+    }
+  }
+
+  async function handleUpdateServiceStatus(row) {
+    try {
+      const data = {
+        serviceId: row?.serviceId,
+        status: row?.status,
+      };
+      const res = await updateServiceStatus(data);
+      if (!res?.status) {
+        return toast.error("Failed to update status");
+      }
+      toast.success("Status updated successfully");
+      await handleFetchAllPlans();
+    } catch (e) {
+      console.log(e);
+      toast.error("Failed to update status");
+    }
+  }
+
+  async function handleUpdateOpenContentStatus(row) {
+    try {
+      const data = {
+        serviceId: row?.serviceId,
+        openContent: row?.openContent,
+      };
+      const res = await updateOpenContentStatus(data);
+      if (!res?.status) {
+        return toast.error("Failed to update status");
+      }
+      toast.success("Status updated successfully");
+      await handleFetchAllPlans();
+    } catch (e) {
+      console.log(e);
+      toast.error("Failed to update status");
+    }
+  }
+
+  async function handleUpdateNdncStatus(row) {
+    try {
+      const data = {
+        serviceId: row?.serviceId,
+        ndnc: row?.ndnc,
+      };
+      const res = await updateNdncStatus(data);
+      if (!res?.status) {
+        return toast.error("Failed to update status");
+      }
+      toast.success("Status updated successfully");
+      await handleFetchAllPlans();
+    } catch (e) {
+      console.log(e);
+      toast.error("Failed to update status");
+    }
+  }
+
+  async function handleUpdateOpenMobileStatus(row) {
+    try {
+      const data = {
+        serviceId: row?.serviceId,
+        openMobile: row?.openMobile,
+      };
+      const res = await updateOpenMobileStatus(data);
+      if (!res?.status) {
+        return toast.error("Failed to update status");
+      }
+      toast.success("Status updated successfully");
+      await handleFetchAllPlans();
+    } catch (e) {
+      console.log(e);
+      toast.error("Failed to update status");
     }
   }
 

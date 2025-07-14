@@ -204,3 +204,27 @@ export const deletePlan = async (data) => {
     body: JSON.stringify(data),
   });
 };
+export const updateServiceStatus = async (data) => {
+  return await fetchWithAuth(`/plan/updateStatusByServiceId`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+export const updateOpenContentStatus = async (data) => {
+  return await fetchWithAuth(`/plan/updateOpenContentByServiceId`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+export const updateNdncStatus = async (data) => {
+  return await fetchWithAuth(`/plan/updateNdncByServiceId`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+export const updateOpenMobileStatus = async (data) => {
+  return await fetchWithAuth(`/plan/updateOpenMobileByServiceId`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
