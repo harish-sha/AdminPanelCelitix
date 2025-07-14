@@ -499,7 +499,9 @@ const TemplateTypes = ({
         </div>
       )}
 
-      {selectedTemplateType === "location" && (
+      {selectedTemplateType === "location" && null}
+
+      {/* {selectedTemplateType === "location" && (
         <div className="w-full mb-2">
           <div className="flex items-center mb-2">
             <label className="text-sm font-medium text-gray-700">
@@ -525,7 +527,7 @@ const TemplateTypes = ({
             placeholder="Enter location URL"
           />
         </div>
-      )}
+      )} */}
 
       <div className="w-full mb-4">
         <div className="flex items-center mb-2">

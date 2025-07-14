@@ -95,7 +95,7 @@ const WhatsappCreateTemplate = () => {
     { value: "image", label: "Image" },
     { value: "video", label: "Video" },
     { value: "document", label: "Document" },
-    // { value: "location", label: "Location" },
+    { value: "location", label: "Location" },
     { value: "carousel", label: "Carousel" },
   ];
   const handleDeleteCard = (index) => {
@@ -222,11 +222,11 @@ const WhatsappCreateTemplate = () => {
   const validateUrl = (value) => {
     const urlPattern = new RegExp(
       "^(https?:\\/\\/)?" +
-        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" +
-        "((\\d{1,3}\\.){3}\\d{1,3}))" +
-        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
-        "(\\?[;&a-z\\d%_.~+=-]*)?" +
-        "(\\#[-a-z\\d_]*)?$",
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" +
+      "((\\d{1,3}\\.){3}\\d{1,3}))" +
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
+      "(\\?[;&a-z\\d%_.~+=-]*)?" +
+      "(\\#[-a-z\\d_]*)?$",
       "i"
     );
     setUrlValid(!!urlPattern.test(value));
@@ -316,28 +316,28 @@ const WhatsappCreateTemplate = () => {
         phone_number: phoneNumber,
       });
     }
-    // if (flowTemplateState) {
-    //   btns.push({
-    //     type: "FLOW",
-    //     text: flowTemplateState?.title,
-    //     flow_id: flowTemplateState?.flow_id,
-    //     navigate_screen: flowScreen,
-    //     flow_action: "navigate",
-    //   });
-    // }
-    if (
-      flowTemplateState?.title &&
-      flowTemplateState?.flow_id &&
-      flowScreen // make sure a valid screen is found
-    ) {
+    if (flowTemplateState?.title && flowTemplateState?.flow_id) {
       btns.push({
         type: "FLOW",
-        text: flowTemplateState.title,
-        flow_id: flowTemplateState.flow_id,
+        text: flowTemplateState?.title,
+        flow_id: flowTemplateState?.flow_id,
         navigate_screen: flowScreen,
         flow_action: "navigate",
       });
     }
+    // if (
+    //   flowTemplateState?.title &&
+    //   flowTemplateState?.flow_id &&
+    //   flowScreen // make sure a valid screen is found
+    // ) {
+    //   btns.push({
+    //     type: "FLOW",
+    //     text: flowTemplateState.title,
+    //     flow_id: flowTemplateState.flow_id,
+    //     navigate_screen: flowScreen,
+    //     flow_action: "navigate",
+    //   });
+    // }
     if (url && urlTitle) {
       if (urlVariables.length > 0) {
         btns.push({
@@ -381,34 +381,7 @@ const WhatsappCreateTemplate = () => {
       components: [],
     };
 
-    if (selectedTemplateType === "text" && templateHeader) {
-      data.components.push({
-        type: "HEADER",
-        format: "TEXT",
-        text: templateHeader,
-        // example: {
-        //   header_text: [templateHeader],
-        // },
-      });
-    }
-
-    // const allHeadersVariable = headerVariable.map((variable, index) => {
-    //   if (!variable.value) {
-    //     return toast.error(`Please enter value for header variable ${index + 1}`);
-    //   }
-    //   return variable.value;
-    // })
-
-    // if (selectedTemplateType === "text" && allHeadersVariable.length > 0) {
-    //   data.components.push({
-    //     type: "HEADER",
-    //     format: "TEXT",
-    //     text: templateHeader,
-    //     example: {
-    //       header_text: allHeadersVariable,
-    //     },
-    //   });
-    // } else {
+    // if (selectedTemplateType === "text" && templateHeader) {
     //   data.components.push({
     //     type: "HEADER",
     //     format: "TEXT",
@@ -418,6 +391,37 @@ const WhatsappCreateTemplate = () => {
     //     // },
     //   });
     // }
+
+    const allHeadersVariable = headerVariable.map((variable, index) => {
+      if (!variable.value) {
+        return toast.error(`Please enter value for header variable ${index + 1}`);
+      }
+      return variable.value;
+    })
+
+    if (
+      selectedTemplateType === "text" &&
+      allHeadersVariable.length > 0 &&
+      templateHeader
+    ) {
+      data.components.push({
+        type: "HEADER",
+        format: "TEXT",
+        text: templateHeader,
+        example: {
+          header_text: allHeadersVariable,
+        },
+      });
+    } else if (selectedTemplateType === "text" && templateHeader) {
+      data.components.push({
+        type: "HEADER",
+        format: "TEXT",
+        text: templateHeader,
+        // example: {
+        //   header_text: [templateHeader],
+        // },
+      });
+    }
 
     // insert data in component dynamicall
     if (varvalue.length > 0) {
@@ -449,20 +453,27 @@ const WhatsappCreateTemplate = () => {
       });
     }
 
-    if (selectedTemplateType != "carousel" && selectedTemplateType != "text") {
+    if (selectedTemplateType != "carousel" && selectedTemplateType != "text" && selectedTemplateType != "location") {
       if (!fileUploadUrl) {
         toast.error("Please upload a file");
         return;
       }
     }
 
-    if (selectedTemplateType != "text") {
+    if (selectedTemplateType != "text" && selectedTemplateType != "carousel" &&
+      selectedTemplateType !== "location") {
       data.components.push({
         type: "HEADER",
         format: selectedTemplateType.toUpperCase(),
         example: {
           header_handle: [fileUploadUrl],
         },
+      });
+    }
+    if (selectedTemplateType === "location") {
+      data.components.push({
+        type: "HEADER",
+        format: "LOCATION",
       });
     }
     // "components": [
@@ -690,6 +701,8 @@ const WhatsappCreateTemplate = () => {
         setUrl("");
         setUrlTitle("");
         setQuickReplies([]);
+        setFlowTemplateState({});
+        setAllFlows([]);
         navigate("/managetemplate");
       } else if (!response.msg || response.msg === "") {
         // Handle blank msg from backend
@@ -774,9 +787,9 @@ const WhatsappCreateTemplate = () => {
                     value={
                       selectedWaba
                         ? JSON.stringify({
-                            mbno: selectedWaba,
-                            sno: selectedWabaSno,
-                          })
+                          mbno: selectedWaba,
+                          sno: selectedWabaSno,
+                        })
                         : ""
                     }
                     onChange={(selectedValue) => {
@@ -926,11 +939,10 @@ const WhatsappCreateTemplate = () => {
                       disabled={
                         !selectedWaba || !selectedCategory || !templateName
                       }
-                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${
-                        selectedWaba && selectedCategory && templateName
-                          ? "bg-[#212529] hover:bg-[#434851]"
-                          : "bg-gray-300 cursor-not-allowed"
-                      }`}
+                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba && selectedCategory && templateName
+                        ? "bg-[#212529] hover:bg-[#434851]"
+                        : "bg-gray-300 cursor-not-allowed"
+                        }`}
                       onClick={handleSubmit}
                       id="submitTemplate"
                       name="submitTemplate"
@@ -946,33 +958,33 @@ const WhatsappCreateTemplate = () => {
                       <>
                         {
                           selectedTemplateType === "carousel" &&
-                            carouselMediaType && (
-                              <>
-                                <CarouselTemplateTypes
-                                  templateFormat={templateFormat}
-                                  setTemplateFormat={setTemplateFormat}
-                                  templateFooter={templateFooter}
-                                  setTemplateFooter={setTemplateFooter}
-                                  handleAddVariable={handleAddVariable}
-                                  handleEmojiSelect={handleEmojiSelect}
-                                  selectedCardIndex={selectedCardIndex}
-                                  setSelectedCardIndex={setSelectedCardIndex}
-                                  cards={cards}
-                                  setCards={setCards}
-                                  file={file}
-                                  setFile={setFile}
-                                  onPreviewUpdate={handlePreviewUpdate}
-                                  setFileUploadUrl={setFileUploadUrl}
-                                  uploadImageFile={uploadImageFile}
-                                  setvariables={setVariables}
-                                />
-                                <CarouselInteractiveActions
-                                  cards={cards}
-                                  selectedCardIndex={selectedCardIndex}
-                                  setCards={setCards}
-                                />
-                              </>
-                            )
+                          carouselMediaType && (
+                            <>
+                              <CarouselTemplateTypes
+                                templateFormat={templateFormat}
+                                setTemplateFormat={setTemplateFormat}
+                                templateFooter={templateFooter}
+                                setTemplateFooter={setTemplateFooter}
+                                handleAddVariable={handleAddVariable}
+                                handleEmojiSelect={handleEmojiSelect}
+                                selectedCardIndex={selectedCardIndex}
+                                setSelectedCardIndex={setSelectedCardIndex}
+                                cards={cards}
+                                setCards={setCards}
+                                file={file}
+                                setFile={setFile}
+                                onPreviewUpdate={handlePreviewUpdate}
+                                setFileUploadUrl={setFileUploadUrl}
+                                uploadImageFile={uploadImageFile}
+                                setvariables={setVariables}
+                              />
+                              <CarouselInteractiveActions
+                                cards={cards}
+                                selectedCardIndex={selectedCardIndex}
+                                setCards={setCards}
+                              />
+                            </>
+                          )
 
                           // : (
                           //   <div className="w-full">
@@ -1055,7 +1067,7 @@ const WhatsappCreateTemplate = () => {
                     </div>
                     <div className="flex items-start justify-center lg:mt-7 ">
                       {selectedTemplateType === "carousel" &&
-                      carouselMediaType ? (
+                        carouselMediaType ? (
                         <>
                           <CarouselTemplatePreview
                             // scrollContainerRef={scrollableContainerRef}
@@ -1103,14 +1115,13 @@ const WhatsappCreateTemplate = () => {
                         !templateName ||
                         isFetching
                       }
-                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${
-                        selectedWaba &&
+                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba &&
                         selectedCategory &&
                         selectedTemplateType &&
                         templateName
-                          ? "bg-[#212529] hover:bg-[#434851]"
-                          : "bg-gray-300 cursor-not-allowed"
-                      }`}
+                        ? "bg-[#212529] hover:bg-[#434851]"
+                        : "bg-gray-300 cursor-not-allowed"
+                        }`}
                       onClick={handleSubmit}
                       id="submitTemplate"
                       name="submitTemplate"

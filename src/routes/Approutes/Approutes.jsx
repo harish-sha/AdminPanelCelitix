@@ -150,6 +150,17 @@ import GptConfiguration from "@/gpt/GptConfiguration";
 // Self Recharge
 import SelfRecharge from "@/SelfRecharge/SelfRecharge";
 
+// LeadManager
+import LeadManager from "@/LeadManager/LeadManager";
+import Analytics from "@/LeadManager/pages/Analytics";
+import LeadDash from "@/LeadManager/pages/leaddash/LeadDash";
+import LeadSettings from "@/LeadManager/pages/LeadSettings";
+import LeadReports from "@/LeadManager/pages/LeadReports";
+import LeadTags from "@/LeadManager/pages/LeadTags";
+import LeadMain from "@/LeadManager/pages/LeadMain";
+import LeadForms from "@/LeadManager/pages/LeadForms";
+import Details from "@/LeadManager/pages/details/Details";
+
 // CombineLiveChat
 import LiveChatDashboard from "@/CombineLiveChats/pages/LiveChatDashboard";
 import LiveChatLayout from "@/CombineLiveChats/pages/LiveChatLayout";
@@ -337,9 +348,21 @@ const Approutes = () => {
         {/* self recharge */}
         <Route path="selfrecharge" element={<SelfRecharge />} />
 
+        {/* Lead Manager */}
+        <Route path="leadmanagement" element={<LeadManager />} >
+          <Route path="leaddash" element={<LeadDash />} />
+          <Route path="leadanalytics" element={<Analytics />} />
+          <Route path="leadforms" element={<LeadForms />} />
+          <Route path="leadsettings" element={<LeadSettings />} />
+          <Route path="leadreports" element={<LeadReports />} />
+          <Route path="leadtags" element={<LeadTags />} />
+          <Route path="leadmain" element={<LeadMain />} />
+          <Route path="leaddash/details" element={<Details />} />
+        </Route>
+
         {/* Combine Live Chat */}
         <Route path="liveChatMain" element={<LiveChatLayout />}>
-          <Route index element={<LiveChatDashboard />} />{" "}
+          <Route index element={<LiveChatDashboard />} />
           {/* <Route path="whatsapp" element={<WhatsAppView />} /> */}
           <Route path="wlivechat" element={<WhatsappLiveChat />} />
           <Route path="rcs" element={<RCSView />} />

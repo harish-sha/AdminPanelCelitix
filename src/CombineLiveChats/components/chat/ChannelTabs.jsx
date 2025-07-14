@@ -66,7 +66,7 @@ const ChannelTabs = () => {
 
   return (
     <div className="flex flex-col gap-2 relative z-10">
-      <div className="flex border-b bg-white shadow-sm px-4 relative z-10 rounded-t-2xl">
+      <div className="flex border-b bg-white shadow-sm px-4 relative z-10 rounded-2xl">
         {channels.map((ch) => (
           <button
             key={ch.value}
@@ -88,11 +88,11 @@ const ChannelTabs = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="px-4 py-2 flex flex-wrap items-center gap-3 bg-white shadow rounded-b-2xl border-t border-gray-100">
+      <div className="px-4 py-2 flex flex-wrap items-center gap-3 bg-white shadow rounded-md border border-gray-100">
         {quickActions.map((action, i) => (
           <button
             key={i}
-            className="flex items-center gap-2 text-xs text-gray-700 bg-gray-100 px-3 py-1 rounded-full hover:bg-blue-100 hover:text-blue-600 transition"
+            className="flex items-center gap-2 text-xs text-gray-700 bg-gray-100 px-3 py-1 rounded-full hover:bg-blue-100 hover:text-blue-600 transition "
           >
             {action.icon}
             <span>{action.label}</span>

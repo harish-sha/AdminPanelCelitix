@@ -82,6 +82,15 @@ const WhatsappLaunchCampaign = () => {
 
   const [marketingType, setMarketingType] = useState(2);
 
+  const [templateType, setTemplateType] = useState("");
+
+  const [locationData, setLocationData] = useState({
+    latitude: "",
+    longitude: "",
+    name: "",
+    address: "",
+  });
+
   const fileRef = useRef(null);
 
   function handleNextCard() {
@@ -394,7 +403,7 @@ const WhatsappLaunchCampaign = () => {
       date.getMinutes()
     )}:${padZero(date.getSeconds())}`;
 
-    const requestData = {
+    let requestData = {
       mobileIndex: selectedMobileColumn,
       ContentMessage: contentValues || "",
       wabaNumber: selectedWabaData?.wabaSrno || "",
@@ -425,6 +434,16 @@ const WhatsappLaunchCampaign = () => {
       cardsVariables: [],
       vendor: "jio",
     };
+
+    if (selectedTemplateData?.type === "location") {
+      requestData = {
+        ...requestData,
+        latitude: locationData.latitude || 0,
+        longitude: locationData.longitude || 0,
+        name: locationData.name || "Default Location",
+        address: locationData.address || "Default Address",
+      };
+    }
 
     // console.log(requestData)
 
@@ -528,13 +547,16 @@ const WhatsappLaunchCampaign = () => {
       const response = await getWabaTemplateDetails(wabaNumber, 0);
       if (response) {
         setTemplateList(response);
-        const approvedTemplateList = response.filter((template) => template.status === "APPROVED");
-        setTemplateOptions(
-          approvedTemplateList.map((template) => ({
-            value: template.vendorTemplateId,
-            label: template.templateName,
-          }))
+        // const approvedTemplateList = response.filter((template) => template.status === "APPROVED");
+        // setTemplateOptions(
+        //   approvedTemplateList.map((template) => ({
+        //     value: template.vendorTemplateId,
+        //     label: template.templateName,
+        //   }))
+        const approvedTemplateList = response.filter(
+          (template) => template.status === "APPROVED"
         );
+        setTemplateOptions(approvedTemplateList);
       } else {
         toast.error("Failed to load templates!");
       }
@@ -676,7 +698,11 @@ const WhatsappLaunchCampaign = () => {
                       label="Select Template"
                       tooltipContent="Select Template"
                       tooltipPlacement="right"
-                      options={templateOptions}
+                      // options={templateOptions}
+                      options={templateOptions.map((template) => ({
+                        value: template.vendorTemplateId,
+                        label: template.templateName,
+                      }))}
                       value={selectedTemplate}
                       onChange={(value) => {
                         setSelectedTemplate(value);
@@ -761,6 +787,10 @@ const WhatsappLaunchCampaign = () => {
                           fileData={fileData}
                           marketingType={marketingType}
                           setMarketingType={setMarketingType}
+                          setLocationData={setLocationData}
+                          locationData={locationData}
+                          selectedTemplate={selectedTemplate}
+                          templateOptions={templateOptions}
                         />
                       )
                     )}

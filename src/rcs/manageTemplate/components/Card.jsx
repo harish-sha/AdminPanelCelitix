@@ -58,6 +58,8 @@ export const Card = ({
 
     if (!file) return;
     const fileType = file.type.split("/")[0];
+    const isPdf = file.type === "application/pdf";
+
 
     const img = new Image();
     img.src = URL.createObjectURL(file);
@@ -75,7 +77,11 @@ export const Card = ({
       setCardData({ ...cardData, filePath: file });
       return;
     }
-    
+
+    if (isPdf) {
+      setCardData({ ...cardData, filePath: file });
+      return;
+    }
     img.onload = () => {
       const width = img.naturalWidth;
       const height = img.naturalHeight;
@@ -248,7 +254,7 @@ Unsupported sizes may cause delivery failure or layout issues."
             className="hidden"
             id="fileInput"
             name="fileInput"
-            accept="image/* video/*"
+            accept="image/* video/* application/pdf"
             ref={fileRef}
           />
           <div className="flex items-center justify-center gap-2">

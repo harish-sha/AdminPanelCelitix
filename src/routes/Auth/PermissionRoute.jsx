@@ -80,6 +80,11 @@ export const PermissionRoute = ({ children }) => {
       roles: ["ADMIN"],
     },
     {
+      name: "Leadmanagement",
+      links: ["/leadmanagement/leaddash", "/leadmanagement/leadanalytics", "/leadmanagement/leadforms", "/leadmanagement/leadsettings", "/leadmanagement/leadreports", "/leadmanagement/leadtags", "/leadmanagement/leadmain", "/leadmanagement/leaddash/details"],
+      roles: ["ADMIN"],
+    },
+    {
       name: "OBD",
       links: [
         "/obdcreatecampaign",
@@ -182,6 +187,18 @@ export const PermissionRoute = ({ children }) => {
       roles: ["ADMIN"],
     },
     {
+      name: "chatManagement",
+      links: [
+        "/liveChatMain/",
+        "/combineLiveChatSettings",
+        "/liveChatMain/wlivechat",
+        "/liveChatMain/rcs",
+        "/liveChatMain/instagram",
+        "/liveChatMain/messenger",
+      ],
+      roles: ["ADMIN"],
+    },
+    {
       name: "WorkFlow",
       links: "/aiconfiguration",
       roles: ["ADMIN"],
@@ -238,10 +255,18 @@ export const PermissionRoute = ({ children }) => {
       if (item.name === "Manage Contacts") {
         allowedServices.push(item);
       }
+      if (item.name === "Leadmanagement") {
+        allowedServices.push(item);
+      }
       if (item.name === "WorkFlow") {
         allowedServices.push(item);
       }
-
+      if (item.name === "E-mail") {
+        allowedServices.push(item);
+      }
+      if (item.name === "chatManagement") {
+        allowedServices.push(item);
+      }
       // if (item.name === "Admin") {
       //   allowedServices.push(item);
       // }

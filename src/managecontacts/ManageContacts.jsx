@@ -309,10 +309,10 @@ const ManageContacts = () => {
       allowishes: addContactDetails.allowishes === "enable" ? 1 : 0,
       status: 1,
       birthDate: addContactDetails.birthDate
-        ? new Date(addContactDetails.birthDate).toLocaleDateString("en-GB")
+        ? moment(addContactDetails.birthDate).format("DD-MM-YYYY")
         : "",
       anniversaryDate: addContactDetails.mariageDate
-        ? new Date(addContactDetails.mariageDate).toLocaleDateString("en-GB")
+        ? moment(addContactDetails.mariageDate).format("DD-MM-YYYY")
         : "",
     };
 
@@ -435,12 +435,12 @@ const ManageContacts = () => {
           flex: 1,
           minWidth: 120,
         },
-        {
-          field: "emailstatus",
-          headerName: "Email Status",
-          flex: 1,
-          minWidth: 120,
-        },
+        // {
+        //   field: "emailstatus",
+        //   headerName: "User Status",
+        //   flex: 1,
+        //   minWidth: 120,
+        // },
         { field: "group", headerName: "Group", flex: 1, minWidth: 120 },
         {
           field: "status",
@@ -449,7 +449,10 @@ const ManageContacts = () => {
           minWidth: 120,
           renderCell: (params) => {
             return (
-              <CustomTooltip arrow placement="top" title="Allow/ Disallow">
+              <CustomTooltip arrow placement="top"
+                // title="Allow/ Disallow"
+                title={params.row.status === 1 ? "Active" : "Inactive"}
+              >
                 <Switch
                   checked={params.row.status === 1}
                   onChange={(e) => {
@@ -474,7 +477,7 @@ const ManageContacts = () => {
           field: "action",
           headerName: "Action",
           flex: 1,
-          minWidth: 150,
+          minWidth: 120,
           renderCell: (params) => (
             <>
               <IconButton
@@ -1009,9 +1012,9 @@ const ManageContacts = () => {
 
   return (
     <div>
-      <div className="flex flex-wrap items-end w-full gap-2 mb-4 justify-between">
-        <h1 className="text-xl font-semibold text-gray-700">Manage Contacts</h1>
-        <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-end w-full gap-2 mb-4 md:justify-between justify-center">
+        <h1 className="text-xl font-semibold text-gray-700 text-center">Manage Contacts</h1>
+        <div className="flex items-center gap-2 flex-wrap">
           <div className="w-max-content">
             <UniversalButton
               id="addgroupbtn"
@@ -1262,7 +1265,7 @@ const ManageContacts = () => {
         header="Add Contact"
         visible={addContactvisible}
         draggable={false}
-        className="lg:w-[40rem] md:w-[40rem] w-[20rem]"
+        className="w-[40rem]"
         onHide={() => {
           if (!addContactvisible) return;
           setaddContactVisible(false);
@@ -1418,7 +1421,7 @@ const ManageContacts = () => {
                 required={true}
               /> */}
 
-            <div>
+            <div className="w-full">
               <UniversalLabel
                 text="Allow wishes"
                 id="addwish"
@@ -1426,10 +1429,10 @@ const ManageContacts = () => {
                 className="mt-0 text-sm font-medium text-gray-800"
               />
 
-              <div className="flex flex-wrap gap-2 lg:w-70 md:w-50">
+              <div className="flex flex-wrap gap-2 ">
                 {/* Enable Option */}
                 <div className="flex-1 px-1 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-5 flex-wrap lg:flex-nowrap">
                     <RadioButton
                       inputId="AllowishesOption1"
                       name="Allowishesredio"
@@ -1493,7 +1496,7 @@ const ManageContacts = () => {
                 }
                 required={true}
               /> */}
-            <div>
+            <div className="w-full">
               <UniversalLabel
                 text="Gender"
                 id="gamderadd"
@@ -1501,7 +1504,7 @@ const ManageContacts = () => {
                 className="mt-0 text-sm font-medium text-gray-800"
               />
 
-              <div className="flex flex-wrap gap-2 lg:w-70 md:w-50">
+              <div className="flex flex-wrap gap-2 ">
                 {/* Enable Option */}
                 <div className="flex-1 px-1 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
@@ -1656,7 +1659,7 @@ const ManageContacts = () => {
                 </div>
                 {importContactFormVisible && (
                   <div>
-                    <div className="grid flex-wrap grid-cols-2 gap-3 lg:flex-nowrap">
+                    <div className="grid flex-wrap md:grid-cols-2 grid-cols-1 gap-3 lg:flex-nowrap">
                       {/* <InputField
                             placeholder="Enter first name.."
                             id="userfirstname"
@@ -2082,7 +2085,7 @@ const ManageContacts = () => {
               />
             </div>
             <div className="flex items-center gap-5 flex-wrap lg:flex-nowrap">
-              <RadioGroupField
+              {/* <RadioGroupField
                 label={"Allowishes?"}
                 name="addwish"
                 id="addwish"
@@ -2104,8 +2107,70 @@ const ManageContacts = () => {
                   })
                 }
                 required={true}
-              />
-              <RadioGroupField
+              /> */}
+
+
+              <div className="w-full">
+                <UniversalLabel
+                  text="Allow wishes"
+                  id="addwish"
+                  name="addwish"
+                  className="mt-0 text-sm font-medium text-gray-800"
+                />
+
+                <div className="flex flex-wrap gap-2">
+                  {/* Enable Option */}
+                  <div className="flex-1 px-1 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                    <div className="flex items-center gap-5 flex-wrap lg:flex-nowrap">
+                      <RadioButton
+                        inputId="AllowishesOption1"
+                        name="addwish"
+                        value="1"
+                        onChange={(e) =>
+                          setUpdateContactDetails({
+                            ...updateContactDetails,
+                            allowishes: e.value,
+                          })
+                        }
+                        checked={String(updateContactDetails.allowishes) === "1"}
+                      />
+                      <label
+                        htmlFor="AllowishesOption1"
+                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                      >
+                        Enable
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Disable Option */}
+                  <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                    <div className="flex items-center gap-2">
+                      <RadioButton
+                        inputId="AllowishesOption2"
+                        name="addwish"
+                        value="0"
+                        onChange={(e) =>
+                          setUpdateContactDetails({
+                            ...updateContactDetails,
+                            allowishes: e.value,
+                          })
+                        }
+                        checked={String(updateContactDetails.allowishes) === "0"}
+                      />
+                      <label
+                        htmlFor="AllowishesOption2"
+                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                      >
+                        Disable
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              {/* <RadioGroupField
                 label={"Gender?"}
                 name="gamderadd"
                 id="addgamderaddImportContact"
@@ -2121,10 +2186,69 @@ const ManageContacts = () => {
                   })
                 }
                 required={true}
-              />
+              /> */}
+
+              <div className="w-full">
+                <UniversalLabel
+                  text="Gender"
+                  id="gamderadd"
+                  name="gamderadd"
+                  className="mt-0 text-sm font-medium text-gray-800"
+                />
+
+                <div className="flex flex-wrap gap-2">
+                  {/* Enable Option */}
+                  <div className="flex-1 px-1 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                    <div className="flex items-center gap-2">
+                      <RadioButton
+                        inputId="genderOption1"
+                        name="gamderadd"
+                        value="m"
+                        onChange={(e) =>
+                          setUpdateContactDetails({
+                            ...updateContactDetails,
+                            gender: e.target.value,
+                          })
+                        }
+                        checked={updateContactDetails.gender === "m"}
+                      />
+                      <label
+                        htmlFor="genderOption1"
+                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                      >
+                        Male
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Disable Option */}
+                  <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                    <div className="flex items-center gap-2">
+                      <RadioButton
+                        inputId="genderOption2"
+                        name="gamderadd"
+                        value="f"
+                        onChange={(e) =>
+                          setUpdateContactDetails({
+                            ...updateContactDetails,
+                            gender: e.target.value,
+                          })
+                        }
+                        checked={updateContactDetails.gender === "f"}
+                      />
+                      <label
+                        htmlFor="genderOption2"
+                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                      >
+                        Female
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="flex items-center justify-center ">
+            {/* <div className="flex items-center justify-center ">
               <RadioGroupField
                 label={"Active Status"}
                 name="activeStatus"
@@ -2142,7 +2266,7 @@ const ManageContacts = () => {
                 }
                 required={true}
               />
-            </div>
+            </div> */}
           </div>
           <div className="flex justify-center mt-2">
             <UniversalButton
