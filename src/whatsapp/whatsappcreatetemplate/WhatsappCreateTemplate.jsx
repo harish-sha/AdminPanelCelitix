@@ -86,7 +86,6 @@ const WhatsappCreateTemplate = () => {
 
   const [allFlows, setAllFlows] = useState([]);
 
-
   const [expiryTime, setExpiryTime] = useState(10);
   const handlePreviewUpdate = (updatedPreview) => {
     setTemplatePreview(updatedPreview);
@@ -96,7 +95,7 @@ const WhatsappCreateTemplate = () => {
     { value: "image", label: "Image" },
     { value: "video", label: "Video" },
     { value: "document", label: "Document" },
-    // { value: "location", label: "Location" },
+    { value: "location", label: "Location" },
     { value: "carousel", label: "Carousel" },
   ];
   const handleDeleteCard = (index) => {
@@ -142,7 +141,7 @@ const WhatsappCreateTemplate = () => {
       setUrl("");
       setUrlTitle("");
       setQuickReplies([]);
-      setFlowTemplateState({})
+      setFlowTemplateState({});
     }
   }, [interactiveAction]);
 
@@ -317,7 +316,7 @@ const WhatsappCreateTemplate = () => {
         phone_number: phoneNumber,
       });
     }
-    if (flowTemplateState) {
+    if (flowTemplateState?.title && flowTemplateState?.flow_id) {
       btns.push({
         type: "FLOW",
         text: flowTemplateState?.title,
@@ -326,6 +325,19 @@ const WhatsappCreateTemplate = () => {
         flow_action: "navigate",
       });
     }
+    // if (
+    //   flowTemplateState?.title &&
+    //   flowTemplateState?.flow_id &&
+    //   flowScreen // make sure a valid screen is found
+    // ) {
+    //   btns.push({
+    //     type: "FLOW",
+    //     text: flowTemplateState.title,
+    //     flow_id: flowTemplateState.flow_id,
+    //     navigate_screen: flowScreen,
+    //     flow_action: "navigate",
+    //   });
+    // }
     if (url && urlTitle) {
       if (urlVariables.length > 0) {
         btns.push({
@@ -354,7 +366,9 @@ const WhatsappCreateTemplate = () => {
     const isValid = /^[a-z0-9_]+$/.test(templateName);
 
     if (!isValid) {
-      toast.error("Only underscore (_) and alphanumeric are allowed in template name.");
+      toast.error(
+        "Only underscore (_) and alphanumeric are allowed in template name."
+      );
       return;
     }
 
@@ -367,15 +381,14 @@ const WhatsappCreateTemplate = () => {
       components: [],
     };
 
-
     // if (selectedTemplateType === "text" && templateHeader) {
     //   data.components.push({
     //     type: "HEADER",
     //     format: "TEXT",
-    //     // text: templateHeader,
-    //     example: {
-    //       header_text: [templateHeader],
-    //     },
+    //     text: templateHeader,
+    //     // example: {
+    //     //   header_text: [templateHeader],
+    //     // },
     //   });
     // }
 
@@ -386,7 +399,11 @@ const WhatsappCreateTemplate = () => {
       return variable.value;
     })
 
-    if (selectedTemplateType === "text" && allHeadersVariable.length > 0) {
+    if (
+      selectedTemplateType === "text" &&
+      allHeadersVariable.length > 0 &&
+      templateHeader
+    ) {
       data.components.push({
         type: "HEADER",
         format: "TEXT",
@@ -395,7 +412,7 @@ const WhatsappCreateTemplate = () => {
           header_text: allHeadersVariable,
         },
       });
-    } else {
+    } else if (selectedTemplateType === "text" && templateHeader) {
       data.components.push({
         type: "HEADER",
         format: "TEXT",
@@ -436,20 +453,27 @@ const WhatsappCreateTemplate = () => {
       });
     }
 
-    if (selectedTemplateType != "carousel" && selectedTemplateType != "text") {
+    if (selectedTemplateType != "carousel" && selectedTemplateType != "text" && selectedTemplateType != "location") {
       if (!fileUploadUrl) {
         toast.error("Please upload a file");
         return;
       }
     }
 
-    if (selectedTemplateType != "text") {
+    if (selectedTemplateType != "text" && selectedTemplateType != "carousel" &&
+      selectedTemplateType !== "location") {
       data.components.push({
         type: "HEADER",
         format: selectedTemplateType.toUpperCase(),
         example: {
           header_handle: [fileUploadUrl],
         },
+      });
+    }
+    if (selectedTemplateType === "location") {
+      data.components.push({
+        type: "HEADER",
+        format: "LOCATION",
       });
     }
     // "components": [
@@ -630,12 +654,16 @@ const WhatsappCreateTemplate = () => {
 
       const message = response?.msg;
 
-      if (message.message === "Template Name is duplicate") {
+      if (message?.error?.error_user_msg) {
+        return toast.error(message.error.error_user_msg);
+      }
+
+      if (message?.message === "Template Name is duplicate") {
         return toast.error(
           "Template name is already in use. Please choose another."
         );
         // } else if (response.message === "Template Save Successfully") {
-      } else if (message.message === "Template Save Successfully") {
+      } else if (message?.message === "Template Save Successfully") {
         // return
         setIsLoading(true);
         toast.success("Template submitted successfully!");
@@ -673,11 +701,15 @@ const WhatsappCreateTemplate = () => {
         setUrl("");
         setUrlTitle("");
         setQuickReplies([]);
+        setFlowTemplateState({});
+        setAllFlows([]);
+        navigate("/managetemplate");
       } else if (!response.msg || response.msg === "") {
         // Handle blank msg from backend
-        return toast.error("Unable to create template at this time. Please try again later.");
-      }
-      else if (
+        return toast.error(
+          "Unable to create template at this time. Please try again later."
+        );
+      } else if (
         message?.includes("language") &&
         message?.includes("not available")
       ) {
@@ -686,12 +718,14 @@ const WhatsappCreateTemplate = () => {
         );
       } else if (!response.msg || response.msg === "") {
         // Handle blank msg from backend
-        return toast.error("Unable to create template at this time. Please try again later.");
+        return toast.error(
+          "Unable to create template at this time. Please try again later."
+        );
       } else {
         return toast.error("An unknown error occurred. Please try again.");
       }
     } catch (e) {
-      console.log(e)
+      console.log(e);
       return toast.error(e.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
@@ -860,9 +894,14 @@ const WhatsappCreateTemplate = () => {
               selectedCategory === "AUTHENTICATION" ? (
                 <div>
                   <div className="grid lg:grid-cols-2 gap-5 mt-4">
-                    <div className="border-2 border-gray-300 p-4 rounded-lg" >
+                    <div className="border-2 border-gray-300 p-4 rounded-lg">
                       <div className="flex gap-2 items-center">
-                        <span htmlFor="expiryTime" className="text-md text-gray-700 font-semibold">Set Expiry Time</span>
+                        <span
+                          htmlFor="expiryTime"
+                          className="text-md text-gray-700 font-semibold"
+                        >
+                          Set Expiry Time
+                        </span>
                         <CustomTooltip
                           title="Expiry Time should be in 1 min to 90 min"
                           placement="top"

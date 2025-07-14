@@ -82,6 +82,15 @@ const WhatsappLaunchCampaign = () => {
 
   const [marketingType, setMarketingType] = useState(2);
 
+  const [templateType, setTemplateType] = useState("");
+
+  const [locationData, setLocationData] = useState({
+    latitude: "",
+    longitude: "",
+    name: "",
+    address: "",
+  });
+
   const fileRef = useRef(null);
 
   function handleNextCard() {
@@ -394,7 +403,7 @@ const WhatsappLaunchCampaign = () => {
       date.getMinutes()
     )}:${padZero(date.getSeconds())}`;
 
-    const requestData = {
+    let requestData = {
       mobileIndex: selectedMobileColumn,
       ContentMessage: contentValues || "",
       wabaNumber: selectedWabaData?.wabaSrno || "",
@@ -405,7 +414,7 @@ const WhatsappLaunchCampaign = () => {
       templateCategory: selectedTemplateData?.category || "",
       templateType: selectedTemplateData?.type || "",
       // isMarketingMessage: marketingType || "",
-      // ...(marketingType === 1 && { isMarketingMessage: 1 }),
+      ...(marketingType === 1 && { isMarketingMessage: 1 }),
       url: "",
       variables: [],
       xlsxpath: xlsxPath,
@@ -425,6 +434,16 @@ const WhatsappLaunchCampaign = () => {
       cardsVariables: [],
       vendor: "jio",
     };
+
+    if (selectedTemplateData?.type === "location") {
+      requestData = {
+        ...requestData,
+        latitude: locationData.latitude || 0,
+        longitude: locationData.longitude || 0,
+        name: locationData.name || "Default Location",
+        address: locationData.address || "Default Address",
+      };
+    }
 
     // console.log(requestData)
 
@@ -528,13 +547,16 @@ const WhatsappLaunchCampaign = () => {
       const response = await getWabaTemplateDetails(wabaNumber, 0);
       if (response) {
         setTemplateList(response);
-        const approvedTemplateList = response.filter((template) => template.status === "APPROVED");
-        setTemplateOptions(
-          approvedTemplateList.map((template) => ({
-            value: template.vendorTemplateId,
-            label: template.templateName,
-          }))
+        // const approvedTemplateList = response.filter((template) => template.status === "APPROVED");
+        // setTemplateOptions(
+        //   approvedTemplateList.map((template) => ({
+        //     value: template.vendorTemplateId,
+        //     label: template.templateName,
+        //   }))
+        const approvedTemplateList = response.filter(
+          (template) => template.status === "APPROVED"
         );
+        setTemplateOptions(approvedTemplateList);
       } else {
         toast.error("Failed to load templates!");
       }
@@ -676,7 +698,11 @@ const WhatsappLaunchCampaign = () => {
                       label="Select Template"
                       tooltipContent="Select Template"
                       tooltipPlacement="right"
-                      options={templateOptions}
+                      // options={templateOptions}
+                      options={templateOptions.map((template) => ({
+                        value: template.vendorTemplateId,
+                        label: template.templateName,
+                      }))}
                       value={selectedTemplate}
                       onChange={(value) => {
                         setSelectedTemplate(value);
@@ -689,12 +715,13 @@ const WhatsappLaunchCampaign = () => {
                       placeholder="Select Template"
                     />
                   </div>
-                  {/* {selectedTemplateData?.category === "MARKETING" && (
+                  {selectedTemplateData?.category === "MARKETING" && (
                     <div>
                       <h1 className="mb-1 text-sm font-medium text-gray-800">
                         Send Via
                       </h1>
                       <div className="grid lg:grid-cols-2 gap-2 mb-2 sm:grid-cols-2">
+                        {/* Option 1 */}
                         <label className="cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2 hover:shadow-lg transition-shadow duration-300">
                           <div className="flex items-center justify-start gap-2 cursor-pointer">
                             <RadioButton
@@ -713,6 +740,7 @@ const WhatsappLaunchCampaign = () => {
                           </div>
                         </label>
 
+                        {/* Option 2 */}
                         <label className="cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2 hover:shadow-lg transition-shadow duration-300">
                           <div className="flex items-center justify-start gap-2">
                             <RadioButton
@@ -732,7 +760,7 @@ const WhatsappLaunchCampaign = () => {
                         </label>
                       </div>
                     </div>
-                  )} */}
+                  )}
                   <div>
                     {isFetching ? (
                       // <UniversalSkeleton height="15rem" width="100%" />
@@ -759,6 +787,10 @@ const WhatsappLaunchCampaign = () => {
                           fileData={fileData}
                           marketingType={marketingType}
                           setMarketingType={setMarketingType}
+                          setLocationData={setLocationData}
+                          locationData={locationData}
+                          selectedTemplate={selectedTemplate}
+                          templateOptions={templateOptions}
                         />
                       )
                     )}

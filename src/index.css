@@ -497,3 +497,9 @@ a {
   color: #000;
   font-weight: 600;
 }
+
+.btn-sm {
+  @apply inline-flex items-center px-1 sm:px-2 py-1 text-sm font-medium
+         bg-white border border-gray-300 rounded hover:bg-gray-50
+         transition;
+}
