@@ -7,8 +7,9 @@ import { Dialog } from "primereact/dialog";
 import CustomTooltip from "../../whatsapp/components/CustomTooltip";
 import { Switch } from "@mui/material";
 import ManagePlanTable from "./components/ManagePlanTable";
-import { getAllPlans } from "@/apis/admin/admin";
+import { createPlan, getAllPlans } from "@/apis/admin/admin";
 import UniversalSkeleton from "../components/UniversalSkeleton";
+import toast from "react-hot-toast";
 
 const ManagePlan = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -25,23 +26,41 @@ const ManagePlan = () => {
   });
   const [data, setData] = useState([]);
 
+  const [createData, setCreateData] = useState({
+    planName: "",
+    planType: "",
+    characterLimit: "",
+    orderQueueSize: "",
+    initialQueueSize: "",
+    triggerQueueSize: "",
+    isPlanTimeout: "",
+    fromTime: "",
+    toTime: "",
+  });
+
   const plancreateOptions = [
-    { label: "Active", value: "active" },
-    { label: "Inactive", value: "inactive" },
+    { label: "Transactional", value: "1" },
+    { label: "Promotional", value: "2" },
+    { label: "International", value: "3" },
   ];
 
   const planOptions = [
-    { label: "Option 1", value: "option1" },
-    { label: "Option 2", value: "option2" },
-    { label: "Option 3", value: "option3" },
+    { label: "Transactional", value: "1" },
+    { label: "Promotional", value: "2" },
+    { label: "International", value: "3" },
   ];
   const statusOptions = [
     { label: "Active", value: "active" },
     { label: "Inactive", value: "inactive" },
   ];
 
-  const handleTogglecreate = () => {
+  const handleTogglecreate = (e) => {
+    console.log("Toggle create:", e.target.checked);
     setIsCheckedsetIsChecked((prev) => !prev);
+    setCreateData((prev) => ({
+      ...prev,
+      isPlanTimeout: e.target.checked ? "1" : "0",
+    }));
   };
 
   const handleCreatePlan = () => {
@@ -69,6 +88,22 @@ const ManagePlan = () => {
     handleFetchAllPlans();
   }, []);
 
+  async function handleCreatePlanSave() {
+    try {
+      console.log("createData", createData);
+      const res = await createPlan(createData);
+      console.log("Plan created successfully:", res);
+      if (!res?.status) {
+        return toast.error(res?.msg || "Plan creation failed");
+      }
+      toast.success("Plan created successfully");
+      setCreateData({});
+      setManageCreatePlancreate(false);
+    } catch (e) {
+      console.error("Error saving plan:", e);
+    }
+  }
+
   return (
     <div className="w-full">
       {/* {isLoading ? (
@@ -85,6 +120,10 @@ const ManagePlan = () => {
                 id="planName"
                 name="planName"
                 placeholder="Enter Plan Name"
+                value={searchData.planname}
+                onChange={(e) =>
+                  setSearchData({ ...searchData, planname: e.target.value })
+                }
               />
             </div>
 
@@ -94,8 +133,8 @@ const ManagePlan = () => {
                 options={planOptions}
                 id="plantype"
                 name="plantype"
-                value={planTypeOption}
-                onChange={(newValue) => setPlanTypeOption(newValue)}
+                value={searchData.ptype}
+                onChange={(e) => setSearchData({ ...searchData, ptype: e })}
                 placeholder="Select Plan Type"
               />
             </div>
@@ -105,8 +144,8 @@ const ManagePlan = () => {
                 options={statusOptions}
                 id="planstatus"
                 name="planstatus"
-                value={statusOption}
-                onChange={(newValue) => setStatusOption(newValue)}
+                value={searchData.status}
+                onChange={(e) => setSearchData({ ...searchData, status: e })}
                 placeholder="Select Status"
               />
             </div>
@@ -162,14 +201,83 @@ const ManagePlan = () => {
                 id="createplannamecreate"
                 name="createplannamecreate"
                 placeholder="Enter Plan Name"
+                onChange={(e) =>
+                  setCreateData({
+                    ...createData,
+                    planName: e.target.value,
+                  })
+                }
+                value={createData.planName}
               />
               <AnimatedDropdown
                 label="Plan Type"
                 options={plancreateOptions}
                 id="createplantypecreate"
                 name="createplantypecreate"
-                value={plantypeoptioncreate}
-                onChange={(newValue) => setPlantypeoptioncreate(newValue)}
+                onChange={(e) =>
+                  setCreateData({
+                    ...createData,
+                    planType: e,
+                  })
+                }
+                value={createData.planType}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <InputField
+                label="Order Queue Size"
+                id="createplanorderqueuesizecreate"
+                name="createplanorderqueuesizecreate"
+                placeholder="Enter Order Queue Size"
+                onChange={(e) =>
+                  setCreateData({
+                    ...createData,
+                    orderQueueSize: e.target.value,
+                  })
+                }
+                value={createData.orderQueueSize}
+              />
+              <InputField
+                label="Initial Queue Size"
+                id="createplaninitialqueuesizecreate"
+                name="createplaninitialqueuesizecreate"
+                placeholder="Enter Initial Queue Size"
+                onChange={(e) =>
+                  setCreateData({
+                    ...createData,
+                    initialQueueSize: e.target.value,
+                  })
+                }
+                value={createData.initialQueueSize}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <InputField
+                label="Trigger Queue Size"
+                id="createplantriggerqueuesizecreate"
+                name="createplantriggerqueuesizecreate"
+                placeholder="Enter Trigger Queue Size"
+                onChange={(e) =>
+                  setCreateData({
+                    ...createData,
+                    triggerQueueSize: e.target.value,
+                  })
+                }
+                value={createData.triggerQueueSize}
+              />
+              <InputField
+                label="Character Limit"
+                id="createplancharlimitcreate"
+                name="createplancharlimitcreate"
+                placeholder="Enter Character Limit"
+                onChange={(e) =>
+                  setCreateData({
+                    ...createData,
+                    characterLimit: e.target.value,
+                  })
+                }
+                value={createData.characterLimit}
               />
             </div>
             <div className="flex items-center">
@@ -178,7 +286,9 @@ const ManagePlan = () => {
                 <CustomTooltip arrow placement="top" title="Allow/ Disallow">
                   <Switch
                     checked={isCheckedcreate}
-                    onChange={handleTogglecreate}
+                    onChange={(e) => {
+                      handleTogglecreate(e);
+                    }}
                     sx={{
                       "& .MuiSwitch-switchBase.Mui-checked": {
                         color: "#34C759",
@@ -194,30 +304,30 @@ const ManagePlan = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <InputField
-                label="Order Queue Size"
-                id="createplanorderqueuesizecreate"
-                name="createplanorderqueuesizecreate"
-                placeholder="Enter Order Queue Size"
-              />
-              <InputField
-                label="Initial Queue Size"
-                id="createplaninitialqueuesizecreate"
-                name="createplaninitialqueuesizecreate"
-                placeholder="Enter Initial Queue Size"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <InputField
                 label="Trigger Queue Size"
                 id="createplantriggerqueuesizecreate"
                 name="createplantriggerqueuesizecreate"
                 placeholder="Enter Trigger Queue Size"
+                onChange={(e) =>
+                  setCreateData({
+                    ...createData,
+                    triggerQueueSize: e.target.value,
+                  })
+                }
+                value={createData.triggerQueueSize}
               />
               <InputField
                 label="Character Limit"
                 id="createplancharlimitcreate"
                 name="createplancharlimitcreate"
                 placeholder="Enter Character Limit"
+                onChange={(e) =>
+                  setCreateData({
+                    ...createData,
+                    characterLimit: e.target.value,
+                  })
+                }
+                value={createData.characterLimit}
               />
             </div>
             <div className="flex items-center justify-center">
@@ -225,6 +335,7 @@ const ManagePlan = () => {
                 label="Save"
                 id="createplansavecreatebtn"
                 name="createplansavecreatebtn"
+                onClick={handleCreatePlanSave}
               />
             </div>
           </div>
