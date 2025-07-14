@@ -86,7 +86,6 @@ const WhatsappCreateTemplate = () => {
 
   const [allFlows, setAllFlows] = useState([]);
 
-
   const [expiryTime, setExpiryTime] = useState(10);
   const handlePreviewUpdate = (updatedPreview) => {
     setTemplatePreview(updatedPreview);
@@ -142,7 +141,7 @@ const WhatsappCreateTemplate = () => {
       setUrl("");
       setUrlTitle("");
       setQuickReplies([]);
-      setFlowTemplateState({})
+      setFlowTemplateState({});
     }
   }, [interactiveAction]);
 
@@ -223,11 +222,11 @@ const WhatsappCreateTemplate = () => {
   const validateUrl = (value) => {
     const urlPattern = new RegExp(
       "^(https?:\\/\\/)?" +
-      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" +
-      "((\\d{1,3}\\.){3}\\d{1,3}))" +
-      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
-      "(\\?[;&a-z\\d%_.~+=-]*)?" +
-      "(\\#[-a-z\\d_]*)?$",
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" +
+        "((\\d{1,3}\\.){3}\\d{1,3}))" +
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
+        "(\\?[;&a-z\\d%_.~+=-]*)?" +
+        "(\\#[-a-z\\d_]*)?$",
       "i"
     );
     setUrlValid(!!urlPattern.test(value));
@@ -317,11 +316,24 @@ const WhatsappCreateTemplate = () => {
         phone_number: phoneNumber,
       });
     }
-    if (flowTemplateState) {
+    // if (flowTemplateState) {
+    //   btns.push({
+    //     type: "FLOW",
+    //     text: flowTemplateState?.title,
+    //     flow_id: flowTemplateState?.flow_id,
+    //     navigate_screen: flowScreen,
+    //     flow_action: "navigate",
+    //   });
+    // }
+    if (
+      flowTemplateState?.title &&
+      flowTemplateState?.flow_id &&
+      flowScreen // make sure a valid screen is found
+    ) {
       btns.push({
         type: "FLOW",
-        text: flowTemplateState?.title,
-        flow_id: flowTemplateState?.flow_id,
+        text: flowTemplateState.title,
+        flow_id: flowTemplateState.flow_id,
         navigate_screen: flowScreen,
         flow_action: "navigate",
       });
@@ -354,7 +366,9 @@ const WhatsappCreateTemplate = () => {
     const isValid = /^[a-z0-9_]+$/.test(templateName);
 
     if (!isValid) {
-      toast.error("Only underscore (_) and alphanumeric are allowed in template name.");
+      toast.error(
+        "Only underscore (_) and alphanumeric are allowed in template name."
+      );
       return;
     }
 
@@ -367,35 +381,7 @@ const WhatsappCreateTemplate = () => {
       components: [],
     };
 
-
-    // if (selectedTemplateType === "text" && templateHeader) {
-    //   data.components.push({
-    //     type: "HEADER",
-    //     format: "TEXT",
-    //     // text: templateHeader,
-    //     example: {
-    //       header_text: [templateHeader],
-    //     },
-    //   });
-    // }
-
-    const allHeadersVariable = headerVariable.map((variable, index) => {
-      if (!variable.value) {
-        return toast.error(`Please enter value for header variable ${index + 1}`);
-      }
-      return variable.value;
-    })
-
-    if (selectedTemplateType === "text" && allHeadersVariable.length > 0) {
-      data.components.push({
-        type: "HEADER",
-        format: "TEXT",
-        text: templateHeader,
-        example: {
-          header_text: allHeadersVariable,
-        },
-      });
-    } else {
+    if (selectedTemplateType === "text" && templateHeader) {
       data.components.push({
         type: "HEADER",
         format: "TEXT",
@@ -405,6 +391,33 @@ const WhatsappCreateTemplate = () => {
         // },
       });
     }
+
+    // const allHeadersVariable = headerVariable.map((variable, index) => {
+    //   if (!variable.value) {
+    //     return toast.error(`Please enter value for header variable ${index + 1}`);
+    //   }
+    //   return variable.value;
+    // })
+
+    // if (selectedTemplateType === "text" && allHeadersVariable.length > 0) {
+    //   data.components.push({
+    //     type: "HEADER",
+    //     format: "TEXT",
+    //     text: templateHeader,
+    //     example: {
+    //       header_text: allHeadersVariable,
+    //     },
+    //   });
+    // } else {
+    //   data.components.push({
+    //     type: "HEADER",
+    //     format: "TEXT",
+    //     text: templateHeader,
+    //     // example: {
+    //     //   header_text: [templateHeader],
+    //     // },
+    //   });
+    // }
 
     // insert data in component dynamicall
     if (varvalue.length > 0) {
@@ -630,12 +643,16 @@ const WhatsappCreateTemplate = () => {
 
       const message = response?.msg;
 
-      if (message.message === "Template Name is duplicate") {
+      if (message?.error?.error_user_msg) {
+        return toast.error(message.error.error_user_msg);
+      }
+
+      if (message?.message === "Template Name is duplicate") {
         return toast.error(
           "Template name is already in use. Please choose another."
         );
         // } else if (response.message === "Template Save Successfully") {
-      } else if (message.message === "Template Save Successfully") {
+      } else if (message?.message === "Template Save Successfully") {
         // return
         setIsLoading(true);
         toast.success("Template submitted successfully!");
@@ -673,11 +690,13 @@ const WhatsappCreateTemplate = () => {
         setUrl("");
         setUrlTitle("");
         setQuickReplies([]);
+        navigate("/managetemplate");
       } else if (!response.msg || response.msg === "") {
         // Handle blank msg from backend
-        return toast.error("Unable to create template at this time. Please try again later.");
-      }
-      else if (
+        return toast.error(
+          "Unable to create template at this time. Please try again later."
+        );
+      } else if (
         message?.includes("language") &&
         message?.includes("not available")
       ) {
@@ -686,12 +705,14 @@ const WhatsappCreateTemplate = () => {
         );
       } else if (!response.msg || response.msg === "") {
         // Handle blank msg from backend
-        return toast.error("Unable to create template at this time. Please try again later.");
+        return toast.error(
+          "Unable to create template at this time. Please try again later."
+        );
       } else {
         return toast.error("An unknown error occurred. Please try again.");
       }
     } catch (e) {
-      console.log(e)
+      console.log(e);
       return toast.error(e.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
@@ -753,9 +774,9 @@ const WhatsappCreateTemplate = () => {
                     value={
                       selectedWaba
                         ? JSON.stringify({
-                          mbno: selectedWaba,
-                          sno: selectedWabaSno,
-                        })
+                            mbno: selectedWaba,
+                            sno: selectedWabaSno,
+                          })
                         : ""
                     }
                     onChange={(selectedValue) => {
@@ -860,9 +881,14 @@ const WhatsappCreateTemplate = () => {
               selectedCategory === "AUTHENTICATION" ? (
                 <div>
                   <div className="grid lg:grid-cols-2 gap-5 mt-4">
-                    <div className="border-2 border-gray-300 p-4 rounded-lg" >
+                    <div className="border-2 border-gray-300 p-4 rounded-lg">
                       <div className="flex gap-2 items-center">
-                        <span htmlFor="expiryTime" className="text-md text-gray-700 font-semibold">Set Expiry Time</span>
+                        <span
+                          htmlFor="expiryTime"
+                          className="text-md text-gray-700 font-semibold"
+                        >
+                          Set Expiry Time
+                        </span>
                         <CustomTooltip
                           title="Expiry Time should be in 1 min to 90 min"
                           placement="top"
@@ -900,10 +926,11 @@ const WhatsappCreateTemplate = () => {
                       disabled={
                         !selectedWaba || !selectedCategory || !templateName
                       }
-                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba && selectedCategory && templateName
-                        ? "bg-[#212529] hover:bg-[#434851]"
-                        : "bg-gray-300 cursor-not-allowed"
-                        }`}
+                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${
+                        selectedWaba && selectedCategory && templateName
+                          ? "bg-[#212529] hover:bg-[#434851]"
+                          : "bg-gray-300 cursor-not-allowed"
+                      }`}
                       onClick={handleSubmit}
                       id="submitTemplate"
                       name="submitTemplate"
@@ -919,33 +946,33 @@ const WhatsappCreateTemplate = () => {
                       <>
                         {
                           selectedTemplateType === "carousel" &&
-                          carouselMediaType && (
-                            <>
-                              <CarouselTemplateTypes
-                                templateFormat={templateFormat}
-                                setTemplateFormat={setTemplateFormat}
-                                templateFooter={templateFooter}
-                                setTemplateFooter={setTemplateFooter}
-                                handleAddVariable={handleAddVariable}
-                                handleEmojiSelect={handleEmojiSelect}
-                                selectedCardIndex={selectedCardIndex}
-                                setSelectedCardIndex={setSelectedCardIndex}
-                                cards={cards}
-                                setCards={setCards}
-                                file={file}
-                                setFile={setFile}
-                                onPreviewUpdate={handlePreviewUpdate}
-                                setFileUploadUrl={setFileUploadUrl}
-                                uploadImageFile={uploadImageFile}
-                                setvariables={setVariables}
-                              />
-                              <CarouselInteractiveActions
-                                cards={cards}
-                                selectedCardIndex={selectedCardIndex}
-                                setCards={setCards}
-                              />
-                            </>
-                          )
+                            carouselMediaType && (
+                              <>
+                                <CarouselTemplateTypes
+                                  templateFormat={templateFormat}
+                                  setTemplateFormat={setTemplateFormat}
+                                  templateFooter={templateFooter}
+                                  setTemplateFooter={setTemplateFooter}
+                                  handleAddVariable={handleAddVariable}
+                                  handleEmojiSelect={handleEmojiSelect}
+                                  selectedCardIndex={selectedCardIndex}
+                                  setSelectedCardIndex={setSelectedCardIndex}
+                                  cards={cards}
+                                  setCards={setCards}
+                                  file={file}
+                                  setFile={setFile}
+                                  onPreviewUpdate={handlePreviewUpdate}
+                                  setFileUploadUrl={setFileUploadUrl}
+                                  uploadImageFile={uploadImageFile}
+                                  setvariables={setVariables}
+                                />
+                                <CarouselInteractiveActions
+                                  cards={cards}
+                                  selectedCardIndex={selectedCardIndex}
+                                  setCards={setCards}
+                                />
+                              </>
+                            )
 
                           // : (
                           //   <div className="w-full">
@@ -1028,7 +1055,7 @@ const WhatsappCreateTemplate = () => {
                     </div>
                     <div className="flex items-start justify-center lg:mt-7 ">
                       {selectedTemplateType === "carousel" &&
-                        carouselMediaType ? (
+                      carouselMediaType ? (
                         <>
                           <CarouselTemplatePreview
                             // scrollContainerRef={scrollableContainerRef}
@@ -1076,13 +1103,14 @@ const WhatsappCreateTemplate = () => {
                         !templateName ||
                         isFetching
                       }
-                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba &&
+                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${
+                        selectedWaba &&
                         selectedCategory &&
                         selectedTemplateType &&
                         templateName
-                        ? "bg-[#212529] hover:bg-[#434851]"
-                        : "bg-gray-300 cursor-not-allowed"
-                        }`}
+                          ? "bg-[#212529] hover:bg-[#434851]"
+                          : "bg-gray-300 cursor-not-allowed"
+                      }`}
                       onClick={handleSubmit}
                       id="submitTemplate"
                       name="submitTemplate"

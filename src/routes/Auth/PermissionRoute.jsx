@@ -60,7 +60,7 @@ export const PermissionRoute = ({ children }) => {
         "/apicampaigninfo",
         "/wblockuser",
         "/wmmlite",
-        "/cannedmessagemanager"
+        "/cannedmessagemanager",
       ],
       roles: ["ADMIN"],
     },
@@ -168,7 +168,6 @@ export const PermissionRoute = ({ children }) => {
         "/settings",
         "/transactions",
         "/tagmanager",
-
       ],
       roles: ["ADMIN"],
     },

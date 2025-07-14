@@ -150,16 +150,22 @@ import GptConfiguration from "@/gpt/GptConfiguration";
 // Self Recharge
 import SelfRecharge from "@/SelfRecharge/SelfRecharge";
 
+// CombineLiveChat
+import LiveChatDashboard from "@/CombineLiveChats/pages/LiveChatDashboard";
+import LiveChatLayout from "@/CombineLiveChats/pages/LiveChatLayout";
+import WhatsAppView from "@/CombineLiveChats/pages/channels/WhatsappView";
+import RCSView from "@/CombineLiveChats/pages/channels/RcsView";
+import InstagramView from "@/CombineLiveChats/pages/channels/InstagramView";
+import MessengerView from "@/CombineLiveChats/pages/channels/MessengerView";
+
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
-
 
 const Approutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Mainlayout />}>
-
         {/* dashboard */}
         {/* <Route index element={<Dashboard />} /> */}
         <Route index element={<ResellerDashboard />} />
@@ -284,51 +290,62 @@ const Approutes = () => {
         <Route path="ibdsettings" element={<SettingIBD />} />
 
         {/* OBD */}
-        <Route path="/obdcreatecampaign" element={<ObdCreateCampaign />} />
-        <Route path="/obdmanagevoiceclips" element={<ObdManageVoiceClips />} />
-        <Route path="/obdIntegration" element={<ObdIntegration />} />
-        <Route path="/obdmanagecampaign" element={<ObdCampaignReports />} />
-        <Route path='/obdCampaignDetailslog' element={<CampaignDetailsReports />} />
-
+        <Route path="obdcreatecampaign" element={<ObdCreateCampaign />} />
+        <Route path="obdmanagevoiceclips" element={<ObdManageVoiceClips />} />
+        <Route path="obdIntegration" element={<ObdIntegration />} />
+        <Route path="obdmanagecampaign" element={<ObdCampaignReports />} />
+        <Route
+          path="obdCampaignDetailslog"
+          element={<CampaignDetailsReports />}
+        />
 
         {/* MissedCall */}
-        <Route path="/missedcallhistory" element={<HistoryMissedCall />} />
-        <Route path="/missedcallsettings" element={<MissedCallSettings />} />
+        <Route path="missedcallhistory" element={<HistoryMissedCall />} />
+        <Route path="missedcallsettings" element={<MissedCallSettings />} />
 
         {/* Number Lookup */}
-        <Route path="/hlrlookup" element={<HlrLookup />} />
-        <Route path="/lookupreports" element={<HlrLookupReports />} />
+        <Route path="hlrlookup" element={<HlrLookup />} />
+        <Route path="lookupreports" element={<HlrLookupReports />} />
 
         {/* Callback */}
-        <Route path="/callback" element={<Callback />} />
-        <Route path="/addcallback" element={<AddCallback />} />
-        <Route path="/editcallback" element={<EditCallback />} />
+        <Route path="callback" element={<Callback />} />
+        <Route path="addcallback" element={<AddCallback />} />
+        <Route path="editcallback" element={<EditCallback />} />
 
         {/* Tag Manager */}
-        <Route path="/tagmanager" element={<TagManager />} />
+        <Route path="tagmanager" element={<TagManager />} />
 
         {/* Canned Message Manager */}
-        <Route path="/cannedmessagemanager" element={<CannedMessage />} />
+        <Route path="cannedmessagemanager" element={<CannedMessage />} />
 
         {/* Appauthenticator */}
-        <Route path="/authreports" element={<AppauthenticatorReports />} />
-        <Route path="/authsettings" element={<AuthenticatorSetting />} />
+        <Route path="authreports" element={<AppauthenticatorReports />} />
+        <Route path="authsettings" element={<AuthenticatorSetting />} />
 
         {/* Email */}
-        <Route path="/emailtemplate" element={<EmailTemplate />} />
-        <Route path="/emailreports" element={<EmailReport />} />
+        <Route path="emailtemplate" element={<EmailTemplate />} />
+        <Route path="emailreports" element={<EmailReport />} />
 
         {/* Workflow */}
-        <Route path="/workflow" element={<WorkflowDetails />} />
-        <Route path="/workflow/create" element={<WorkflowCreate />} />
-        <Route path="/workflow/edit" element={<UpdateWorkflow />} />
+        <Route path="workflow" element={<WorkflowDetails />} />
+        <Route path="workflow/create" element={<WorkflowCreate />} />
+        <Route path="workflow/edit" element={<UpdateWorkflow />} />
 
         {/* Ai Configuration */}
-        <Route path="/aiconfiguration" element={<GptConfiguration />} />
+        <Route path="aiconfiguration" element={<GptConfiguration />} />
 
         {/* self recharge */}
-        <Route path="/selfrecharge" element={<SelfRecharge />} />
+        <Route path="selfrecharge" element={<SelfRecharge />} />
 
+        {/* Combine Live Chat */}
+        <Route path="liveChatMain" element={<LiveChatLayout />}>
+          <Route index element={<LiveChatDashboard />} />{" "}
+          {/* <Route path="whatsapp" element={<WhatsAppView />} /> */}
+          <Route path="wlivechat" element={<WhatsappLiveChat />} />
+          <Route path="rcs" element={<RCSView />} />
+          <Route path="instagram" element={<InstagramView />} />
+          <Route path="messenger" element={<MessengerView />} />
+        </Route>
       </Route>
 
       <Route path="dummy" element={<Dummy />} />

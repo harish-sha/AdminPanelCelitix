@@ -351,7 +351,7 @@ const DataTable = ({
               />
             </IconButton>
           </CustomTooltip>
-          <CustomTooltip title="Duplicate" placement="top" arrow>
+          {/* <CustomTooltip title="Duplicate" placement="top" arrow>
             <IconButton onClick={() => handleDuplicate(params.row)}>
               <FileCopyIcon
                 sx={{
@@ -360,7 +360,7 @@ const DataTable = ({
                 }}
               />
             </IconButton>
-          </CustomTooltip>
+          </CustomTooltip> */}
           <CustomTooltip title="CURL" placement="top" arrow>
             <IconButton onClick={() => handleApi(params.row)}>
               <TerminalOutlinedIcon
