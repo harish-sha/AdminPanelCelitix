@@ -79,7 +79,7 @@ const CustomPagination = ({
   );
 };
 
-const ManagePlanTable = ({ id, name }) => {
+const ManagePlanTable = ({ id, name, data = [] }) => {
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
@@ -102,30 +102,69 @@ const ManagePlanTable = ({ id, name }) => {
     setManageCreatePlan(true);
   };
 
-  const rows = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    sn: i + 1,
-    userplan: "demo",
-    plantype: "	Promotional",
-    status: "pending",
-    ndnc: "pending",
-    opencontent: "pending.",
-    openmobile: "pending",
-  }));
-
+  const rows = Array.isArray(data)
+    ? data.map((item, index) => ({
+        ...item,
+        id: item.serviceId,
+        sn: index + 1,
+      }))
+    : [];
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-    { field: "userplan", headerName: "Plan Name", flex: 1, minWidth: 80 },
-    { field: "plantype", headerName: "Plan Type", flex: 1, minWidth: 100 },
-    { field: "status", headerName: "Status", flex: 1, minWidth: 100 },
-    { field: "ndnc", headerName: "NDNC", flex: 1, minWidth: 100 },
+    { field: "serviceName", headerName: "Plan Name", flex: 1, minWidth: 80 },
+    { field: "planType", headerName: "Plan Type", flex: 1, minWidth: 100 },
     {
-      field: "opencontent",
+      field: "status",
+      headerName: "Status",
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params) => {
+        return params.value === 1 ? (
+          <span className="text-green-500">Active</span>
+        ) : (
+          <span className="text-red-500">Inactive</span>
+        );
+      },
+    },
+    {
+      field: "ndnc",
+      headerName: "NDNC",
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params) => {
+        return params.value === 1 ? (
+          <span className="text-green-500">Active</span>
+        ) : (
+          <span className="text-red-500">Inactive</span>
+        );
+      },
+    },
+    {
+      field: "openContent",
       headerName: "Open content",
       flex: 1,
       minWidth: 100,
+      renderCell: (params) => {
+        return params.value === 1 ? (
+          <span className="text-green-500">Active</span>
+        ) : (
+          <span className="text-red-500">Inactive</span>
+        );
+      },
     },
-    { field: "openmobile", headerName: "Open Mobile", flex: 1, minWidth: 100 },
+    {
+      field: "openMobile",
+      headerName: "Open Mobile",
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params) => {
+        return params.value === 1 ? (
+          <span className="text-green-500">Active</span>
+        ) : (
+          <span className="text-red-500">Inactive</span>
+        );
+      },
+    },
     {
       field: "action",
       headerName: "Action",

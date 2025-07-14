@@ -185,3 +185,10 @@ export const getCountryList = async () => {
     method: "POST",
   });
 };
+
+export const getAllPlans = async (data) => {
+  return await fetchWithAuth(`/plan/getAllPlans`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};

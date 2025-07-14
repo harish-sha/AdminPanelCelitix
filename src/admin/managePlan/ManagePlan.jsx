@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputField from "../../whatsapp/components/InputField";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
 import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
@@ -7,6 +7,8 @@ import { Dialog } from "primereact/dialog";
 import CustomTooltip from "../../whatsapp/components/CustomTooltip";
 import { Switch } from "@mui/material";
 import ManagePlanTable from "./components/ManagePlanTable";
+import { getAllPlans } from "@/apis/admin/admin";
+import UniversalSkeleton from "../components/UniversalSkeleton";
 
 const ManagePlan = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -16,6 +18,12 @@ const ManagePlan = () => {
   const [manageCreatePlancreate, setManageCreatePlancreate] = useState(false);
   const [plantypeoptioncreate, setPlantypeoptioncreate] = useState(null);
   const [isCheckedcreate, setIsCheckedsetIsChecked] = useState(true);
+  const [searchData, setSearchData] = useState({
+    planname: "",
+    ptype: "",
+    status: "",
+  });
+  const [data, setData] = useState([]);
 
   const plancreateOptions = [
     { label: "Active", value: "active" },
@@ -39,6 +47,27 @@ const ManagePlan = () => {
   const handleCreatePlan = () => {
     setManageCreatePlancreate(true);
   };
+
+  async function handleFetchAllPlans() {
+    try {
+      const payload = {
+        ...searchData,
+        ptype: searchData.ptype ? searchData.ptype : -1,
+        status: searchData.status ? searchData.status : -1,
+      };
+      setIsFetching(true);
+      const res = await getAllPlans(payload);
+      setData(res);
+    } catch (error) {
+      console.error("Error fetching plans:", error);
+    } finally {
+      setIsFetching(false);
+    }
+  }
+
+  useEffect(() => {
+    handleFetchAllPlans();
+  }, []);
 
   return (
     <div className="w-full">
@@ -90,6 +119,7 @@ const ManagePlan = () => {
                 label={isFetching ? "Searching..." : "Search"}
                 icon={<IoSearch />}
                 disabled={isFetching}
+                onClick={handleFetchAllPlans}
               />
             </div>
           </div>
@@ -110,7 +140,11 @@ const ManagePlan = () => {
           </div>
         ) : (
           <div className="w-full">
-            <ManagePlanTable id="managePlanTable" name="managePlanTable" />
+            <ManagePlanTable
+              id="managePlanTable"
+              name="managePlanTable"
+              data={data}
+            />
           </div>
         )}
 
