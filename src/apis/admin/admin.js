@@ -192,3 +192,15 @@ export const getAllPlans = async (data) => {
     body: JSON.stringify(data),
   });
 };
+export const createPlan = async (data) => {
+  return await fetchWithAuth(`/plan/createPlan`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+export const deletePlan = async (data) => {
+  return await fetchWithAuth(`/plan/createPlan`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
