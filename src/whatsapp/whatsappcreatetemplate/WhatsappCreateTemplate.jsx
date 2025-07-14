@@ -332,12 +332,6 @@ const WhatsappCreateTemplate = () => {
         phone_number: phoneNumber,
       });
     }
-    if (selectedTemplateType === "location") {
-      btns.push({
-        type: "HEADER",
-        format: "LOCATION",
-      });
-    }
     if (flowTemplateState?.title && flowTemplateState?.flow_id) {
       btns.push({
         type: "FLOW",
@@ -473,13 +467,23 @@ const WhatsappCreateTemplate = () => {
       // }
     }
 
-    if (selectedTemplateType != "text") {
+    if (
+      selectedTemplateType != "text" &&
+      selectedTemplateType != "carousel" &&
+      selectedTemplateType !== "location"
+    ) {
       data.components.push({
         type: "HEADER",
         format: selectedTemplateType.toUpperCase(),
         example: {
           header_handle: [fileUploadUrl],
         },
+      });
+    }
+    if (selectedTemplateType === "location") {
+      data.components.push({
+        type: "HEADER",
+        format: "LOCATION",
       });
     }
 
