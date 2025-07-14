@@ -98,7 +98,7 @@ const WhatsappCreateTemplate = () => {
     { value: "image", label: "Image" },
     { value: "video", label: "Video" },
     { value: "document", label: "Document" },
-    // { value: "location", label: "Location" },
+    { value: "location", label: "Location" },
     { value: "carousel", label: "Carousel" },
   ];
   const handleDeleteCard = (index) => {
@@ -330,6 +330,12 @@ const WhatsappCreateTemplate = () => {
         type: "PHONE_NUMBER",
         text: phoneTitle,
         phone_number: phoneNumber,
+      });
+    }
+    if (selectedTemplateType === "location") {
+      btns.push({
+        type: "HEADER",
+        format: "LOCATION",
       });
     }
     if (flowTemplateState?.title && flowTemplateState?.flow_id) {

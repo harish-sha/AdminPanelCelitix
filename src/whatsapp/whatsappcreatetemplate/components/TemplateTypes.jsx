@@ -75,7 +75,6 @@ const TemplateTypes = ({
     setHeaderVariableValue(previewFormat);
   };
 
-
   const [isOpen, setIsOpen] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -499,33 +498,7 @@ const TemplateTypes = ({
         </div>
       )}
 
-      {selectedTemplateType === "location" && (
-        <div className="w-full mb-2">
-          <div className="flex items-center mb-2">
-            <label className="text-sm font-medium text-gray-700">
-              Location URL
-            </label>
-            <CustomTooltip
-              title="Enter the location URL"
-              placement="right"
-              arrow
-            >
-              <span className="ml-2">
-                <AiOutlineInfoCircle className="text-gray-500 cursor-pointer" />
-              </span>
-            </CustomTooltip>
-          </div>
-          <input
-            id="location-url"
-            name="location-url"
-            type="text"
-            className="w-full p-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm"
-            value={locationUrl}
-            onChange={(e) => setLocationUrl(e.target.value)}
-            placeholder="Enter location URL"
-          />
-        </div>
-      )}
+      {selectedTemplateType === "location" && null}
 
       <div className="w-full mb-4">
         <div className="flex items-center mb-2">
