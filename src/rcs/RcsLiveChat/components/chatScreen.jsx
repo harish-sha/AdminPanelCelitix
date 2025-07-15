@@ -9,6 +9,8 @@ import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { FullscreenIcon } from "lucide-react";
 import { PiFilePdf, PiMicrosoftExcelLogo } from "react-icons/pi";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import { HiOutlineCheck } from "react-icons/hi";
+import { VscCheckAll } from "react-icons/vsc";
 
 export const ChatScreen = ({
   chatState,

@@ -251,8 +251,9 @@ const RcsLiveChat = () => {
         toast.error(res?.msg);
         return;
       }
+      setInput("");
+      await handleFetchSpecificConvo();
     } catch (e) {
-      console.log(e);
       toast.error("Error sending message");
     }
   }
