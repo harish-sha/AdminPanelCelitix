@@ -405,6 +405,11 @@ const AddTemplateRcs = () => {
           toast.error("Please upload a file");
           return;
         }
+        if (!card?.thumbnailPath) {
+          isError = true;
+          toast.error("Please upload a thumbnail");
+          return;
+        }
 
         const suggestion = {
           website: [],
@@ -475,6 +480,7 @@ const AddTemplateRcs = () => {
 
         const data = {
           imagePath: card?.filePath,
+          thumbnailUrl: card?.thumbnailPath,
           title: card?.cardTitle,
           caption: card?.cardDescription,
           suggestions: suggestion,

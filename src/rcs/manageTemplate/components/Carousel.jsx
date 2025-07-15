@@ -272,6 +272,9 @@ export const Carousel = ({
       if (!thumbnailRefs.current[index]) return;
       const file = e.target.files?.[0];
 
+      if (file.size > 100 * 1024) {
+        return toast.error("Thumbnail size must be less than 100KB.");
+      }
       const img = new Image();
       img.src = URL.createObjectURL(file);
 
@@ -281,11 +284,12 @@ export const Carousel = ({
         const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
         const divisor = gcd(width, height);
         const ratio = `${width / divisor}:${height / divisor}`;
+        console.log("Image ratio:", ratio);
 
-        if (ratio !== "7:3") {
+        if (ratio !== "605:452") {
           thumbnailRefs.current[index].value = "";
           return toast.error(
-            "Please select a 7:3 ratio image for the thumbnail."
+            "Please select a 605:452 ratio image for the thumbnail."
           );
         }
 
