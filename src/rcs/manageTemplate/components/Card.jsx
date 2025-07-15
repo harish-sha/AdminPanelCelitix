@@ -13,10 +13,10 @@ export const Card = ({
   cardOrientation,
   setCardOrientation,
   subType,
+  fileRef,
+  thumbnailRef,
 }) => {
   const [customFilePath, setCustomFilePath] = useState(null);
-  const fileRef = useRef(null);
-  const thumbnailRef = useRef(null);
 
   const handleFileDrop = (event) => {
     event.preventDefault();
@@ -62,7 +62,6 @@ export const Card = ({
 
     if (!file) return;
     const fileType = file.type.split("/")[0];
-    const isPdf = file.type === "application/pdf";
 
     const img = new Image();
     img.src = URL.createObjectURL(file);
@@ -84,10 +83,6 @@ export const Card = ({
       return;
     }
 
-    if (isPdf) {
-      setCardData({ ...cardData, filePath: file });
-      return;
-    }
     img.onload = () => {
       const width = img.naturalWidth;
       const height = img.naturalHeight;
@@ -132,7 +127,10 @@ export const Card = ({
         return;
       }
 
-      setCardData({ ...cardData, filePath: file });
+      setCardData({
+        ...cardData,
+        filePath: file,
+      });
     };
     img.onloadend = () => {
       URL.revokeObjectURL(img.src);
@@ -147,26 +145,61 @@ export const Card = ({
       return toast.error("Please select a valid image file for thumbnail.");
     }
 
-    if (file?.size > 2 * 1024 * 1024) {
-      return toast.error("Thumbnail size must be less than 2MB.");
+    // if (file?.size > 2 * 1024 * 1024) {
+    //   return toast.error("Thumbnail size must be less than 2MB.");
+    // }
+    if (file.size > 100 * 1024) {
+      return toast.error("Thumbnail size must be less than 100KB.");
     }
 
-    setCustomFilePath(file);
-    setCardData({ ...cardData, thumbnailPath: file });
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+
+    img.onload = () => {
+      const width = img.naturalWidth;
+      const height = img.naturalHeight;
+
+      const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
+      const divisor = gcd(width, height);
+      const ratioWidth = width / divisor;
+      const ratioHeight = height / divisor;
+      const ratio = `${ratioWidth}:${ratioHeight}`;
+
+      if (ratio !== "7:3") {
+        fileRef.current.value = null;
+        toast.error("Please select a 7:3 ratio image for thumbnail.");
+        return;
+      }
+
+      setCustomFilePath(file);
+      setCardData({
+        ...cardData,
+        thumbnailPath: file,
+      });
+    };
+    img.onloadend = () => {
+      URL.revokeObjectURL(img.src);
+    };
   };
 
   const uploadFile = async () => {
     if (!cardData.filePath) return toast.error("Please select a file.");
-    if (cardData.file) return toast.error("File already uploaded.");
+    // if (cardData.file) return toast.error("File already uploaded.");
     const res = await uploadImageFile(cardData.filePath);
+    if (!res?.fileUrl) {
+      return toast.error(res?.msg || "Failed to upload file");
+    }
     setCardData({ ...cardData, file: res?.fileUrl });
 
     toast.success("File Uploaded Successfully");
   };
   const uploadThumbnailFile = async () => {
     if (!cardData.thumbnailPath) return toast.error("Please select a file.");
-    if (cardData.thumbnail) return toast.error("File already uploaded.");
+    // if (cardData.thumbnail) return toast.error("File already uploaded.");
     const res = await uploadImageFile(cardData.thumbnailPath);
+    if (!res?.fileUrl) {
+      return toast.error(res?.msg || "Failed to upload thumbnail");
+    }
     setCardData({ ...cardData, thumbnail: res?.fileUrl });
 
     toast.success("File Uploaded Successfully");
@@ -275,36 +308,63 @@ Unsupported sizes may cause delivery failure or layout issues."
           }}
         />
       </div>
-      <div className="mt-5 flex flex-col items-center gap-2 md:flex-row mb-2">
-        <InputField
-          type="file"
-          id="fileInput"
-          name="fileInput"
-          onChange={(e) => {
-            handleFileChange(e);
-          }}
-          ref={fileRef}
-          accept={subType === "image" ? "image/*" : "video/*"}
-          label={"Upload File"}
-          tooltipContent={
-            subType === "image"
-              ? "Upload an image file for the card. Supported formats: JPG, PNG, GIF. Max size: 2MB."
-              : "Upload a video file for the card. Supported formats: MP4. Max size: 10MB."
-          }
-        />
-        {subType === "video" && (
+      <div className="mt-5 flex flex-col items-center gap-2 md:flex-row mb-2 w-full">
+        <div className="flex gap-2 items-end w-full md:w-auto">
           <InputField
             type="file"
-            label="Upload Thumbnail"
-            tooltipContent="Upload a thumbnail image for the video. Supported formats: JPG, PNG, GIF. Max size: 2MB."
-            id="thumbnailInput"
-            name="thumbnailInput"
+            id="fileInput"
+            name="fileInput"
             onChange={(e) => {
-              handleThumbnailChange(e);
+              handleFileChange(e);
             }}
-            ref={thumbnailRef}
-            accept="image/*"
+            ref={fileRef}
+            accept={subType === "image" ? "image/*" : "video/*"}
+            label={"Upload File"}
+            tooltipContent={
+              subType === "image"
+                ? "Upload an image file for the card. Supported formats: JPG, PNG, GIF. Max size: 2MB."
+                : "Upload a video file for the card. Supported formats: MP4. Max size: 10MB."
+            }
           />
+
+          <div className="upload-button-container ">
+            <button
+              onClick={uploadFile}
+              disabled={false}
+              className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer `}
+            >
+              <FileUploadOutlinedIcon
+                sx={{ color: "white", fontSize: "23px" }}
+              />
+            </button>
+          </div>
+        </div>
+        {subType === "video" && (
+          <div className="flex gap-2 items-end w-full md:w-auto">
+            <InputField
+              type="file"
+              label="Upload Thumbnail"
+              tooltipContent="Upload a thumbnail image for the video. Supported formats: JPG, PNG, GIF. Max size: 2MB."
+              id="thumbnailInput"
+              name="thumbnailInput"
+              onChange={(e) => {
+                handleThumbnailChange(e);
+              }}
+              ref={thumbnailRef}
+              accept="image/*"
+            />
+            <div className="upload-button-container ">
+              <button
+                onClick={uploadThumbnailFile}
+                disabled={false}
+                className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer `}
+              >
+                <FileUploadOutlinedIcon
+                  sx={{ color: "white", fontSize: "23px" }}
+                />
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>

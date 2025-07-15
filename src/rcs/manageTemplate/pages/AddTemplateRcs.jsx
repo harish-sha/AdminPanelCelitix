@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import InputField from "@/whatsapp/components/InputField";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import UniversalButton from "@/whatsapp/components/UniversalButton";
@@ -38,6 +38,8 @@ const AddTemplateRcs = () => {
     mediaHeight: "",
     file: "",
     filePath: "",
+    thumbnailPath: "",
+    thumbnail: "",
   });
 
   const [cardOrientation, setCardOrientation] = useState("");
@@ -55,6 +57,9 @@ const AddTemplateRcs = () => {
     dropdown3: "",
     dropdown4: "",
   });
+
+  const fileRef = useRef(null);
+  const thumbnailRef = useRef(null);
 
   const [BtninputData, setBtnInputData] = useState({
     dropdown1: {
@@ -144,7 +149,8 @@ const AddTemplateRcs = () => {
       dropdown3: "",
       dropdown4: "",
     });
-
+    fileRef.current && (fileRef.current.value = "");
+    thumbnailRef.current && (thumbnailRef.current.value = "");
     setBtnInputData({});
     setCardData({ title: "", mediaHeight: "", file: "" });
   }
@@ -159,6 +165,8 @@ const AddTemplateRcs = () => {
       dropdown3: "",
       dropdown4: "",
     });
+    fileRef.current && (fileRef.current.value = "");
+    thumbnailRef.current && (thumbnailRef.current.value = "");
 
     setBtnInputData({});
     setCardData({ title: "", mediaHeight: "", file: "" });
@@ -282,6 +290,7 @@ const AddTemplateRcs = () => {
 
     if (inputData.templateType === "rich_card") {
       for (const key in cardData) {
+        console.log(cardData[key], key);
         if (!cardData[key]) {
           toast.error(`Please fill the ${key}`);
           return;
@@ -318,13 +327,31 @@ const AddTemplateRcs = () => {
 
     if (inputData.templateType === "rich_card") {
       if (!cardData?.file) {
-        toast.error("Please upload a file");
+        toast.error("Please select a file");
         return;
       }
+      if (inputData.subType === "video" && !cardData?.thumbnail) {
+        toast.error("Please select a thumbnail for the video");
+        return;
+      }
+
+      // const res = await uploadImageFile(cardData.filePath);
+      // let thumbnail = "";
+      // if (inputData.subType === "video") {
+      //   thumbnail = await uploadImageFile(cardData.thumbnailPath);
+      // }
       // console.log(cardData);
       const key = {
         HORIZONTAL: "cardAlignment",
         VERTICAL: "mediaHeight",
+      };
+      const type = {
+        video: "videoPath",
+        image: "imagePath",
+      };
+      const typeList = {
+        video: "videoList",
+        image: "imageList",
       };
       const isVertical = cardOrientation.toUpperCase() === "VERTICAL";
 
@@ -332,10 +359,13 @@ const AddTemplateRcs = () => {
       const value = isVertical
         ? `${cardData.mediaHeight.toUpperCase()}_HEIGHT`
         : cardData.mediaHeight.toUpperCase();
+
+      const listType = typeList[inputData.subType];
+      const fileType = type[inputData.subType];
       data = {
         ...inputData,
         agentId: inputData.agentId.toString(),
-        templateType: "image",
+        templateType: inputData.subType,
         variables,
         imageList: [
           {
@@ -346,6 +376,9 @@ const AddTemplateRcs = () => {
             // mediaHeight: `${cardData.mediaHeight.toUpperCase()}_HEIGHT`,
             [dynamicKey]: value,
             suggestions: suggestions,
+            ...(inputData.subType === "video"
+              ? { thumbnailUrl: cardData?.thumbnail }
+              : {}),
           },
         ],
       };
@@ -470,9 +503,11 @@ const AddTemplateRcs = () => {
     }
 
     try {
+      console.log("data", data);
       setIsFetching(true);
       const res = await saveRcsTemplate(data);
       if (!res?.status) {
+        console.log("res save", res);
         toast.error(res?.msg);
         return;
       }
@@ -675,11 +710,13 @@ const AddTemplateRcs = () => {
           {inputData.templateType === "rich_card" && (
             <Card
               type={inputData.templateType}
-              subType = {inputData.subType}
+              subType={inputData.subType}
               cardData={cardData}
               setCardData={setCardData}
               cardOrientation={cardOrientation}
               setCardOrientation={setCardOrientation}
+              fileRef={fileRef}
+              thumbnailRef={thumbnailRef}
             />
           )}
           {inputData.templateType != "carousel" && (
@@ -748,6 +785,7 @@ const AddTemplateRcs = () => {
             handleNextIndex={handleNextIndex}
             handlePreviousIndex={handlePreviousIndex}
             setSelectedCardIndex={setSelectedIndex}
+            subType={inputData.subType}
           />
         </div>
       </div>
