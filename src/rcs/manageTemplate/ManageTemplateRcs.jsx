@@ -167,6 +167,7 @@ const ManageTemplateRcs = () => {
             options={[
               { label: "Text", value: "text" },
               { label: "Image", value: "image" },
+              { label: "Video", value: "video" },
               // {
               //   label: "Rich Card Stand Alone",
               //   value: "richcardstandalone",
