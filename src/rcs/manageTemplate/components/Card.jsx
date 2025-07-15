@@ -327,20 +327,14 @@ Unsupported sizes may cause delivery failure or layout issues."
             }
           />
 
-          <div className="upload-button-container ">
-            <button
-              onClick={uploadFile}
-              disabled={false}
-              className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer `}
-            >
-              <FileUploadOutlinedIcon
-                sx={{ color: "white", fontSize: "23px" }}
-              />
+          <div className="upload-button-container" className="mb-2">
+            <button onClick={uploadFile} disabled={false}>
+              <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
             </button>
           </div>
         </div>
         {subType === "video" && (
-          <div className="flex gap-2 items-end w-full md:w-auto">
+          <div className="flex gap-2 items-end w-full md:w-auto ml-2">
             <InputField
               type="file"
               label="Upload Thumbnail"
@@ -353,15 +347,9 @@ Unsupported sizes may cause delivery failure or layout issues."
               ref={thumbnailRef}
               accept="image/*"
             />
-            <div className="upload-button-container ">
-              <button
-                onClick={uploadThumbnailFile}
-                disabled={false}
-                className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer `}
-              >
-                <FileUploadOutlinedIcon
-                  sx={{ color: "white", fontSize: "23px" }}
-                />
+            <div className="upload-button-container" className="mb-2">
+              <button onClick={uploadThumbnailFile} disabled={false}>
+                <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
               </button>
             </div>
           </div>

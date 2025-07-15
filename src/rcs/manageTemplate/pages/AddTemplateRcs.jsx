@@ -494,7 +494,7 @@ const AddTemplateRcs = () => {
       data = {
         ...inputData,
         agentId: inputData.agentId.toString(),
-        templateType: "image",
+        templateType: inputData.subType,
         width: `${cardwidth.toUpperCase()}_WIDTH`,
         height: `${cardheight.toUpperCase()}_HEIGHT`,
         variables,
@@ -880,6 +880,7 @@ const AddTemplateRcs = () => {
               setAi={setAi}
               setIsOpen={setIsOpen}
               isOpen={isOpen}
+              subType={inputData.subType}
             />
           )}
         </div>

@@ -46,14 +46,22 @@ export const Carousel = ({
   setAi,
   setIsOpen,
   isOpen,
+  subType,
 }) => {
   const fileRefs = useRef([]);
+  const thumbnailRefs = useRef([]);
 
   useEffect(() => {
     if (fileRefs.current[selectedCardIndex]) {
       const data = caraousalData[selectedCardIndex];
       if (!data?.fileTempPath && !data?.filePath) {
         fileRefs.current[selectedCardIndex].value = "";
+      }
+    }
+    if (thumbnailRefs.current[selectedCardIndex]) {
+      const data = caraousalData[selectedCardIndex];
+      if (!data?.thumbnailTempPath && !data?.thumbnailPath) {
+        thumbnailRefs.current[selectedCardIndex].value = "";
       }
     }
   }, [selectedCardIndex]);
@@ -259,6 +267,43 @@ export const Carousel = ({
     },
     [selectedCardIndex, setCaraousalData, cardheight, cardwidth]
   );
+  const handleThumbnailChange = useCallback(
+    (e, index) => {
+      if (!thumbnailRefs.current[index]) return;
+      const file = e.target.files?.[0];
+
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+
+      img.onload = () => {
+        const { naturalWidth: width, naturalHeight: height } = img;
+
+        const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
+        const divisor = gcd(width, height);
+        const ratio = `${width / divisor}:${height / divisor}`;
+
+        if (ratio !== "7:3") {
+          thumbnailRefs.current[index].value = "";
+          return toast.error(
+            "Please select a 7:3 ratio image for the thumbnail."
+          );
+        }
+
+        setCaraousalData((prev) =>
+          prev.map((item, index) =>
+            index === selectedCardIndex
+              ? { ...item, thumbnailTempPath: file, thumbnail: file.name }
+              : item
+          )
+        );
+      };
+
+      img.onloadend = () => {
+        URL.revokeObjectURL(img.src);
+      };
+    },
+    [selectedCardIndex, setCaraousalData, cardheight, cardwidth]
+  );
 
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -287,6 +332,31 @@ export const Carousel = ({
       toast.error("Something went wrong");
     }
   };
+  const handleUploadThumbnail = async () => {
+    try {
+      if (!caraousalData[selectedCardIndex]?.thumbnailTempPath) {
+        return toast.error("Please select a file first");
+      }
+      if (caraousalData[selectedCardIndex]?.thumbnailPath) {
+        return toast.error(
+          "Image already uploaded, please choose a different one."
+        );
+      }
+      const res = await uploadImageFile(
+        caraousalData[selectedCardIndex]?.thumbnailTempPath
+      );
+      setCaraousalData((prev) =>
+        prev.map((item, index) =>
+          index === selectedCardIndex
+            ? { ...item, thumbnailPath: res?.fileUrl }
+            : item
+        )
+      );
+      toast.success("File Uploaded Successfully");
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
+  };
 
   const handleDeleteFile = () => {
     setCaraousalData((prev) =>
@@ -297,6 +367,16 @@ export const Carousel = ({
       )
     );
     fileRefs.current[selectedCardIndex].value = null;
+  };
+  const handleDeleteThumbnail = () => {
+    setCaraousalData((prev) =>
+      prev.map((item, index) =>
+        index === selectedCardIndex
+          ? { ...item, thumbnailPath: "", thumbnail: "", thumbnailTempPath: "" }
+          : item
+      )
+    );
+    thumbnailRefs.current[selectedCardIndex].value = null;
   };
 
   const currentCardSuggestions =
@@ -419,7 +499,9 @@ export const Carousel = ({
           </IconButton>
         </div>
       </div>
-      <p className="mr-auto ml-auto underline text-[#212529]">Card - {selectedCardIndex + 1}</p>
+      <p className="mr-auto ml-auto underline text-[#212529]">
+        Card - {selectedCardIndex + 1}
+      </p>
       <div className="flex gap-2">
         <AnimatedDropdown
           id="selectCardHeight"
@@ -491,7 +573,7 @@ Images: Max 1MB | Videos: Max 5MB`}
           maxLength="200"
           tooltipContent="Enter the title that will appear on the rich card. Keep it short and engaging."
         />
-        <div className="flex flex-col gap-2 mb-2">
+        <div className="flex flex-col gap-2">
           <label
             htmlFor={`uplaodfile-${selectedCardIndex + 1}`}
             className="text-sm font-medium text-gray-700"
@@ -505,6 +587,11 @@ Images: Max 1MB | Videos: Max 5MB`}
               name={`uploadfile-${selectedCardIndex + 1}`}
               onChange={handleImageChange}
               ref={(el) => (fileRefs.current[selectedCardIndex] = el)}
+              accept={
+                subType === "video"
+                  ? "video/*"
+                  : "image/png, image/jpeg, image/jpg, image/webp"
+              }
               // value={fileRefs.current[selectedCardIndex]?.value || ""}
               className="block w-full p-1.5 h-[2.275rem] border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm border-gray-300"
             />
@@ -523,6 +610,45 @@ Images: Max 1MB | Videos: Max 5MB`}
           </div>
         </div>
       </div>
+
+      {/* Thumbnail */}
+
+      {subType === "video" && (
+        <div className="flex flex-col gap-2 mb-2 ">
+          <label
+            htmlFor={`uplaodfile-${selectedCardIndex + 1}`}
+            className="text-sm font-medium text-gray-700"
+          >
+            Upload Thumbnail
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="file"
+              id={`uploadThumbnail-${selectedCardIndex + 1}`}
+              name={`uploadThumbnail-${selectedCardIndex + 1}`}
+              onChange={(e) => {
+                handleThumbnailChange(e, selectedCardIndex);
+              }}
+              accept="image/*"
+              ref={(el) => (thumbnailRefs.current[selectedCardIndex] = el)}
+              // value={fileRefs.current[selectedCardIndex]?.value || ""}
+              className="block w-full p-1.5 h-[2.275rem] border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm border-gray-300"
+            />
+
+            <button onClick={handleUploadThumbnail}>
+              <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
+            </button>
+            {caraousalData[selectedCardIndex]?.thumbnail && (
+              <button onClick={handleDeleteThumbnail}>
+                <MdOutlineDeleteForever
+                  className="text-red-500 cursor-pointer hover:text-red-600"
+                  size={20}
+                />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="relative">
         <Variables
