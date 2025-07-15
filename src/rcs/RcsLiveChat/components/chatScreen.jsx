@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { IoArrowBack, IoVideocamOutline } from "react-icons/io5";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { ChatInput } from "./chatInput";
@@ -32,6 +32,33 @@ export const ChatScreen = ({
   function formatTime(time) {
     return moment(time).format("HH:mm");
   }
+
+  useEffect(() => {
+    if (messageRef.current) {
+      messageRef.current.scrollTop = messageRef.current.scrollHeight;
+    }
+
+    if (endOfMessagesRef.current) {
+      endOfMessagesRef.current.scrollIntoView({
+        behavior: "auto",
+        block: "end",
+      });
+    }
+
+    const timeout = setTimeout(() => {
+      if (messageRef.current) {
+        messageRef.current.scrollTop = messageRef.current.scrollHeight;
+      }
+      if (endOfMessagesRef.current) {
+        endOfMessagesRef.current.scrollIntoView({
+          behavior: "auto",
+          block: "end",
+        });
+      }
+    }, 200);
+
+    return () => clearTimeout(timeout);
+  }, [chatState?.specificConversation]);
 
   function mediaType(mime) {
     const type = mime.split("/")[0];

@@ -123,8 +123,6 @@ const RcsLiveChat = () => {
         ...prev,
         allConversations: mappedConversations,
       }));
-
-      console.log(mappedConversations);
     } catch (e) {
       toast.error("Error fetching conversations");
     }

@@ -118,7 +118,6 @@ export const VariableManager = ({
   );
 
   const insertVariable = (variable, index) => {
-    console.log(variable);
     const input = textBoxRef.current;
     if (!input) return;
 
