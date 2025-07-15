@@ -26,6 +26,7 @@ const AddTemplateRcs = () => {
     agentId: "",
     templateName: "",
     templateType: "text",
+    subType: "image",
   });
   const [btnData, setBtnData] = useState([]);
   const [variables, setVariables] = useState([]);
@@ -132,8 +133,23 @@ const AddTemplateRcs = () => {
     },
   ];
 
-  function handleTemplateTypeChange(value) {
+  function handleTemplateCategoryChange(value) {
     setInputData({ ...inputData, templateType: value });
+    setMessageContent("");
+    setVariables([]);
+    setBtnData([]);
+    setSelectedAction({
+      dropdown1: "",
+      dropdown2: "",
+      dropdown3: "",
+      dropdown4: "",
+    });
+
+    setBtnInputData({});
+    setCardData({ title: "", mediaHeight: "", file: "" });
+  }
+  function handleTemplateTypeChange(value) {
+    setInputData({ ...inputData, subType: value });
     setMessageContent("");
     setVariables([]);
     setBtnData([]);
@@ -549,8 +565,8 @@ const AddTemplateRcs = () => {
             placeholder="Enter Template Name"
             value={inputData.templateName}
             onChange={(e) => {
-              const value = e.target.value
-              if(/^[a-zA-Z0-9_]*$/.test(value)){
+              const value = e.target.value;
+              if (/^[a-zA-Z0-9_]*$/.test(value)) {
                 setInputData({ ...inputData, templateName: value });
               }
               // setInputData({ ...inputData, templateName: e.target.value });
@@ -561,9 +577,9 @@ const AddTemplateRcs = () => {
         </div>
         <div className="w-full sm:w-56">
           <AnimatedDropdown
-            label="Template Type"
-            id="templateType"
-            name="templateType"
+            label="Template Category"
+            id="templateCategory"
+            name="templateCategory"
             options={[
               {
                 label: "Text",
@@ -580,12 +596,37 @@ const AddTemplateRcs = () => {
             ]}
             value={inputData.templateType}
             onChange={(newValue) => {
-              handleTemplateTypeChange(newValue);
+              handleTemplateCategoryChange(newValue);
             }}
-            placeholder="Select Template Type"
-            tooltipContent="Select Template Type"
+            placeholder="Select Template Category"
+            tooltipContent="Select Template Category"
           />
         </div>
+        {inputData.templateType && inputData.templateType !== "text" && (
+          <div className="w-full sm:w-56">
+            <AnimatedDropdown
+              label="Template Type"
+              id="templateType"
+              name="templateType"
+              options={[
+                {
+                  label: "Image",
+                  value: "image",
+                },
+                {
+                  label: "Video",
+                  value: "video",
+                },
+              ]}
+              value={inputData.subType}
+              onChange={(newValue) => {
+                handleTemplateTypeChange(newValue);
+              }}
+              placeholder="Select Template Type"
+              tooltipContent="Select Template Type"
+            />
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col justify-between gap-6 bg-gray-100 sm:flex-row lg:flex-row">
@@ -634,6 +675,7 @@ const AddTemplateRcs = () => {
           {inputData.templateType === "rich_card" && (
             <Card
               type={inputData.templateType}
+              subType = {inputData.subType}
               cardData={cardData}
               setCardData={setCardData}
               cardOrientation={cardOrientation}
