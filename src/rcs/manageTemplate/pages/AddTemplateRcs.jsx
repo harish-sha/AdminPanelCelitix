@@ -20,6 +20,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AiOutlineClose } from "react-icons/ai";
 import { GenerateAiContent } from "@/components/common/CustomContentGenerate";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import { Pdf } from "../components/pdf";
 
 const AddTemplateRcs = () => {
   const [inputData, setInputData] = useState({
@@ -60,6 +61,13 @@ const AddTemplateRcs = () => {
 
   const fileRef = useRef(null);
   const thumbnailRef = useRef(null);
+  const pdfRef = useRef(null);
+
+  const [pdfTemplateState, setPdfTemplateState] = useState({
+    documentFileName: "",
+    messageOrder: "",
+    pdfBase64: "",
+  });
 
   const [BtninputData, setBtnInputData] = useState({
     dropdown1: {
@@ -492,6 +500,99 @@ const AddTemplateRcs = () => {
         variables,
         imageList: imageList,
       };
+    } else if (inputData.templateType === "text_message_with_pdf") {
+      if (!pdfTemplateState.documentFileName) {
+        toast.error("Please enter a file name");
+        return;
+      }
+
+      if (!pdfTemplateState.pdfBase64) {
+        toast.error("Please upload a PDF file");
+        return;
+      }
+      if (!pdfTemplateState.messageOrder) {
+        toast.error("Please select a message order");
+        return;
+      }
+
+      Object.values(btnData).forEach(({ type, value, title }) => {
+        // console.log(type, value, title);
+        if (!type) return;
+
+        if (type == "Share Location") {
+          value = "fdsf";
+        }
+
+        if (!title || !value) {
+          toast.error(`Please fill all the fields for ${type}`);
+          hasError = true;
+          return;
+        }
+
+        if (
+          type === "Url Action" &&
+          !value.startsWith("http://") &&
+          !value.startsWith("https://")
+        ) {
+          toast.error(`Please enter a valid URL for ${type}`);
+          hasError = true;
+          return;
+        }
+
+        const actions = {
+          "Url Action": () => {
+            suggestions.website.push(value);
+            suggestions.websitetitle.push(title);
+          },
+          "Dialer Action": () => {
+            suggestions.mobile.push(value);
+            suggestions.mobiletitle.push(title);
+          },
+          Reply: () => {
+            suggestions.replybtn.push(value);
+            suggestions.replybtntitle.push(title);
+          },
+          "Share Location": () => {
+            suggestions.locationtitle.push(title);
+          },
+          "View Location": () => {
+            const [latitude, longitude] = value.split(",");
+            suggestions.addresstitle.push(title);
+            suggestions.addressLatitude.push(latitude);
+            suggestions.addressLongitude.push(longitude);
+          },
+        };
+
+        actions[type]?.();
+      });
+
+      const hasAtLeastOneButton =
+        suggestions.website.length ||
+        suggestions.mobile.length ||
+        suggestions.replybtn.length ||
+        suggestions.locationtitle.length ||
+        suggestions.addresstitle.length;
+
+      if (!hasAtLeastOneButton && !hasError) {
+        toast.error(`Please add at least one button`);
+        hasError = true;
+        return;
+      }
+
+      variables.forEach((item) => {
+        if (item.id && !item.value) {
+          toast.error(`Please fill the fields for variable [${item.id}]`);
+          hasError = true;
+        }
+      });
+
+      data = {
+        ...inputData,
+        suggestions,
+        messageContent,
+        variables,
+        ...pdfTemplateState,
+      };
     }
     // console.log(isError, hasError);
     if (hasError) {
@@ -503,11 +604,10 @@ const AddTemplateRcs = () => {
     }
 
     try {
-      console.log("data", data);
       setIsFetching(true);
+      delete data.subType;
       const res = await saveRcsTemplate(data);
       if (!res?.status) {
-        console.log("res save", res);
         toast.error(res?.msg);
         return;
       }
@@ -621,6 +721,10 @@ const AddTemplateRcs = () => {
                 value: "text",
               },
               {
+                label: "Text with PDF",
+                value: "text_message_with_pdf",
+              },
+              {
                 label: "Rich Card Stand Alone",
                 value: "rich_card",
               },
@@ -637,31 +741,33 @@ const AddTemplateRcs = () => {
             tooltipContent="Select Template Category"
           />
         </div>
-        {inputData.templateType && inputData.templateType !== "text" && (
-          <div className="w-full sm:w-56">
-            <AnimatedDropdown
-              label="Template Type"
-              id="templateType"
-              name="templateType"
-              options={[
-                {
-                  label: "Image",
-                  value: "image",
-                },
-                {
-                  label: "Video",
-                  value: "video",
-                },
-              ]}
-              value={inputData.subType}
-              onChange={(newValue) => {
-                handleTemplateTypeChange(newValue);
-              }}
-              placeholder="Select Template Type"
-              tooltipContent="Select Template Type"
-            />
-          </div>
-        )}
+        {inputData.templateType &&
+          inputData.templateType !== "text" &&
+          inputData.templateType !== "text_message_with_pdf" && (
+            <div className="w-full sm:w-56">
+              <AnimatedDropdown
+                label="Template Type"
+                id="templateType"
+                name="templateType"
+                options={[
+                  {
+                    label: "Image",
+                    value: "image",
+                  },
+                  {
+                    label: "Video",
+                    value: "video",
+                  },
+                ]}
+                value={inputData.subType}
+                onChange={(newValue) => {
+                  handleTemplateTypeChange(newValue);
+                }}
+                placeholder="Select Template Type"
+                tooltipContent="Select Template Type"
+              />
+            </div>
+          )}
       </div>
 
       <div className="flex flex-col justify-between gap-6 bg-gray-100 sm:flex-row lg:flex-row">
@@ -676,7 +782,7 @@ const AddTemplateRcs = () => {
               Template
             </span>
             <CustomTooltip
-              title="Enter Message content and variables. Maximum length is 2500 characters."
+              title="Enter Message content and variables. Maximum length is 2000 characters."
               placement="right"
               arrow
             >
@@ -717,6 +823,13 @@ const AddTemplateRcs = () => {
               setCardOrientation={setCardOrientation}
               fileRef={fileRef}
               thumbnailRef={thumbnailRef}
+            />
+          )}
+          {inputData.templateType === "text_message_with_pdf" && (
+            <Pdf
+              pdfTemplateState={pdfTemplateState}
+              setPdfTemplateState={setPdfTemplateState}
+              pdfRef={pdfRef}
             />
           )}
           {inputData.templateType != "carousel" && (
