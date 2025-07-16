@@ -85,6 +85,7 @@ const RcsLiveChat = () => {
   async function handleFetchAllConvo() {
     if (!agentState?.id) return;
     try {
+      setIsLoading(true);
       const userActive = btnOption == "active" ? 1 : 0;
       const payload = {
         agentId: agentState?.id,
@@ -125,6 +126,8 @@ const RcsLiveChat = () => {
       }));
     } catch (e) {
       toast.error("Error fetching conversations");
+    } finally {
+      setIsLoading(false);
     }
   }
 
