@@ -604,7 +604,7 @@ Images: Max 1MB | Videos: Max 5MB`}
               className="block w-full p-1.5 h-[2.275rem] border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm border-gray-300"
             />
 
-            {!caraousalData[selectedCardIndex]?.fileName && (
+            {caraousalData[selectedCardIndex]?.fileName && (
               <button onClick={handleUploadFile}>
                 <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
               </button>

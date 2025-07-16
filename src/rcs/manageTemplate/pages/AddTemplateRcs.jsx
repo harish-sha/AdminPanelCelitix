@@ -405,7 +405,7 @@ const AddTemplateRcs = () => {
           toast.error("Please upload a file");
           return;
         }
-        if (!card?.thumbnailPath) {
+        if (inputData.subType === "video" && !card?.thumbnailPath) {
           isError = true;
           toast.error("Please upload a thumbnail");
           return;
