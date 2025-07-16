@@ -54,16 +54,19 @@ export const Carousel = ({
   useEffect(() => {
     if (fileRefs.current[selectedCardIndex]) {
       const data = caraousalData[selectedCardIndex];
+      console.log("data?.fileName:", data?.fileName);
       if (!data?.fileTempPath && !data?.filePath) {
         fileRefs.current[selectedCardIndex].value = "";
+      } else {
+        fileRefs.current[selectedCardIndex].filename = data?.fileName;
       }
     }
-    if (thumbnailRefs.current[selectedCardIndex]) {
-      const data = caraousalData[selectedCardIndex];
-      if (!data?.thumbnailTempPath && !data?.thumbnailPath) {
-        thumbnailRefs.current[selectedCardIndex].value = "";
-      }
-    }
+    // if (thumbnailRefs.current[selectedCardIndex]) {
+    //   const data = caraousalData[selectedCardIndex];
+    //   if (!data?.thumbnailTempPath && !data?.thumbnailPath) {
+    //     thumbnailRefs.current[selectedCardIndex].value = "";
+    //   }
+    // }
   }, [selectedCardIndex]);
 
   const [selectedAction, setSelectedAction] = useState({
@@ -296,7 +299,7 @@ export const Carousel = ({
         setCaraousalData((prev) =>
           prev.map((item, index) =>
             index === selectedCardIndex
-              ? { ...item, thumbnailTempPath: file, thumbnail: file.name }
+              ? { ...item, thumbnailTempPath: file, thumbnailName: file.name }
               : item
           )
         );
@@ -591,6 +594,7 @@ Images: Max 1MB | Videos: Max 5MB`}
               name={`uploadfile-${selectedCardIndex + 1}`}
               onChange={handleImageChange}
               ref={(el) => (fileRefs.current[selectedCardIndex] = el)}
+              // fileName={fileRefs.current[selectedCardIndex]?.filename }
               accept={
                 subType === "video"
                   ? "video/*"
@@ -600,9 +604,12 @@ Images: Max 1MB | Videos: Max 5MB`}
               className="block w-full p-1.5 h-[2.275rem] border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm border-gray-300"
             />
 
-            <button onClick={handleUploadFile}>
-              <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
-            </button>
+            {!caraousalData[selectedCardIndex]?.fileName && (
+              <button onClick={handleUploadFile}>
+                <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
+              </button>
+            )}
+
             {caraousalData[selectedCardIndex]?.fileName && (
               <button onClick={handleDeleteFile}>
                 <MdOutlineDeleteForever
