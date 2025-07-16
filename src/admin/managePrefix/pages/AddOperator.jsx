@@ -14,7 +14,11 @@ import InputField from "../../../whatsapp/components/InputField";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { toast } from "react-hot-toast";
 import * as XLSX from "xlsx";
-import { getOperatorList } from "@/apis/admin/admin";
+import {
+  addOperator,
+  deleteOperator,
+  getOperatorList,
+} from "@/apis/admin/admin";
 import { getCountryList } from "@/apis/common/common";
 
 const PaginationList = styled("ul")({
@@ -95,6 +99,15 @@ const AddOperator = ({ id, name }) => {
   const [countryList, setCountryList] = useState([]);
 
   const [searchCountry, setSearchCountry] = useState("");
+
+  const [addData, setAddData] = useState({
+    operatorName: "",
+    countrySrno: 0,
+  });
+  const [editoperatorData, setEditOperatorData] = useState({
+    operatorName: "",
+    countrySrno: 0,
+  });
   const handleAdd = () => {
     setNewOperator(true);
   };
@@ -259,7 +272,8 @@ const AddOperator = ({ id, name }) => {
       }));
 
       const filteredOperators = enrichedOperators.filter(
-        (operator) => operator.countrySrno === searchCountry || searchCountry === ""
+        (operator) =>
+          operator.countrySrno === searchCountry || searchCountry === ""
       );
       setOperatorList(filteredOperators);
     } catch (error) {
@@ -317,6 +331,35 @@ const AddOperator = ({ id, name }) => {
   ];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+
+  async function handleSave() {
+    try {
+      const res = await addOperator(addData);
+      console.log("Operator added successfully:", res);
+      if (!res.success) {
+        toast.error("Failed to add operator. Please try again.");
+        return;
+      }
+      toast.success("Operator added successfully.");
+    } catch (e) {
+      toast.error("Something went wrong while saving the operator.");
+    }
+  }
+
+  async function handleDelete(row) {
+    if (!row?.srNo) return;
+    try {
+      const res = await deleteOperator(row?.srNo);
+      if (!res.status) {
+        toast.error("Failed to delete operator. Please try again.");
+        return;
+      }
+      toast.success("Operator deleted successfully.");
+      await handleFetchOpertorList();
+    } catch (e) {
+      toast.error("Something went wrong while deleting the operator.");
+    }
+  }
 
   const CustomFooter = () => {
     return (
@@ -405,14 +448,14 @@ const AddOperator = ({ id, name }) => {
               onClick={handleAdd}
             />
           </div>
-          <div className="w-max-content">
+          {/* <div className="w-max-content">
             <UniversalButton
               label="Import"
               id="importoperator"
               name="importoperator"
               onClick={handleImport}
             />
-          </div>
+          </div> */}
         </div>
       </div>
       <Paper sx={{ height: 558 }} id={id} name={name}>
@@ -464,20 +507,30 @@ const AddOperator = ({ id, name }) => {
             label="Country"
             id="countryaddnew"
             name="countryaddnew"
-            options={AddnewcountryOptions}
+            options={countryList.map((country) => ({
+              label: country.countryName,
+              value: country.srNo,
+            }))}
             placeholder="select country"
+            value={addData.countrySrno}
+            onChange={(e) => setAddData({ ...addData, countrySrno: e })}
           />
           <InputField
             label="Operator Name*"
             id="addnewoperatorname"
             name="addnewoperatorname"
             placeholder="Enter Operator Name"
+            value={addData.operatorName}
+            onChange={(e) =>
+              setAddData({ ...addData, operatorName: e.target.value })
+            }
           />
           <div className="flex justify-center">
             <UniversalButton
               label="Save"
               id="saveaddprefix"
               name="saveaddprefix"
+              onClick={handleSave}
             />
           </div>
         </div>

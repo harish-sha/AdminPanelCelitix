@@ -238,11 +238,20 @@ export const getPlanDetailsByServiceId = async (srno) => {
   );
 };
 export const updatePlan = async (data) => {
-  return await fetchWithAuth(
-    `/plan/editPlan`,
-    {
-      method: "POST",
-      body: JSON.stringify(data),
-    }
-  );
+  return await fetchWithAuth(`/plan/editPlan`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+export const addOperator = async (data) => {
+  return await fetchWithAuth(`/addOperator`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+export const deleteOperator = async (data) => {
+  return await fetchWithAuth(`/deleteOperatorBySrno?srNo=${data}`, {
+    method: "POST",
+  });
 };
