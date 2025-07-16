@@ -327,7 +327,7 @@ Unsupported sizes may cause delivery failure or layout issues."
             }
           />
 
-          <div className="upload-button-container" className="mb-2">
+          <div className="upload-button-container mb-2">
             <button onClick={uploadFile} disabled={false}>
               <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
             </button>
@@ -347,7 +347,7 @@ Unsupported sizes may cause delivery failure or layout issues."
               ref={thumbnailRef}
               accept="image/*"
             />
-            <div className="upload-button-container" className="mb-2">
+            <div className="upload-button-container mb-2">
               <button onClick={uploadThumbnailFile} disabled={false}>
                 <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
               </button>

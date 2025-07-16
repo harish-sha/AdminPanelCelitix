@@ -31,6 +31,7 @@ const ManageTemplateRcs = () => {
   const [templateid, setTemplateid] = useState("");
   const [templateDialogVisible, setTemplateDialogVisible] = useState(false);
   const [templateDetails, setTemplateDetails] = useState();
+
   const [templateDeleteVisible, setTemplateDeleteVisible] = useState(false);
 
   const navigate = useNavigate();
@@ -102,6 +103,7 @@ const ManageTemplateRcs = () => {
         templateName: found.templateName,
         isCarousal: res.length > 1 ? true : false,
       });
+
     } catch {
       toast.error("Something went wrong");
     }
@@ -247,13 +249,22 @@ const ManageTemplateRcs = () => {
         <div className="p-2 border-2 border-gray-200 rounded-xl">
           {!templateDetails?.isCarousal ? (
             <>
-              {templateDetails?.data?.[0]?.imageUrl && (
-                <img
-                  src={templateDetails?.data[0].imageUrl}
-                  alt=""
-                  className="w-full h-45 rounded-lg"
-                />
-              )}
+              {templateDetails?.data?.[0]?.templateType === "image" &&
+                templateDetails?.data?.[0]?.imageUrl && (
+                  <img
+                    src={templateDetails?.data[0].imageUrl}
+                    alt=""
+                    className="w-full h-45 rounded-lg"
+                  />
+                )}
+              {templateDetails?.data?.[0]?.templateType === "video" &&
+                templateDetails?.data?.[0]?.imageUrl && (
+                  <video
+                    src={templateDetails?.data[0].imageUrl}
+                    controls
+                    className="w-full h-45 rounded-lg"
+                  />
+                )}
               <div className="py-2 text-sm overflow-y-scroll max-h-80">
                 <h1 className="font-semibold">
                   {templateDetails?.data[0]?.contentTitle}
@@ -309,10 +320,17 @@ const ManageTemplateRcs = () => {
             >
               {templateDetails?.data?.map((template) => (
                 <>
-                  {template?.imageUrl && (
+                  {template.templateType === "image" && template?.imageUrl && (
                     <img
                       src={template.imageUrl}
                       alt=""
+                      className="w-full h-45 rounded-lg"
+                    />
+                  )}
+                  {template.templateType === "video" && template?.imageUrl && (
+                    <video
+                      src={template.imageUrl}
+                      controls
                       className="w-full h-45 rounded-lg"
                     />
                   )}
