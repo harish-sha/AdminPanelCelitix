@@ -262,3 +262,16 @@ export const editOperatorData = async (data) => {
     body: JSON.stringify(data),
   });
 }
+
+export const getSMPPDetailsById = async (id) => {
+  return await fetchWithAuth(`/smpp/getSmppDetailsByServiceId?serviceId=${id}`, {
+    method: "POST",
+  });
+}
+
+export const updateSMPP = async (data) => {
+  return await fetchWithAuth(`/smpp/editSmppConnection`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
