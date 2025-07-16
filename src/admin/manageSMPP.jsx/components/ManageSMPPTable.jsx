@@ -337,7 +337,7 @@ const ManageSMPPTable = ({ id, name, data }) => {
       console.log("SMPP Details:", res[0]);
       setEditDetails(res[0]);
       setVersionEditStatus(res[0]?.Version);
-      setTpEditStatus(res[0]?.tps === 0 ? "disable" : "enable");
+      setTpEditStatus(res[0]?.tps ? "enable" : "disable");
       setAddServiceedit(true);
     } catch (e) {
       toast.error("Error in fetching smpp details");
@@ -802,9 +802,9 @@ const ManageSMPPTable = ({ id, name, data }) => {
                 id="tpeditvalue"
                 name="tpeditvalue"
                 placeholder="Enter TPS Value"
-                value={editDetails?.tpsValue || ""}
+                value={editDetails?.tps || ""}
                 onChange={(e) =>
-                  setEditDetails({ ...editDetails, tpsValue: e.target.value })
+                  setEditDetails({ ...editDetails, tps: e.target.value })
                 }
               />
             )}
