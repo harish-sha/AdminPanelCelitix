@@ -133,18 +133,24 @@ export const Preview = ({
         {!data.isCarousal ? (
           <div className="rounded-md border px-1">
             {data.type !== "text" && (
-              <div className="mb-0 w-full h-35">
+              <div className="mb-2 w-full h-35">
                 {data.type === "image" ? (
                   <img
                     src={data?.details[0]?.imageUrl}
                     alt="Uploaded content"
                     className="h-full w-full"
                   />
+                ) : data?.type === "video" ? (
+                  <video
+                    controls
+                    src={data?.details[0]?.imageUrl}
+                    className="w-full overflow-x-hidden"
+                  />
                 ) : (
                   <embed
                     src={data?.details[0]?.imageUrl}
-                    type="your-file-type"
-                    className="w-[70%] overflow-x-hidden"
+                    type={"application/pdf"}
+                    className="w-full overflow-x-hidden"
                   />
                 )}
               </div>
