@@ -17,6 +17,7 @@ import * as XLSX from "xlsx";
 import {
   addOperator,
   deleteOperator,
+  editOperatorData,
   getOperatorList,
 } from "@/apis/admin/admin";
 import { getCountryList } from "@/apis/common/common";
@@ -112,9 +113,31 @@ const AddOperator = ({ id, name }) => {
     setNewOperator(true);
   };
 
-  const handleEdit = () => {
+  async function handleEdit(row) {
+    if (!row?.srNo) return;
     setEditOperator(true);
-  };
+    setEditOperatorData({
+      operatorName: row.operatorName,
+      countrySrno: row.countrySrno,
+      srno: row.srNo,
+    });
+  }
+
+  async function handleEditOperator() {
+    try {
+      const res = await editOperatorData(editoperatorData);
+      if (!res.status) {
+        toast.error("Failed to edit operator. Please try again.");
+        return;
+      }
+      toast.success("Operator edited successfully.");
+      setEditOperator(false);
+
+      await handleFetchOpertorList();
+    } catch (e) {
+      toast.error("Something went wrong while deleting the operator.");
+    }
+  }
 
   const handleImport = () => {
     setImportOperator(true);
@@ -547,20 +570,35 @@ const AddOperator = ({ id, name }) => {
             label="Country"
             id="countryaddedit"
             name="countryaddedit"
-            options={AddeditcountryOptions}
+            options={countryList.map((country) => ({
+              label: country.countryName,
+              value: country.srNo,
+            }))}
             placeholder="select country"
+            value={editoperatorData.countrySrno}
+            onChange={(e) =>
+              setEditOperatorData({ ...editoperatorData, countrySrno: e })
+            }
           />
           <InputField
             label="Operator Name*"
             id="addeditoperatorname"
             name="addeditoperatorname"
             placeholder="Enter Operator Name"
+            value={editoperatorData.operatorName}
+            onChange={(e) =>
+              setEditOperatorData({
+                ...editoperatorData,
+                operatorName: e.target.value,
+              })
+            }
           />
           <div className="flex justify-center">
             <UniversalButton
               label="Save"
               id="saveeditprefix"
               name="saveeditprefix"
+              onClick={handleEditOperator}
             />
           </div>
         </div>

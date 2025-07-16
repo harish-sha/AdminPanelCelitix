@@ -255,3 +255,10 @@ export const deleteOperator = async (data) => {
     method: "POST",
   });
 };
+
+export const editOperatorData = async (data) => {
+  return await fetchWithAuth(`/editOperator`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
