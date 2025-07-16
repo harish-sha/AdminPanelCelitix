@@ -334,7 +334,6 @@ const ManageSMPPTable = ({ id, name, data }) => {
   const handleEdit = async (row) => {
     try {
       const res = await getSMPPDetailsById(row?.serviceId);
-      console.log("SMPP Details:", res[0]);
       setEditDetails(res[0]);
       setVersionEditStatus(res[0]?.Version);
       setTpEditStatus(res[0]?.tps ? "enable" : "disable");
@@ -347,7 +346,6 @@ const ManageSMPPTable = ({ id, name, data }) => {
   const handleUpdateSmpp = async () => {
     try {
       const res = await updateSMPP(editDetails);
-      console.log(res);
       if (!res?.status) {
         return toast.error("Error updating SMPP");
       }
