@@ -429,7 +429,7 @@ const ManageSMPPTable = ({ id, name, data }) => {
               />
             </IconButton>
           </CustomTooltip>
-          <CustomTooltip title="Delete Service" placement="top" arrow>
+          {/* <CustomTooltip title="Delete Service" placement="top" arrow>
             <IconButton
               className="no-xs"
               onClick={() => handleDelete(params.row)}
@@ -439,7 +439,7 @@ const ManageSMPPTable = ({ id, name, data }) => {
                 size={20}
               />
             </IconButton>
-          </CustomTooltip>
+          </CustomTooltip> */}
         </>
       ),
     },
