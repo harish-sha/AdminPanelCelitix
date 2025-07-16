@@ -206,16 +206,24 @@ export const Preview = ({
             }}
           >
             {data?.details.map((item, index) => {
+              const type = item?.templateType?.toLowerCase();
               return (
                 <>
                   <div key={index} className="text-start p-2">
-                    {item.imageUrl && (
-                      <img
-                        src={item.imageUrl}
-                        alt={item.contentTitle}
-                        className="h-30 p-1 rounded-xl"
-                      />
-                    )}
+                    {item.imageUrl &&
+                      (type === "image" ? (
+                        <img
+                          src={item.imageUrl}
+                          alt={item.contentTitle}
+                          className="h-30 p-1 rounded-xl"
+                        />
+                      ) : type === "video" ? (
+                        <video
+                          src={item.imageUrl}
+                          controls
+                          className="h-30 p-1 rounded-xl"
+                        />
+                      ) : null)}
                     <p className="text-md text-start p-2">
                       {item.contentTitle}
                     </p>
