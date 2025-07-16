@@ -221,7 +221,7 @@ export const Preview = ({
                         <video
                           src={item.imageUrl}
                           controls
-                          className="h-30 p-1 rounded-xl"
+                          className="rounded-xl w-full"
                         />
                       ) : null)}
                     <p className="text-md text-start p-2">
