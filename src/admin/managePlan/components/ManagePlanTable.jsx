@@ -20,9 +20,11 @@ import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../../whatsapp/components/UniversalButton";
 import toast from "react-hot-toast";
 import {
+  getPlanDetailsByServiceId,
   updateNdncStatus,
   updateOpenContentStatus,
   updateOpenMobileStatus,
+  updatePlan,
   updateServiceStatus,
 } from "@/apis/admin/admin";
 
@@ -96,17 +98,41 @@ const ManagePlanTable = ({ id, name, data = [], handleFetchAllPlans }) => {
   const [plantypeoptionedit, setPlantypeoptionedit] = useState(null);
   const [isChecked, setIsChecked] = useState(true);
 
+  const [editData, setEditData] = useState({});
+
   const planeditOptions = [
-    { label: "Active", value: "active" },
-    { label: "Inactive", value: "inactive" },
+    { label: "Transactional", value: 1 },
+    { label: "Promotional", value: 2 },
+    { label: "International", value: 3 },
   ];
 
-  const handleToggle = () => {
+  const handleToggle = (e) => {
     setIsChecked((prev) => !prev);
+    setEditData((prev) => ({
+      ...prev,
+      isPlanTimeout: e.target.checked ? "1" : "0",
+    }));
   };
 
-  const handleEdit = () => {
-    setManageCreatePlan(true);
+  const handleEdit = async (row) => {
+    try {
+      const res = await getPlanDetailsByServiceId(row?.serviceId);
+      setEditData({
+        ...res,
+        isPlanTimeout:
+          res?.isPlanTimeout === "1" || res?.fromTime || res?.toTime
+            ? "1"
+            : "0",
+        serviceId: row?.serviceId,
+      });
+      if (res?.isPlanTimeout === "1" || res?.fromTime || res?.toTime) {
+        setIsChecked(true);
+      }
+      setManageCreatePlan(true);
+    } catch (e) {
+      console.error("Error fetching plan details:", e);
+      toast.error("Failed to fetch plan details");
+    }
   };
 
   const rows = Array.isArray(data)
@@ -214,37 +240,37 @@ const ManagePlanTable = ({ id, name, data = [], handleFetchAllPlans }) => {
         );
       },
     },
-    // {
-    //   field: "action",
-    //   headerName: "Action",
-    //   flex: 1,
-    //   minWidth: 100,
-    //   renderCell: (params) => (
-    //     <>
-    //       <CustomTooltip title="Edit Plan" placement="top" arrow>
-    //         <IconButton onClick={() => handleEdit(params.row)}>
-    //           <EditNoteIcon
-    //             sx={{
-    //               fontSize: "1.2rem",
-    //               color: "gray",
-    //             }}
-    //           />
-    //         </IconButton>
-    //       </CustomTooltip>
-    //       <CustomTooltip title="Delete Plan" placement="top" arrow>
-    //         <IconButton
-    //           className="no-xs"
-    //           onClick={() => handleDelete(params.row)}
-    //         >
-    //           <MdOutlineDeleteForever
-    //             className="text-red-500 cursor-pointer hover:text-red-600"
-    //             size={20}
-    //           />
-    //         </IconButton>
-    //       </CustomTooltip>
-    //     </>
-    //   ),
-    // },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params) => (
+        <>
+          <CustomTooltip title="Edit Plan" placement="top" arrow>
+            <IconButton onClick={() => handleEdit(params.row)}>
+              <EditNoteIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "gray",
+                }}
+              />
+            </IconButton>
+          </CustomTooltip>
+          {/* <CustomTooltip title="Delete Plan" placement="top" arrow>
+            <IconButton
+              className="no-xs"
+              onClick={() => handleDelete(params.row)}
+            >
+              <MdOutlineDeleteForever
+                className="text-red-500 cursor-pointer hover:text-red-600"
+                size={20}
+              />
+            </IconButton>
+          </CustomTooltip> */}
+        </>
+      ),
+    },
   ];
 
   async function handleDelete(row) {
@@ -324,6 +350,19 @@ const ManagePlanTable = ({ id, name, data = [], handleFetchAllPlans }) => {
     } catch (e) {
       console.log(e);
       toast.error("Failed to update status");
+    }
+  }
+
+  async function handleupdatePlan(row) {
+    try {
+      const res = await updatePlan(editData);
+      if (!res?.status) {
+        return toast.error("Failed to update plan");
+      }
+      toast.success("Plan updated successfully");
+      setManageCreatePlan(false);
+    } catch (e) {
+      toast.error("Failed to update plan");
     }
   }
 
@@ -419,7 +458,7 @@ const ManagePlanTable = ({ id, name, data = [], handleFetchAllPlans }) => {
       </Paper>
 
       <Dialog
-        header="Create Plan"
+        header="Update Plan"
         visible={manageCreatePlan}
         onHide={() => setManageCreatePlan(false)}
         className="lg:w-[30rem] md:w-[25rem] w-[20rem]"
@@ -432,14 +471,63 @@ const ManagePlanTable = ({ id, name, data = [], handleFetchAllPlans }) => {
               id="createplannameedit"
               name="createplannameedit"
               placeholder="Enter Plan Name"
+              value={editData?.serviceName || ""}
+              onChange={(e) =>
+                setEditData({ ...editData, serviceName: e.target.value })
+              }
             />
             <AnimatedDropdown
               label="Plan Type"
               options={planeditOptions}
               id="createplantypeedit"
               name="createplantypeedit"
-              value={plantypeoptionedit}
-              onChange={(newValue) => setPlantypeoptionedit(newValue)}
+              value={editData?.planType || ""}
+              onChange={(e) => setEditData({ ...editData, planType: e })}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <InputField
+              label="Order Queue Size"
+              id="createplanorderqueuesizeedit"
+              name="createplanorderqueuesizeedit"
+              placeholder="Enter Order Queue Size"
+              value={editData?.orderQueueSize || ""}
+              onChange={(e) =>
+                setEditData({ ...editData, orderQueueSize: e.target.value })
+              }
+            />
+            <InputField
+              label="Initial Queue Size"
+              id="createplaninitialqueuesizeedit"
+              name="createplaninitialqueuesizeedit"
+              placeholder="Enter Initial Queue Size"
+              value={editData?.initialQueueSize || ""}
+              onChange={(e) =>
+                setEditData({ ...editData, initialQueueSize: e.target.value })
+              }
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <InputField
+              label="Trigger Queue Size"
+              id="createplantriggerqueuesizeedit"
+              name="createplantriggerqueuesizeedit"
+              placeholder="Enter Trigger Queue Size"
+              value={editData?.triggerQueueSize || ""}
+              onChange={(e) =>
+                setEditData({ ...editData, triggerQueueSize: e.target.value })
+              }
+            />
+            <InputField
+              label="Character Limit"
+              id="createplancharlimitedit"
+              name="createplancharlimitedit"
+              placeholder="Enter Character Limit"
+              value={editData?.characterLimit || ""}
+              onChange={(e) =>
+                setEditData({ ...editData, characterLimit: e.target.value })
+              }
             />
           </div>
           <div className="flex items-center">
@@ -462,39 +550,46 @@ const ManagePlanTable = ({ id, name, data = [], handleFetchAllPlans }) => {
               </CustomTooltip>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <InputField
-              label="Order Queue Size"
-              id="createplanorderqueuesizeedit"
-              name="createplanorderqueuesizeedit"
-              placeholder="Enter Order Queue Size"
-            />
-            <InputField
-              label="Initial Queue Size"
-              id="createplaninitialqueuesizeedit"
-              name="createplaninitialqueuesizeedit"
-              placeholder="Enter Initial Queue Size"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <InputField
-              label="Trigger Queue Size"
-              id="createplantriggerqueuesizeedit"
-              name="createplantriggerqueuesizeedit"
-              placeholder="Enter Trigger Queue Size"
-            />
-            <InputField
-              label="Character Limit"
-              id="createplancharlimitedit"
-              name="createplancharlimitedit"
-              placeholder="Enter Character Limit"
-            />
-          </div>
+
+          {editData.isPlanTimeout === "1" && (
+            <>
+              <div className="grid grid-cols-2 gap-4">
+                <InputField
+                  label="From Time"
+                  id="createplanfromtimecreate"
+                  name="createplanfromtimecreate"
+                  placeholder="Enter From Time"
+                  onChange={(e) =>
+                    setEditData({
+                      ...editData,
+                      fromTime: e.target.value,
+                    })
+                  }
+                  value={editData.fromTime}
+                />
+                <InputField
+                  label="To Time"
+                  id="createplantotimecreate"
+                  name="createplantotimecreate"
+                  placeholder="Enter To Time"
+                  onChange={(e) =>
+                    setEditData({
+                      ...editData,
+                      toTime: e.target.value,
+                    })
+                  }
+                  value={editData.toTime}
+                />
+              </div>
+            </>
+          )}
           <div className="flex items-center justify-center">
             <UniversalButton
               label="Save"
               id="createplansavebtn"
               name="createplansavebtn"
+              type="submit"
+              onClick={handleupdatePlan}
             />
           </div>
         </div>

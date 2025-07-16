@@ -55,7 +55,6 @@ const ManagePlan = () => {
   ];
 
   const handleTogglecreate = (e) => {
-    console.log("Toggle create:", e.target.checked);
     setIsCheckedsetIsChecked((prev) => !prev);
     setCreateData((prev) => ({
       ...prev,
@@ -90,7 +89,25 @@ const ManagePlan = () => {
 
   async function handleCreatePlanSave() {
     try {
-      console.log("createData", createData);
+      // let isError = false;
+      // Object.keys(createData).forEach((key) => {
+      //   // if (createData[key] === "") {
+      //   //   delete createData[key];
+      //   // }
+      //   if (!createData[key] || createData[key] === "") {
+      //     isError = true;``
+      //     return toast.error(`Please fill the ${key} field`);
+      //   }
+      // });
+      // if (isError) {
+      //   return;
+      // }
+
+      for (const key in createData) {
+        if (createData[key] === "" || createData[key] === null) {
+          return toast.error(`Please fill the ${key} field`);
+        }
+      }
       const res = await createPlan(createData);
       console.log("Plan created successfully:", res);
       if (!res?.status) {
@@ -303,42 +320,47 @@ const ManagePlan = () => {
                 </CustomTooltip>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <InputField
-                label="Trigger Queue Size"
-                id="createplantriggerqueuesizecreate"
-                name="createplantriggerqueuesizecreate"
-                placeholder="Enter Trigger Queue Size"
-                onChange={(e) =>
-                  setCreateData({
-                    ...createData,
-                    triggerQueueSize: e.target.value,
-                  })
-                }
-                value={createData.triggerQueueSize}
-              />
-              <InputField
-                label="Character Limit"
-                id="createplancharlimitcreate"
-                name="createplancharlimitcreate"
-                placeholder="Enter Character Limit"
-                onChange={(e) =>
-                  setCreateData({
-                    ...createData,
-                    characterLimit: e.target.value,
-                  })
-                }
-                value={createData.characterLimit}
-              />
-            </div>
-            <div className="flex items-center justify-center">
-              <UniversalButton
-                label="Save"
-                id="createplansavecreatebtn"
-                name="createplansavecreatebtn"
-                onClick={handleCreatePlanSave}
-              />
-            </div>
+
+            {createData.isPlanTimeout === "1" && (
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <InputField
+                    label="From Time"
+                    id="createplanfromtimecreate"
+                    name="createplanfromtimecreate"
+                    placeholder="Enter From Time"
+                    onChange={(e) =>
+                      setCreateData({
+                        ...createData,
+                        fromTime: e.target.value,
+                      })
+                    }
+                    value={createData.fromTime}
+                  />
+                  <InputField
+                    label="To Time"
+                    id="createplantotimecreate"
+                    name="createplantotimecreate"
+                    placeholder="Enter To Time"
+                    onChange={(e) =>
+                      setCreateData({
+                        ...createData,
+                        toTime: e.target.value,
+                      })
+                    }
+                    value={createData.toTime}
+                  />
+                </div>
+                <div className="flex items-center justify-center">
+                  <UniversalButton
+                    label="Save"
+                    id="createplansavecreatebtn"
+                    name="createplansavecreatebtn"
+                    onClick={handleCreatePlanSave}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </Dialog>
       </div>

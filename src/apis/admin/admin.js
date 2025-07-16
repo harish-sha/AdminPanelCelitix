@@ -228,3 +228,21 @@ export const updateOpenMobileStatus = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
+export const getPlanDetailsByServiceId = async (srno) => {
+  return await fetchWithAuth(
+    `/plan/getPlanDetailsByServiceId?serviceId=${srno}`,
+    {
+      method: "POST",
+    }
+  );
+};
+export const updatePlan = async (data) => {
+  return await fetchWithAuth(
+    `/plan/editPlan`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
+};
