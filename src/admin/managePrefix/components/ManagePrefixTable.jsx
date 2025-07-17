@@ -77,6 +77,7 @@ const ManagePrefixTable = ({ id, name, data = [] }) => {
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
         sn: i + 1,
+        id: item.srNo,
         ...item,
       }))
     : [];
@@ -97,13 +98,13 @@ const ManagePrefixTable = ({ id, name, data = [] }) => {
     },
     { field: "circleSrno", headerName: "Circle Number", flex: 1, minWidth: 90 },
     {
-      field: "countrycode",
+      field: "countrySrno",
       headerName: "Country Code",
       flex: 1,
       minWidth: 120,
     },
     {
-      field: "countryname",
+      field: "countryName",
       headerName: "Country Name",
       flex: 1,
       minWidth: 120,

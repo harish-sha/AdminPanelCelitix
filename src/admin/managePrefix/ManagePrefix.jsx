@@ -40,7 +40,6 @@ const ManagePrefix = () => {
         operator: mappedData,
       }));
     } catch (e) {
-      console.log(e);
       toast.error("Something went wrong");
     }
   }
@@ -49,7 +48,7 @@ const ManagePrefix = () => {
       const res = await getCountryList();
       const mappedData = res?.map((item) => ({
         label: item.countryName,
-        value: item.countryCode,
+        value: item.srNo,
       }));
 
       setDropdownData((prev) => ({
@@ -57,16 +56,35 @@ const ManagePrefix = () => {
         country: mappedData,
       }));
     } catch (e) {
-      console.log(e);
       toast.error("Something went wrong");
     }
   }
   async function handleSearch() {
+    if(!searchData.country && !searchData.operator) return
     try {
       const res = await getPrefixList(searchData);
-      setData(res);
+      const countryList = await getCountryList();
+
+      if (!res?.length) {
+        setData([]);
+        return;
+      }
+
+      const countryMap = new Map(
+        countryList.map((country) => [country.srNo, country.countryName])
+      );
+
+      const enrichedOperators = res?.map((operator) => ({
+        ...operator,
+        countryName: countryMap.get(operator.countrySrno) || null,
+      }));
+
+      const sortedData = enrichedOperators
+        ?.filter((item) => item.countryName != null)
+        .sort((a, b) => a.countryName.localeCompare(b.countryName));
+
+      setData(sortedData);
     } catch (e) {
-      console.log(e);
       toast.error("Something went wrong");
     }
   }
@@ -110,7 +128,7 @@ const ManagePrefix = () => {
     <div>
       <div className="flex flex-wrap gap-2 items-end justify-between pb-3 w-full">
         <div className="flex flex-wrap gap-2 items-end">
-          <div className="w-max-content">
+          <div className="w-60">
             <DropdownWithSearch
               label="Country"
               id="country"
@@ -122,7 +140,7 @@ const ManagePrefix = () => {
               value={searchData.country}
             />
           </div>
-          <div className="w-max-content">
+          <div className="w-60">
             <DropdownWithSearch
               label="Operator"
               id="operator"
