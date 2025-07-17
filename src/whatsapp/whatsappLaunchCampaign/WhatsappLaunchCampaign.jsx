@@ -819,6 +819,7 @@ const WhatsappLaunchCampaign = () => {
                   uploadedImage={imagePreview}
                   setCardIndex={setCardIndex}
                   cardIndex={cardIndex}
+                  locationData={locationData}
                   fileData={fileData}
                 />
                 {/* )} */}

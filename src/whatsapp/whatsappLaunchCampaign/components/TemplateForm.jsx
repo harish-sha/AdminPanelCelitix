@@ -12,6 +12,37 @@ import { Carousel } from "react-responsive-carousel";
 import { RadioButton } from "primereact/radiobutton";
 import InputField from "@/whatsapp/components/InputField";
 
+const extractCoordinates = (url) => {
+  let regex = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
+  let match = url.match(regex);
+  if (match) {
+    return {
+      lat: match[1],
+      lng: match[2],
+    };
+  }
+
+  regex = /place\/.*\/@(-?\d+\.\d+),(-?\d+\.\d+)/;
+  match = url.match(regex);
+  if (match) {
+    return {
+      lat: match[1],
+      lng: match[2],
+    };
+  }
+
+  regex = /q=(-?\d+\.\d+),(-?\d+\.\d+)/;
+  match = url.match(regex);
+  if (match) {
+    return {
+      lat: match[1],
+      lng: match[2],
+    };
+  }
+
+  return null;
+};
+
 // Function to extract variables from text (e.g., {{1}})
 const extractVariablesFromText = (text) => {
   const regex = /{{(\d+)}}/g;
@@ -641,6 +672,21 @@ const TemplateForm = ({
 
       {templateType === "location" && (
         <div className="p-2 clear-both space-y-2 bg-gray-50 rounded-b-xl">
+          <InputField
+            id="locationurl"
+            name="locationurl"
+            label={"Location URL (optional)"}
+            onChange={(e) => {
+              setLocationData((prev) => ({
+                ...prev,
+                url: e.target.value,
+                latitude: extractCoordinates(e.target.value)?.lat,
+                longitude: extractCoordinates(e.target.value)?.lng,
+              }));
+            }}
+            value={locationData.url}
+            placeholder="Enter location url"
+          />
           <div className="flex items-center gap-2">
             <InputField
               id="latitude"
