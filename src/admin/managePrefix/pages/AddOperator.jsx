@@ -147,7 +147,7 @@ const AddOperator = ({ id, name }) => {
     try {
       const res = await getOperatorList();
       const countryList = await getCountryList();
-      setCountryList(res);
+      setCountryList(countryList);
 
       const countryMap = new Map(
         countryList.map((country) => [country.srNo, country.countryName])
