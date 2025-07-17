@@ -181,7 +181,7 @@ export const getPrefixList = async (data) => {
   );
 };
 export const getCountryList = async () => {
-  return await fetchWithAuth(`getcountryList`, {
+  return await fetchWithAuth(`/getcountryList`, {
     method: "POST",
   });
 };

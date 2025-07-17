@@ -34,7 +34,11 @@ const ManagePrefix = () => {
         label: item.operatorName,
         value: item.srNo,
       }));
-      setDropdownData({ ...dropdownData, operator: mappedData });
+
+      setDropdownData((prev) => ({
+        ...prev,
+        operator: mappedData,
+      }));
     } catch (e) {
       console.log(e);
       toast.error("Something went wrong");
@@ -47,7 +51,11 @@ const ManagePrefix = () => {
         label: item.countryName,
         value: item.countryCode,
       }));
-      setDropdownData({ ...dropdownData, country: mappedData });
+
+      setDropdownData((prev) => ({
+        ...prev,
+        country: mappedData,
+      }));
     } catch (e) {
       console.log(e);
       toast.error("Something went wrong");
