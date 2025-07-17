@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FaWhatsapp,
   FaFacebookMessenger,
@@ -11,31 +12,40 @@ import {
   FaUserClock,
   FaBolt,
 } from "react-icons/fa";
+import { FaAngleDoubleDown } from "react-icons/fa";
+import { FaAngleDoubleUp } from "react-icons/fa";
+
+
 
 const channels = [
   {
+    service_type_id: "1",
     label: "Dashboard",
     value: "",
     icon: <FaThLarge className="text-gray-500 text-lg" />,
   },
   {
+    service_type_id: "2",
     label: "WhatsApp",
     value: "wlivechat",
     icon: <FaWhatsapp className="text-green-500 text-lg" />,
   },
   {
+    service_type_id: "3",
     label: "RCS",
-    value: "rcs",
+    value: "rcslivechats",
     icon: <FaCommentDots className="text-purple-500 text-lg" />,
   },
   {
+    service_type_id: "4",
     label: "Instagram",
-    value: "instagram",
+    value: "instachats",
     icon: <FaInstagram className="text-pink-500 text-lg" />,
   },
   {
+    service_type_id: "5",
     label: "Messenger",
-    value: "messenger",
+    value: "messengerchats",
     icon: <FaFacebookMessenger className="text-blue-500 text-lg" />,
   },
 ];
@@ -63,10 +73,12 @@ const ChannelTabs = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const activeTab = pathname.split("/")[2];
+  const [showActions, setShowActions] = useState(true);
 
   return (
-    <div className="flex flex-col gap-2 relative z-10">
-      <div className="flex border-b bg-white shadow-sm px-4 relative z-10 rounded-2xl">
+    <div className="flex flex-col gap-1 relative z-10">
+      <div className="flex border-b bg-white shadow-sm px-4 relative z-10 rounded-2xl overflow-auto">
+
         {channels.map((ch) => (
           <button
             key={ch.value}
@@ -85,20 +97,52 @@ const ChannelTabs = () => {
             )}
           </button>
         ))}
+
+        <div className="flex items-center">
+          <motion.button
+            onClick={() => setShowActions((prev) => !prev)}
+            className="p-2 rounded-full hover:bg-gray-100 transition"
+          >
+            <motion.div
+              key={showActions ? "up" : "down"}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 1, 0.5, 1] }}
+              transition={{ duration: 0.4 }}
+            >
+              {showActions ? (
+                <FaAngleDoubleUp className="text-lg" />
+              ) : (
+                <FaAngleDoubleDown className="text-lg" />
+              )}
+            </motion.div>
+          </motion.button>
+        </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="px-4 py-2 flex flex-wrap items-center gap-3 bg-white shadow rounded-md border border-gray-100">
-        {quickActions.map((action, i) => (
-          <button
-            key={i}
-            className="flex items-center gap-2 text-xs text-gray-700 bg-gray-100 px-3 py-1 rounded-full hover:bg-blue-100 hover:text-blue-600 transition "
+      <AnimatePresence initial={false}>
+        {showActions && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="overflow-hidden absolute top-12 md:relative md:top-0 z-50"
           >
-            {action.icon}
-            <span>{action.label}</span>
-          </button>
-        ))}
-      </div>
+            <div className="px-4 py-2 md:flex  w-full gap-3 bg-white shadow rounded-md border border-gray-100 overflow-auto ">
+              {quickActions.map((action, i) => (
+                <button
+                  key={i}
+                  className="flex flex-nowrap whitespace-nowrap items-center justify-center gap-2 text-xs text-gray-700 bg-gray-100 px-3 py-1 rounded-full hover:bg-blue-100 hover:text-blue-600 transition mb-1 md:mb-0"
+                >
+                  {action.icon}
+                  {action.label}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

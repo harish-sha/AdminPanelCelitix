@@ -1085,7 +1085,7 @@ export const ExportDialog = ({
       {dataToExport.type === "custom" && (
         <>
           <div className="mt-4 ">
-            <div className="flex justify-between gap-x-4">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-x-4">
               <UniversalDatePicker
                 label="From Date:"
                 value={dataToExport.fromDate}
@@ -1104,7 +1104,7 @@ export const ExportDialog = ({
               />
             </div>
 
-            <div className="flex justify-between gap-5 my-4">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-5 my-4">
               <div className="flex-1">
                 <AnimatedDropdown
                   label="Select Type"
@@ -1139,7 +1139,7 @@ export const ExportDialog = ({
               </div>
             </div>
 
-            <div className="flex justify-between gap-5 my-4">
+            <div className="flex flex-col sm:justify-between sm:flex-row gap-5 my-4">
               <div className="flex-1">
                 <AnimatedDropdown
                   label="Select Source"

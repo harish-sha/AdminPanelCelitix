@@ -13,3 +13,9 @@ pass: 7%3uShWk
 reseller user with otp enable
 user: demores
 pass: QZ@5x4bC
+
+=====================remember before build==========
+1.sidebar - replace menuitems to filteredItems
+2. login page - replace systeminfo and ip with live api
+
+

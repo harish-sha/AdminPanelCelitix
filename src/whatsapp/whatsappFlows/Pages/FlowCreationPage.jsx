@@ -610,7 +610,7 @@ const FlowCreationPage = () => {
   return (
     <div className="p rounded-2xl shadow-lg">
       <div className="relative rounded-xl overflow-hidden shadow-md z-50">
-        <div className="relative z-10 bg-gradient-to-tr from-indigo-100 via-blue-50 to-purple-100 px-3 py-3 flex flex-col sm:flex-row items-center justify-between gap-4 transition-all duration-300">
+        <div className="relative z-10 bg-gradient-to-tr from-indigo-100 via-blue-50 to-purple-100 px-3 py-3 flex flex-col sm:flex-row items-center justify-between gap-4 transition-all duration-300 md:overflow-x-scroll">
           <ParticleBackground />
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -650,11 +650,13 @@ const FlowCreationPage = () => {
                   const noSpaces = e.target.value.replace(/\s/g, "");
                   setFlowName(noSpaces);
                 }}
-                className="px-3 py-1.5 border border-indigo-300 bg-white text-[0.82rem] rounded-md shadow-sm focus:ring-1 focus:ring-indigo-300 focus:outline-none sm:min-w-[250px]"
+                className="sm:flex-col xs:flex-col px-3 py-1.5 border border-indigo-300 bg-white text-[0.82rem] rounded-md shadow-sm focus:ring-1 focus:ring-indigo-300 focus:outline-none sm:min-w-[250px]"
               />
             </motion.div>
 
-            <div className="flex items-center gap-3 justify-between relative">
+            {/* <div className="flex items-center gap-3 justify-between relative "> */}
+            <div className="flex flex-col sm:flex-col md:flex-row items-center gap-3 justify-between relative ">
+
               {/* Error Dialog Box Button */}
               <motion.button
                 whileHover={{ scale: 1.03 }}
@@ -843,9 +845,11 @@ const FlowCreationPage = () => {
         </motion.div>
       )}
 
-      <div className="flex gap-2 items-start mt-3">
+      {/* <div className="flex gap-2 items-start mt-3 "> */}
+      <div className="flex flex-col gap-2 items-start mt-3 md:flex-row">
+
         {/* Siddebar */}
-        <div className="flex-1">
+        <div className="flex-1 ">
           <Sidebar onAdd={handleAddItem} flexGrow={1} />
         </div>
         <div className="w-full flex relative">
@@ -918,7 +922,7 @@ const FlowCreationPage = () => {
           )}
         </div>
 
-        <div className="flex-1 ">
+      <div className="flex-1 ">
           {/* Mobile Panel Preview*/}
           <MobilePanel
             items={tabs[activeIndex].payload}

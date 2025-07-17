@@ -33,7 +33,7 @@ const ObdVariable = ({ variables = [], selectVariable }) => {
                 <PiBracketsCurlyBold />
             </button>
             {showDropdown && (
-                <div className="absolute min-w-30  z-50 left-[35px] max-h-47 overflow-auto  bg-white border border-gray-300 rounded-sm shadow-md top-0 ">
+                <div className="absolute min-w-30  z-50 left-[-95px] top-[35px] max-h-47 overflow-auto  bg-white border border-gray-300 rounded-sm shadow-md lg:top-0 lg:left-[35px]">
                     {variables && variables.length > 0 ? (
                         variables.map((variable, idx) => (
                             <React.Fragment key={variable + idx}>

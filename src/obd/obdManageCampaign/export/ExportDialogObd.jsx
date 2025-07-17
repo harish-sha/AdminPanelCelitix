@@ -576,7 +576,7 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
         {selectedOption === "option2" && (
           <>
             <div className="mt-4 ">
-              <div className="flex justify-between gap-x-4">
+              <div className="flex flex-col md:flex-row justify-between gap-x-4 gap-y-2 ">
                 <UniversalDatePicker
                   label="From Date:"
                   defaultValue={new Date()}
@@ -595,7 +595,7 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
                 />
               </div>
 
-              <div className="flex justify-between gap-5 my-4">
+              <div className="flex flex-col md:flex-row justify-between gap-5 my-4 ">
                 <div className="flex-1">
                   <AnimatedDropdown
                     label="Select Type"
@@ -625,7 +625,7 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
                 </div>
               </div>
 
-              <div className="flex justify-between gap-5 my-4">
+              <div className="flex flex-col md:flex-row justify-between gap-5 my-4 ">
                 <div className="flex-1">
                   <AnimatedDropdown
                     label="Select Source"
@@ -717,7 +717,7 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
                 </div>
               </div> */}
 
-              <div className="flex my-4 gap-4">
+              <div className="flex flex-col md:flex-row justify-between my-4 gap-4">
                 <InputField
                   label="Mobile Number"
                   id="customdialognumber"

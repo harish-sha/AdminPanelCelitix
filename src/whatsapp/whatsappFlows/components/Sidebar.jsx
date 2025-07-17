@@ -165,7 +165,7 @@ const Sidebar = ({ onAdd }) => {
         variants={containerVariants(0)}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 lg:grid-cols-2 mt-1.5"
+        className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 mt-1.5"
       >
         {items.map((item) => (
           <motion.div
@@ -186,7 +186,7 @@ const Sidebar = ({ onAdd }) => {
         variants={containerVariants(0.3)}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 lg:grid-cols-2 mt-1.5"
+        className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 mt-1.5"
       >
         {items2.map((item) => (
           <motion.div
@@ -209,7 +209,7 @@ const Sidebar = ({ onAdd }) => {
         variants={containerVariants(0.5)}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 lg:grid-cols-2 mt-1.5"
+        className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 mt-1.5"
       >
         {items3.map((item) => (
           <motion.div
@@ -230,7 +230,7 @@ const Sidebar = ({ onAdd }) => {
         variants={containerVariants(0.7)}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 lg:grid-cols-2 mt-1.5"
+        className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 mt-1.5"
       >
         {items4.map((item) => (
           <motion.div
@@ -251,7 +251,7 @@ const Sidebar = ({ onAdd }) => {
         variants={containerVariants(0.9)}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 lg:grid-cols-2 mt-1.5"
+        className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 mt-1.5"
       >
         {items5.map((item) => (
           <motion.div
@@ -272,7 +272,7 @@ const Sidebar = ({ onAdd }) => {
         variants={containerVariants(0.11)}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 lg:grid-cols-2 mt-1.5"
+        className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 mt-1.5"
       >
         {items6.map((item) => (
           <motion.div
@@ -293,7 +293,7 @@ const Sidebar = ({ onAdd }) => {
         variants={containerVariants(0.13)}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 lg:grid-cols-2 mt-1.5"
+        className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 mt-1.5"
       >
         {items7.map((item) => (
           <motion.div

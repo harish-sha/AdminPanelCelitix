@@ -23,6 +23,7 @@ export const Preview = ({
   handleNextIndex,
   handlePreviousIndex,
   setSelectedCardIndex,
+   subType,
 }) => {
   const [pree, setPree] = useState();
 
@@ -142,9 +143,9 @@ export const Preview = ({
         {/* <p className="text-md font-medium text-center">Template Preview</p> */}
         {templateType != "carousel" ? (
           <div className="rounded-md border px-1">
-            {pree?.cardData?.file && (
+            {pree?.cardData?.filePath && (
               <div className="mb-0 w-full h-35">
-                {pree?.fileType === "image" ? (
+                {/* {pree?.fileType === "image" ? (
                   <img
                     src={pree.cardData.file}
                     alt="Uploaded content"
@@ -157,9 +158,35 @@ export const Preview = ({
                     type="your-file-type"
                     className="w-[70%] overflow-x-hidden"
                   />
-                )}
+                )} */}
+
+                 <p className="text-xs">
+                  {subType === "video" && "(Video Thumbnail)"}
+                </p>
+                <img
+                  src={
+                    subType === "image"
+                      ? URL.createObjectURL(pree?.cardData?.filePath)
+                      : URL.createObjectURL(
+                          pree?.cardData?.thumbnailPath ??
+                            pree?.cardData?.filePath
+                        )
+                  }
+                  alt="Uploaded content"
+                  className="h-full w-full"
+                />
               </div>
             )}
+
+             {/* {pree?.cardData?.thumbnailPath && (
+              <div className="mb-0 w-full h-35">
+                <img
+                  src={pree.cardData.thumbnailPath}
+                  alt="Thumbnail"
+                  className="h-full w-full"
+                />
+              </div>
+            )} */}
             <div className="overflow-y-scroll max-h-[50px] text-sm font-medium break-words whitespace-pre-wrap px-1 py-2">
               <p>{pree?.cardData?.title}</p>
             </div>

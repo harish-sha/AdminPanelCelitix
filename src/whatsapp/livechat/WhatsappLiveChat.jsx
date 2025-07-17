@@ -21,7 +21,7 @@ import {
   sendMessageToUser,
   sendTemplateMessageToUser,
   uploadImageFile,
-  getTemplateDetialsById
+  getTemplateDetialsById,
 } from "../../apis/whatsapp/whatsapp";
 import {
   BoltRounded,
@@ -869,7 +869,7 @@ export default function WhatsappLiveChat() {
   useEffect(() => {
     async function handleIsView() {
       if (!wabaState.selectedWaba || !chatState?.active) return;
-      if (!latestMessageData.srno) return
+      if (!latestMessageData.srno) return;
       try {
         const data = {
           mobile: chatState?.active.mobileNo,
@@ -944,12 +944,30 @@ export default function WhatsappLiveChat() {
     },
   };
 
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+
+    const handleResize = (e) => {
+      setIsSmallScreen(e.matches);
+    };
+
+    // Set initial state
+    setIsSmallScreen(mediaQuery.matches);
+
+    // Add listener
+    mediaQuery.addEventListener("change", handleResize);
+
+    // Cleanup
+    return () => mediaQuery.removeEventListener("change", handleResize);
+  }, []);
+
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
       <div
         className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${chatState?.active ? "hidden md:block" : "block"
-          }`}
-      >
+          }`}>
         <InputData
           setSearch={setSearch}
           search={search}
@@ -972,15 +990,15 @@ export default function WhatsappLiveChat() {
           isLoading={isFetching}
         />
       </div>
+      <AnimatePresence>
 
-      {!chatState.active && (
-        <AnimatePresence>
+        {!chatState.active && !isSmallScreen && (
           <motion.div
             key="empty-chat"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="relative flex flex-col items-center justify-center bg-gradient-to-br from-green-50 via-white to-green-100 border flex-1 border-tr-lg"
+            className="relative flex flex-col items-center justify-center bg-gradient-to-br from-green-50 via-white to-green-100 border flex-1 border-tr-lg "
           >
             {/* Background Animation - Floating Bubbles */}
             <div className="absolute inset-0 overflow-hidden z-0 pointer-events-none">
@@ -1013,8 +1031,7 @@ export default function WhatsappLiveChat() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="relative z-10 px-6 py-10 bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg text-center max-w-xl
-"
+              className="relative z-10 px-6 py-10 bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg text-center max-w-xl"
             >
               <div className="w-50 h-50 mx-auto mb-3">
                 <lottie-player
@@ -1053,10 +1070,9 @@ export default function WhatsappLiveChat() {
               </motion.p>
             </motion.div>
           </motion.div>
-        </AnimatePresence>
-      )}
+        )}
 
-      <AnimatePresence>
+
         {chatState.active && (
           <motion.div
             key="chat-screen"

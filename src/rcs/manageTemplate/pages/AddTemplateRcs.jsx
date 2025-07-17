@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import InputField from "@/whatsapp/components/InputField";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import UniversalButton from "@/whatsapp/components/UniversalButton";
@@ -20,12 +20,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AiOutlineClose } from "react-icons/ai";
 import { GenerateAiContent } from "@/components/common/CustomContentGenerate";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import { Pdf } from "../components/Pdf";
+
+
 
 const AddTemplateRcs = () => {
   const [inputData, setInputData] = useState({
     agentId: "",
     templateName: "",
     templateType: "text",
+    subType: "image",
   });
   const [btnData, setBtnData] = useState([]);
   const [variables, setVariables] = useState([]);
@@ -37,7 +41,10 @@ const AddTemplateRcs = () => {
     mediaHeight: "",
     file: "",
     filePath: "",
+    thumbnailPath: "",
+    thumbnail: "",
   });
+
 
   const [cardOrientation, setCardOrientation] = useState("");
 
@@ -54,6 +61,19 @@ const AddTemplateRcs = () => {
     dropdown3: "",
     dropdown4: "",
   });
+
+  const fileRef = useRef(null);
+  const thumbnailRef = useRef(null);
+  const pdfRef = useRef(null);
+
+  const [pdfTemplateState, setPdfTemplateState] = useState({
+    documentFileName: "",
+    messageOrder: "",
+    pdfBase64: "",
+  });
+
+  fileRef.current && (fileRef.current.value = "");
+  thumbnailRef.current && (thumbnailRef.current.value = "");
 
   const [BtninputData, setBtnInputData] = useState({
     dropdown1: {
@@ -132,7 +152,7 @@ const AddTemplateRcs = () => {
     },
   ];
 
-  function handleTemplateTypeChange(value) {
+  function handleTemplateCategoryChange(value) {
     setInputData({ ...inputData, templateType: value });
     setMessageContent("");
     setVariables([]);
@@ -143,6 +163,27 @@ const AddTemplateRcs = () => {
       dropdown3: "",
       dropdown4: "",
     });
+
+    fileRef.current && (fileRef.current.value = "");
+    thumbnailRef.current && (thumbnailRef.current.value = "");
+    setBtnInputData({});
+    setCardData({ title: "", mediaHeight: "", file: "" });
+  }
+
+  function handleTemplateTypeChange(value) {
+    setInputData({ ...inputData, subType: value });
+    setMessageContent("");
+    setVariables([]);
+    setBtnData([]);
+    setSelectedAction({
+      dropdown1: "",
+      dropdown2: "",
+      dropdown3: "",
+      dropdown4: "",
+    });
+
+    fileRef.current && (fileRef.current.value = "");
+    thumbnailRef.current && (thumbnailRef.current.value = "");
 
     setBtnInputData({});
     setCardData({ title: "", mediaHeight: "", file: "" });
@@ -302,24 +343,49 @@ const AddTemplateRcs = () => {
 
     if (inputData.templateType === "rich_card") {
       if (!cardData?.file) {
-        toast.error("Please upload a file");
+        toast.error("Please select a file");
         return;
       }
+      if (inputData.subType === "video" && !cardData?.thumbnail) {
+        toast.error("Please select a thumbnail for the video");
+        return;
+      }
+
+      // const res = await uploadImageFile(cardData.filePath);
+      // let thumbnail = "";
+      // if (inputData.subType === "video") {
+      //   thumbnail = await uploadImageFile(cardData.thumbnailPath);
+      // }
+
       // console.log(cardData);
       const key = {
         HORIZONTAL: "cardAlignment",
         VERTICAL: "mediaHeight",
       };
+
+      const type = {
+        video: "videoPath",
+        image: "imagePath",
+      };
+      const typeList = {
+        video: "videoList",
+        image: "imageList",
+      };
+
       const isVertical = cardOrientation.toUpperCase() === "VERTICAL";
 
       const dynamicKey = key[cardOrientation.toUpperCase()];
       const value = isVertical
         ? `${cardData.mediaHeight.toUpperCase()}_HEIGHT`
         : cardData.mediaHeight.toUpperCase();
+
+      const listType = typeList[inputData.subType];
+      const fileType = type[inputData.subType];
+
       data = {
         ...inputData,
         agentId: inputData.agentId.toString(),
-        templateType: "image",
+        templateType: inputData.subType,
         variables,
         imageList: [
           {
@@ -330,6 +396,9 @@ const AddTemplateRcs = () => {
             // mediaHeight: `${cardData.mediaHeight.toUpperCase()}_HEIGHT`,
             [dynamicKey]: value,
             suggestions: suggestions,
+            ...(inputData.subType === "video"
+              ? { thumbnailUrl: cardData?.thumbnail }
+              : {}),
           },
         ],
       };
@@ -346,6 +415,12 @@ const AddTemplateRcs = () => {
         if (!card?.filePath) {
           isError = true;
           toast.error("Please upload a file");
+          return;
+        }
+
+        if (inputData.subType === "video" && !card?.thumbnailPath) {
+          isError = true;
+          toast.error("Please upload a thumbnail");
           return;
         }
 
@@ -421,6 +496,7 @@ const AddTemplateRcs = () => {
           title: card?.cardTitle,
           caption: card?.cardDescription,
           suggestions: suggestion,
+          thumbnailUrl: card?.thumbnailPath,
         };
 
         imageList.push(data);
@@ -437,11 +513,104 @@ const AddTemplateRcs = () => {
       data = {
         ...inputData,
         agentId: inputData.agentId.toString(),
-        templateType: "image",
+        templateType: inputData.subType,
         width: `${cardwidth.toUpperCase()}_WIDTH`,
         height: `${cardheight.toUpperCase()}_HEIGHT`,
         variables,
         imageList: imageList,
+      };
+    } else if (inputData.templateType === "text_message_with_pdf") {
+      if (!pdfTemplateState.documentFileName) {
+        toast.error("Please enter a file name");
+        return;
+      }
+
+      if (!pdfTemplateState.pdfBase64) {
+        toast.error("Please upload a PDF file");
+        return;
+      }
+      if (!pdfTemplateState.messageOrder) {
+        toast.error("Please select a message order");
+        return;
+      }
+
+      Object.values(btnData).forEach(({ type, value, title }) => {
+        // console.log(type, value, title);
+        if (!type) return;
+
+        if (type == "Share Location") {
+          value = "fdsf";
+        }
+
+        if (!title || !value) {
+          toast.error(`Please fill all the fields for ${type}`);
+          hasError = true;
+          return;
+        }
+
+        if (
+          type === "Url Action" &&
+          !value.startsWith("http://") &&
+          !value.startsWith("https://")
+        ) {
+          toast.error(`Please enter a valid URL for ${type}`);
+          hasError = true;
+          return;
+        }
+
+        const actions = {
+          "Url Action": () => {
+            suggestions.website.push(value);
+            suggestions.websitetitle.push(title);
+          },
+          "Dialer Action": () => {
+            suggestions.mobile.push(value);
+            suggestions.mobiletitle.push(title);
+          },
+          Reply: () => {
+            suggestions.replybtn.push(value);
+            suggestions.replybtntitle.push(title);
+          },
+          "Share Location": () => {
+            suggestions.locationtitle.push(title);
+          },
+          "View Location": () => {
+            const [latitude, longitude] = value.split(",");
+            suggestions.addresstitle.push(title);
+            suggestions.addressLatitude.push(latitude);
+            suggestions.addressLongitude.push(longitude);
+          },
+        };
+
+        actions[type]?.();
+      });
+
+      const hasAtLeastOneButton =
+        suggestions.website.length ||
+        suggestions.mobile.length ||
+        suggestions.replybtn.length ||
+        suggestions.locationtitle.length ||
+        suggestions.addresstitle.length;
+
+      if (!hasAtLeastOneButton && !hasError) {
+        toast.error(`Please add at least one button`);
+        hasError = true;
+        return;
+      }
+
+      variables.forEach((item) => {
+        if (item.id && !item.value) {
+          toast.error(`Please fill the fields for variable [${item.id}]`);
+          hasError = true;
+        }
+      });
+
+      data = {
+        ...inputData,
+        suggestions,
+        messageContent,
+        variables,
+        ...pdfTemplateState,
       };
     }
     // console.log(isError, hasError);
@@ -455,6 +624,7 @@ const AddTemplateRcs = () => {
 
     try {
       setIsFetching(true);
+      delete data.subType;
       const res = await saveRcsTemplate(data);
       if (!res?.status) {
         toast.error(res?.msg);
@@ -483,8 +653,7 @@ const AddTemplateRcs = () => {
       setBtnInputData({});
     } catch (e) {
       toast.error("Something went wrong");
-    }
-    finally {
+    } finally {
       setIsFetching(false);
     }
 
@@ -558,13 +727,17 @@ const AddTemplateRcs = () => {
         </div>
         <div className="w-full sm:w-56">
           <AnimatedDropdown
-            label="Template Type"
-            id="templateType"
-            name="templateType"
+            label="Template Category"
+            id="templateCategory"
+            name="templateCategory"
             options={[
               {
                 label: "Text",
                 value: "text",
+              },
+              {
+                label: "Text with PDF",
+                value: "text_message_with_pdf",
               },
               {
                 label: "Rich Card Stand Alone",
@@ -577,12 +750,65 @@ const AddTemplateRcs = () => {
             ]}
             value={inputData.templateType}
             onChange={(newValue) => {
-              handleTemplateTypeChange(newValue);
+              handleTemplateCategoryChange(newValue);
             }}
-            placeholder="Select Template Type"
-            tooltipContent="Select Template Type"
+            placeholder="Select Template Category"
+            tooltipContent="Select Template Category"
           />
         </div>
+        {/* {inputData.templateType && inputData.templateType !== "text" && (
+          <div className="w-full sm:w-56">
+            <AnimatedDropdown
+              label="Template Type"
+              id="templateType"
+              name="templateType"
+              options={[
+                {
+                  label: "Image",
+                  value: "image",
+                },
+                {
+                  label: "Video",
+                  value: "video",
+                },
+              ]}
+              value={inputData.subType}
+              onChange={(newValue) => {
+                handleTemplateTypeChange(newValue);
+              }}
+              placeholder="Select Template Type"
+              tooltipContent="Select Template Type"
+            />
+          </div>
+        )} */}
+
+        {inputData.templateType &&
+          inputData.templateType !== "text" &&
+          inputData.templateType !== "text_message_with_pdf" && (
+            <div className="w-full sm:w-56">
+              <AnimatedDropdown
+                label="Template Type"
+                id="templateType"
+                name="templateType"
+                options={[
+                  {
+                    label: "Image",
+                    value: "image",
+                  },
+                  {
+                    label: "Video",
+                    value: "video",
+                  },
+                ]}
+                value={inputData.subType}
+                onChange={(newValue) => {
+                  handleTemplateTypeChange(newValue);
+                }}
+                placeholder="Select Template Type"
+                tooltipContent="Select Template Type"
+              />
+            </div>
+          )}
       </div>
 
       <div className="flex flex-col justify-between gap-6 bg-gray-100 sm:flex-row lg:flex-row">
@@ -597,7 +823,7 @@ const AddTemplateRcs = () => {
               Template
             </span>
             <CustomTooltip
-              title="Enter Message content and variables. Maximum length is 2500 characters."
+              title="Enter Message content and variables. Maximum length is 2000 characters."
               placement="right"
               arrow
             >
@@ -635,8 +861,20 @@ const AddTemplateRcs = () => {
               setCardData={setCardData}
               cardOrientation={cardOrientation}
               setCardOrientation={setCardOrientation}
+              subType={inputData.subType}
+              fileRef={fileRef}
+              thumbnailRef={thumbnailRef}
             />
           )}
+
+          {inputData.templateType === "text_message_with_pdf" && (
+            <Pdf
+              pdfTemplateState={pdfTemplateState}
+              setPdfTemplateState={setPdfTemplateState}
+              pdfRef={pdfRef}
+            />
+          )}
+
           {inputData.templateType != "carousel" && (
             <div className="mb-3">
               <div className="flex items-center mb-2 gap-2">
@@ -685,6 +923,7 @@ const AddTemplateRcs = () => {
               setAi={setAi}
               setIsOpen={setIsOpen}
               isOpen={isOpen}
+              subType={inputData.subType}
             />
           )}
         </div>
@@ -703,6 +942,7 @@ const AddTemplateRcs = () => {
             handleNextIndex={handleNextIndex}
             handlePreviousIndex={handlePreviousIndex}
             setSelectedCardIndex={setSelectedIndex}
+            subType={inputData.subType}
           />
         </div>
       </div>

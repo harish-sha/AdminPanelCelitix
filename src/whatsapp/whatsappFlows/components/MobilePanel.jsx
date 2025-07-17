@@ -133,7 +133,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 100 }}
       transition={{ type: "spring", stiffness: 200, damping: 25 }}
-      className="relative h-[83vh] w-[340px] rounded-3xl shadow-md bg-gray-100 border-3 border-indigo-300 hide-scrollbar overflow-auto"
+      className="relative h-[83vh] w-[270px] rounded-3xl shadow-md bg-gray-100 border-3 border-indigo-300 hide-scrollbar overflow-auto"
     >
       <h2 className="text-xl font-semibold text-center">{screenTitle}</h2>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px", p: 2 }}>

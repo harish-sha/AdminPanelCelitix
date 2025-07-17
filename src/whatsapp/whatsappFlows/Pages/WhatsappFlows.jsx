@@ -63,7 +63,7 @@ import {
   getWhatsappFlowTemplate,
   updateFlowStatus,
   deleteFlow,
-  getMainJson
+  getMainJson,
 } from "@/apis/whatsapp/whatsapp";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa";
@@ -266,7 +266,6 @@ const WhatsappFlows = () => {
 
     const { flowId } = currentRow;
 
-
     try {
       setIsFetching(true);
       const res = await deleteFlow(flowId);
@@ -312,7 +311,7 @@ const WhatsappFlows = () => {
       document.body.removeChild(link);
 
       URL.revokeObjectURL(url);
-      toast.success("Downloaded Successfully")
+      toast.success("Downloaded Successfully");
     } catch (error) {
       console.error("Error in exporting the data:", error);
     }
@@ -408,19 +407,21 @@ const WhatsappFlows = () => {
 
   return (
     <>
-      <div className=" bg-white border border-gray-300 rounded-xl shadow-sm mb-3 px-3 pt-2">
+      <div className=" bg-white border border-gray-300 rounded-xl shadow-sm mb-3 md:px-3 px-0 pt-2">
         <div className="flex flex-col sm:flex-row sm:justify-between items-center mb-4">
           <div className="flex items-center gap-2 text-xl font-semibold mb-2 sm:mb-0">
             Templates
             <FaWhatsapp className="text-[#25D366] text-2xl" />
           </div>
-          <div className="flex gap-2 w-full sm:w-auto justify-end items-end">
-            <UniversalButton
-              label="+ Create New Flow"
-              onClick={() => setShowDialog(true)}
-              id="createflow"
-              name="createflow"
-            />
+          <div className=" flex gap-2 w-full sm:w-auto md:justify-end justify-center items-end   ">
+            <div className="md:block hidden">
+              <UniversalButton
+                label="+ Create New Flow"
+                onClick={() => setShowDialog(true)}
+                id="createflow"
+                name="createflow"
+              />
+            </div>
           </div>
         </div>
         <div className="mb-2 sm:mb-0">
@@ -438,12 +439,37 @@ const WhatsappFlows = () => {
               className="custom-carousel"
               responsiveOptions={[
                 {
-                  breakpoint: "1024px",
+                  breakpoint: "2560px",
+                  numVisible: 5,
+                  numScroll: 1,
+                },
+                {
+                  breakpoint: "1440px",
                   numVisible: 4,
                   numScroll: 1,
                 },
                 {
+                  breakpoint: "1024px",
+                  numVisible: 3,
+                  numScroll: 1,
+                },
+                {
                   breakpoint: "768px",
+                  numVisible: 2,
+                  numScroll: 1,
+                },
+                {
+                  breakpoint: "425px",
+                  numVisible: 1,
+                  numScroll: 1,
+                },
+                {
+                  breakpoint: "375px",
+                  numVisible: 1,
+                  numScroll: 1,
+                },
+                {
+                  breakpoint: "320px",
                   numVisible: 1,
                   numScroll: 1,
                 },
@@ -453,10 +479,10 @@ const WhatsappFlows = () => {
         </div>
       </div>
 
-      <div className=" bg-white border border-gray-300 rounded-xl shadow-sm">
-        <div className="p-4">
-          <div className="flex flex-col sm:flex-row sm:justify-between items-center mb-4">
-            <h2 className="flex items-center gap-2 text-xl font-semibold mb-2 sm:mb-0">
+      <div className="bg-white border border-gray-300 rounded-xl shadow-sm  md:p-4 pb-2 h-auto flex flex-col ">
+        <div className="p-2  ">
+          <div className="flex flex-col sm:flex-row sm:justify-between items-center mb-4 bg-white">
+            <h2 className="flex items-center justify-center gap-2 text-xl font-semibold mb-2 sm:mb-0">
               Created Flows
               <FaWhatsapp className="text-[#25D366] text-2xl" />
             </h2>
@@ -475,7 +501,7 @@ const WhatsappFlows = () => {
           </div>
 
           {/* Flows */}
-          <div className="space-y-4 h-100">
+          <div className="space-y-4 h-100  overflow-y-auto lg:overflow-y-hidden">
             {isLoading ? (
               <div className="w-full">
                 <div className="flex flex-col gap-3">
@@ -498,7 +524,7 @@ const WhatsappFlows = () => {
                       Start your professional journey by creating a new flow!
                     </span>
                   </div>
-                  <div className="mt-4">
+                  <div className="mt-4  md:block hidden">
                     <UniversalButton
                       label="+ Create Flow"
                       onClick={() => setShowDialog(true)}
@@ -510,10 +536,12 @@ const WhatsappFlows = () => {
               paginatedFlows.map((flow, index) => (
                 <div
                   key={index}
-                  className="bg-blue-100 border border-blue-200 rounded-xl px-4 py-5 grid grid-cols-7 items-center justify-between flex-wrap sm:flex-nowrap"
+                  className="bg-blue-100 border border-blue-200 rounded-xl px-4 py-5 grid lg:grid-cols-6 xl:grid-cols-7 xs:grid-cols-1 md:grid-cols-4 gap-5 sm:grid-cols-3  items-center justify-between flex-wrap sm:flex-nowrap"
+
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-start  gap-4">
                     <div className="bg-white flex items-center justify-center p-0.5 rounded-full shadow">
+
                       {flow.status === "DRAFT" && (
                         <RadioButtonCheckedOutlinedIcon
                           className="text-orange-500"
@@ -524,7 +552,7 @@ const WhatsappFlows = () => {
                       )}
                       {flow.status === "PUBLISHED" && (
                         <RadioButtonCheckedOutlinedIcon
-                          className="text-green-500"
+                          className="text-green-500 "
                           sx={{
                             fontSize: "22px",
                           }}
@@ -533,6 +561,7 @@ const WhatsappFlows = () => {
                     </div>
                     <div className="flex flex-col gap-1">
                       <div className="font-semibold text-sm">
+
                         {/* {flow.flowName} */}
                         {highlightMatch(String(flow.flowName || ""), search)}
                       </div>
@@ -576,7 +605,7 @@ const WhatsappFlows = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-center gap-3 mt-3 sm:mt-0">
+                  <div className="flex items-center md:justify-center lg:justify-center gap-3 mt-3 sm:mt-0">
                     {flow.status === "DRAFT" && (
                       <div className="relative inline-block">
                         <button
@@ -584,6 +613,7 @@ const WhatsappFlows = () => {
                             ? "cursor-not-allowed opacity-70"
                             : "cursor-pointer"
                             }`}
+
                           onClick={() => {
                             if (!isPublishingNow) {
                               setPublishingId(
@@ -669,9 +699,10 @@ const WhatsappFlows = () => {
                     )}
                   </div>
 
-                  <div className="flex items-center justify-end gap-3 mt-3 sm:mt-0">
+                  {/* <div className="flex items-center justify-end gap-3 mt-3 sm:mt-0"> */}
+                    <div className="flex items-center md:justify-center lg:justify-between gap-3 mt-3 sm:mt-0">
                     <button
-                      className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 border-2 border-white rounded-3xl text-sm flex items-center gap-2"
+                      className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 border-2 border-white rounded-3xl text-sm flex items-center gap-2 flex-nowrap whitespace-nowrap "
                       onClick={() => {
                         handlepublishBtn(flow);
                       }}
@@ -752,11 +783,13 @@ const WhatsappFlows = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-end items-center mt-4 gap-2">
+
+
+          <div className="flex justify-end items-center mt-4 gap-2 w-full whitespace-nowrap sm:overflow-x-scroll">
             {Array.from({ length: totalPages }, (_, i) => (
               <button
                 key={i + 1}
-                className={`text-sm px-3 py-1 border rounded-sm cursor-pointer   ${currentPage === i + 1 ? "bg-blue-500 text-white" : ""
+                className={`text-sm px-3 py-1 border rounded-sm cursor-pointer ${currentPage === i + 1 ? "bg-blue-500 text-white" : ""
                   }`}
                 onClick={() => setCurrentPage(i + 1)}
               >
@@ -812,7 +845,7 @@ const WhatsappFlows = () => {
                   onChange={setSelectedWaba}
                   placeholder="Select WABA"
                 />
-                <div className="max-w-content flex items-center justify-center">
+                <div className="max-w-content flex items-center justify-center ">
                   <UniversalButton
                     label="Create Flow"
                     type="submit"

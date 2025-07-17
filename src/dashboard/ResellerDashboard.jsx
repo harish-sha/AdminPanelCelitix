@@ -563,7 +563,7 @@ const ResellerDashboard = () => {
     <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-[calc(100vh-6rem)]">
       {/* Logged In User Card */}
       <motion.div
-        className="rounded-2xl shadow-md p-6 flex items-center justify-between flex-wrap gap-6 bg-gradient-to-br from-blue-50 to-blue-100"
+        className="rounded-2xl shadow-md p-6 flex items-center justify-center sm:justify-between flex-wrap gap-6 bg-gradient-to-br from-blue-50 to-blue-100"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -633,7 +633,7 @@ const ResellerDashboard = () => {
               (s) => s.display_name.toLowerCase() === service.name.toLowerCase()
             );
             return (
-              <Grid item xs={12} sm={6} md={3} key={index}>
+              <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 300 }}
@@ -753,7 +753,7 @@ const ResellerDashboard = () => {
           </svg>
         </div> */}
 
-        <div className="relative z-10 flex items-center justify-around space-y-2">
+        <div className="relative flex flex-col md:flex-row items-center justify-around space-y-2">
           {/* <AiOutlineAppstoreAdd size={48} className="text-blue-600" /> */}
           <div className="flex flex-col items-center">
             <Lottie
@@ -819,7 +819,7 @@ const ResellerDashboard = () => {
             ))}
           </motion.div>
         </div>
-        <p className="relative z-10 text-xs text-gray-400 mt-5 text-center">
+        <p className="relative text-xs text-gray-400 mt-5 text-center">
           Click to configure integrations
         </p>
       </motion.div>
@@ -859,7 +859,7 @@ const ResellerDashboard = () => {
 
       {/* bots & flows start */}
       <motion.div
-        className=" bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-2xl shadow-md p-3"
+        className="bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-2xl shadow-md p-3"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}

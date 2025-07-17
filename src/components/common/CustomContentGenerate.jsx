@@ -28,7 +28,19 @@ export const GenerateAiContent = ({
     const handleGenerate = async () => {
         if (!ai.text) return;
 
-        const message = ai?.text;
+        // const message = ai?.text;
+
+       const message = `
+You are an expert marketing AI that writes engaging marketing and promotional message templates.
+
+Style: ${style}
+
+Task: ${ai?.text}
+
+Write the message as a short marketing template message with a clear CTA if applicable. Make it mobile friendly and grammatically correct.
+`.trim();
+
+
         setAi((prev) => ({
             ...prev,
             typing: true,
@@ -198,7 +210,7 @@ export const GenerateAiContent = ({
                                 Chars: {ai.text.length}/1000
                             </div>
 
-                            {/* <div className="flex flex-wrap gap-2 text-sm">
+                            <div className="flex flex-wrap gap-2 text-sm">
                                 <p className="w-full font-medium text-[#2b40b0]">
                                     Choose your message style :
                                 </p>
@@ -224,7 +236,7 @@ export const GenerateAiContent = ({
                                         </div>
                                     )
                                 )}
-                            </div> */}
+                            </div>
 
                             <div className="min-h-[60px] bg-gray-100 p-3 rounded-md border">
                                 {ai?.isGenerating ? (

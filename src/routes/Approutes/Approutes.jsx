@@ -169,9 +169,20 @@ import RCSView from "@/CombineLiveChats/pages/channels/RcsView";
 import InstagramView from "@/CombineLiveChats/pages/channels/InstagramView";
 import MessengerView from "@/CombineLiveChats/pages/channels/MessengerView";
 
+// Instagram
+import InstagramLiveChat from "@/Instagram/InstagramLiveChat/InstagramLiveChat";
+
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
+import WhatsappChats from "@/CombineLiveChats/components/ServiceLayout/whatsappChats";
+import RcsChats from "@/CombineLiveChats/components/ServiceLayout/RcsChats";
+import InstagramChats from "@/CombineLiveChats/components/ServiceLayout/InstagramChats";
+import MessengerChats from "@/CombineLiveChats/components/ServiceLayout/MessengerChats";
+
+
+const userServices = ["7", "8", "9", "10"]; 
+
 
 const Approutes = () => {
   return (
@@ -363,11 +374,30 @@ const Approutes = () => {
         {/* Combine Live Chat */}
         <Route path="liveChatMain" element={<LiveChatLayout />}>
           <Route index element={<LiveChatDashboard />} />
-          {/* <Route path="whatsapp" element={<WhatsAppView />} /> */}
-          <Route path="wlivechat" element={<WhatsappLiveChat />} />
-          <Route path="rcs" element={<RCSView />} />
-          <Route path="instagram" element={<InstagramView />} />
-          <Route path="messenger" element={<MessengerView />} />
+          <Route
+            path="wlivechat"
+            element={
+              userServices.includes("2") ? <WhatsappLiveChat /> : <WhatsappChats />
+            }
+          />
+          <Route
+            path="rcslivechats"
+            element={
+              userServices.includes("2") ? <RcsLiveChat /> : <RcsChats />
+            }
+          />
+          <Route
+            path="instachats"
+            element={
+              userServices.includes("2") ? <InstagramLiveChat /> : <InstagramChats />
+            }
+          />
+          <Route
+            path="messengerchats"
+            element={
+              userServices.includes("2") ? <MessengerView /> : <MessengerChats />
+            }
+          />
         </Route>
       </Route>
 

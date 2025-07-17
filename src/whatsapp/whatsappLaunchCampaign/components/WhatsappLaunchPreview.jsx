@@ -16,6 +16,40 @@ const replaceVariablesInText = (text, variables, type = "body") => {
   );
 };
 
+const extractCoordinates = (url) => {
+  if (!url) {
+    return null;
+  }
+  let regex = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
+  let match = url.match(regex);
+  if (match) {
+    return {
+      lat: match[1],
+      lng: match[2],
+    };
+  }
+
+  regex = /place\/.*\/@(-?\d+\.\d+),(-?\d+\.\d+)/;
+  match = url.match(regex);
+  if (match) {
+    return {
+      lat: match[1],
+      lng: match[2],
+    };
+  }
+
+  regex = /q=(-?\d+\.\d+),(-?\d+\.\d+)/;
+  match = url.match(regex);
+  if (match) {
+    return {
+      lat: match[1],
+      lng: match[2],
+    };
+  }
+
+  return null;
+};
+
 const WhatsappLaunchPreview = ({
   templateDataNew,
   formData,
@@ -23,6 +57,7 @@ const WhatsappLaunchPreview = ({
   setCardIndex,
   cardIndex,
   fileData,
+  locationData,
 }) => {
   if (!templateDataNew || !templateDataNew.components) {
     return (
@@ -70,7 +105,7 @@ const WhatsappLaunchPreview = ({
   const headerComponent = templateDataNew.components.find(
     (comp) =>
       comp.type === "HEADER" &&
-      ["IMAGE", "VIDEO", "DOCUMENT", "TEXT"].includes(comp.format)
+      ["IMAGE", "VIDEO", "DOCUMENT", "TEXT", "LOCATION"].includes(comp.format)
   );
 
   const bodyComponent = templateDataNew.components.find(
@@ -149,7 +184,7 @@ const WhatsappLaunchPreview = ({
           </div>
 
           {!isCarousal && (
-            <div className="flex flex-col gap-3 p-3 bg-white rounded-b-md">
+            <div className="flex flex-col gap-2 p-3 bg-white rounded-b-md">
               {["IMAGE", "VIDEO", "DOCUMENT"].includes(
                 headerComponent?.format
               ) &&
@@ -191,6 +226,25 @@ const WhatsappLaunchPreview = ({
                     ></iframe>
                   </div>
                 ))}
+
+              {headerComponent?.format === "LOCATION" && (
+                <>
+                  <iframe
+                    id="gmap"
+                    src={`https://www.google.com/maps?q=${extractCoordinates(locationData?.url)?.lat
+                      },${extractCoordinates(locationData?.url)?.lng
+                      }&hl=es;z=14&output=embed`}
+                    width="100%"
+                    height="200"
+                    className="border-none "
+                    allowFullScreen={false}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  ></iframe>
+                  <div className="text-sm text-gray-800 font-bold">{locationData.name}</div>
+                  <div className="text-sm text-gray-600 font-semibold" >{locationData.address}</div>
+                </>
+              )}
 
               {headerComponent && headerComponent.format === "TEXT" && (
                 <div className="text-md font-semibold text-gray-800">

@@ -4,14 +4,21 @@ import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-
+import PhoneCallbackIcon from "@mui/icons-material/PhoneCallback";
+import PhoneIcon from '@mui/icons-material/Phone';
+import callback from "../assets/icons/Callback02.svg";
 import UniversalDatePicker from "../whatsapp/components/UniversalDatePicker";
 import InputField from "../whatsapp/components/InputField";
 import UniversalButton from "../whatsapp/components/UniversalButton";
 import AnimatedDropdown from "../whatsapp/components/AnimatedDropdown";
 import { PaginationTable } from "@/components/layout/PaginationTable";
 import toast from "react-hot-toast";
-import { getData, deleteData, updateStatus, getEditData } from "@/apis/callback/callback";
+import {
+  getData,
+  deleteData,
+  updateStatus,
+  getEditData,
+} from "@/apis/callback/callback";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import { IconButton, Switch } from "@mui/material";
 import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
@@ -64,7 +71,6 @@ const Callback = () => {
 
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-
 
   async function handleFetchData() {
     try {
@@ -188,9 +194,9 @@ const Callback = () => {
                 color: "#34C759",
               },
               "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-              {
-                backgroundColor: "#34C759",
-              },
+                {
+                  backgroundColor: "#34C759",
+                },
             }}
           />
         </CustomTooltip>
@@ -257,7 +263,11 @@ const Callback = () => {
         indicatorColor="primary"
       >
         <Tab
-          label="Callback Profile"
+          label={
+            <span className="flex items-center gap-1">
+              <PhoneIcon size={20} /> Callback Profile
+            </span>
+          }
           {...a11yProps(0)}
           sx={{
             textTransform: "none",
@@ -271,7 +281,11 @@ const Callback = () => {
           }}
         />
         <Tab
-          label="Callback Logs"
+          label={
+            <span className="flex items-center gap-2">
+              <PhoneCallbackIcon size={20} /> Callback Logs
+            </span>
+          }
           {...a11yProps(1)}
           sx={{
             textTransform: "none",
@@ -288,8 +302,8 @@ const Callback = () => {
 
       <CustomTabPanel value={value} index={0}>
         <div className="w-full">
-          <div className="flex items-end justify-between w-full mb-5 ">
-            <div className="flex items-end gap-2">
+          <div className="flex flex-col w-full mb-5 ">
+            <div className="flex flex-col md:flex-row md:items-end items-start gap-2 mb-2">
               <div className="w-full sm:w-56">
                 <InputField
                   label={"Campaign Name"}
@@ -319,12 +333,15 @@ const Callback = () => {
                   }}
                 />
               </div>
-              <UniversalButton label="Search" onClick={handleFetchData} />
+              <div className="flex gap-2">
+                <UniversalButton label="Search" onClick={handleFetchData} />
+                <UniversalButton label="Add Callback" onClick={handleOpen} />
+              </div>
             </div>
 
-            <div>
+            {/* <div>
               <UniversalButton label="Add Callback" onClick={handleOpen} />
-            </div>
+            </div> */}
           </div>
 
           <PaginationTable
@@ -342,7 +359,6 @@ const Callback = () => {
 
       <CustomTabPanel value={value} index={1}>
         <TerminalApp />
-
       </CustomTabPanel>
 
       <Dialog

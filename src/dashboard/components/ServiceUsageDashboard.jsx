@@ -69,6 +69,25 @@ export default function ServiceUsageDashboard() {
   const [usageData, setUsageData] = useState({});
   const [chartType, setChartType] = useState("Bar");
   const [isLoading, setIsLoading] = useState(false);
+  const [chartHeight, setChartHeight] = useState(340);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 600) {
+        // Tailwind "sm" breakpoint
+        setChartHeight(200); // smaller height
+      } else if (window.innerWidth <= 800) {
+        setChartHeight(260);
+      } else {
+        setChartHeight(340);
+      }
+    };
+
+    handleResize(); // initial check
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -260,14 +279,14 @@ export default function ServiceUsageDashboard() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex gap-3 rounded-2xl bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 p-2 h-147">
+      <div className="flex md:flex-row flex-col gap-3 rounded-2xl bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 p-2 md:h-147 ">
         {/* Sidebar */}
-        <div className=" bg-white p-2 rounded-2xl shadow-md h-full space-y-4 border-1  border-gray-200 w-50">
+        <div className="bg-white p-2 rounded-2xl shadow-md md:h-full h-1/5 space-y-4 border-1 border-gray-200 md:w-50 w-full">
           {/* Services Filter */}
           <span className="text-xl font-semibold text-gray-800 tracking-wide playf">
             Filter Services
           </span>
-          <div className="space-y-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-1 gap-3">
             {activeServices.map((service) => {
               const selected = selectedServices.includes(service);
               // Map service → its color palette
@@ -297,11 +316,11 @@ export default function ServiceUsageDashboard() {
                   "bg-yellow-50",
                 ],
               }[service.toLowerCase()] || [
-                  "from-gray-100",
-                  "to-gray-300",
-                  "text-black-600",
-                  "bg-gray-50",
-                ];
+                "from-gray-100",
+                "to-gray-300",
+                "text-black-600",
+                "bg-gray-50",
+              ];
 
               const [from, to, txt, bg] = palette;
 
@@ -316,18 +335,18 @@ export default function ServiceUsageDashboard() {
                     )
                   }
                   className={`
-                    flex items-center gap-2 w-full px-2 py-2 rounded-lg transition cursor-pointer
-                         ${selected
-                      ? `bg-gradient-to-r ${from} ${to} ${txt} shadow-md`
-                      : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                    }
+                    flex flex-col sm:flex-row items-center sm:gap-2 gap-0 w-full px-2 py-2 rounded-lg transition cursor-pointer
+                         ${
+                           selected
+                             ? `bg-gradient-to-r ${from} ${to} ${txt} shadow-md`
+                             : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                         }
                     `}
                 >
                   <span
                     className={`
                     flex-shrink-0 p-2 rounded-full transition
-                      ${selected ? "" : bg} ${selected ? txt : "text-gray-400"
-                      }
+                      ${selected ? "" : bg} ${selected ? txt : "text-gray-400"}
                        `}
                   >
                     {icons[service] || "🔧"}
@@ -344,13 +363,14 @@ export default function ServiceUsageDashboard() {
           {/* Chart Type */}
           <span className="font-semibold text-xl playf">Chart Type</span>
 
-          <div className="flex flex-col  gap-2">
+          <div className="flex md:flex-col flex-col sm:flex-row gap-2">
             {CHART_TYPES.map((type) => (
               <button
                 key={type}
                 onClick={() => setChartType(type)}
-                className={`flex items-center justify-center gap-2 px-3 py-1 rounded-md ${chartType === type ? "bg-[#687efa] text-white" : "bg-gray-100"
-                  }`}
+                className={`flex items-center justify-center gap-2 px-3 py-1 rounded-md ${
+                  chartType === type ? "bg-[#687efa] text-white" : "bg-gray-100"
+                }`}
               >
                 {ICON_MAP[type] || <span className="w-5" />}
                 {/* label */}
@@ -359,21 +379,25 @@ export default function ServiceUsageDashboard() {
             ))}
           </div>
         </div>
-        
 
         {/* Main Content */}
         <div className="flex-1 bg-gradient-to-tr from-blue-50 via-white to-blue-100 p-3 rounded-2xl shadow-md">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-3xl font-medium playf">Service Usage Overview</h2>
+            <h2 className="text-3xl font-medium playf">
+              Service Usage Overview
+            </h2>
 
             {/* Filter Buttons */}
-            <div className="flex flex-wrap gap-4 items-center">
+            <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center">
               {FILTERS.map((item) => (
                 <div
                   key={item}
                   onClick={() => setFilter(item)}
-                  className={`relative px-4 py-1.5 rounded-full border cursor-pointer overflow-hidden transition-colors duration-300 ${filter === item ? "text-white scale-105" : "bg-white text-gray-700"
-                    }`}
+                  className={`relative px-4 py-1.5 rounded-full border cursor-pointer overflow-hidden transition-colors duration-300 ${
+                    filter === item
+                      ? "text-white scale-105"
+                      : "bg-white text-gray-700"
+                  }`}
                 >
                   <span className="relative z-10">{item}</span>
                   <span
@@ -418,7 +442,6 @@ export default function ServiceUsageDashboard() {
             </div>
           </div>
 
-
           {/* Usage Cards */}
           {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {filteredData.map((service, i) => (
@@ -445,7 +468,7 @@ export default function ServiceUsageDashboard() {
                 key={service.name}
                 whileHover={{ backgroundColor: "#f9fafb" }}
                 transition={{ duration: 0.2 }}
-                className="flex items-center justify-between border border-gray-300 rounded-xl p-2 hover:border-indigo-300 transition w-full"
+                className="flex flex-row md:flex-col lg:flex-row items-center justify-between border border-gray-300 rounded-xl p-2 hover:border-indigo-300 transition"
               >
                 {/* Icon */}
                 <div className="flex-shrink-0 bg-indigo-50 text-indigo-600 rounded-full p-2 text-2xl">
@@ -463,9 +486,11 @@ export default function ServiceUsageDashboard() {
                 </div>
 
                 {/* Charge */}
-                <p className="text-sm text-gray-700 font-semibold whitespace-nowrap">
-                  ₹{service.totalCharge.toFixed(2)}
-                </p>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-700 font-semibold whitespace-nowrap">
+                    ₹{service.totalCharge.toFixed(2)}
+                  </p>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -473,7 +498,7 @@ export default function ServiceUsageDashboard() {
           {/* Graph */}
           <div className="mt-3 p-3 rounded-2xl bg-white border-2 border-dashed">
             <h3 className="text-lg font-semibold mb-2">Usage Analytics</h3>
-            <ResponsiveContainer width="100%" height={350}>
+            <ResponsiveContainer width="100%" height={chartHeight}>
               {renderChart()}
             </ResponsiveContainer>
           </div>

@@ -19,6 +19,7 @@ import UniversalButton from "../components/UniversalButton.jsx";
 import toast from "react-hot-toast";
 import UniversalSkeleton from "../components/UniversalSkeleton.jsx";
 import CustomNoRowsOverlay from "../components/CustomNoRowsOverlay.jsx";
+import { PaginationTable } from "@/components/layout/PaginationTable.jsx";
 import moment from "moment";
 
 const PaginationList = styled("ul")({
@@ -121,15 +122,15 @@ const CampaignDetailsReport = () => {
     // }, [campaignSrno, currentPage]);
 
     const fetchData = async () => {
-        const body = {
-            campSrno: campaignSrno,
-            mobno: mobileNumber,
-            status: "status",
-            page: currentPage,
-            delStatus: deliveryStatus || "",
-        };
-        setIsFetching(true)
         try {
+            setIsFetching(true)
+            const body = {
+                campSrno: campaignSrno,
+                mobno: mobileNumber,
+                status: "status",
+                page: currentPage,
+                delStatus: deliveryStatus || "",
+            };
             const data = await getWhatsappCampaignDetailsReport(body);
             setCampaignDetails(data.data);
             setTotalPage(data.total);
@@ -309,6 +310,23 @@ const CampaignDetailsReport = () => {
             {isFetching ? (
                 <UniversalSkeleton height="35rem" width="100%" />
             ) : (
+                <PaginationTable
+                    id={"detailsReport"}
+                    name={"detailsReport"}
+                    col={columns}
+                    rows={rows}
+                    setSelectedRows={setSelectedRows}
+                    selectedRows={selectedRows}
+                    paginationModel={paginationModel}
+                    setPaginationModel={setPaginationModel}
+                    setCurrentPage={setCurrentPage}
+                    totalPage={totalPage}
+                />
+            )}
+
+            {/* {isFetching ? (
+                <UniversalSkeleton height="35rem" width="100%" />
+            ) : (
                 <Paper sx={{ height: 558 }}>
                     <DataGrid
                         // id={id}
@@ -348,7 +366,7 @@ const CampaignDetailsReport = () => {
                         }}
                     />
                 </Paper>
-            )}
+            )} */}
         </div>
     );
 };

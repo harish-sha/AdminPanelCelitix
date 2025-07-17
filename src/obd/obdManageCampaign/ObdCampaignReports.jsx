@@ -422,6 +422,10 @@ const ObdCampaignReports = () => {
                 aria-label="Manage Campaigns Tabs"
                 textColor="primary"
                 indicatorColor="primary"
+                scrollButtons="auto"
+                allowScrollButtonsMobile
+                className="w-full"
+                variant="scrollable"
               >
                 <Tab
                   label={
@@ -495,25 +499,13 @@ const ObdCampaignReports = () => {
                 />
               </Tabs>
 
-              <div className="w-full sm:w-56 mt-4 ml-6 flex lg:justify-end md:justify-end">
-                <UniversalButton
-                  id="exportBtn"
-                  name="exportBtn"
-                  label="Export"
-                  icon={
-                    <IosShareOutlinedIcon
-                      sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
-                    />
-                  }
-                  onClick={handleExportBtn}
-                />
-              </div>
+
             </div>
 
             {/* Campaign Logs Report Start */}
             <CustomTabPanel value={value} index={0}>
               <div className="w-full">
-                <div className="flex flex-col md:flex-row lg:flex-row flex--wrap gap-4 items-end justify-start align-middle mb-3 w-full">
+                <div className="flex flex-col md:flex-row lg:flex-row flex-wrap gap-4 md:items-end items-center  justify-start align-middle mb-3 w-full">
                   <div className="w-full sm:w-56">
                     <UniversalDatePicker
                       id="obdcampaignfromdate"
@@ -586,15 +578,31 @@ const ObdCampaignReports = () => {
                     />
                   </div>
 
-                  <div className="w-full sm:w-56">
-                    <UniversalButton
-                      id="obdTemplateSearchBtn"
-                      name="obdSearchBtn"
-                      label={isFetching ? "Searching..." : "Search"}
-                      onClick={handleSearchObdCampaignLogs}
-                      icon={<IoSearch />}
-                      disabled={isFetching}
-                    />
+                  <div className="flex flex-row gap-4">
+                    <div className="w-full ">
+                      <UniversalButton
+                        id="obdTemplateSearchBtn"
+                        name="obdSearchBtn"
+                        label={isFetching ? "Searching..." : "Search"}
+                        onClick={handleSearchObdCampaignLogs}
+                        icon={<IoSearch />}
+                        disabled={isFetching}
+                      />
+                    </div>
+
+                    <div className="w-full">
+                      <UniversalButton
+                        id="exportBtn"
+                        name="exportBtn"
+                        label="Export"
+                        icon={
+                          <IosShareOutlinedIcon
+                            sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
+                          />
+                        }
+                        onClick={handleExportBtn}
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="mt-5">

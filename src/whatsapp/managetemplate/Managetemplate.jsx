@@ -789,6 +789,7 @@ const ManageTemplate = () => {
                         { value: "video", label: "Video" },
                         { value: "document", label: "Document" },
                         { value: "carousel", label: "Carousel" },
+                        { value: "location", label: "Location" },
                       ]}
                       value={selectedType}
                       onChange={setSelectedType}

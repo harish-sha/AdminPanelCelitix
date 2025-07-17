@@ -92,31 +92,31 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
       ? { field: "month", headerName: "Month", flex: 1, minWidth: 120 }
       : {
         field: "queDate",
-        headerName: "Que Date",
+        headerName: "Date",
         flex: 1,
         minWidth: 120,
         renderCell: (params) => (
           <>{moment(params.row.queDate).format("DD-MM-YYYY")}</>
         ),
       },
-    {
-      field: "chargedUnit",
-      headerName: "Charged Unit",
-      flex: 1,
-      minWidth: 120,
-    },
+    // {
+    //   field: "chargedUnit",
+    //   headerName: "Charged Unit",
+    //   flex: 1,
+    //   minWidth: 120,
+    // },
     { field: "count", headerName: "Count", flex: 1, minWidth: 120 },
-    { field: "pending", headerName: "Pending", flex: 1, minWidth: 120 },
+    // { field: "pending", headerName: "Pending", flex: 1, minWidth: 120 },
     { field: "failed", headerName: "Failed", flex: 1, minWidth: 120 },
     { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 120 },
     { field: "sent", headerName: "Sent", flex: 1, minWidth: 120 },
+    { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 120 },
     {
       field: "readCount",
-      headerName: "Read Count",
+      headerName: "Read",
       flex: 1,
       minWidth: 120,
     },
-    { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 120 },
     {
       field: "notDelivered",
       headerName: "Not Delivered",
@@ -125,11 +125,11 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
     },
     {
       field: "drnotAvailable",
-      headerName: "DR Not Available",
+      headerName: "PDR",
       flex: 1,
       minWidth: 120,
     },
-    { field: "others", headerName: "Others", flex: 1, minWidth: 120 },
+    // { field: "others", headerName: "Others", flex: 1, minWidth: 120 },
   ];
 
   let rows = [];

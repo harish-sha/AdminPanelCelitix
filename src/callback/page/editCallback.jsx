@@ -149,8 +149,8 @@ export const EditCallback = () => {
     }
 
     return (
-        <div className="flex gap-2 h-full">
-            <div className="flex flex-col gap-2 w-2/3 p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1">
+         <div className="flex md:flex-row flex-col gap-2 h-auto">
+            <div className="flex flex-col gap-2 md:w-2/3 w-full p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                     <InputField
                         id="callBackName"
@@ -371,14 +371,14 @@ export const EditCallback = () => {
 
                             {customHeader?.isSelect && customHeader?.data?.length > 0 && (
                                 <div>
-                                    <div className="flex justify-end">
+                                    <div className="flex md:justify-end justify-center">
                                         <UniversalButton
                                             id="addHeader"
                                             label="Add Header"
                                             onClick={addHeader}
                                         />
                                     </div>
-                                    <div className="flex flex-col gap-2 mt-2 max-h-[220px] overflow-y-scroll p-2">
+                                    <div className="flex flex-col gap-2 mt-1 max-h-[80px] overflow-y-scroll p-2 border-1 border-gray-200 rounded-xl">
                                         {customHeader.data.map((item, index) => (
                                             <div className="flex gap-2" key={index}>
                                                 <InputField
@@ -463,7 +463,7 @@ export const EditCallback = () => {
                     </div>
                 )}
 
-                <div className="flex justify-center mt-5">
+                <div className="flex justify-center my-4">
                     <UniversalButton
                         id="editCallback"
                         label="Update Callback"
@@ -471,7 +471,9 @@ export const EditCallback = () => {
                     />
                 </div>
             </div>
-            <Preview />
+            <div className="md:w-1/3 w-full">
+          <Preview />
+        </div>
         </div>
     );
 };
