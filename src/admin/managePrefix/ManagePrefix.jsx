@@ -7,16 +7,24 @@ import UniversalTextArea from "../../whatsapp/components/UniversalTextArea";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
+  addPrefix,
   getCountryList,
   getOperatorList,
   getPrefixList,
 } from "@/apis/admin/admin";
+import InputField from "@/components/layout/InputField";
 
 const ManagePrefix = () => {
   const navigate = useNavigate();
 
   const [isFetching, setIsFetching] = useState(false);
   const [prefixadd, setPrefixAdd] = useState(false);
+  const [addPrefixData, setAddPrefixData] = useState({
+    operatorSrno: 0,
+    circleSrno: 0,
+    countrySrno: 0,
+    prefix: [],
+  });
   const [dropdownData, setDropdownData] = useState({
     operator: [],
     country: [],
@@ -60,7 +68,7 @@ const ManagePrefix = () => {
     }
   }
   async function handleSearch() {
-    if(!searchData.country && !searchData.operator) return
+    if (!searchData.country && !searchData.operator) return;
     try {
       const res = await getPrefixList(searchData);
       const countryList = await getCountryList();
@@ -123,6 +131,20 @@ const ManagePrefix = () => {
   const handleAddPrefix = () => {
     setPrefixAdd(true);
   };
+
+  async function handleSavePrefix() {
+    try {
+      const payload = {
+        ...addPrefixData,
+        prefix: addPrefixData.prefix.split(),
+      };
+      const res = await addPrefix(payload);
+      console.log(res);
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong");
+    }
+  }
 
   return (
     <div>
@@ -218,24 +240,62 @@ const ManagePrefix = () => {
         header="Add Prefix"
         visible={prefixadd}
         onHide={() => setPrefixAdd(false)}
-        className="lg:w-[30rem] md:w-[25rem] w-[20rem]"
+        className="w-2/3 md:w-1/2 lg:w-1/3"
         draggable={false}
       >
         <small className="font-bold">
           Enter each prefix with sign and new line.{" "}
         </small>
-        <div className="space-y-4">
+        <div className="space-y-4 w-full">
+          <DropdownWithSearch
+            label="Country"
+            id="country"
+            name="country"
+            options={dropdownData.country}
+            onChange={(e) => {
+              setAddPrefixData({ ...addPrefixData, countrySrno: e });
+            }}
+            value={addPrefixData.countrySrno}
+          />
+
+          <DropdownWithSearch
+            label="Operator"
+            id="operator"
+            name="operator"
+            options={dropdownData.operator}
+            onChange={(e) => {
+              setAddPrefixData({ ...addPrefixData, operatorSrno: e });
+            }}
+            value={addPrefixData.operatorSrno}
+          />
+
+          <InputField
+            id="circle"
+            name="circle"
+            label="Circle"
+            value={addPrefixData.circle}
+            onChange={(e) => {
+              setAddPrefixData({ ...addPrefixData, circle: e.target.value });
+            }}
+            placeholder="Enter Circle Code"
+          />
+
           <UniversalTextArea
             label="Prefix :"
             id="prefixaddtext"
             name="prefixaddtext"
             placeholder="Enter Prefix"
+            value={addPrefixData.prefix}
+            onChange={(e) => {
+              setAddPrefixData({ ...addPrefixData, prefix: e.target.value });
+            }}
           />
           <div className="flex justify-center">
             <UniversalButton
               label="Save"
               id="saveaddprefix"
               name="saveaddprefix"
+              onClick={handleSavePrefix}
             />
           </div>
         </div>

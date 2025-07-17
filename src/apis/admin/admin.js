@@ -180,6 +180,12 @@ export const getPrefixList = async (data) => {
     }
   );
 };
+export const addPrefix = async (data) => {
+  return await fetchWithAuth(`/addPrefixList`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
 export const getCountryList = async () => {
   return await fetchWithAuth(`/getcountryList`, {
     method: "POST",
@@ -261,17 +267,20 @@ export const editOperatorData = async (data) => {
     method: "POST",
     body: JSON.stringify(data),
   });
-}
+};
 
 export const getSMPPDetailsById = async (id) => {
-  return await fetchWithAuth(`/smpp/getSmppDetailsByServiceId?serviceId=${id}`, {
-    method: "POST",
-  });
-}
+  return await fetchWithAuth(
+    `/smpp/getSmppDetailsByServiceId?serviceId=${id}`,
+    {
+      method: "POST",
+    }
+  );
+};
 
 export const updateSMPP = async (data) => {
   return await fetchWithAuth(`/smpp/editSmppConnection`, {
     method: "POST",
     body: JSON.stringify(data),
   });
-}
+};
