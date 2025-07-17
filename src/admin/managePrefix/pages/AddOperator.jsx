@@ -143,147 +143,11 @@ const AddOperator = ({ id, name }) => {
     setImportOperator(true);
   };
 
-  const countryOptions = [
-    { label: "India", value: "India" },
-    { label: "USA", value: "USA" },
-    { label: "UK", value: "UK" },
-    { label: "Australia", value: "Australia" },
-  ];
-  const AddnewcountryOptions = [
-    { label: "India", value: "India" },
-    { label: "USA", value: "USA" },
-    { label: "UK", value: "UK" },
-    { label: "Australia", value: "Australia" },
-  ];
-  const AddeditcountryOptions = [
-    { label: "India", value: "India" },
-    { label: "USA", value: "USA" },
-    { label: "UK", value: "UK" },
-    { label: "Australia", value: "Australia" },
-  ];
-  const AddimportcountryOptions = [
-    { label: "India", value: "India" },
-    { label: "USA", value: "USA" },
-    { label: "UK", value: "UK" },
-    { label: "Australia", value: "Australia" },
-  ];
-
-  // handle File drop
-  const handleFileDrop = (event) => {
-    event.preventDefault();
-    const file = event.dataTransfer.files[0];
-
-    if (file) {
-      const validExtensions = [".xls", ".xlsx", ".xlsm"];
-      const fileExtension = file.name.split(".").pop();
-
-      if (validExtensions.includes(`.${fileExtension.toLowerCase()}`)) {
-        if (isValidFileName(file.name.split(".")[0])) {
-          setUploadedFile(file);
-          setIsUploaded(false);
-          parseFile(file);
-        } else {
-          toast.error(
-            "File name can only contain alphanumeric characters, underscores, or hyphens."
-          );
-        }
-      } else {
-        toast.error("Only Excel files (.xls, .xlsx, .xlsm) are supported.");
-      }
-    }
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
-  };
-
-  // handle file change
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const validExtensions = [".xls", ".xlsx", ".xlsm"];
-      const fileExtension = file.name.split(".").pop();
-
-      if (validExtensions.includes(`.${fileExtension.toLowerCase()}`)) {
-        if (isValidFileName(file.name.split(".")[0])) {
-          setUploadedFile(file);
-          setIsUploaded(false);
-          parseFile(file);
-        } else {
-          toast.error(
-            "File name can only contain alphanumeric characters, underscores, or hyphens."
-          );
-        }
-      } else {
-        toast.error("Only Excel files (.xls, .xlsx, .xlsm) are supported.");
-      }
-    }
-  };
-
-  const handleFileUpload = async () => {
-    if (!uploadedFile) {
-      toast.error("No file selected for upload.");
-      return;
-    }
-    if (isUploaded) {
-      toast.error("File already uploaded. Please select a different one.");
-      return;
-    }
-    setIsUploading(true);
-    try {
-      setIsUploaded(true);
-      toast.success("File uploaded successfully!");
-    } catch (error) {
-      toast.error("File upload failed. Please try again.");
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const isValidFileName = (fileName) => {
-    const regex = /^[a-zA-Z0-9_-]+$/;
-    return regex.test(fileName);
-  };
-
-  const parseFile = (file) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const workbook = XLSX.read(reader.result, { type: "binary" });
-      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-      // const headers = Object.keys(jsonData[0]);
-      const headers = jsonData.length > 0 ? Object.keys(jsonData[0]) : [];
-      // const headers = Object.keys(jsonData[0] || {}).map(header => header.trim()); // Trim header names
-      // console.log("Extracted headers:", headers);
-
-      setFileData(jsonData);
-      setColumn(headers);
-      // setFileHeaders(headers);
-      setIsUploaded(false); // Reset to "File Selected" if a new file is selected
-      // setTotalRecords(jsonData.length);
-    };
-    reader.readAsBinaryString(file);
-  };
-
-  // Handle file removal
-  const handleRemoveFile = () => {
-    setUploadedFile(null);
-    setIsUploaded(false);
-    // setAddCountryCode(false)
-    // setSelectedCountryCode('');
-    // setSelectedMobileColumn("");
-    // setFileData([]);
-    // setTotalRecords("");
-    // setXlsxPath("");
-    document.getElementById("fileInput").value = "";
-    toast.success("File removed successfully.");
-  };
-
   async function handleFetchOpertorList() {
     try {
       const res = await getOperatorList();
       const countryList = await getCountryList();
-      setCountryList(countryList);
+      setCountryList(res);
 
       const countryMap = new Map(
         countryList.map((country) => [country.srNo, country.countryName])
@@ -298,7 +162,11 @@ const AddOperator = ({ id, name }) => {
         (operator) =>
           operator.countrySrno === searchCountry || searchCountry === ""
       );
-      setOperatorList(filteredOperators);
+
+      const sortedData = filteredOperators
+        ?.filter((item) => item.countryName != null)
+        .sort((a, b) => a.countryName.localeCompare(b.countryName));
+      setOperatorList(sortedData);
     } catch (error) {
       toast.error("Something went wrong");
     }
@@ -358,7 +226,6 @@ const AddOperator = ({ id, name }) => {
   async function handleSave() {
     try {
       const res = await addOperator(addData);
-      console.log("Operator added successfully:", res);
       if (!res.success) {
         toast.error("Failed to add operator. Please try again.");
         return;
@@ -603,7 +470,7 @@ const AddOperator = ({ id, name }) => {
           </div>
         </div>
       </Dialog>
-      <Dialog
+      {/* <Dialog
         header="Edit Operator"
         visible={importoperator}
         onHide={() => setImportOperator(false)}
@@ -690,7 +557,7 @@ const AddOperator = ({ id, name }) => {
             />
           </div>
         </div>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 };

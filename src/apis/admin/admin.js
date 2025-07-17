@@ -245,7 +245,7 @@ export const updatePlan = async (data) => {
 };
 
 export const addOperator = async (data) => {
-  return await fetchWithAuth(`/addOperator`, {
+  return await fetchWithAuth(`/saveOperator`, {
     method: "POST",
     body: JSON.stringify(data),
   });
