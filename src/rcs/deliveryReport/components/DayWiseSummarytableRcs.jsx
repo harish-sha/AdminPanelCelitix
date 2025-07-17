@@ -91,26 +91,31 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
     isMonthWise
       ? { field: "month", headerName: "Month", flex: 1, minWidth: 120 }
       : {
-          field: "queDate",
-          headerName: "Que Date",
-          flex: 1,
-          minWidth: 120,
-          renderCell: (params) => (
-            <>{moment(params.row.queDate).format("DD-MM-YYYY")}</>
-          ),
-        },
-    {
-      field: "chargedUnit",
-      headerName: "Charged Unit",
-      flex: 1,
-      minWidth: 120,
-    },
+        field: "queDate",
+        headerName: "Date",
+        flex: 1,
+        minWidth: 120,
+        renderCell: (params) => (
+          <>{moment(params.row.queDate).format("DD-MM-YYYY")}</>
+        ),
+      },
+    // {
+    //   field: "chargedUnit",
+    //   headerName: "Charged Unit",
+    //   flex: 1,
+    //   minWidth: 120,
+    // },
     { field: "count", headerName: "Count", flex: 1, minWidth: 120 },
-    { field: "pending", headerName: "Pending", flex: 1, minWidth: 120 },
     { field: "failed", headerName: "Failed", flex: 1, minWidth: 120 },
     { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 120 },
     { field: "sent", headerName: "Sent", flex: 1, minWidth: 120 },
     { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 120 },
+    {
+      field: "readCount",
+      headerName: "Read",
+      flex: 1,
+      minWidth: 120,
+    },
     {
       field: "notDelivered",
       headerName: "Not Delivered",
@@ -119,11 +124,12 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
     },
     {
       field: "drnotAvailable",
-      headerName: "DR Not Available",
+      headerName: "PDR",
       flex: 1,
       minWidth: 120,
     },
-    { field: "others", headerName: "Others", flex: 1, minWidth: 120 },
+    // { field: "pending", headerName: "Pending", flex: 1, minWidth: 120 },
+    // { field: "others", headerName: "Others", flex: 1, minWidth: 120 },
   ];
 
   let rows = [];
@@ -131,38 +137,40 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
   if (isMonthWise) {
     rows = Array.isArray(data)
       ? data.map((item, i) => ({
-          id: i + 1,
-          sn: i + 1,
-          month: item.month,
-          chargedUnit: item.chargedUnits,
-          count: item.smscount,
-          pending: item.pending,
-          failed: item.failed,
-          blocked: item.blocked,
-          sent: item.sent,
-          delivered: item.delivered,
-          notDelivered: item.not_delivered,
-          drnotAvailable: item.dr_not_available,
-          others: item.others,
-        }))
+        id: i + 1,
+        sn: i + 1,
+        month: item.month,
+        chargedUnit: item.chargedUnits,
+        count: item.smscount,
+        pending: item.pending,
+        failed: item.failed,
+        blocked: item.blocked,
+        sent: item.sent,
+        delivered: item.delivered,
+        notDelivered: item.not_delivered,
+        readCount: item.readCount,
+        drnotAvailable: item.dr_not_available,
+        others: item.others,
+      }))
       : [];
   } else {
     rows = Array.isArray(data)
       ? data.map((item, i) => ({
-          id: i + 1,
-          sn: i + 1,
-          queDate: item.queuedate,
-          chargedUnit: item.chargedUnits,
-          count: item.smscount,
-          pending: item.pending,
-          failed: item.failed,
-          blocked: item.blocked,
-          sent: item.sent,
-          delivered: item.delivered,
-          notDelivered: item.not_delivered,
-          drnotAvailable: item.dr_not_available,
-          others: item.others,
-        }))
+        id: i + 1,
+        sn: i + 1,
+        queDate: item.queuedate,
+        chargedUnit: item.chargedUnits,
+        count: item.smscount,
+        pending: item.pending,
+        failed: item.failed,
+        blocked: item.blocked,
+        sent: item.sent,
+        delivered: item.delivered,
+        notDelivered: item.not_delivered,
+        readCount: item.readCount,
+        drnotAvailable: item.dr_not_available,
+        others: item.others,
+      }))
       : [];
   }
 

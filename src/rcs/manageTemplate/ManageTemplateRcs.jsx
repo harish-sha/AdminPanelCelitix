@@ -168,6 +168,7 @@ const ManageTemplateRcs = () => {
             options={[
               { label: "Text", value: "text" },
               { label: "Image", value: "image" },
+              { label: "Video", value: "video" },
               // {
               //   label: "Rich Card Stand Alone",
               //   value: "richcardstandalone",
@@ -247,13 +248,32 @@ const ManageTemplateRcs = () => {
         <div className="p-2 border-2 border-gray-200 rounded-xl">
           {!templateDetails?.isCarousal ? (
             <>
-              {templateDetails?.data?.[0]?.imageUrl && (
+              {/* {templateDetails?.data?.[0]?.imageUrl && (
                 <img
                   src={templateDetails?.data[0].imageUrl}
                   alt=""
                   className="w-full h-45 rounded-lg"
                 />
-              )}
+              )} */}
+
+              {templateDetails?.data?.[0]?.templateType === "image" &&
+                templateDetails?.data?.[0]?.imageUrl && (
+                  <img
+                    src={templateDetails?.data[0].imageUrl}
+                    alt=""
+                    className="w-full h-45 rounded-lg"
+                  />
+                )}
+              {templateDetails?.data?.[0]?.templateType === "video" &&
+                templateDetails?.data?.[0]?.imageUrl && (
+                  <video
+                    src={templateDetails?.data[0].imageUrl}
+                    controls
+                    className="w-full h-45 rounded-lg"
+                  />
+                )}
+
+
               <div className="py-2 text-sm overflow-y-scroll max-h-80">
                 <h1 className="font-semibold">
                   {templateDetails?.data[0]?.contentTitle}
@@ -264,8 +284,9 @@ const ManageTemplateRcs = () => {
                 {templateDetails?.data[0]?.suggestions?.map((sug, idx) => (
                   <div key={idx} className="my-2 w-full">
                     <button
-                      className={`flex items-center px-4 py-2 text-sm rounded-md w-full justify-center ${templateTypeConfig[sug.type]?.css || ""
-                        }`}
+                      className={`flex items-center px-4 py-2 text-sm rounded-md w-full justify-center ${
+                        templateTypeConfig[sug.type]?.css || ""
+                      }`}
                       title={sug.suggestionValue}
                     >
                       {templateTypeConfig[sug.type]?.icon}
@@ -308,13 +329,22 @@ const ManageTemplateRcs = () => {
             >
               {templateDetails?.data?.map((template) => (
                 <>
-                  {template?.imageUrl && (
+                  {template.templateType === "image" && template?.imageUrl && (
                     <img
                       src={template.imageUrl}
                       alt=""
                       className="w-full h-45 rounded-lg"
                     />
                   )}
+
+                   {template.templateType === "video" && template?.imageUrl && (
+                    <video
+                      src={template.imageUrl}
+                      controls
+                      className="w-full h-45 rounded-lg"
+                    />
+                  )}
+
                   <div className="py-2 text-sm overflow-y-scroll max-h-80">
                     <h1 className="font-semibold">{template?.contentTitle}</h1>
                     <pre className="whitespace-pre-wrap">
@@ -323,8 +353,9 @@ const ManageTemplateRcs = () => {
                     {template?.suggestions?.map((sug, idx) => (
                       <div key={idx} className="my-2">
                         <button
-                          className={`flex items-center px-4 py-2 text-sm rounded-md w-full justify-center ${templateTypeConfig[sug.type]?.css || ""
-                            }`}
+                          className={`flex items-center px-4 py-2 text-sm rounded-md w-full justify-center ${
+                            templateTypeConfig[sug.type]?.css || ""
+                          }`}
                           title={sug.suggestionValue}
                         >
                           {templateTypeConfig[sug.type]?.icon}

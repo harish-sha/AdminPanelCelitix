@@ -28,7 +28,7 @@ export const ClosedChat = ({ setSendMessageDialogVisible }) => {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="flex flex-col items-center  w-full p-3 gap-2 bg-white shadow-lg rounded-t-lg mb-17 md:mb-0 md:flex-row"
+      className="flex flex-col items-center  w-full p-3 gap-2 bg-white shadow-lg rounded-t-lg md:mb-0 md:flex-row"
     >
       <div className="flex items-center gap-2 text-gray-700">
         <AccessAlarmOutlinedIcon className="text-red-500" />

@@ -10,13 +10,15 @@ import { DataTable } from "../../../components/layout/DataTable";
 import toast from "react-hot-toast";
 import UniversalSkeleton from "../../../whatsapp/components/UniversalSkeleton";
 import { getCampaignDetails } from "../../../apis/sms/sms";
-import { select } from "@material-tailwind/react";
+import SmsCampaignDetailedLogsTable from "../components/SmsCampaignDetailedLogsTable";
 
 const Smscampaigndetaillogs = () => {
   const navigate = useNavigate();
   let { state } = useLocation();
 
   const [mobileNo, setMobileNo] = useState("");
+  const [smsDetailedData, setSmsDetailedData] = useState([])
+  console.log("smsDetailedData", smsDetailedData)
 
   if (!state.id) {
     navigate("/smsreports");
@@ -30,67 +32,68 @@ const Smscampaigndetaillogs = () => {
       setIsFetching(true);
       const data = {
         receiptNo: state.id,
+        summaryType: "",
         mobileNo,
-        selectedUserId: state.userId,
       };
       const res = await getCampaignDetails(data);
+      setSmsDetailedData(res.data)
 
-      setColumns([
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        {
-          field: "mobile_no",
-          headerName: "Mobile No.",
-          flex: 1,
-          minWidth: 120,
-        },
-        { field: "que_time", headerName: "Sent Time", flex: 1, minWidth: 120 },
-        { field: "message", headerName: "Message", flex: 1, minWidth: 120 },
-        { field: "status", headerName: "Status", flex: 1, minWidth: 90 },
-        {
-          field: "actual_status",
-          headerName: "Actual Status",
-          flex: 1,
-          minWidth: 70,
-        },
-        { field: "smsunit", headerName: "Sms Unit", flex: 1, minWidth: 60 },
-        { field: "senderid", headerName: "Sender Id", flex: 1, minWidth: 90 },
-        // {
-        //   field: "more",
-        //   headerName: "More",
-        //   flex: 1,
-        //   minWidth: 100,
-        //   renderCell: (params) => (
-        //     <>
-        //       <CustomTooltip title="Details" placement="top" arrow>
-        //         <IconButton
-        //           className="no-xs"
-        //           onClick={() => handleInfo(params.row)}
-        //         >
-        //           <InfoOutlinedIcon
-        //             sx={{
-        //               fontSize: "1.2rem",
-        //               color: "green",
-        //             }}
-        //           />
-        //         </IconButton>
-        //       </CustomTooltip>
-        //     </>
-        //   ),
-        // },
-      ]);
+      // setColumns([
+      //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+      //   {
+      //     field: "mobile_no",
+      //     headerName: "Mobile No.",
+      //     flex: 1,
+      //     minWidth: 120,
+      //   },
+      //   { field: "que_time", headerName: "Sent Time", flex: 1, minWidth: 120 },
+      //   { field: "message", headerName: "Message", flex: 1, minWidth: 120 },
+      //   { field: "status", headerName: "Status", flex: 1, minWidth: 90 },
+      //   {
+      //     field: "actual_status",
+      //     headerName: "Actual Status",
+      //     flex: 1,
+      //     minWidth: 70,
+      //   },
+      //   { field: "smsunit", headerName: "Sms Unit", flex: 1, minWidth: 60 },
+      //   { field: "senderid", headerName: "Sender Id", flex: 1, minWidth: 90 },
+      //   // {
+      //   //   field: "more",
+      //   //   headerName: "More",
+      //   //   flex: 1,
+      //   //   minWidth: 100,
+      //   //   renderCell: (params) => (
+      //   //     <>
+      //   //       <CustomTooltip title="Details" placement="top" arrow>
+      //   //         <IconButton
+      //   //           className="no-xs"
+      //   //           onClick={() => handleInfo(params.row)}
+      //   //         >
+      //   //           <InfoOutlinedIcon
+      //   //             sx={{
+      //   //               fontSize: "1.2rem",
+      //   //               color: "green",
+      //   //             }}
+      //   //           />
+      //   //         </IconButton>
+      //   //       </CustomTooltip>
+      //   //     </>
+      //   //   ),
+      //   // },
+      // ]);
 
-      setRows(
-        Array.isArray(res.data)
-          ? res.data.map((item, i) => ({
-            sn: i + 1,
-            id: i + 1,
-            ...item,
-            actual_status: item.actual_status === " " ? "-" : "-",
-          }))
-          : []
-      );
+      // setRows(
+      //   Array.isArray(res.data)
+      //     ? res.data.map((item, i) => ({
+      //       sn: i + 1,
+      //       id: i + 1,
+      //       ...item,
+      //       actual_status: item.actual_status === " " ? "-" : "-",
+      //     }))
+      //     : []
+      // );
     } catch (e) {
-      // console.log(e);
+      console.log(e);
       toast.error("Error fetching campaign details report");
     } finally {
       setIsFetching(false);
@@ -132,11 +135,17 @@ const Smscampaigndetaillogs = () => {
       {isFetching ? (
         <UniversalSkeleton height="35rem" width="100%" />
       ) : (
-        <DataTable
+        // <DataTable
+        //   id={"SmsCampaignDetailLogs"}
+        //   name={"SmsCampaignDetailLogs"}
+        //   col={columns}
+        //   rows={rows}
+        // />
+
+        <SmsCampaignDetailedLogsTable
           id={"SmsCampaignDetailLogs"}
           name={"SmsCampaignDetailLogs"}
-          col={columns}
-          rows={rows}
+          data={smsDetailedData}
         />
       )}
     </>

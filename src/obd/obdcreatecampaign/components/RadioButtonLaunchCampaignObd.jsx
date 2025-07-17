@@ -24,7 +24,7 @@ const RadioButtonLaunchCampaignObd = ({
   resetImportContact,
   countryCode,
   onMobileDropdown,
-  fileInputRef,
+  // fileInputRef,
   selectedOption,
   setSelectedOption,
   uploadedFile,
@@ -80,9 +80,9 @@ const RadioButtonLaunchCampaignObd = ({
     fetchCountryList();
   }, []);
 
-  useEffect(() => {
-    handleRemoveFile();
-  }, []);
+  // useEffect(() => {
+  //   handleRemoveFile();
+  // }, []);
 
   const handleChange = (event) => {
     const value = event.target.value;
@@ -237,9 +237,9 @@ const RadioButtonLaunchCampaignObd = ({
     setTotalRecords("");
     setXlsxPath("");
     setFileHeaders([]);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    // if (fileInputRef.current) {
+    //   fileInputRef.current.value = "";
+    // }
   };
 
   // Handle change in 'Add Country Code' checkbox
@@ -264,9 +264,9 @@ const RadioButtonLaunchCampaignObd = ({
       <h2 className="text-sm font-medium text-gray-800 mb-2 tracking-wide">
         Choose an Option
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {/* Option 1 */}
-        <div className="cursor-pointer  px-2 py-2 bg-white  border  border-gray-300 rounded-lg">
+        <div className="cursor-pointer  px-2 py-2 bg-white shadow-2xl border  border-gray-300 rounded-lg">
           <div className="flex items-center gap-2 rounded-full">
             <RadioButton
               inputId="radioOption1"
@@ -285,7 +285,7 @@ const RadioButtonLaunchCampaignObd = ({
         </div>
         {/* Option 2 */}
         <div className="cursor-pointer  px-2 py-2 shadow-2xl bg-white border  border-gray-300 rounded-lg">
-          <div className="flex items-center gap-2 rounded-full">
+          <div className="flex items-center  gap-2 rounded-full">
             <RadioButton
               inputId="radioOption2"
               name="radioGroup"
@@ -332,7 +332,7 @@ const RadioButtonLaunchCampaignObd = ({
           >
             <input
               type="file"
-              ref={fileInputRef}
+              // ref={fileInputRef}
               onChange={handleFileChange}
               className="hidden"
               id="fileInput"
@@ -402,7 +402,7 @@ const RadioButtonLaunchCampaignObd = ({
               <label className="text-sm font-medium">Add Country Code</label>
             </div>
 
-            <div className="w-full mt-4">
+            <div className="w-full lg:mt-4 mt-4">
               <DropdownWithSearch
                 id="selectCountryCode"
                 name="selectCountryCode"
@@ -445,8 +445,8 @@ const RadioButtonLaunchCampaignObd = ({
         {/* Mobile Column Selection */}
         {selectedOption === "option2" && isUploaded && (
           <div className="w-full">
-            <div className="w-full lg:mt-9 mt-2">
-              <AnimatedDropdown
+            <div className="w-full lg:mt-4 xl:mt-9 mt-2">
+              <DropdownWithSearch
                 id="selectMobileColumn"
                 name="selectMobileColumn"
                 label="Select Mobile Number Field"
@@ -473,38 +473,41 @@ const RadioButtonLaunchCampaignObd = ({
               Total Records in file: {totalRecords}{" "}
             </p>
           </div>
-          <div
-            className="overflow-auto w-full max-w-full"
-            style={{ maxHeight: "400px", maxWidth: "auto", width: "auto" }}
-          >
-            <table className="w-full min-w-max border-collapse">
-              <thead className="bg-[#128C7E]">
-                <tr className="">
-                  {columns.map((col, index) => (
-                    <th
-                      key={index}
-                      className="border border-gray-500 px-3 py-1 text-[0.94rem] font-medium tracking-wide text-white whitespace-nowrap"
-                    >
-                      {col}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="">
-                {fileData.map((row, index) => (
-                  <tr key={index} className="">
-                    {columns.map((col, idx) => (
-                      <td
-                        key={idx}
-                        className="border border-gray-400 px-2 py-1 text-sm font-normal whitespace-nowrap tracking-wide text-gray-800"
+
+          <div className="lg:w-[400px] xl:w-[500px] 2xl:w-[600px]">
+            <div
+              className="overflow-auto w-full max-w-full "
+              style={{ maxHeight: "400px", maxWidth: "auto", width: "auto" }}
+            >
+              <table className="w-full min-w-max border-collapse">
+                <thead className="bg-[#128C7E]">
+                  <tr className="">
+                    {columns.map((col, index) => (
+                      <th
+                        key={index}
+                        className="border border-gray-500 px-3 py-1 text-[0.94rem] font-medium tracking-wide text-white whitespace-nowrap"
                       >
-                        {row[col]}
-                      </td>
+                        {col}
+                      </th>
                     ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="">
+                  {fileData.map((row, index) => (
+                    <tr key={index} className="">
+                      {columns.map((col, idx) => (
+                        <td
+                          key={idx}
+                          className="border border-gray-400 px-2 py-1 text-sm font-normal whitespace-nowrap tracking-wide text-gray-800"
+                        >
+                          {row[col]}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </>
       )}

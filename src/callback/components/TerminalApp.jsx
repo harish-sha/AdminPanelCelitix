@@ -73,7 +73,7 @@ const TerminalApp = () => {
                         placeholder="Enter command..."
                     />
 
-                    <div className="flex justify-between gap-4">
+                    <div className="flex md:flex-row flex-col justify-between gap-4">
                         <button
                             type="submit"
                             className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold"

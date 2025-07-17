@@ -377,6 +377,7 @@ const ManageTemplate = () => {
     setIsFetching(false);
   };
 
+
   const applyFilters = (data) => {
     const filtered = data.filter((item) => {
       const itemCategory = item.category?.toLowerCase().trim() || "";
@@ -402,6 +403,7 @@ const ManageTemplate = () => {
     });
     setFilteredData(filtered);
   };
+
 
   const handleSyncTemplate = async () => {
     if (!syncWabaId) {
@@ -564,6 +566,7 @@ const ManageTemplate = () => {
                 },
               }}
             />
+
           </Tabs>
           <CustomTabPanel value={value} index={1}>
             <div className="flex flex-wrap gap-3 min-h-[90vh]">
@@ -786,6 +789,7 @@ const ManageTemplate = () => {
                         { value: "video", label: "Video" },
                         { value: "document", label: "Document" },
                         { value: "carousel", label: "Carousel" },
+                        { value: "location", label: "Location" },
                       ]}
                       value={selectedType}
                       onChange={setSelectedType}

@@ -831,6 +831,7 @@ const WhatsappLaunchCampaign = () => {
                   setCardIndex={setCardIndex}
                   cardIndex={cardIndex}
                   fileData={fileData}
+                  locationData={locationData}
                 />
                 {/* )} */}
               </div>
@@ -919,15 +920,15 @@ const WhatsappLaunchCampaign = () => {
                 )}
               </div>
               {/* <div className="flex items-center gap-2">
-                                <Checkbox
-                                    inputId="agreeTermsCheckbox"
-                                    checked={agreeTerms}
-                                    onChange={(e) => setAgreeTerms(e.checked)}
-                                />
-                                <label htmlFor="agreeTermsCheckbox">
-                                    I agree to terms and conditions*
-                                </label>
-                            </div> */}
+                <Checkbox
+                  inputId="agreeTermsCheckbox"
+                  checked={agreeTerms}
+                  onChange={(e) => setAgreeTerms(e.checked)}
+                />
+                <label htmlFor="agreeTermsCheckbox">
+                  I agree to terms and conditions*
+                </label>
+              </div> */}
               <div className="flex items-center justify-center">
                 {/*final Submit Button */}
                 <UniversalButton

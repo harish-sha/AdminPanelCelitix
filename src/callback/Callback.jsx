@@ -4,7 +4,9 @@ import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-
+import PhoneCallbackIcon from "@mui/icons-material/PhoneCallback";
+import PhoneIcon from '@mui/icons-material/Phone';
+import callback from "../assets/icons/Callback02.svg";
 import UniversalDatePicker from "../whatsapp/components/UniversalDatePicker";
 import InputField from "../whatsapp/components/InputField";
 import UniversalButton from "../whatsapp/components/UniversalButton";
@@ -24,8 +26,6 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 import { Dialog } from "primereact/dialog";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import TerminalApp from "./components/TerminalApp";
-import { useUser } from "@/context/auth";
-import { fetchAllUsers } from "@/apis/admin/admin";
 
 // Custom Tab Panel
 function CustomTabPanel({ children, value, index, ...other }) {
@@ -54,7 +54,6 @@ const a11yProps = (index) => ({
 });
 
 const Callback = () => {
-  const { user } = useUser();
   const navigate = useNavigate();
   const [value, setValue] = useState(0);
   const [formValues, setFormValues] = useState({
@@ -72,40 +71,12 @@ const Callback = () => {
 
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [allUsers, setAllUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState("");
-
-  useEffect(() => {
-    //fetchAllUsersDetails
-    if (user.role === "RESELLER") {
-      const fetchAllUsersDetails = async () => {
-        const data = {
-          userId: "",
-          mobileNo: "",
-          companyName: "",
-          status: "-1",
-        };
-        try {
-          // setIsFetching(true);
-          const res = await fetchAllUsers(data);
-          setAllUsers(res.userMstPojoList);
-        } catch (e) {
-          // console.log(e);
-          toast.error("Something went wrong! Please try again later.");
-        } finally {
-          // setIsFetching(false);
-        }
-      };
-      fetchAllUsersDetails();
-    }
-  }, [user.role]);
 
   async function handleFetchData() {
     try {
       const payload = {
         ...formValues,
         page: "1",
-        selectedUserId: selectedUser,
       };
       const res = await getData(payload);
       const data = res?.data;
@@ -125,7 +96,6 @@ const Callback = () => {
         srno: row?.id,
         // selectedUserId: 0,
         callBackType: row?.callbackType,
-        selectedUserId: selectedUser,
       };
       const res = await deleteData(data);
       if (!res.status) {
@@ -162,7 +132,6 @@ const Callback = () => {
       // selectedUserId: 0,
       callBackType: row?.callbackType,
       callbackStatus: Number(e.target.checked),
-      selectedUserId: selectedUser,
     };
 
     try {
@@ -274,7 +243,6 @@ const Callback = () => {
         srno: row?.id,
         // selectedUserId: 0,
         callBackType: row?.callbackType,
-        selectedUserId: selectedUser,
       };
       const res = await getEditData(data);
       navigate(`/editcallback`, { state: { data: res } });
@@ -285,69 +253,57 @@ const Callback = () => {
 
   return (
     <Box>
-      <div className="flex items-center justify-between pr-2">
-        <Tabs
-          value={value}
-          onChange={(e, newValue) => {
-            setValue(newValue);
+      <Tabs
+        value={value}
+        onChange={(e, newValue) => {
+          setValue(newValue);
+        }}
+        aria-label="Callback Profile Tabs"
+        textColor="primary"
+        indicatorColor="primary"
+      >
+        <Tab
+          label={
+            <span className="flex items-center gap-1">
+              <PhoneIcon size={20} /> Callback Profile
+            </span>
+          }
+          {...a11yProps(0)}
+          sx={{
+            textTransform: "none",
+            fontWeight: "bold",
+            color: "text.secondary",
+            "&:hover": {
+              color: "primary.main",
+              backgroundColor: "#f0f4ff",
+              borderRadius: "8px",
+            },
           }}
-          aria-label="Callback Profile Tabs"
-          textColor="primary"
-          indicatorColor="primary"
-        >
-          <Tab
-            label="Callback Profile"
-            {...a11yProps(0)}
-            sx={{
-              textTransform: "none",
-              fontWeight: "bold",
-              color: "text.secondary",
-              "&:hover": {
-                color: "primary.main",
-                backgroundColor: "#f0f4ff",
-                borderRadius: "8px",
-              },
-            }}
-          />
-          <Tab
-            label="Callback Logs"
-            {...a11yProps(1)}
-            sx={{
-              textTransform: "none",
-              fontWeight: "bold",
-              color: "text.secondary",
-              "&:hover": {
-                color: "primary.main",
-                backgroundColor: "#f0f4ff",
-                borderRadius: "8px",
-              },
-            }}
-          />
-        </Tabs>
-        {user.role === "RESELLER" && (
-          <div className="w-full sm:w-54">
-            <AnimatedDropdown
-              id="manageuser"
-              name="manageuser"
-              label="Select User"
-              tooltipContent="Select user you want to see reports"
-              tooltipPlacement="right"
-              options={allUsers.map((user) => ({
-                label: user.userId,
-                value: user.srno,
-              }))}
-              value={selectedUser}
-              onChange={setSelectedUser}
-              placeholder="Select User"
-            />
-          </div>
-        )}
-      </div>
+        />
+        <Tab
+          label={
+            <span className="flex items-center gap-2">
+              <PhoneCallbackIcon size={20} /> Callback Logs
+            </span>
+          }
+          {...a11yProps(1)}
+          sx={{
+            textTransform: "none",
+            fontWeight: "bold",
+            color: "text.secondary",
+            "&:hover": {
+              color: "primary.main",
+              backgroundColor: "#f0f4ff",
+              borderRadius: "8px",
+            },
+          }}
+        />
+      </Tabs>
 
       <CustomTabPanel value={value} index={0}>
         <div className="w-full">
-          <div className="flex items-end justify-between w-full mb-5 ">
-            <div className="flex items-end gap-2">
+          <div className="flex flex-col w-full mb-5 ">
+            <div className="flex flex-col md:flex-row md:items-end items-start gap-2 mb-2">
               <div className="w-full sm:w-56">
                 <InputField
                   label={"Campaign Name"}
@@ -377,12 +333,15 @@ const Callback = () => {
                   }}
                 />
               </div>
-              <UniversalButton label="Search" onClick={handleFetchData} />
+              <div className="flex gap-2">
+                <UniversalButton label="Search" onClick={handleFetchData} />
+                <UniversalButton label="Add Callback" onClick={handleOpen} />
+              </div>
             </div>
 
-            <div>
+            {/* <div>
               <UniversalButton label="Add Callback" onClick={handleOpen} />
-            </div>
+            </div> */}
           </div>
 
           <PaginationTable

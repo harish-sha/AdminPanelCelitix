@@ -112,10 +112,6 @@ export const ChatScreen = ({
     );
   };
 
-  // const BASE_MEDIA_URL = "https://cb.celitix.com";
-  const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
-  // const BASE_MEDIA_URL = "/image";
-
   // const [BASE_MEDIA_URL, setBaseMediaUrl] = useState("");
 
   // useEffect(() => {
@@ -130,13 +126,18 @@ export const ChatScreen = ({
   //   fetchBaseUrl();
   // }, []);
 
+  const BASE_MEDIA_URL = "https://cb.celitix.com";
+
+  // const BASE_MEDIA_URL = "/image";
+
+  // const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
+
   const handleDownload = async (url, filename) => {
     try {
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", filename || "file");
-      // href="example.jpg" download="my-image.jpg"
-      link.setAttribute("target", "_blank"); // Corrected this line
+      link.setAttribute("target", "_blank");
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -147,6 +148,66 @@ export const ChatScreen = ({
       toast.error("Failed to download the file.");
     }
   };
+
+  // const handleDownload = async (url, filename = "file") => {
+  //   try {
+  //     const proxy = "https://cors-anywhere.herokuapp.com/";
+  //     const finalUrl = `${proxy}${url}`;
+
+  //     const response = await fetch(finalUrl);
+  //     if (!response.ok) throw new Error("Network error");
+
+  //     const blob = await response.blob();
+  //     const blobUrl = URL.createObjectURL(blob);
+
+  //     const link = document.createElement("a");
+  //     link.href = blobUrl;
+  //     link.setAttribute("download", filename);
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     link.remove();
+
+  //     URL.revokeObjectURL(blobUrl);
+  //     toast.success("Download started!");
+  //   } catch (error) {
+  //     console.error("Download failed:", error);
+  //     toast.error("CORS Blocked: Cannot download file directly.");
+  //   }
+  // };
+
+
+
+
+  // const handleDownload = async (relativePathOrUrl, filename = "file") => {
+  //   try {
+  //     // Check if it's already a full URL (starts with http/https)
+  //     const isFullUrl = /^https?:\/\//.test(relativePathOrUrl);
+  //     const url = isFullUrl
+  //       ? relativePathOrUrl
+  //       : `${BASE_MEDIA_URL.replace(/\/$/, "")}/${relativePathOrUrl.replace(/^\/+/, "")}`;
+
+  //     const response = await fetch(url, { mode: 'cors' });
+
+  //     if (!response.ok) throw new Error("Network response was not ok");
+
+  //     const blob = await response.blob();
+  //     const blobUrl = window.URL.createObjectURL(blob);
+
+  //     const link = document.createElement("a");
+  //     link.href = blobUrl;
+  //     link.setAttribute("download", filename);
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     link.remove();
+
+  //     window.URL.revokeObjectURL(blobUrl);
+  //     toast.success("Download started!");
+  //   } catch (error) {
+  //     console.error("Download error:", error);
+  //     toast.error("Failed to download the file.");
+  //   }
+  // };
+
 
   // const handleDownload = async (url, filename) => {
   //   try {
@@ -276,7 +337,7 @@ export const ChatScreen = ({
 
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
-      <div className="z-1 flex items-center justify-between w-full h-15 bg-gray-100 px-2  border rounded-tr-lg">
+      <div className="mt-5 md:mt-0 z-1 flex items-center justify-between w-full h-15 bg-gray-100 px-2 border rounded-tr-lg">
         <div className="flex items-center gap-2 h-auto">
           <IoArrowBack
             className="text-xl cursor-pointer md:hidden"
@@ -381,7 +442,7 @@ export const ChatScreen = ({
 
       <div
         ref={messageRef}
-        className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col md:max-h-[calc(100vh-8rem)] md:-mt-5 bg-[url(/WB.png)]"
+        className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col mb-30 md:mb-18 md:-mt-5 bg-[url(/WB.png)]"
       >
         {chatState.specificConversation?.map((group, groupIndex) => (
           <div key={groupIndex}>
@@ -676,7 +737,7 @@ export const ChatScreen = ({
                       >
                         <div className="max-w-[250px]">
                           <p
-                            className={` whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${isSent
+                            className={`whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${isSent
                               ? "bg-[#22577E] text-white rounded-br-none"
                               : "bg-[#5584AC] text-white rounded-bl-none"
                               }`}
@@ -734,8 +795,7 @@ export const ChatScreen = ({
         visible={previewDialog.open}
         onHide={() => setPreviewDialog({ ...previewDialog, open: false })}
         className="w-[50rem]"
-        draggable={false}
-      >
+        draggable={false}>
         <div className="flex flex-col items-center justify-center bg-gray-400 rounded-md p-1">
           {previewDialog.type === "image" && (
             <img
@@ -769,86 +829,7 @@ export const ChatScreen = ({
 
       {/* media full screen preview */}
 
-      {/* Reply Preview */}
-      {chatState.isReply && btnOption === "active" && (
-        <motion.div
-          initial="closed"
-          animate="open"
-          exit="closed"
-          variants={replyPreviewVariants}
-          className="relative border border-gray-300 rounded-md"
-        >
-          <div className="ml-2 mr-2 p-2">
-            {chatState.replyData?.replyType === "image" && (
-              <img
-                src={
-                  chatState.replyData?.isReceived
-                    ? `${BASE_MEDIA_URL}${chatState.replyData?.mediaPath}`
-                    : chatState.replyData?.mediaPath
-                }
-                alt={chatState.replyData?.mediaPath}
-                className="mb-2 pointer-events-none select-none h-10 w-20"
-              />
-            )}
-            {chatState.replyData?.replyType === "video" && (
-              <video
-                src={
-                  chatState.replyData?.isReceived
-                    ? `${BASE_MEDIA_URL}${chatState.replyData?.mediaPath}`
-                    : chatState.replyData?.mediaPath
-                }
-                controls={false}
-                autoPlay={false}
-                className="mb-2 h-30 w-20 pointer-events-none "
-              />
-            )}
-            {chatState.replyData?.replyType === "document" && (
-              // <iframe
-              //   src={
-              //     chatState.replyData?.isReceived
-              //       ? `${BASE_MEDIA_URL}${chatState.replyData?.mediaPath}`
-              //       : chatState.replyData?.mediaPath
-              //   }
-              //   controls={false}
-              //   autoPlay={false}
-              //   allow=" encrypted-media"
-              //   className="object-contain mb-2 h-48 w-48 pointer-events-none"
-              // ></iframe>
-              <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md max-w-xs flex items-center gap-3">
-                <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
-                  {getFileType(chatState.replyData.fileType)}
-                </div>
-                <div className="flex flex-col">
-                  <div className="font-medium truncate max-w-[10rem]">
-                    {chatState.replyData.fileName || "Untitled Document"}
-                  </div>
-                  <div className="text-xs text-gray-500 uppercase">
-                    .{chatState.replyData.fileType}
-                  </div>
-                </div>
-              </div>
-            )}
-            {chatState.replyData?.messageBody && (
-              <p>{chatState.replyData?.messageBody}</p>
-            )}
-          </div>
-          <div
-            onClick={() => {
-              // setIsReply(false);
-              // setReplyData(null);
-              setChatState({ ...chatState, isReply: false, replyData: null });
-            }}
-            className="absolute top-1 right-1 cursor-pointer bg-gray-300 rounded-full px-1 hover:bg-gray-400 hover:text-white"
-          >
-            <CloseOutlinedIcon
-              sx={{
-                fontSize: "18px",
-                color: "gray",
-              }}
-            />
-          </div>
-        </motion.div>
-      )}
+
 
       {/* Image Preview */}
       {selectedImage && (
@@ -917,55 +898,139 @@ export const ChatScreen = ({
       )}
 
       {/* Input Area */}
-      {btnOption === "active" ? (
-        // <div className="flex items-center w-full p-4 bg-white border-t mb-17 md:mb-0">
-        //   <div className="mr-2">
-        //     <CustomEmojiPicker position="top" onSelect={insertEmoji} />
-        //   </div>
-        //   <div className="relative flex items-center justify-center w-full gap-2 border rounded-lg">
-        //     <input
-        //       type="text"
-        //       className="flex-1 w-full p-2 focus:outline-none"
-        //       placeholder="Type a message..."
-        //       ref={inputRef}
-        //       value={input}
-        //       onChange={(e) => setInput(e.target.value)}
-        //       onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-        //     />
-        //     <button
-        //       onClick={sendMessage}
-        //       disabled={!selectedImage && !input}
-        //       className="flex items-center justify-center w-8 h-8 text-white transition-all bg-blue-600 rounded-full shadow-md hover:bg-blue-700 active:scale-95 md:mr-6"
-        //     >
-        //       <FiSend className="w-4 h-4 mt-1 mr-1" />
-        //     </button>
-        //     <SpeedDial
-        //       model={items}
-        //       direction="up"
-        //       buttonStyle={{ width: "2rem", height: "2rem" }}
-        //       className="right-19 bottom-1 speeddial-bottom-right"
-        //     />
-        //     <div className="items-center justify-center hidden gap-1 mr-2 md:flex">
-        //       <FormatBoldOutlined />
-        //       <FormatItalicOutlined />
-        //       <FormatStrikethroughOutlined />
-        //     </div>
-        //   </div>
-        // </div>
-        <ChatInput
-          inputRef={inputRef}
-          input={input}
-          setInput={setInput}
-          sendMessage={sendMessage}
-          selectedImage={selectedImage}
-          items={items}
-          insertEmoji={insertEmoji}
-          setChatState={setChatState}
-          chatState={chatState}
-        />
-      ) : (
-        <ClosedChat setSendMessageDialogVisible={setSendMessageDialogVisible} />
-      )}
+      <div className="absolute bottom-16 md:bottom-0 w-full">
+        {/* Reply Preview */}
+        {chatState.isReply && btnOption === "active" && (
+          <motion.div
+            initial="closed"
+            animate="open"
+            exit="closed"
+            variants={replyPreviewVariants}
+            className="relative border border-gray-300 rounded-md bg-[#F9FAFB]"
+          >
+            <div className="ml-2 mr-2 p-2">
+              {chatState.replyData?.replyType === "image" && (
+                <img
+                  src={
+                    chatState.replyData?.isReceived
+                      ? `${BASE_MEDIA_URL}${chatState.replyData?.mediaPath}`
+                      : chatState.replyData?.mediaPath
+                  }
+                  alt={chatState.replyData?.mediaPath}
+                  className="mb-2 pointer-events-none select-none h-10 w-20"
+                />
+              )}
+              {chatState.replyData?.replyType === "video" && (
+                <video
+                  src={
+                    chatState.replyData?.isReceived
+                      ? `${BASE_MEDIA_URL}${chatState.replyData?.mediaPath}`
+                      : chatState.replyData?.mediaPath
+                  }
+                  controls={false}
+                  autoPlay={false}
+                  className="mb-2 h-30 w-20 pointer-events-none "
+                />
+              )}
+              {chatState.replyData?.replyType === "document" && (
+                // <iframe
+                //   src={
+                //     chatState.replyData?.isReceived
+                //       ? `${BASE_MEDIA_URL}${chatState.replyData?.mediaPath}`
+                //       : chatState.replyData?.mediaPath
+                //   }
+                //   controls={false}
+                //   autoPlay={false}
+                //   allow=" encrypted-media"
+                //   className="object-contain mb-2 h-48 w-48 pointer-events-none"
+                // ></iframe>
+                <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md max-w-xs flex items-center gap-3">
+                  <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
+                    {getFileType(chatState.replyData.fileType)}
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="font-medium truncate max-w-[10rem]">
+                      {chatState.replyData.fileName || "Untitled Document"}
+                    </div>
+                    <div className="text-xs text-gray-500 uppercase">
+                      .{chatState.replyData.fileType}
+                    </div>
+                  </div>
+                </div>
+              )}
+              {chatState.replyData?.messageBody && (
+                <p>{chatState.replyData?.messageBody}</p>
+              )}
+            </div>
+            <div
+              onClick={() => {
+                // setIsReply(false);
+                // setReplyData(null);
+                setChatState({ ...chatState, isReply: false, replyData: null });
+              }}
+              className="absolute top-1 right-1 cursor-pointer bg-gray-300 rounded-full px-1 hover:bg-gray-400 hover:text-white"
+            >
+              <CloseOutlinedIcon
+                sx={{
+                  fontSize: "18px",
+                  color: "gray",
+                }}
+              />
+            </div>
+          </motion.div>
+        )}
+
+
+        {btnOption === "active" ? (
+          // <div className="flex items-center w-full p-4 bg-white border-t mb-17 md:mb-0">
+          //   <div className="mr-2">
+          //     <CustomEmojiPicker position="top" onSelect={insertEmoji} />
+          //   </div>
+          //   <div className="relative flex items-center justify-center w-full gap-2 border rounded-lg">
+          //     <input
+          //       type="text"
+          //       className="flex-1 w-full p-2 focus:outline-none"
+          //       placeholder="Type a message..."
+          //       ref={inputRef}
+          //       value={input}
+          //       onChange={(e) => setInput(e.target.value)}
+          //       onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          //     />
+          //     <button
+          //       onClick={sendMessage}
+          //       disabled={!selectedImage && !input}
+          //       className="flex items-center justify-center w-8 h-8 text-white transition-all bg-blue-600 rounded-full shadow-md hover:bg-blue-700 active:scale-95 md:mr-6"
+          //     >
+          //       <FiSend className="w-4 h-4 mt-1 mr-1" />
+          //     </button>
+          //     <SpeedDial
+          //       model={items}
+          //       direction="up"
+          //       buttonStyle={{ width: "2rem", height: "2rem" }}
+          //       className="right-19 bottom-1 speeddial-bottom-right"
+          //     />
+          //     <div className="items-center justify-center hidden gap-1 mr-2 md:flex">
+          //       <FormatBoldOutlined />
+          //       <FormatItalicOutlined />
+          //       <FormatStrikethroughOutlined />
+          //     </div>
+          //   </div>
+          // </div>
+          <ChatInput
+            inputRef={inputRef}
+            input={input}
+            setInput={setInput}
+            sendMessage={sendMessage}
+            selectedImage={selectedImage}
+            items={items}
+            insertEmoji={insertEmoji}
+            setChatState={setChatState}
+            chatState={chatState}
+          />
+        ) : (
+          <ClosedChat setSendMessageDialogVisible={setSendMessageDialogVisible} />
+        )}
+      </div>
 
       {/* Sidebar */}
       <Sidebar

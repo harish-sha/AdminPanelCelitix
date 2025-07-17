@@ -29,6 +29,11 @@ import { DetailsDialog } from "../create/components/details";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { convertPaylaod } from "./helpers/convertPaylaod";
+import { FaWhatsapp } from "react-icons/fa";
+import obd from "../../assets/icons/OBD02.svg";
+import rcsicon from "../../assets/icons/RCS02.svg";
+import { LuMessageSquareMore } from "react-icons/lu";
+import RestartAltOutlinedIcon from "@mui/icons-material/RestartAltOutlined";
 
 function NodeComponent({
   id,
@@ -234,7 +239,8 @@ export const UpdateWorkflow = () => {
   };
 
   const commonButtonClass =
-    "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-blue-400 to-gray-600 shadow-lg ";
+    // "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-blue-400 to-gray-600 shadow-lg ";
+    "cursor-pointer flex flex-col h-auto text-[0.7rem] bg-white text-gray-900 border-2 border-gray-500 shadow-lg hover:bg-gradient-to-br hover:from-blue-200 hover:to-blue-300 hover:text-gray-900 hover:shadow-2xl hover:scale-105";
 
   const addNode = (type: string, position?: { x: number; y: number }) => {
     const newNode = {
@@ -408,12 +414,12 @@ export const UpdateWorkflow = () => {
 
   return (
     <>
-      <div className="flex h-[100%]">
+      <div className="flex flex-wrap md:flex-nowrap h-[100%] md:overflow-hidden">
         <div
-          style={{ width: "90vw", height: "auto" }}
+         className="w-full md:w-[calc(100vw-220px)] h-[calc(100vh-1rem)]"
           onDrop={handleDrop}
-          onDragOver={handleDragOver}
-        >
+          onDragOver={handleDragOver}>
+
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -439,10 +445,12 @@ export const UpdateWorkflow = () => {
           </ReactFlow>
         </div>
 
-        <div className="flex flex-col justify-between w-[250px] gap-4">
+        <div className="flex flex-col sm:flex-col md:flex-col lg:flex-col xl:flex-col  justify-between w-full sm:w-[200px] bg-gray-50 gap-4 px-2 py-3 rounded-md h-auto  overflow-x-auto sm:overflow-visible sm:mt-5">
+    
           <div>
-            <h1>Select Channel</h1>
-            <div className="grid grid-cols-1 p-1 gap-x-2 gap-y-3">
+            <h1 className="font-semibold text-lg">Select Channel</h1>
+
+            <div className="flex flex-row flex-wrap md:flex-col gap-3 p-1 overflow-x-auto md:overflow-hidden">
               <Button
                 draggable
                 onDragStart={(event) => {
@@ -453,7 +461,7 @@ export const UpdateWorkflow = () => {
                 }}
                 className={commonButtonClass}
               >
-                OBD
+                <img src={obd} className="w-4 h-4" /> OBD
               </Button>
               <Button
                 draggable
@@ -465,6 +473,7 @@ export const UpdateWorkflow = () => {
                 }}
                 className={commonButtonClass}
               >
+                <FaWhatsapp />
                 WhatsApp
               </Button>
               <Button
@@ -477,6 +486,7 @@ export const UpdateWorkflow = () => {
                 }}
                 className={commonButtonClass}
               >
+                <img src={rcsicon} className="w-4 h-4" />
                 RCS
               </Button>
               <Button
@@ -489,6 +499,8 @@ export const UpdateWorkflow = () => {
                 }}
                 className={commonButtonClass}
               >
+                {" "}
+                <LuMessageSquareMore />
                 SMS
               </Button>
               <Button
@@ -498,15 +510,16 @@ export const UpdateWorkflow = () => {
                   reset();
                 }}
                 className={
-                  "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-red-400 to-red-600 shadow-lg"
+                  "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-[#3671D6] hover:bg-[#527ECA] shadow-lg"
                 }
               >
+                <RestartAltOutlinedIcon />
                 Reset
               </Button>
             </div>
           </div>
 
-          <div className="w-full space-y-2">
+          <div className="w-full space-y-2 ">
             <InputField
               id="workflowName"
               name="workflowName"
@@ -605,3 +618,4 @@ export const UpdateWorkflow = () => {
     </>
   );
 };
+  

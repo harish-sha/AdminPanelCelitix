@@ -12,9 +12,11 @@ export const Card = ({
   setCardData,
   cardOrientation,
   setCardOrientation,
+  subType,
+  fileRef,
+  thumbnailRef,
 }) => {
   const [customFilePath, setCustomFilePath] = useState(null);
-  const fileRef = useRef(null);
 
   const handleFileDrop = (event) => {
     event.preventDefault();
@@ -50,38 +52,37 @@ export const Card = ({
     // if(!cardm)
 
     if (!cardOrientation) {
+      fileRef.current.value = null;
       return toast.error("Please select card orientation.");
     }
     if (!cardData.mediaHeight) {
+      fileRef.current.value = null;
       return toast.error("Please select card height.");
     }
 
     if (!file) return;
     const fileType = file.type.split("/")[0];
-    const isPdf = file.type === "application/pdf";
-
 
     const img = new Image();
     img.src = URL.createObjectURL(file);
 
     if (file?.size) {
       if (fileType === "image" && file?.size > 2 * 1024 * 1024) {
+        fileRef.current.value = null;
         toast.error("File size must be less than 2MB.");
         return;
       } else if (fileType === "video" && file?.size > 10 * 1024 * 1024) {
+        fileRef.current.value = null;
         toast.error("File size must be less than 10MB.");
         return;
       }
     }
+
     if (fileType === "video") {
       setCardData({ ...cardData, filePath: file });
       return;
     }
 
-    if (isPdf) {
-      setCardData({ ...cardData, filePath: file });
-      return;
-    }
     img.onload = () => {
       const width = img.naturalWidth;
       const height = img.naturalHeight;
@@ -126,7 +127,55 @@ export const Card = ({
         return;
       }
 
-      setCardData({ ...cardData, filePath: file });
+      setCardData({
+        ...cardData,
+        filePath: file,
+      });
+    };
+    img.onloadend = () => {
+      URL.revokeObjectURL(img.src);
+    };
+  };
+  const handleThumbnailChange = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+    const fileType = file.type.split("/")[0];
+    if (fileType !== "image") {
+      return toast.error("Please select a valid image file for thumbnail.");
+    }
+
+    // if (file?.size > 2 * 1024 * 1024) {
+    //   return toast.error("Thumbnail size must be less than 2MB.");
+    // }
+    if (file.size > 100 * 1024) {
+      return toast.error("Thumbnail size must be less than 100KB.");
+    }
+
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+
+    img.onload = () => {
+      const width = img.naturalWidth;
+      const height = img.naturalHeight;
+
+      const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
+      const divisor = gcd(width, height);
+      const ratioWidth = width / divisor;
+      const ratioHeight = height / divisor;
+      const ratio = `${ratioWidth}:${ratioHeight}`;
+
+      if (ratio !== "7:3") {
+        fileRef.current.value = null;
+        toast.error("Please select a 7:3 ratio image for thumbnail.");
+        return;
+      }
+
+      setCustomFilePath(file);
+      setCardData({
+        ...cardData,
+        thumbnailPath: file,
+      });
     };
     img.onloadend = () => {
       URL.revokeObjectURL(img.src);
@@ -135,9 +184,23 @@ export const Card = ({
 
   const uploadFile = async () => {
     if (!cardData.filePath) return toast.error("Please select a file.");
-    if (cardData.file) return toast.error("File already uploaded.");
+    // if (cardData.file) return toast.error("File already uploaded.");
     const res = await uploadImageFile(cardData.filePath);
+    if (!res?.fileUrl) {
+      return toast.error(res?.msg || "Failed to upload file");
+    }
     setCardData({ ...cardData, file: res?.fileUrl });
+
+    toast.success("File Uploaded Successfully");
+  };
+  const uploadThumbnailFile = async () => {
+    if (!cardData.thumbnailPath) return toast.error("Please select a file.");
+    // if (cardData.thumbnail) return toast.error("File already uploaded.");
+    const res = await uploadImageFile(cardData.thumbnailPath);
+    if (!res?.fileUrl) {
+      return toast.error(res?.msg || "Failed to upload thumbnail");
+    }
+    setCardData({ ...cardData, thumbnail: res?.fileUrl });
 
     toast.success("File Uploaded Successfully");
   };
@@ -146,6 +209,11 @@ export const Card = ({
     setCustomFilePath("");
     setCardData({ ...cardData, file: "", filePath: "" });
     fileRef.current.value = null;
+  };
+  const deleteThumbnailUpload = () => {
+    setCustomFilePath("");
+    setCardData({ ...cardData, thumbnail: "", thumbnailPath: "" });
+    thumbnailRef.current.value = null;
   };
 
   return (
@@ -159,8 +227,8 @@ export const Card = ({
           label={"Title"}
           value={cardData.title}
           onChange={(e) => setCardData({ ...cardData, title: e.target.value })}
-          tooltipContent=" Enter the title that will appear on the rich card. Keep it short and engaging."
           maxLength="200"
+          tooltipContent=" Enter the title that will appear on the rich card. Keep it short and engaging."
         />
         <AnimatedDropdown
           id={"selectCardOrientation"}
@@ -240,65 +308,52 @@ Unsupported sizes may cause delivery failure or layout issues."
           }}
         />
       </div>
-      <div className="mb-5">
-        <div
-          className="file-upload-container"
-          onDrop={handleFileDrop}
-          onDragOver={handleDragOver}
-        >
-          <input
+      <div className="mt-5 flex flex-col items-center gap-2 md:flex-row mb-2 w-full">
+        <div className="flex gap-2 items-end w-full md:w-auto">
+          <InputField
             type="file"
+            id="fileInput"
+            name="fileInput"
             onChange={(e) => {
               handleFileChange(e);
             }}
-            className="hidden"
-            id="fileInput"
-            name="fileInput"
-            accept="image/* video/* application/pdf"
             ref={fileRef}
+            accept={subType === "image" ? "image/*" : "video/*"}
+            label={"Upload File"}
+            tooltipContent={
+              subType === "image"
+                ? "Upload an image file for the card. Supported formats: JPG, PNG, GIF. Max size: 2MB."
+                : "Upload a video file for the card. Supported formats: MP4. Max size: 10MB."
+            }
           />
-          <div className="flex items-center justify-center gap-2">
-            <label
-              htmlFor="fileInput"
-              className="inline-block px-3 py-2 text-sm font-medium tracking-wider text-center text-white bg-blue-400 rounded-lg cursor-pointer file-upload-button hover:bg-blue-500"
-            >
-              Choose or Drop File
-            </label>
-            <div className="upload-button-container ">
-              <button
-                onClick={uploadFile}
-                disabled={false}
-                className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer `}
-              >
-                <FileUploadOutlinedIcon
-                  sx={{ color: "white", fontSize: "23px" }}
-                />
+
+          <div className="upload-button-container mb-2">
+            <button onClick={uploadFile} disabled={false}>
+              <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
+            </button>
+          </div>
+        </div>
+        {subType === "video" && (
+          <div className="flex gap-2 items-end w-full md:w-auto ml-2">
+            <InputField
+              type="file"
+              label="Upload Thumbnail"
+              tooltipContent="Upload a thumbnail image for the video. Supported formats: JPG, PNG, GIF. Max size: 2MB."
+              id="thumbnailInput"
+              name="thumbnailInput"
+              onChange={(e) => {
+                handleThumbnailChange(e);
+              }}
+              ref={thumbnailRef}
+              accept="image/*"
+            />
+            <div className="upload-button-container mb-2" >
+              <button onClick={uploadThumbnailFile} disabled={false}>
+                <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
               </button>
             </div>
           </div>
-          <div className="mt-3">
-            {cardData?.filePath ? (
-              <div className="flex items-center justify-center gap-1 file-upload-info">
-                <p className="file-upload-feedback file-upload-feedback-success text-sm text-green-500 font-[500]">
-                  File Selected: <strong>{cardData?.filePath.name}</strong>
-                </p>
-                <button
-                  className="file-remove-button rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer"
-                  onClick={deleteFileUpload}
-                >
-                  <MdOutlineDeleteForever
-                    className="text-red-500 cursor-pointer hover:text-red-600"
-                    size={20}
-                  />
-                </button>
-              </div>
-            ) : (
-              <p className="text-sm font-semibold tracking-wide text-gray-500 file-upload-feedback file-upload-feedback-error">
-                No file uploaded yet!
-              </p>
-            )}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

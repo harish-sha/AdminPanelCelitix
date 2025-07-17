@@ -551,6 +551,7 @@ const DeliveryreportRcs = () => {
                     options={[
                       { label: "Text", value: "text" },
                       { label: "Image", value: "image" },
+                      { label: "Video", value: "video" },
                       // {
                       //   label: "Rich Card Stand Alone",
                       //   value: "richcardstandalone",
@@ -740,6 +741,7 @@ const DeliveryreportRcs = () => {
                       id="manageFromDate"
                       name="manageFromDate"
                       label="From Date"
+                      defaultValue={new Date()}
                       // value={fromDate}
                       // onChange={(newValue) => setfromDate(newValue)}
                       value={setSummaryData.fromDate}
@@ -765,6 +767,7 @@ const DeliveryreportRcs = () => {
                       id="manageToDate"
                       name="manageToDate"
                       label="To Date"
+                      defaultValue={new Date()}
                       value={setSummaryData.toDate}
                       onChange={(e) => {
                         setSummaryData({

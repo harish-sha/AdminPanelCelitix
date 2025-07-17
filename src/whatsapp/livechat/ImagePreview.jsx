@@ -73,7 +73,7 @@ const ImagePreview = ({
           showIndicators
           showThumbnails={true}
           thumbnail={thumbnailTemplate}
-          // responsiveOptions={responsiveOptions}
+        // responsiveOptions={responsiveOptions}
         />
       </Dialog>
     </>

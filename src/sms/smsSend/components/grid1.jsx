@@ -53,7 +53,7 @@ export const Grid1 = ({
   //   renderSmsUnit(inputDetails?.message);
   // }, [inputDetails]);
   return (
-    <div className="border md:w-[40%] p-2 space-y-2 rounded-lg shadow-md w-full">
+    <div className="border lg:w-[40%] p-2 space-y-2 rounded-lg shadow-md w-full">
       <div className="grid md:grid-cols-3 grid-cols-1 gap-2">
         <div className="flex items-center gap-2 border border-gray-300 rounded-md p-2">
           <RadioButton
@@ -268,7 +268,7 @@ export const Grid1 = ({
             inputDetails={inputDetails?.message}
             headers={headers}
           />
-          <GenerateAiContent
+          {/* <GenerateAiContent
             ai={ai}
             setAi={setAi}
             setIsOpen={setIsOpen}
@@ -284,7 +284,7 @@ export const Grid1 = ({
             messageContent={inputDetails?.message}
             length={1000}
             type="carousel"
-          />
+          /> */}
         </div>
 
         <div className="grid grid-cols-2 gap-2">

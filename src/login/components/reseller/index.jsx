@@ -17,7 +17,6 @@ import { getIpAddress, login, requestOtp, verifyOtp, verifyForgotPasswordOtp, fo
 import { getAllowedServices } from "@/apis/admin/admin";
 import axios from "axios";
 import { InputOtp } from "primereact/inputotp";
-// import { InputOtp } from "primereact/inputotp";
 
 const ResellerLogin = () => {
   const { authLogin } = useUser();
@@ -181,25 +180,21 @@ const ResellerLogin = () => {
     const phoneRegex = /^\d{10}$/;
     const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
-    // Check if both fields are empty
     if (!mobile || !email) {
       toast.error("Both mobile number and email are required.");
       return;
     }
 
-    // Validate Mobile Number
     if (!phoneRegex.test(mobile)) {
       toast.error("Invalid mobile number. Please enter a 10-digit number.");
       return;
     }
 
-    // Validate Email
     if (!emailRegex.test(email)) {
       toast.error("Invalid email format. Please enter a valid email.");
       return;
     }
 
-    // If both fields are valid, proceed
     toast.success("OTP Sent to your mobile number and email");
     setStep("verifyOTP");
   }
@@ -238,22 +233,13 @@ const ResellerLogin = () => {
       ? await forgotPassword(payload)
       : await requestOtp(payload);
 
-    // if (!res?.data?.status) {
-    //   return toast.error(res?.msg || "Unable to send OTP");
-    // }
+    if (!res?.data?.status) {
+      return toast.error(res?.msg || "Unable to send OTP");
+    }
     toast.success("OTP Sent to your mobile number");
     setStep("verifynumberotp");
   }
 
-  // function handleVerifyNumberOTP() {
-  //   if (numberOtp === "123456") {
-  //     toast.success("Successfully Sign");
-  //     // Optionally reset to login or another appropriate step
-  //     // setStep("login");
-  //   } else {
-  //     toast.error("Incorrect OTP");
-  //   }
-  // }
 
   async function handleVerifyNumberOTP() {
     try {

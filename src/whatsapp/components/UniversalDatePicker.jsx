@@ -14,7 +14,7 @@ const UniversalDatePicker = ({
     tooltipContent = '',
     tooltipPlacement = 'top',
     // error = false,
-    errorText = '',
+    // errorText = '',
     minDate,
     maxDate,
     defaultValue,
@@ -88,6 +88,8 @@ const UniversalDatePicker = ({
                         textField: {
                             fullWidth: true,
                             // placeholder,
+                            // error: false,
+                            // helperText: errorText || null,
                             variant: "outlined",
                             InputProps: {
                                 style: {
