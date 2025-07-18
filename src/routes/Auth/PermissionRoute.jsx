@@ -75,7 +75,7 @@ import { useMemo } from "react";
 import Loader from "@/admin/components/Loader";
 
 export const PermissionRoute = () => {
-  const { user, loading } = useUser();
+  const { user, isLoading } = useUser();
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -98,7 +98,7 @@ export const PermissionRoute = () => {
     return allowedServices;
   }, [user]);
 
-  if (loading)
+  if (isLoading || !user)
     return (
       <div className="flex items-center justify-center h-[80vh]">
         <Loader />
