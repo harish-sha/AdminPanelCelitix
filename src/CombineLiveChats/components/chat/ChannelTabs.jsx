@@ -14,8 +14,7 @@ import {
 } from "react-icons/fa";
 import { FaAngleDoubleDown } from "react-icons/fa";
 import { FaAngleDoubleUp } from "react-icons/fa";
-
-
+import { useUser } from "@/context/auth";
 
 const channels = [
   {
@@ -75,10 +74,19 @@ const ChannelTabs = () => {
   const activeTab = pathname.split("/")[2];
   const [showActions, setShowActions] = useState(true);
 
+  const { user } = useUser();
+  const allowedServiceIds =
+    user?.services?.map((s) => s.service_type_id.toString()) || [];
+
+  const visibleChannels = channels.filter(
+    (ch) =>
+      ch.service_type_id === "1" ||
+      allowedServiceIds.includes(ch.service_type_id)
+  );
+
   return (
     <div className="flex flex-col gap-1 relative z-10">
       <div className="flex border-b bg-white shadow-sm px-4 relative z-10 rounded-2xl overflow-auto">
-
         {channels.map((ch) => (
           <button
             key={ch.value}

@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Outlet,
+} from "react-router-dom";
 
 // mainlayout
 import Mainlayout from "@/mainlayout/Mainlayout";
@@ -164,25 +169,10 @@ import Details from "@/LeadManager/pages/details/Details";
 // CombineLiveChat
 import LiveChatDashboard from "@/CombineLiveChats/pages/LiveChatDashboard";
 import LiveChatLayout from "@/CombineLiveChats/pages/LiveChatLayout";
-import WhatsAppView from "@/CombineLiveChats/pages/channels/WhatsappView";
-import RCSView from "@/CombineLiveChats/pages/channels/RcsView";
-import InstagramView from "@/CombineLiveChats/pages/channels/InstagramView";
-import MessengerView from "@/CombineLiveChats/pages/channels/MessengerView";
-
-// Instagram
-import InstagramLiveChat from "@/Instagram/InstagramLiveChat/InstagramLiveChat";
 
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
-import WhatsappChats from "@/CombineLiveChats/components/ServiceLayout/whatsappChats";
-import RcsChats from "@/CombineLiveChats/components/ServiceLayout/RcsChats";
-import InstagramChats from "@/CombineLiveChats/components/ServiceLayout/InstagramChats";
-import MessengerChats from "@/CombineLiveChats/components/ServiceLayout/MessengerChats";
-
-
-const userServices = ["7", "8", "9", "10"]; 
-
 
 const Approutes = () => {
   return (
@@ -360,7 +350,7 @@ const Approutes = () => {
         <Route path="selfrecharge" element={<SelfRecharge />} />
 
         {/* Lead Manager */}
-        <Route path="leadmanagement" element={<LeadManager />} >
+        <Route path="leadmanagement" element={<LeadManager />}>
           <Route path="leaddash" element={<LeadDash />} />
           <Route path="leadanalytics" element={<Analytics />} />
           <Route path="leadforms" element={<LeadForms />} />
@@ -374,30 +364,7 @@ const Approutes = () => {
         {/* Combine Live Chat */}
         <Route path="liveChatMain" element={<LiveChatLayout />}>
           <Route index element={<LiveChatDashboard />} />
-          <Route
-            path="wlivechat"
-            element={
-              userServices.includes("2") ? <WhatsappLiveChat /> : <WhatsappChats />
-            }
-          />
-          <Route
-            path="rcslivechats"
-            element={
-              userServices.includes("2") ? <RcsLiveChat /> : <RcsChats />
-            }
-          />
-          <Route
-            path="instachats"
-            element={
-              userServices.includes("2") ? <InstagramLiveChat /> : <InstagramChats />
-            }
-          />
-          <Route
-            path="messengerchats"
-            element={
-              userServices.includes("2") ? <MessengerView /> : <MessengerChats />
-            }
-          />
+          <Route path=":channel" element={<Outlet />} />
         </Route>
       </Route>
 

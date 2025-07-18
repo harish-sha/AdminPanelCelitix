@@ -3,16 +3,33 @@ import ShareIcon from "@mui/icons-material/Share";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import InstagramIcon from "@mui/icons-material/Instagram";
+import { motion, AnimatePresence } from "framer-motion";
+import Lottie from "lottie-react";
+import Instagram from "@/assets/animation/Instagram.json";
+import Messengeranimation from "@/assets/animation/Messengeranimation.json";
+
 
 export default function InstagramChats() {
   return (
-    <div className=" flex justify-center bg-gradient-to-tr from-purple-100 to-blue-100 p-10">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className=" flex justify-center bg-gradient-to-tr from-purple-100 to-blue-100 p-10"
+    >
       <div className="w-full max-w-md sm:max-w-lg md:max-w-xl bg-white rounded-3xl shadow-2xl p-3 sm:p-4 animate-fadeIn">
         {/* Instagram Badge */}
         <div className="flex justify-center mb-4">
-          <div className="w-16 h-16 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg transform transition-transform hover:scale-110">
+          {/* <div className="w-16 h-16 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg transform transition-transform hover:scale-110">
             <InstagramIcon sx={{ fontSize: 32, color: "white" }} />
-          </div>
+          </div> */}
+          <Lottie
+            animationData={Instagram}
+            loop
+            autoplay
+            // style={{ width: "48px", height: "48px" }}
+            className="w-60"
+          />
         </div>
 
         {/* Heading */}
@@ -22,9 +39,13 @@ export default function InstagramChats() {
 
         {/* Subtext */}
         <p className="text-sm  text-gray-600 leading-relaxed text-center mb-3 px-2 sm:px-4">
-          To reach more of your community, connect your Facebook Page to a professional Instagram account.
-          If you connect a personal Instagram account, it will be switched to professional.{" "}
-          <a href="#" className="text-blue-600 underline hover:text-blue-800 transition">
+          To reach more of your community, connect your Facebook Page to a
+          professional Instagram account. If you connect a personal Instagram
+          account, it will be switched to professional.{" "}
+          <a
+            href="#"
+            className="text-blue-600 underline hover:text-blue-800 transition"
+          >
             Learn more
           </a>
         </p>
@@ -48,10 +69,12 @@ export default function InstagramChats() {
         {/* CTA Button */}
         <button className="group w-full flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-semibold py-3 rounded-lg hover:bg-blue-700 transition-all shadow-md hover:shadow-lg">
           <InstagramIcon sx={{ fontSize: 20 }} />
-          <span className="group-hover:scale-105 transition-transform">Connect Instagram</span>
+          <span className="group-hover:scale-105 transition-transform">
+            Connect Instagram
+          </span>
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
