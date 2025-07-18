@@ -133,6 +133,18 @@ const ManagePrefix = () => {
   };
 
   async function handleSavePrefix() {
+    if (!addPrefixData.operatorSrno) {
+      return toast.error("Please select operator");
+    }
+    if (!addPrefixData.circleSrno) {
+      return toast.error("Please enter circle");
+    }
+    if (!addPrefixData.countrySrno) {
+      return toast.error("Please select country");
+    }
+    if (!addPrefixData.prefix) {
+      return toast.error("Please enter prefix");
+    }
     try {
       const payload = {
         ...addPrefixData,
