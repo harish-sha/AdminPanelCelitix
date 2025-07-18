@@ -76,7 +76,7 @@ const ManagePlan = () => {
       const payload = {
         ...searchData,
         ptype: searchData.ptype || -1,
-        status: String(searchData.status) || -1,
+        status: String(searchData.status || -1) || -1,
       };
       setIsFetching(true);
       const res = await getAllPlans(payload);
