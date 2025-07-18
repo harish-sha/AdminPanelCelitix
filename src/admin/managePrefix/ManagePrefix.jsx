@@ -136,7 +136,7 @@ const ManagePrefix = () => {
     if (!addPrefixData.operatorSrno) {
       return toast.error("Please select operator");
     }
-    if (!addPrefixData.circleSrno) {
+    if (!String(addPrefixData.circleSrno)) {
       return toast.error("Please enter circle");
     }
     if (!addPrefixData.countrySrno) {
