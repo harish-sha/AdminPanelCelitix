@@ -8,10 +8,15 @@ import CustomTooltip from "../components/CustomTooltip";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import toast from "react-hot-toast";
 import { getSMPP } from "@/apis/admin/admin";
+import InputField from "../components/InputField";
 
 const ManageSMPP = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [data, setData] = useState({});
+  const [searchData, setSearchData] = useState({
+    username: "",
+    servicename: "",
+  });
 
   const navigate = useNavigate();
 
@@ -82,7 +87,19 @@ const ManageSMPP = () => {
   async function handleFetchSmppDetails() {
     try {
       const res = await getSMPP();
-      setData(res);
+      const filteredData = res?.filter((item) => {
+        const matchesUsername = searchData.username
+          ? item.userName === searchData.username
+          : true;
+
+        const matchesServiceName = searchData.servicename
+          ? item.serviceName === searchData.servicename
+          : true;
+
+        return matchesUsername && matchesServiceName;
+      });
+
+      setData(filteredData);
     } catch (e) {
       console.log(e);
       toast.error("Error in fetching smpp details");
@@ -100,7 +117,47 @@ const ManageSMPP = () => {
     </>
   ) : ( */}
       <div>
-        <div className="flex flex-wrap gap-2 items-end justify-end pb-3 w-full">
+        <div className="flex flex-wrap gap-2 items-end justify-between pb-3 w-full">
+          <div className="flex gap-2 ">
+            <InputField
+              id="username"
+              name="username"
+              placeholder="Search by User Name"
+              type="text"
+              className="w-full"
+              label={"User Name"}
+              onChange={(e) => {
+                setSearchData({
+                  ...searchData,
+                  username: e.target.value,
+                });
+              }}
+              value={searchData.username}
+            />
+            <InputField
+              id="serviceName"
+              name="serviceName"
+              placeholder="Search by Service"
+              type="text"
+              className="w-full"
+              label="Service Name"
+              onChange={(e) => {
+                setSearchData({
+                  ...searchData,
+                  servicename: e.target.value,
+                });
+              }}
+              value={searchData.servicename}
+            />
+            <div className="w-max-content flex items-end">
+              <UniversalButton
+                label="Search"
+                id="search"
+                name="search"
+                onClick={handleFetchSmppDetails}
+              />
+            </div>
+          </div>
           <div className="w-max-content">
             <UniversalButton
               label="Add Service"
@@ -118,7 +175,11 @@ const ManageSMPP = () => {
           </div>
         ) : (
           <div className="w-full">
-            <ManageSMPPTable id="manageSMPPTable" name="manageSMPPTable" data={data} />
+            <ManageSMPPTable
+              id="manageSMPPTable"
+              name="manageSMPPTable"
+              data={data}
+            />
           </div>
         )}
       </div>

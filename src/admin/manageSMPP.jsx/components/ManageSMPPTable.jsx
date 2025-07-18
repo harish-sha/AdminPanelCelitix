@@ -372,7 +372,7 @@ const ManageSMPPTable = ({ id, name, data }) => {
       flex: 1,
       minWidth: 130,
     },
-    { field: "userName", headerName: "User Name", flex: 1, minWidth: 120 },
+    { field: "userName", headerName: "UserName", flex: 1, minWidth: 120 },
     { field: "host", headerName: "Host", flex: 1, minWidth: 120 },
     {
       field: "sendingPort",
