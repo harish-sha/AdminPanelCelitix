@@ -55,8 +55,8 @@ const ManagePlan = () => {
     { label: "International", value: "3" },
   ];
   const statusOptions = [
-    { label: "Active", value: "active" },
-    { label: "Inactive", value: "inactive" },
+    { label: "Active", value: 1 },
+    { label: "Inactive", value: 0 },
   ];
 
   const handleTogglecreate = (e) => {
