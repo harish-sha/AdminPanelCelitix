@@ -96,6 +96,11 @@ const AddOperator = ({ id, name }) => {
     pageSize: 10,
   });
 
+  const [deleteState, setDeleteState] = useState({
+    visible: false,
+    srno: 0,
+  });
+
   const [operatorList, setOperatorList] = useState([]);
   const [countryList, setCountryList] = useState([]);
 
@@ -245,15 +250,23 @@ const AddOperator = ({ id, name }) => {
     }
   }
 
-  async function handleDelete(row) {
+  function handleDelete(row) {
     if (!row?.srNo) return;
+    setDeleteState({
+      visible: true,
+      srno: row?.srNo,
+    });
+  }
+  async function handleDeleteOperator() {
+    if (!deleteState?.srno) return;
     try {
-      const res = await deleteOperator(row?.srNo);
+      const res = await deleteOperator(deleteState?.srno);
       if (!res.status) {
         toast.error("Failed to delete operator. Please try again.");
         return;
       }
       toast.success("Operator deleted successfully.");
+      setDeleteState({ visible: false, srno: null });
       await handleFetchOpertorList();
     } catch (e) {
       toast.error("Something went wrong while deleting the operator.");
@@ -567,6 +580,52 @@ const AddOperator = ({ id, name }) => {
           </div>
         </div>
       </Dialog> */}
+
+      <Dialog
+        header="Delete Operator"
+        visible={deleteState.visible}
+        onHide={() =>
+          setDeleteState({
+            visible: false,
+            srno: "",
+          })
+        }
+        className="w-2/3 md:w-1/2 lg:w-1/3"
+        draggable={false}
+      >
+        <div>
+          <div className="p-4 text-center">
+            <p className="text-[1.1rem] font-semibold text-gray-600">
+              Are you sure ?
+            </p>
+            <p>
+              Do you really want to delete selected operator? This process
+              cannot be undo.
+            </p>
+            <div className="flex justify-center gap-4 mt-2">
+              <UniversalButton
+                label="Cancel"
+                style={{
+                  backgroundColor: "#090909",
+                }}
+                onClick={() => {
+                  setDeleteState({
+                    visible: false,
+                    srno: "",
+                  });
+                }}
+              />
+              <UniversalButton
+                label="Delete"
+                style={{
+                  backgroundColor: "red",
+                }}
+                onClick={handleDeleteOperator}
+              />
+            </div>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };

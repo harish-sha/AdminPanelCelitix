@@ -272,7 +272,7 @@ const ManagePrefixTable = ({ id, name, data = [], handleSearch }) => {
       </Paper>
 
       <Dialog
-        header="Add Prefix"
+        header="Delete Prefix"
         visible={deleteDialogState.visible}
         onHide={() =>
           setDeleteDialogState({
