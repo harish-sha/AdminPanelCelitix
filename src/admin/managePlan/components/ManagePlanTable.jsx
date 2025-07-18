@@ -88,11 +88,18 @@ const CustomPagination = ({
   );
 };
 
-const ManagePlanTable = ({ id, name, data = [], handleFetchAllPlans }) => {
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
-  });
+const ManagePlanTable = ({
+  id,
+  name,
+  data = [],
+  handleFetchAllPlans,
+  paginationModel,
+  setPaginationModel,
+}) => {
+  // const [paginationModel, setPaginationModel] = useState({
+  //   page: 0,
+  //   pageSize: 10,
+  // });
   const [selectedRows, setSelectedRows] = useState([]);
   const [manageCreatePlan, setManageCreatePlan] = useState(false);
   const [plantypeoptionedit, setPlantypeoptionedit] = useState(null);
@@ -149,6 +156,7 @@ const ManagePlanTable = ({ id, name, data = [], handleFetchAllPlans }) => {
         className={`text-white text-xs px-3 py-2 border rounded-md text-center ${
           params.value ? "bg-green-500" : "bg-red-500"
         }`}
+        title="Change Status"
         onClick={() => functionName(params.row)}
       >
         {params.value === 1 ? "Active" : "Inactive"}
