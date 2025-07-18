@@ -225,6 +225,15 @@ const AddOperator = ({ id, name }) => {
 
   async function handleSave() {
     try {
+      if (!addData.operatorName) {
+        toast.error("Please enter operator name.");
+        return;
+      }
+
+      if (!addData.countrySrno) {
+        toast.error("Please select country.");
+        return;
+      }
       const res = await addOperator(addData);
       if (!res.success) {
         toast.error("Failed to add operator. Please try again.");
