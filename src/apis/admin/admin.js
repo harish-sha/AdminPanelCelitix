@@ -186,6 +186,12 @@ export const addPrefix = async (data) => {
     body: JSON.stringify(data),
   });
 };
+export const deletePrefix = async (data) => {
+  return await fetchWithAuth(`/deletePrefix`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
 export const getCountryList = async () => {
   return await fetchWithAuth(`/getcountryList`, {
     method: "POST",

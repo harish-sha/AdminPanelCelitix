@@ -7,6 +7,10 @@ import usePagination from "@mui/material/usePagination/usePagination";
 import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import EditNoteIcon from "@mui/icons-material/EditNote";
+import { Dialog } from "primereact/dialog";
+import UniversalButton from "@/components/common/UniversalButton";
+import toast from "react-hot-toast";
+import { deletePrefix } from "@/apis/admin/admin";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -68,12 +72,57 @@ const CustomPagination = ({
   );
 };
 
-const ManagePrefixTable = ({ id, name, data = [] }) => {
+const ManagePrefixTable = ({ id, name, data = [], handleSearch }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
   });
+  const [deleteDialogState, setDeleteDialogState] = useState({
+    visible: false,
+    data: null,
+  });
+
+  const handleDelete = (row) => {
+    setDeleteDialogState({ visible: true, data: row });
+  };
+
+  async function handleDeletePrefix() {
+    try {
+      const data = deleteDialogState.data;
+
+      if (!data.prefix || !data.operatorSrno || !data.countrySrno) {
+        toast.error("Something went wrong while deleting the prefix");
+        return;
+      }
+
+      const payload = {
+        operatorSrno: data.operatorSrno,
+        countrySrno: data.countrySrno,
+        prefix: data.prefix.split(),
+      };
+
+      const res = await deletePrefix(payload);
+      // if (!res.length || !res.flag) {
+      //   toast.error("Failed to delete prefix. Please try again");
+      //   return;
+      // }
+
+      if (Array.isArray(res) && !res.length) {
+        return toast.error("Failed to delete prefix. Please try again");
+      } else if (!res.flag) {
+        return toast.error("Failed to delete prefix. Please try again");
+      }
+
+      toast.success("Prefix deleted successfully");
+      setDeleteDialogState({ visible: false, data: null });
+      await handleSearch();
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong while deleting the prefix");
+    }
+  }
+
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
         sn: i + 1,
@@ -108,6 +157,25 @@ const ManagePrefixTable = ({ id, name, data = [] }) => {
       headerName: "Country Name",
       flex: 1,
       minWidth: 120,
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params) => (
+        <CustomTooltip title="Delete Account" placement="top" arrow>
+          <IconButton
+            className="no-xs"
+            onClick={() => handleDelete(params.row)}
+          >
+            <MdOutlineDeleteForever
+              className="text-red-500 cursor-pointer hover:text-red-600"
+              size={20}
+            />
+          </IconButton>
+        </CustomTooltip>
+      ),
     },
   ];
 
@@ -202,6 +270,52 @@ const ManagePrefixTable = ({ id, name, data = [] }) => {
           }}
         />
       </Paper>
+
+      <Dialog
+        header="Add Prefix"
+        visible={deleteDialogState.visible}
+        onHide={() =>
+          setDeleteDialogState({
+            visible: false,
+            data: {},
+          })
+        }
+        className="w-2/3 md:w-1/2 lg:w-1/3"
+        draggable={false}
+      >
+        <div>
+          <div className="p-4 text-center">
+            <p className="text-[1.1rem] font-semibold text-gray-600">
+              Are you sure ?
+            </p>
+            <p>
+              Do you really want to delete selected Prefix? This process cannot
+              be undo.
+            </p>
+            <div className="flex justify-center gap-4 mt-2">
+              <UniversalButton
+                label="Cancel"
+                style={{
+                  backgroundColor: "#090909",
+                }}
+                onClick={() => {
+                  setDeleteDialogState({
+                    visible: false,
+                    data: {},
+                  });
+                }}
+              />
+              <UniversalButton
+                label="Delete"
+                style={{
+                  backgroundColor: "red",
+                }}
+                onClick={handleDeletePrefix}
+              />
+            </div>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };

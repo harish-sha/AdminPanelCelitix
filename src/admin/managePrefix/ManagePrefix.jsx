@@ -237,6 +237,7 @@ const ManagePrefix = () => {
             id="managePrefixTable"
             name="managePrefixTable"
             data={data}
+            handleSearch={handleSearch}
             // isFetching={isFetching}
           />
         </div>
