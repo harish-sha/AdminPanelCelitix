@@ -664,7 +664,9 @@ const ManageSMPPTable = ({ id, name, data }) => {
               id="servicetypeedit"
               name="servicetypeedit"
               options={servicetypeoption}
-              onChange={handleEditService}
+              onChange={(e) =>
+                setEditDetails({ ...editDetails, serviceType: e })
+              }
               value={editDetails?.serviceType || ""}
             />
             <AnimatedDropdown
@@ -672,7 +674,9 @@ const ManageSMPPTable = ({ id, name, data }) => {
               id="dataencodingedit"
               name="dataencodingedit"
               options={dataencodingoption}
-              onChange={handleEditDataEncoding}
+              onChange={(e) =>
+                setEditDetails({ ...editDetails, DataCoding: e })
+              }
               value={editDetails?.DataCoding || ""}
             />
             <InputField
@@ -690,7 +694,7 @@ const ManageSMPPTable = ({ id, name, data }) => {
               id="bindmodeedit"
               name="bindmodeedit"
               options={bindmodeoption}
-              onChange={handleEditBindMode}
+              onChange={(e) => setEditDetails({ ...editDetails, bindMode: e })}
               value={editDetails?.bindMode}
             />
           </div>
@@ -701,7 +705,9 @@ const ManageSMPPTable = ({ id, name, data }) => {
               name="totalsocketsedit"
               placeholder="Enter Total Sockets"
               options={totalsocketseditoption}
-              onChange={handleEditTotalSockets}
+              onChange={(e) =>
+                setEditDetails({ ...editDetails, totalSocket: e })
+              }
               value={editDetails?.totalSocket || ""}
             />
             <InputField
@@ -722,7 +728,7 @@ const ManageSMPPTable = ({ id, name, data }) => {
               id="sourceedit"
               name="sourceedit"
               options={sourceoption}
-              onChange={handleEditSource}
+              onChange={(e) => setEditDetails({ ...editDetails, Source: e })}
               value={editDetails?.Source || ""}
             />
             <AnimatedDropdown
@@ -730,7 +736,9 @@ const ManageSMPPTable = ({ id, name, data }) => {
               id="destinationedit"
               name="destinationedit"
               options={destinationoption}
-              onChange={handleEditDestination}
+              onChange={(e) =>
+                setEditDetails({ ...editDetails, Destination: e })
+              }
               value={editDetails?.Destination || ""}
             />
           </div>
@@ -740,7 +748,10 @@ const ManageSMPPTable = ({ id, name, data }) => {
               id="registereddeliveryedit"
               name="registereddeliveryedit"
               options={registereddeliveryoption}
-              onChange={handleEditRegisteredDelivery}
+              onChange={(e) =>
+                setEditDetails({ ...editDetails, RegisteredDelivery: e })
+              }
+              value={editDetails?.RegisteredDelivery || ""}
             />
             <InputField
               label="Sender Id Prefix"
@@ -846,7 +857,9 @@ const ManageSMPPTable = ({ id, name, data }) => {
               name="windowsizeedit"
               placeholder="Enter Window Size"
               options={windowsizeoption}
-              onChange={handleEditWindowSize}
+              onChange={(e) =>
+                setEditDetails({ ...editDetails, windowSize: e })
+              }
               value={editDetails?.windowSize || ""}
             />
           </div>
