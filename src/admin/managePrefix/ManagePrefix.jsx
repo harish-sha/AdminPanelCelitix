@@ -139,7 +139,13 @@ const ManagePrefix = () => {
         prefix: addPrefixData.prefix.split(),
       };
       const res = await addPrefix(payload);
-      console.log(res);
+
+      if (!res?.flag) {
+        return toast.error(res?.msg);
+      }
+      toast.success(res?.msg);
+      setPrefixAdd(false);
+      setAddPrefixData({});
     } catch (e) {
       console.log(e);
       toast.error("Something went wrong");
@@ -273,9 +279,12 @@ const ManagePrefix = () => {
             id="circle"
             name="circle"
             label="Circle"
-            value={addPrefixData.circle}
+            value={addPrefixData.circleSrno}
             onChange={(e) => {
-              setAddPrefixData({ ...addPrefixData, circle: e.target.value });
+              setAddPrefixData({
+                ...addPrefixData,
+                circleSrno: Number(e.target.value),
+              });
             }}
             placeholder="Enter Circle Code"
           />
