@@ -26,6 +26,11 @@ const ManagePlan = () => {
   });
   const [data, setData] = useState([]);
 
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
+
   const [createData, setCreateData] = useState({
     planName: "",
     planType: "",
@@ -201,6 +206,8 @@ const ManagePlan = () => {
               name="managePlanTable"
               data={data}
               handleFetchAllPlans={handleFetchAllPlans}
+              paginationModel={paginationModel}
+              setPaginationModel={setPaginationModel}
             />
           </div>
         )}
