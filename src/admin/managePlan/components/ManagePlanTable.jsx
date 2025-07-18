@@ -142,6 +142,19 @@ const ManagePlanTable = ({ id, name, data = [], handleFetchAllPlans }) => {
         sn: index + 1,
       }))
     : [];
+
+  function renderCol(functionName, params) {
+    return (
+      <button
+        className={`text-white text-xs px-3 py-2 border rounded-md text-center ${
+          params.value ? "bg-green-500" : "bg-red-500"
+        }`}
+        onClick={() => functionName(params.row)}
+      >
+        {params.value === 1 ? "Active" : "Inactive"}
+      </button>
+    );
+  }
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
     { field: "serviceName", headerName: "Plan Name", flex: 1, minWidth: 80 },
@@ -166,18 +179,7 @@ const ManagePlanTable = ({ id, name, data = [], handleFetchAllPlans }) => {
       flex: 1,
       minWidth: 100,
       renderCell: (params) => {
-        return (
-          <button
-            className="border border-gray-400 rounded-md px-2 py-1 hover:bg-gray-200"
-            onClick={() => handleUpdateServiceStatus(params.row)}
-          >
-            {params.value === 1 ? (
-              <span className="text-green-500">Active</span>
-            ) : (
-              <span className="text-red-500">Inactive</span>
-            )}
-          </button>
-        );
+        return renderCol(handleUpdateServiceStatus, params);
       },
     },
     {
@@ -186,18 +188,7 @@ const ManagePlanTable = ({ id, name, data = [], handleFetchAllPlans }) => {
       flex: 1,
       minWidth: 100,
       renderCell: (params) => {
-        return (
-          <button
-            className="border border-gray-400 rounded-md px-2 py-1 hover:bg-gray-200"
-            onClick={() => handleUpdateNdncStatus(params.row)}
-          >
-            {params.value === 1 ? (
-              <span className="text-green-500">Active</span>
-            ) : (
-              <span className="text-red-500">Inactive</span>
-            )}
-          </button>
-        );
+        return renderCol(handleUpdateNdncStatus, params);
       },
     },
     {
@@ -206,18 +197,7 @@ const ManagePlanTable = ({ id, name, data = [], handleFetchAllPlans }) => {
       flex: 1,
       minWidth: 100,
       renderCell: (params) => {
-        return (
-          <button
-            className="border border-gray-400 rounded-md px-2 py-1 hover:bg-gray-200"
-            onClick={() => handleUpdateOpenContentStatus(params.row)}
-          >
-            {params.value === 1 ? (
-              <span className="text-green-500">Active</span>
-            ) : (
-              <span className="text-red-500">Inactive</span>
-            )}
-          </button>
-        );
+        return renderCol(handleUpdateOpenContentStatus, params);
       },
     },
     {
@@ -226,18 +206,7 @@ const ManagePlanTable = ({ id, name, data = [], handleFetchAllPlans }) => {
       flex: 1,
       minWidth: 100,
       renderCell: (params) => {
-        return (
-          <button
-            className="border border-gray-400 rounded-md px-2 py-1 hover:bg-gray-200"
-            onClick={() => handleUpdateOpenMobileStatus(params.row)}
-          >
-            {params.value === 1 ? (
-              <span className="text-green-500">Active</span>
-            ) : (
-              <span className="text-red-500">Inactive</span>
-            )}
-          </button>
-        );
+        return renderCol(handleUpdateOpenMobileStatus, params);
       },
     },
     {
