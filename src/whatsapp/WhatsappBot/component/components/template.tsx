@@ -187,22 +187,8 @@ export const TemplateNode = ({
         messaging_product: "whatsapp",
       };
 
-      // return;
-
-      const variableInsert = [];
-      // curlData.template.components.forEach((format) => {
-      //   if (format.type === "BODY") {
-      //     format?.parameters?.map((item, index) => {
-      //       variableInsert.push({
-      //         ...item,
-      //         text: `{{${variables[index]}}}`,
-      //       });
-      //     });
-      //   }
-      // });
-
       botData.template.components = botData.template.components.map(
-        (component,index) => {
+        (component, index) => {
           if (component.type === "BODY") {
             return {
               ...component,
@@ -214,6 +200,45 @@ export const TemplateNode = ({
               ],
             };
           }
+          if (template.type === "image") {
+            return {
+              type: "HEADER",
+              parameters: [
+                {
+                  type: "image",
+                  image: {
+                    link: basicDetails.mediaPath,
+                  },
+                },
+              ],
+            };
+          }
+          // if (template.type === "video") {
+          //   return {
+          //     type: "HEADER",
+          //     parameters: [
+          //       {
+          //         type: "video",
+          //         video: {
+          //           link: basicDetails.mediaPath,
+          //         },
+          //       },
+          //     ],
+          //   };
+          // }
+          // if (template.type === "document") {
+          //   return {
+          //     type: "HEADER",
+          //     parameters: [
+          //       {
+          //         type: "document",
+          //         document: {
+          //           link: basicDetails.mediaPath,
+          //         },
+          //       },
+          //     ],
+          //   };
+          // }
           return component;
         }
       );
@@ -221,7 +246,6 @@ export const TemplateNode = ({
       // console.log("botData", botData);
 
       // return;
-
 
       setNodesInputData((prev) => ({
         ...prev,
@@ -234,6 +258,7 @@ export const TemplateNode = ({
 
       setIsVisible(false);
     } catch (e) {
+      console.log(e);
       return toast.error("Error saving template data");
     }
   }
