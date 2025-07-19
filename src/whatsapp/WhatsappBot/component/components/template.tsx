@@ -151,6 +151,13 @@ export const TemplateNode = ({
         (item) => item.templateSrno === selectedTemplate
       );
 
+      if (template?.type === "image" && !basicDetails.mediaPath)
+        return toast.error("Please upload image");
+      if (template?.type === "video" && !basicDetails.mediaPath)
+        return toast.error("Please upload video");
+      if (template?.type === "document" && !basicDetails.mediaPath)
+        return toast.error("Please upload document");
+
       const variables = variablesData.input.filter((item) => item !== "");
       const btnVar = variablesData.btnInput.filter((item) => item !== "");
 
@@ -180,26 +187,28 @@ export const TemplateNode = ({
         messaging_product: "whatsapp",
       };
 
+      // return;
+
       const variableInsert = [];
-      curlData.template.components.forEach((format) => {
-        if (format.type === "BODY") {
-          format?.parameters?.map((item, index) => {
-            variableInsert.push({
-              ...item,
-              text: `{{${variables[index]}}}`,
-            });
-          });
-        }
-      });
+      // curlData.template.components.forEach((format) => {
+      //   if (format.type === "BODY") {
+      //     format?.parameters?.map((item, index) => {
+      //       variableInsert.push({
+      //         ...item,
+      //         text: `{{${variables[index]}}}`,
+      //       });
+      //     });
+      //   }
+      // });
 
       botData.template.components = botData.template.components.map(
-        (component) => {
+        (component,index) => {
           if (component.type === "BODY") {
             return {
               ...component,
               parameters: [
                 {
-                  text: "{{mobileNo}}",
+                  text: `{{${variables[index]}}}`,
                   type: "text",
                 },
               ],
@@ -213,7 +222,6 @@ export const TemplateNode = ({
 
       // return;
 
-      // TODO: add variable dropdown values
 
       setNodesInputData((prev) => ({
         ...prev,
@@ -231,7 +239,7 @@ export const TemplateNode = ({
   }
 
   return (
-    <div className="w-full flex flex-col justify-between h-[calc(80vh-100px)]">
+    <div className="w-full flex flex-col  h-[calc(80vh-100px)]">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
         <div className="w-full">
           <div className="w-full">
@@ -343,6 +351,17 @@ export const TemplateNode = ({
               </div>
             </div>
           )}
+
+          <div className="mt-4">
+            <UniversalButton
+              id="whatsapp-send-message"
+              name="whatsapp-send-message"
+              type="submit"
+              label="Save Template"
+              onClick={handleSave}
+              style={{}}
+            />
+          </div>
         </div>
         <div className="w-full">
           <Preview
@@ -351,16 +370,6 @@ export const TemplateNode = ({
             basicDetails={basicDetails}
           />
         </div>
-      </div>
-      <div className="mt-4">
-        <UniversalButton
-          id="whatsapp-send-message"
-          name="whatsapp-send-message"
-          type="submit"
-          label="Save Template"
-          onClick={handleSave}
-          style={{}}
-        />
       </div>
     </div>
   );
