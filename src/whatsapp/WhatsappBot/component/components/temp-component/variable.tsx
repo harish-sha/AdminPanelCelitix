@@ -48,7 +48,8 @@ export const Variables = ({
 
   function handleVariableInsert(variable, index) {
     const updatedData = [...variablesData.input];
-    const updatedMessage = updatedData[index] + variable;
+    const prevMessage = updatedData[index] || "";
+    const updatedMessage = prevMessage + variable;
     updatedData[index] = updatedMessage;
     setVariablesData((prev) => ({
       ...prev,

@@ -30,7 +30,6 @@ export const TemplateNode = ({
   setIsVisible: React.Dispatch<React.SetStateAction<{}>>;
   allVariables: any[];
 }) => {
-  
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [templateType, setTemplateType] = useState("");
   const [allTemplates, setAllTemplates] = useState([]);
@@ -181,6 +180,39 @@ export const TemplateNode = ({
         messaging_product: "whatsapp",
       };
 
+      const variableInsert = [];
+      curlData.template.components.forEach((format) => {
+        if (format.type === "BODY") {
+          format?.parameters?.map((item, index) => {
+            variableInsert.push({
+              ...item,
+              text: `{{${variables[index]}}}`,
+            });
+          });
+        }
+      });
+
+      botData.template.components = botData.template.components.map(
+        (component) => {
+          if (component.type === "BODY") {
+            return {
+              ...component,
+              parameters: [
+                {
+                  text: "{{mobileNo}}",
+                  type: "text",
+                },
+              ],
+            };
+          }
+          return component;
+        }
+      );
+
+      // console.log("botData", botData);
+
+      // return;
+
       // TODO: add variable dropdown values
 
       setNodesInputData((prev) => ({
@@ -242,7 +274,7 @@ export const TemplateNode = ({
                 setBasicDetails={setBasicDetails}
                 fileData={fileData}
                 setFileData={setFileData}
-                 allVariables={allVariables}
+                allVariables={allVariables}
               />
             )}
           {templateType === "location" && (
