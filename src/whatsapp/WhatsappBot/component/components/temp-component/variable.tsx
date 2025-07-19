@@ -4,6 +4,7 @@ import React from "react";
 import toast from "react-hot-toast";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { MdOutlineDeleteForever } from "react-icons/md";
+import InputVariable from "@/whatsapp/whatsappLaunchCampaign/components/InputVariable";
 
 export const Variables = ({
   variablesData,
@@ -13,6 +14,7 @@ export const Variables = ({
   setBasicDetails,
   fileData,
   setFileData,
+  allVariables,
 }: {
   variablesData: any;
   setVariablesData: any;
@@ -21,6 +23,7 @@ export const Variables = ({
   setBasicDetails: any;
   fileData: any;
   setFileData: any;
+  allVariables: any[];
 }) => {
   function handleFileChange(e) {
     const file = e.target.files[0];
@@ -42,6 +45,16 @@ export const Variables = ({
     setBasicDetails((prev) => ({ ...prev, mediaPath: "" }));
     fileRef.current.value = "";
   }
+
+  function handleVariableInsert(variable, index) {
+    const updatedData = [...variablesData.input];
+    const updatedMessage = updatedData[index] + variable;
+    updatedData[index] = updatedMessage;
+    setVariablesData((prev) => ({
+      ...prev,
+      input: updatedData,
+    }));
+  }
   return (
     <div className="mt-2 space-y-2 border p-3 rounded-xl">
       {variablesData?.data?.length > 0 &&
@@ -51,26 +64,37 @@ export const Variables = ({
               <h1>Variables</h1>
             </div>
             <div>
-              <div className="flex  gap-2 items-center mt-2">
+              <div className="flex  gap-2 items-center mt-2 w-full">
                 <label htmlFor="templateMessage">
                   {`{{${variablesData?.data[index]}}}`}
                 </label>
-                <InputField
-                  label=""
-                  placeholder="{{name}}"
-                  id="templateMessage"
-                  name="templateMessage"
-                  value={variablesData?.input[index]}
-                  onChange={(e) => {
-                    const updatedData = [...variablesData.input];
-                    updatedData[index] = e.target.value;
-                    setVariablesData((prev) => ({
-                      ...prev,
-                      input: updatedData,
-                    }));
-                  }}
-                  className="flex-1 w-full focus:outline-none"
-                />
+                <div className="flex relative w-full">
+                  <InputField
+                    label=""
+                    placeholder="{{name}}"
+                    id="templateMessage"
+                    name="templateMessage"
+                    value={variablesData?.input[index]}
+                    onChange={(e) => {
+                      const updatedData = [...variablesData.input];
+                      updatedData[index] = e.target.value;
+                      setVariablesData((prev) => ({
+                        ...prev,
+                        input: updatedData,
+                      }));
+                    }}
+                    className="flex-1 w-full focus:outline-none"
+                  />
+
+                  <div className="absolute top-0 right-0">
+                    <InputVariable
+                      variables={allVariables}
+                      onSelect={(e) => {
+                        handleVariableInsert(e, index);
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

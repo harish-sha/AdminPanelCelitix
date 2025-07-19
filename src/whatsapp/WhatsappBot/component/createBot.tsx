@@ -1212,6 +1212,7 @@ const CreateWhatsAppBot = () => {
               setNodesInputData={setNodesInputData}
               details={details}
               setIsVisible={setIsVisible}
+              allVariables={allVariables}
             />
           ) : null}
 

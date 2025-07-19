@@ -21,17 +21,16 @@ export const TemplateNode = ({
   setNodesInputData,
   details,
   setIsVisible,
+  allVariables,
 }: {
   id: number;
   nodesInputData: any;
   details: any;
   setNodesInputData: React.Dispatch<React.SetStateAction<{}>>;
   setIsVisible: React.Dispatch<React.SetStateAction<{}>>;
+  allVariables: any[];
 }) => {
-  const [wabaState, setWabaState] = useState({
-    waba: [],
-    selected: "",
-  });
+  
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [templateType, setTemplateType] = useState("");
   const [allTemplates, setAllTemplates] = useState([]);
@@ -176,12 +175,20 @@ export const TemplateNode = ({
       });
       console.log("curlData", curlData);
 
+      const botData = {
+        ...curlData,
+        to: "{{mobileno}}",
+        messaging_product: "whatsapp",
+      };
+
+      // TODO: add variable dropdown values
+
       setNodesInputData((prev) => ({
         ...prev,
         [id]: {
           ...prev[id],
           templateSrno: selectedTemplate,
-          json: JSON.stringify(curlData),
+          json: JSON.stringify(botData),
         },
       }));
 
@@ -192,7 +199,7 @@ export const TemplateNode = ({
   }
 
   return (
-    <div className="w-full flex flex-col justify-between h-full">
+    <div className="w-full flex flex-col justify-between h-[calc(80vh-100px)]">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
         <div className="w-full">
           <div className="w-full">
@@ -235,6 +242,7 @@ export const TemplateNode = ({
                 setBasicDetails={setBasicDetails}
                 fileData={fileData}
                 setFileData={setFileData}
+                 allVariables={allVariables}
               />
             )}
           {templateType === "location" && (
