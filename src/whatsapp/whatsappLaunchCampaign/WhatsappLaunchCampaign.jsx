@@ -21,6 +21,7 @@ import UniversalButton from "../components/UniversalButton.jsx";
 import Loader from "../components/Loader";
 import DropdownWithSearch from "../components/DropdownWithSearch.jsx";
 import { RadioButton } from "primereact/radiobutton";
+import { getAllWorkflow } from "@/apis/workflow/index.js";
 
 const extractVariablesFromText = (text) => {
   const regex = /{{(\d+)}}/g;
@@ -82,6 +83,13 @@ const WhatsappLaunchCampaign = () => {
 
   const [marketingType, setMarketingType] = useState("1");
 
+  const [allWorkflows, setAllWorkflows] = useState([]);
+  const [workflowState, setWorkflowState] = useState({
+    workflowFlag: false,
+    workflowSrno: "",
+    workflowValueObject: {},
+  });
+
   const [templateType, setTemplateType] = useState("");
 
   const [locationData, setLocationData] = useState({
@@ -92,6 +100,26 @@ const WhatsappLaunchCampaign = () => {
   });
 
   const fileRef = useRef(null);
+
+  async function handleFetchWorkflow() {
+    try {
+      const res = await getAllWorkflow();
+
+      const mappedData = Array.isArray(res)
+        ? res?.map((item) => ({
+            value: item.sr_no,
+            label: item.workflow_name,
+          }))
+        : [];
+      setAllWorkflows(mappedData);
+    } catch (e) {
+      toast.error("Error fetching workflows.");
+    }
+  }
+
+  useEffect(() => {
+    handleFetchWorkflow();
+  }, [workflowState.workflowFlag]);
 
   function handleNextCard() {
     setCardIndex(cardIndex + 1);
@@ -260,6 +288,10 @@ const WhatsappLaunchCampaign = () => {
 
     if (isError) {
       return toast.error("Please enter all variable values!");
+    }
+
+    if (workflowState?.workflowFlag == "1" && !workflowState?.workflowSrno) {
+      return toast.error("Please select workflow");
     }
 
     setTotalRecords(finalTotalRecords);
@@ -444,6 +476,20 @@ const WhatsappLaunchCampaign = () => {
         address: locationData.address || "Default Address",
       };
     }
+    if (workflowState?.workflowFlag == "1") {
+      if (!workflowState?.workflowSrno) {
+        return toast.error("Please select workflow");
+      }
+
+      requestData = {
+        ...requestData,
+        workflowSrno: workflowState?.workflowSrno,
+        workflowFlag: workflowState?.workflowFlag,
+      };
+      // requestData.workflowSrno = workflowState?.workflowSrno;
+      // requestData.workflowFlag = workflowState?.workflowFlag;
+      // requestData.workflowSrno = workflowState?.workflowSrno
+    }
 
     try {
       const response = await sendWhatsappCampaign(requestData);
@@ -472,6 +518,7 @@ const WhatsappLaunchCampaign = () => {
         setSelectedGroups([]);
         setUploadedFile(null);
         setIsUploaded(false);
+        setWorkflowState({});
 
         // setGroups([]);
 
@@ -749,6 +796,42 @@ const WhatsappLaunchCampaign = () => {
                       </div>
                     </div>
                   )}
+
+                  <div className="flex flex-col w-full mt-2 mb-2 gap-2 border-2 p-2 rounded-md border-gray-300">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        className="w-4 h-4 bg-gray-200 border-gray-300 rounded cursor-pointer"
+                        onChange={(e) => {
+                          setWorkflowState({
+                            workflowFlag: e.target.checked ? "1" : "0",
+                            workflowSrno: "",
+                            workflowValueObject: {},
+                          });
+                        }}
+                      />
+                      <label className="text-sm font-medium">
+                        Add Workflow?
+                      </label>
+                    </div>
+                    <DropdownWithSearch
+                      id="selectWorkflow"
+                      name="selectWorkflow"
+                      label="Select Workflow"
+                      tooltipContent=""
+                      tooltipPlacement="right"
+                      placeholder="Workflow"
+                      disabled={!Number(workflowState.workflowFlag)}
+                      options={allWorkflows}
+                      value={workflowState.workflowSrno}
+                      onChange={(value) => {
+                        setWorkflowState({
+                          ...workflowState,
+                          workflowSrno: value,
+                        });
+                      }}
+                    />
+                  </div>
                   <div>
                     {isFetching ? (
                       // <UniversalSkeleton height="15rem" width="100%" />
