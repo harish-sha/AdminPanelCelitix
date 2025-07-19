@@ -422,7 +422,7 @@ const ManageCampaignTable = ({
     setDropdownOpenId(null);
 
     const fromDateStr = moment(fromDate).format("YYYY-MM-DD");
-    
+
     const data = {
       campSrno: row?.campaignSrno,
       fromDate: fromDateStr,
@@ -604,6 +604,7 @@ const ManageCampaignTable = ({
                     "pending",
                     "sent",
                     "delivered",
+                    "undelivered",
                     "read",
                     "source",
                     // "queTime",

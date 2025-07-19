@@ -21,17 +21,19 @@ export const TemplateNode = ({
   setNodesInputData,
   details,
   setIsVisible,
+  allVariables,
 }: {
   id: number;
   nodesInputData: any;
   details: any;
   setNodesInputData: React.Dispatch<React.SetStateAction<{}>>;
   setIsVisible: React.Dispatch<React.SetStateAction<{}>>;
+  allVariables: any[];
 }) => {
-  const [wabaState, setWabaState] = useState({
-    waba: [],
-    selected: "",
-  });
+  // const [wabaState, setWabaState] = useState({
+  //   waba: [],
+  //   selected: "",
+  // });
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [templateType, setTemplateType] = useState("");
   const [allTemplates, setAllTemplates] = useState([]);
@@ -153,6 +155,13 @@ export const TemplateNode = ({
         (item) => item.templateSrno === selectedTemplate
       );
 
+      if (template?.type === "image" && !basicDetails.mediaPath)
+        return toast.error("Please upload image");
+      if (template?.type === "video" && !basicDetails.mediaPath)
+        return toast.error("Please upload video");
+      if (template?.type === "document" && !basicDetails.mediaPath)
+        return toast.error("Please upload document");
+
       const variables = variablesData.input.filter((item) => item !== "");
       const btnVar = variablesData.btnInput.filter((item) => item !== "");
 
@@ -176,23 +185,104 @@ export const TemplateNode = ({
       });
       console.log("curlData", curlData);
 
+      const botData = {
+        ...curlData,
+        to: "{{mobileno}}",
+        messaging_product: "whatsapp",
+      };
+
+      const variableInsert = [];
+      // curlData.template.components.forEach((format) => {
+      //   if (format.type === "BODY") {
+      //     format?.parameters?.map((item, index) => {
+      //       variableInsert.push({
+      //         ...item,
+      //         text: `{{${variables[index]}}}`,
+      //       });
+      //     });
+      //   }
+      // });
+
+      botData.template.components = botData.template.components.map(
+        (component, index) => {
+          if (component.type === "BODY") {
+            return {
+              ...component,
+              parameters: [
+                {
+                  text: `{{${variables[index]}}}`,
+                  type: "text",
+                },
+              ],
+            };
+          }
+          if (template.type === "image") {
+            return {
+              type: "HEADER",
+              parameters: [
+                {
+                  type: "image",
+                  image: {
+                    link: basicDetails.mediaPath,
+                  },
+                },
+              ],
+            };
+          }
+          // if (template.type === "video") {
+          //   return {
+          //     type: "HEADER",
+          //     parameters: [
+          //       {
+          //         type: "video",
+          //         video: {
+          //           link: basicDetails.mediaPath,
+          //         },
+          //       },
+          //     ],
+          //   };
+          // }
+          // if (template.type === "document") {
+          //   return {
+          //     type: "HEADER",
+          //     parameters: [
+          //       {
+          //         type: "document",
+          //         document: {
+          //           link: basicDetails.mediaPath,
+          //         },
+          //       },
+          //     ],
+          //   };
+          // }
+          return component;
+        }
+      );
+
+      // console.log("botData", botData);
+
+      // return;
+
+      // TODO: add variable dropdown values
+
       setNodesInputData((prev) => ({
         ...prev,
         [id]: {
           ...prev[id],
           templateSrno: selectedTemplate,
-          json: JSON.stringify(curlData),
+          json: JSON.stringify(botData),
         },
       }));
 
       setIsVisible(false);
     } catch (e) {
+      console.log(e);
       return toast.error("Error saving template data");
     }
   }
 
   return (
-    <div className="w-full flex flex-col justify-between h-full">
+    <div className="w-full flex flex-col h-[calc(80vh-100px)]">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
         <div className="w-full">
           <div className="w-full">
@@ -224,19 +314,18 @@ export const TemplateNode = ({
               disabled={false}
             />
           </div>
-          {specificTemplate &&
-            (variablesData?.btn?.length > 0 ||
-              variablesData?.data?.length > 0) && (
-              <Variables
-                variablesData={variablesData}
-                setVariablesData={setVariablesData}
-                specificTemplate={specificTemplate}
-                fileRef={fileRef}
-                setBasicDetails={setBasicDetails}
-                fileData={fileData}
-                setFileData={setFileData}
-              />
-            )}
+          {specificTemplate && (
+            <Variables
+              variablesData={variablesData}
+              setVariablesData={setVariablesData}
+              specificTemplate={specificTemplate}
+              fileRef={fileRef}
+              setBasicDetails={setBasicDetails}
+              fileData={fileData}
+              setFileData={setFileData}
+              allVariables={allVariables}
+            />
+          )}
           {templateType === "location" && (
             <div className="w-full mt-4 p-2">
               <h1 className="mb-2 text-lg font-semibold text-gray-700">
@@ -305,6 +394,17 @@ export const TemplateNode = ({
               </div>
             </div>
           )}
+
+          <div className="mt-4">
+            <UniversalButton
+              id="whatsapp-send-message"
+              name="whatsapp-send-message"
+              type="submit"
+              label="Save Template"
+              onClick={handleSave}
+              style={{}}
+            />
+          </div>
         </div>
         <div className="w-full">
           <Preview
@@ -314,7 +414,7 @@ export const TemplateNode = ({
           />
         </div>
       </div>
-      <div className="mt-4">
+      {/* <div className="mt-4">
         <UniversalButton
           id="whatsapp-send-message"
           name="whatsapp-send-message"
@@ -323,7 +423,7 @@ export const TemplateNode = ({
           onClick={handleSave}
           style={{}}
         />
-      </div>
+      </div> */}
     </div>
   );
 };

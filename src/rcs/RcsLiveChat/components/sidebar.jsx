@@ -19,7 +19,7 @@ export const Sidebar = ({ chatState, setChatState, isLoading, agentState }) => {
     return moment(data).format("DD/MM/YYYY");
   }
   return (
-    <div className="mt-2 h-[66vh] max-h-full overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+    <div className="mt-2 pb-50 h-[100vh] max-h-full overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
       {!agentState.id && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -43,14 +43,14 @@ export const Sidebar = ({ chatState, setChatState, isLoading, agentState }) => {
               loop
               autoplay
               className="w-60 h-45"
-              // style={{ width: "full", height: "48px" }}
+            // style={{ width: "full", height: "48px" }}
             />
           </motion.div>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-xl font-semibold text-green-900 mb-2"
+            className="text-xl font-semibold text-blue-900 mb-2"
           >
             Select an Agents to view chats.
           </motion.p>
@@ -76,12 +76,11 @@ export const Sidebar = ({ chatState, setChatState, isLoading, agentState }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
-              className={`group p-4 rounded-xl cursor-pointer transition-all duration-200 mb-2 shadow-sm ${
-                chatState?.active?.srno === chat.srno
+              className={`group p-4 rounded-xl cursor-pointer transition-all duration-200 mb-2 shadow-sm ${chatState?.active?.srno === chat.srno
                   ? // ? "bg-gradient-to-br from-blue-600 to-indigo-400 border-l-6 border-[#22577E] text-white "
-                    "bg-gradient-to-br from-[#5584AC] to-[#5584AC] border-l-6 border-[#22577E] text-white "
+                  "bg-gradient-to-br from-[#5584AC] to-[#5584AC] border-l-6 border-[#22577E] text-white "
                   : "bg-gradient-to-br from-gray-100 to-blue-100 hover:from-gray-200 hover:to-blue-200 text-gray-800"
-              }`}
+                }`}
               onClick={() => setChatState({ ...chatState, active: chat })}
             >
               <div className="flex items-center justify-between ">
@@ -89,11 +88,10 @@ export const Sidebar = ({ chatState, setChatState, isLoading, agentState }) => {
                   {/* Image */}
                   <div className="relative">
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center  font-semibold text-sm ${
-                        chatState?.active?.srno === chat.srno
+                      className={`w-10 h-10 rounded-full flex items-center justify-center  font-semibold text-sm ${chatState?.active?.srno === chat.srno
                           ? "bg-white text-blue-600"
                           : "bg-gray-300 text-gray-900"
-                      }`}
+                        }`}
                     >
                       {"A"}
                     </div>
@@ -120,12 +118,12 @@ export const Sidebar = ({ chatState, setChatState, isLoading, agentState }) => {
             </motion.div>
           ))}
 
-      {chatState?.allConversations.length === 0 && (
+      {agentState.id && !isLoading && chatState?.allConversations.length === 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="text-sm font-normal text-gray-900 mb-2"
+          className="text-md font-normal text-gray-900 mb-2  flex items-center justify-center h-[90%]"
         >
           No conversation found
         </motion.div>

@@ -337,7 +337,7 @@ export const ChatScreen = ({
 
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
-      <div className="mt-5 md:mt-0 z-1 flex items-center justify-between w-full h-15 bg-gray-100 px-2 border rounded-tr-lg">
+      <div className="mt-0 md:mt-0 z-1 flex items-center justify-between w-full h-15 bg-gray-100 px-2 border rounded-tr-lg">
         <div className="flex items-center gap-2 h-auto">
           <IoArrowBack
             className="text-xl cursor-pointer md:hidden"
@@ -442,7 +442,7 @@ export const ChatScreen = ({
 
       <div
         ref={messageRef}
-        className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col mb-30 md:mb-18 md:-mt-5 bg-[url(/WB.png)]"
+        className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col mb-35 md:mb-18 md:-mt-5 bg-[url(/WB.png)]"
       >
         {chatState.specificConversation?.map((group, groupIndex) => (
           <div key={groupIndex}>

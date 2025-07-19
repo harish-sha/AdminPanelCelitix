@@ -145,27 +145,7 @@ const ObdCreateCampaign = () => {
     }
   }, [fileHeaders, selectedOption]);
 
-  // const onReady = (ws) => {
-  //   setWavesurfer(ws);
-  //   setIsPlaying(false);
-  // };
 
-  // const handlePlayPause = () => {
-  //   if (!wavesurfer) return;
-
-  //   if (isPlaying) {
-  //     wavesurfer.pause();
-  //   } else {
-  //     wavesurfer.play();
-  //   }
-  // };
-
-  // const handleRestart = () => {
-  //   if (wavesurfer) {
-  //     wavesurfer.seekTo(0);
-  //     wavesurfer.play();
-  //   }
-  // };
 
   const resetForm = () => {
     // Clear campaign fields
@@ -634,7 +614,6 @@ const ObdCreateCampaign = () => {
         variableSampleValue: item.variableSampleValue || "",
         filePath: item.filePath,
         fileTile: item.fileTitle
-
       }));
 
       setVoiceVariables(enrichedVariables);
@@ -667,8 +646,8 @@ const ObdCreateCampaign = () => {
             <div className="flex flex-wrap bg-[#E5E7EB] rounded-2xl">
               <div className=" w-full p-3  rounded-xl flex lg:flex-nowrap flex-wrap gap-3  min-h-[80vh]">
                 <div className="lg:w-1/2 w-full rounded-xl bg-[#f9f9f9]">
-                  <div className="flex items-center justify-around gap-4 px-2 pb-0 pt-4 ">
-                    <div className="flex gap-2 border border-gray-300 rounded-lg w-1/2 px-3 py-2">
+                  <div className="flex flex-col md:flex-row items-center justify-around gap-4 px-2 pb-0 pt-4 ">
+                    <div className="flex gap-2 border border-gray-300 rounded-lg  px-3 py-2 w-full">
                       <RadioButton
                         inputId="radioOptionTransactional"
                         name="radioGroupCampaign"
@@ -683,7 +662,7 @@ const ObdCreateCampaign = () => {
                         Transactional
                       </label>
                     </div>
-                    <div className="flex gap-2 border border-gray-300 rounded-lg w-1/2 px-3 py-2">
+                    <div className="flex gap-2 border border-gray-300 rounded-lg  px-3 py-2 w-full">
                       <RadioButton
                         inputId="radioOptionPromotional"
                         name="radioGroupCampaign"

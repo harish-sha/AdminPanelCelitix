@@ -14,6 +14,8 @@ import clicktwocall from "../../assets/icons/Click2Call02.svg";
 import { LuWandSparkles } from "react-icons/lu";
 import { IoWalletOutline } from "react-icons/io5";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
+import QuickreplyOutlinedIcon from '@mui/icons-material/QuickreplyOutlined';
+
 
 import { MdOutlineEmail } from "react-icons/md";
 
@@ -253,6 +255,19 @@ export const userItems = [
     label: "Manage Funds",
     type: "dropdown",
     links: [{ to: "/recharge", label: "Recharge" }],
+    roles: ["ADMIN"],
+  },
+  {
+    id: "",
+    name: "chatManagement",
+    icon: <QuickreplyOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
+
+    label: "Chats Management",
+    type: "dropdown",
+    links: [
+      { to: "/liveChatMain/", label: "Chats Section" },
+      { to: "/combineLiveChatSettings", label: "Chats Settings" },
+    ],
     roles: ["ADMIN"],
   },
   // {

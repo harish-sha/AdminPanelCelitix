@@ -922,7 +922,7 @@ const FlowCreationPage = () => {
           )}
         </div>
 
-      <div className="flex-1 ">
+        <div className="flex-1 ">
           {/* Mobile Panel Preview*/}
           <MobilePanel
             items={tabs[activeIndex].payload}

@@ -441,16 +441,16 @@ const WhatsappFlows = () => {
                 {
                   breakpoint: "2560px",
                   numVisible: 5,
-                  numScroll: 1,
+                  numScroll: 2,
                 },
                 {
                   breakpoint: "1440px",
-                  numVisible: 4,
-                  numScroll: 1,
+                  numVisible: 3,
+                  numScroll: 2,
                 },
                 {
                   breakpoint: "1024px",
-                  numVisible: 3,
+                  numVisible: 2,
                   numScroll: 1,
                 },
                 {
@@ -536,7 +536,7 @@ const WhatsappFlows = () => {
               paginatedFlows.map((flow, index) => (
                 <div
                   key={index}
-                  className="bg-blue-100 border border-blue-200 rounded-xl px-4 py-5 grid lg:grid-cols-6 xl:grid-cols-7 xs:grid-cols-1 md:grid-cols-4 gap-5 sm:grid-cols-3  items-center justify-between flex-wrap sm:flex-nowrap"
+                  className="bg-blue-100 border border-blue-200 rounded-xl px-2 py-5 grid lg:grid-cols-6 xl:grid-cols-7 xs:grid-cols-1 md:grid-cols-4 gap-2 sm:grid-cols-3  items-center justify-between flex-wrap sm:flex-nowrap"
 
                 >
                   <div className="flex items-center justify-start  gap-4">
@@ -605,7 +605,7 @@ const WhatsappFlows = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center md:justify-center lg:justify-center gap-3 mt-3 sm:mt-0">
+                  <div className="flex items-center md:justify-center lg:justify-center gap-1 mt-3 sm:mt-0">
                     {flow.status === "DRAFT" && (
                       <div className="relative inline-block">
                         <button
@@ -700,7 +700,7 @@ const WhatsappFlows = () => {
                   </div>
 
                   {/* <div className="flex items-center justify-end gap-3 mt-3 sm:mt-0"> */}
-                    <div className="flex items-center md:justify-center lg:justify-between gap-3 mt-3 sm:mt-0">
+                  <div className="flex items-center md:justify-center lg:justify-between gap-1 mt-3 sm:mt-0">
                     <button
                       className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 border-2 border-white rounded-3xl text-sm flex items-center gap-2 flex-nowrap whitespace-nowrap "
                       onClick={() => {

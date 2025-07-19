@@ -23,7 +23,7 @@ export const Preview = ({
   handleNextIndex,
   handlePreviousIndex,
   setSelectedCardIndex,
-   subType,
+  subType,
 }) => {
   const [pree, setPree] = useState();
 
@@ -160,7 +160,7 @@ export const Preview = ({
                   />
                 )} */}
 
-                 <p className="text-xs">
+                <p className="text-xs">
                   {subType === "video" && "(Video Thumbnail)"}
                 </p>
                 <img
@@ -168,9 +168,9 @@ export const Preview = ({
                     subType === "image"
                       ? URL.createObjectURL(pree?.cardData?.filePath)
                       : URL.createObjectURL(
-                          pree?.cardData?.thumbnailPath ??
-                            pree?.cardData?.filePath
-                        )
+                        pree?.cardData?.thumbnailPath ??
+                        pree?.cardData?.filePath
+                      )
                   }
                   alt="Uploaded content"
                   className="h-full w-full"
@@ -178,7 +178,7 @@ export const Preview = ({
               </div>
             )}
 
-             {/* {pree?.cardData?.thumbnailPath && (
+            {/* {pree?.cardData?.thumbnailPath && (
               <div className="mb-0 w-full h-35">
                 <img
                   src={pree.cardData.thumbnailPath}

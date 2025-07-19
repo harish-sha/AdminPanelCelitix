@@ -132,6 +132,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       "apiDocs",
       "CallBack",
       "Managecontacts",
+      "chatManagement",
     ];
 
     // const allowedServices = menuItems.map((item) => {

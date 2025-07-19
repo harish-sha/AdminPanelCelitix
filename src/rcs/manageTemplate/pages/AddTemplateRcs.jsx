@@ -417,8 +417,8 @@ const AddTemplateRcs = () => {
           toast.error("Please upload a file");
           return;
         }
-      
-         if (!card?.thumbnailPath) {
+
+        if (inputData.subType === "video" && !card?.thumbnailPath) {
           isError = true;
           toast.error("Please upload a thumbnail");
           return;
@@ -735,7 +735,7 @@ const AddTemplateRcs = () => {
                 label: "Text",
                 value: "text",
               },
-               {
+              {
                 label: "Text with PDF",
                 value: "text_message_with_pdf",
               },
@@ -782,7 +782,7 @@ const AddTemplateRcs = () => {
           </div>
         )} */}
 
-         {inputData.templateType &&
+        {inputData.templateType &&
           inputData.templateType !== "text" &&
           inputData.templateType !== "text_message_with_pdf" && (
             <div className="w-full sm:w-56">
@@ -867,7 +867,7 @@ const AddTemplateRcs = () => {
             />
           )}
 
-           {inputData.templateType === "text_message_with_pdf" && (
+          {inputData.templateType === "text_message_with_pdf" && (
             <Pdf
               pdfTemplateState={pdfTemplateState}
               setPdfTemplateState={setPdfTemplateState}

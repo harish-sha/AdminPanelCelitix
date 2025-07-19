@@ -18,6 +18,8 @@ import { marked } from "marked";
 import { useDispatch } from "react-redux";
 import DrawOutlinedIcon from "@mui/icons-material/DrawOutlined";
 import { deleteFlowItem } from "../redux/features/FlowSlice";
+import draganddrop from "@/assets/animation/draganddrop.json";
+import Lottie from "lottie-react";
 
 const Canvas = ({
   items,
@@ -1167,8 +1169,8 @@ const Canvas = ({
           borderRadius: "10px",
         }}
         className={`w-110 p-2 mb-3 rounded-lg shadow-md mt-10 ${item.status === 0
-          ? "border-2 border-red-300"
-          : "border-2 border-green-300"
+            ? "border-2 border-red-300"
+            : "border-2 border-green-300"
           }`}
       >
         <div className="flex items-center justify-between">
@@ -1662,6 +1664,20 @@ const Canvas = ({
               design your personalized WhatsApp experience.
             </p>
           </motion.div>
+          {/* <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            transition={{ type: "spring", stiffness: 200, damping: 25 }}
+            className="flex flex-col items-center p-5 rounded-2xl border-dashed border-indigo-300 shadow-2xl"
+          >
+            <Lottie
+              animationData={draganddrop}
+              loop
+              autoplay
+              className="w-150 h-auto "
+            />
+          </motion.div> */}
         </div>
       )}
       <div className="w-1/3 ml-5">

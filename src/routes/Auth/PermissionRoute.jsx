@@ -100,6 +100,7 @@ export const PermissionRoute = ({ children }) => {
       "Manage Contacts",
       "openRoutes",
       "WorkFlow",
+      "chatManagement",
     ];
 
     return menuItems.filter(
@@ -126,6 +127,6 @@ export const PermissionRoute = ({ children }) => {
     );
 
   if (!isPathAllowed) return <PageNotFound />;
-  
+
   return <Outlet />;
 };

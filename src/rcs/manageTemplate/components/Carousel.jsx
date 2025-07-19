@@ -58,8 +58,8 @@ export const Carousel = ({
         fileRefs.current[selectedCardIndex].value = "";
       } else {
         fileRefs.current[selectedCardIndex].filename = data?.fileName;
+      }
     }
-  }
     if (thumbnailRefs.current[selectedCardIndex]) {
       const data = caraousalData[selectedCardIndex];
       if (!data?.thumbnailTempPath && !data?.thumbnailPath) {
@@ -67,7 +67,7 @@ export const Carousel = ({
       }
     }
 
-     // if (thumbnailRefs.current[selectedCardIndex]) {
+    // if (thumbnailRefs.current[selectedCardIndex]) {
     //   const data = caraousalData[selectedCardIndex];
     //   if (!data?.thumbnailTempPath && !data?.thumbnailPath) {
     //     thumbnailRefs.current[selectedCardIndex].value = "";
@@ -278,12 +278,12 @@ export const Carousel = ({
     [selectedCardIndex, setCaraousalData, cardheight, cardwidth]
   );
 
-   const handleThumbnailChange = useCallback(
+  const handleThumbnailChange = useCallback(
     (e, index) => {
       if (!thumbnailRefs.current[index]) return;
       const file = e.target.files?.[0];
 
-       if (file.size > 100 * 1024) {
+      if (file.size > 100 * 1024) {
         return toast.error("Thumbnail size must be less than 100KB.");
       }
 
@@ -348,7 +348,7 @@ export const Carousel = ({
     }
   };
 
-   const handleUploadThumbnail = async () => {
+  const handleUploadThumbnail = async () => {
     try {
       if (!caraousalData[selectedCardIndex]?.thumbnailTempPath) {
         return toast.error("Please select a file first");
@@ -597,9 +597,9 @@ Images: Max 1MB | Videos: Max 5MB`}
               name={`uploadfile-${selectedCardIndex + 1}`}
               onChange={handleImageChange}
               ref={(el) => (fileRefs.current[selectedCardIndex] = el)}
-               // fileName={fileRefs.current[selectedCardIndex]?.filename }
+              // fileName={fileRefs.current[selectedCardIndex]?.filename }
               // value={fileRefs.current[selectedCardIndex]?.value || ""}
-               accept={
+              accept={
                 subType === "video"
                   ? "video/*"
                   : "image/png, image/jpeg, image/jpg, image/webp"
@@ -607,29 +607,26 @@ Images: Max 1MB | Videos: Max 5MB`}
               className="block w-full p-1.5 h-[2.275rem] border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm border-gray-300"
             />
 
-            <button onClick={handleUploadFile}>
-              <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
-            </button>
-            {/* {caraousalData[selectedCardIndex]?.fileName && (
+            {caraousalData[selectedCardIndex]?.fileName && (
+              <button onClick={handleUploadFile}>
+                <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
+              </button>
+            )}
+
+            {caraousalData[selectedCardIndex]?.fileName && (
               <button onClick={handleDeleteFile}>
                 <MdOutlineDeleteForever
                   className="text-red-500 cursor-pointer hover:text-red-600"
                   size={20}
                 />
               </button>
-            )} */}
-
-             {!caraousalData[selectedCardIndex]?.fileName && (
-              <button onClick={handleUploadFile}>
-                <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
-              </button>
             )}
-            
+
           </div>
         </div>
       </div>
 
-        {/* Thumbnail */}
+      {/* Thumbnail */}
 
       {subType === "video" && (
         <div className="flex flex-col gap-2 mb-2 ">

@@ -1,5 +1,8 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router, Routes, Route,
+  Outlet,
+} from "react-router-dom";
 
 // mainlayout
 import Mainlayout from "@/mainlayout/Mainlayout";
@@ -143,6 +146,12 @@ import { UpdateWorkflow } from "@/workflow/edit";
 
 // Self Recharge
 import SelfRecharge from "@/SelfRecharge/SelfRecharge";
+
+// CombineLiveChat
+import LiveChatDashboard from "@/CombineLiveChats/pages/LiveChatDashboard";
+import LiveChatLayout from "@/CombineLiveChats/pages/LiveChatLayout";
+import CombineLiveChatSettings from "@/CombineLiveChats/pages/CombineLiveChatSettings";
+import Pointingup from "@/CombineLiveChats/components/Settings/Pointingup";
 
 // dummy
 import Dummy from "../../dummy/Dummy";
@@ -309,6 +318,18 @@ const Approutes = () => {
         <Route path="/workflow" element={<WorkflowDetails />} />
         <Route path="/workflow/create" element={<WorkflowCreate />} />
         <Route path="/workflow/edit" element={<UpdateWorkflow />} />
+
+        {/* Combine Live Chat */}
+        <Route path="liveChatMain" element={<LiveChatLayout />}>
+          <Route index element={<LiveChatDashboard />} />
+          <Route path=":channel" element={<Outlet />} />
+        </Route>
+
+        {/* Combine Live Chat setting */}
+        <Route path="combineLiveChatSettings" element={<CombineLiveChatSettings />}>
+          <Route index element={<Pointingup />} />
+          <Route path=":channel" element={<Outlet />} />
+        </Route>
 
         {/* self recharge */}
         <Route path="/selfrecharge" element={<SelfRecharge />} />

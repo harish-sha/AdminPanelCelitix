@@ -7,7 +7,6 @@ const DynamicObdVariable = ({ variables = [], selectVariable }) => {
     const dropdownRef = useRef(null);
 
     const handleSelect = (variable) => {
-        // console.log("variableeee", variable)
         selectVariable(variable)
     }
 
