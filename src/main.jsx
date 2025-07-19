@@ -12,6 +12,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { DownloadProvider } from "./context/DownloadProvider.jsx";
 import { Provider } from "react-redux";
 import store from "./whatsapp/whatsappFlows/redux/Store.js";
+import NetworkStatusProvider from "./context/NetworkStatusProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -24,7 +25,8 @@ createRoot(document.getElementById("root")).render(
           <DownloadProvider>
             <DndProvider backend={HTML5Backend}>
               <Provider store={store}>
-                <App />
+                {/* <NetworkStatusProvider></NetworkStatusProvider> */}
+                  <App />
               </Provider>
             </DndProvider>
           </DownloadProvider>

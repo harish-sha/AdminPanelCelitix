@@ -70,7 +70,7 @@ export const ChatInput = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
-      className="flex items-center w-full py-2 px-2 bg-white border-t md:mb-0"
+      className="flex items-center w-full py-2 px-2 bg-white border-t mb-8 md:mb-0"
     >
       <div className="mr-2">
         <CustomEmojiPicker position="top" onSelect={insertEmoji} />

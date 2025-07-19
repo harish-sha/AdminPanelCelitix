@@ -15,36 +15,39 @@ import {
 import { FaAngleDoubleDown } from "react-icons/fa";
 import { FaAngleDoubleUp } from "react-icons/fa";
 import { useUser } from "@/context/auth";
+// import { Player } from '@lottiefiles/react-lottie-player';
+
+
 
 const channels = [
-  {
-    service_type_id: "1",
-    label: "Dashboard",
-    value: "",
-    icon: <FaThLarge className="text-gray-500 text-lg" />,
-  },
+  //   {
+  //     service_type_id: "1",
+  //     label: "Dashboard",
+  //     value: "",
+  //     icon: <FaThLarge className="text-gray-500 text-lg" />,
+  //   },
   {
     service_type_id: "2",
     label: "WhatsApp",
-    value: "wlivechat",
+    value: "wlcsetting",
     icon: <FaWhatsapp className="text-green-500 text-lg" />,
   },
   {
     service_type_id: "3",
     label: "RCS",
-    value: "rcslivechats",
+    value: "rcslcsetting",
     icon: <FaCommentDots className="text-purple-500 text-lg" />,
   },
   {
     service_type_id: "4",
     label: "Instagram",
-    value: "instachats",
+    value: "instalcsetting",
     icon: <FaInstagram className="text-pink-500 text-lg" />,
   },
   {
     service_type_id: "5",
     label: "Messenger",
-    value: "messengerchats",
+    value: "messengerlcsetting",
     icon: <FaFacebookMessenger className="text-blue-500 text-lg" />,
   },
 ];
@@ -68,21 +71,23 @@ const quickActions = [
   },
 ];
 
-const ChannelTabs = () => {
+
+
+const ChannelTabSettings = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const activeTab = pathname.split("/")[2];
   const [showActions, setShowActions] = useState(true);
 
-  // const { user } = useUser();
-  // const allowedServiceIds =
-  //   user?.services?.map((s) => s.service_type_id.toString()) || [];
+  const { user } = useUser();
+  const allowedServiceIds =
+    user?.services?.map((s) => s.service_type_id.toString()) || [];
 
-  // const visibleChannels = channels.filter(
-  //   (ch) =>
-  //     ch.service_type_id === "1" ||
-  //     allowedServiceIds.includes(ch.service_type_id)
-  // );
+  const visibleChannels = channels.filter(
+    (ch) =>
+      ch.service_type_id === "1" ||
+      allowedServiceIds.includes(ch.service_type_id)
+  );
 
   return (
     <div className="flex flex-col gap-1 relative z-10">
@@ -90,7 +95,7 @@ const ChannelTabs = () => {
         {channels.map((ch) => (
           <button
             key={ch.value}
-            onClick={() => navigate(`/liveChatMain/${ch.value}`)}
+            onClick={() => navigate(`/combineLiveChatSettings/${ch.value}`)}
             className="relative group px-4 py-3 text-sm font-medium cursor-pointer"
           >
             <div className="flex items-center gap-2">
@@ -106,7 +111,7 @@ const ChannelTabs = () => {
           </button>
         ))}
 
-        <div className="flex items-center">
+        {/* <div className="flex items-center">
           <motion.button
             onClick={() => setShowActions((prev) => !prev)}
             className="p-2 rounded-full hover:bg-gray-100 transition"
@@ -124,11 +129,11 @@ const ChannelTabs = () => {
               )}
             </motion.div>
           </motion.button>
-        </div>
+        </div> */}
       </div>
 
       {/* Quick Actions */}
-      <AnimatePresence initial={false}>
+      {/* <AnimatePresence initial={false}>
         {showActions && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
@@ -150,9 +155,14 @@ const ChannelTabs = () => {
             </div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
+
+
+      
+
+
     </div>
   );
 };
 
-export default ChannelTabs;
+export default ChannelTabSettings;

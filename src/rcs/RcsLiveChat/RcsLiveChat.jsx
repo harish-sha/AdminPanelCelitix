@@ -7,7 +7,7 @@ import {
   sendRCSMessage,
   sendRCSTemplateMessage,
 } from "@/apis/rcs/rcs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { InputData } from "./components/input";
 import { Sidebar } from "./components/sidebar";
@@ -17,15 +17,15 @@ import moment from "moment";
 import { TemplateDialog } from "./components/templateDialog";
 
 const RcsLiveChat = () => {
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [agentState, setAgentState] = React.useState({
+  const [isLoading, setIsLoading] = useState(false);
+  const [agentState, setAgentState] = useState({
     all: [],
     id: "",
   });
 
-  const [mobileNo, setMobileNo] = React.useState("");
-  const [btnOption, setBtnOption] = React.useState("active");
-  const [chatState, setChatState] = React.useState({
+  const [mobileNo, setMobileNo] = useState("");
+  const [btnOption, setBtnOption] = useState("active");
+  const [chatState, setChatState] = useState({
     selected: null,
     input: "",
     allConversations: [],
@@ -37,38 +37,38 @@ const RcsLiveChat = () => {
     // replyData: "",
     // isReply: false,
   });
-  const [input, setInput] = React.useState("");
-  const inputRef = React.useRef(null);
-  const fileInputRef = React.useRef(null);
+  const [input, setInput] = useState("");
+  const inputRef = useRef(null);
+  const fileInputRef = useRef(null);
 
-  const [isSpeedDialOpen, setIsSpeedDialOpen] = React.useState(false);
+  const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
 
-  const [isTemplateMessage, setIsTemplateMessage] = React.useState(false);
-  const [templateState, setTemplateState] = React.useState({
+  const [isTemplateMessage, setIsTemplateMessage] = useState(false);
+  const [templateState, setTemplateState] = useState({
     all: [],
     selected: "",
   });
-  const [templateDetails, setTemplateDetails] = React.useState({});
-  const [templateSendData, setTemplateSendData] = React.useState({});
+  const [templateDetails, setTemplateDetails] = useState({});
+  const [templateSendData, setTemplateSendData] = useState({});
 
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const [varLength, setVarLength] = React.useState(0);
-  const [varList, setVarList] = React.useState([]);
-  const [inputVariables, setInputVariables] = React.useState([]);
+  const [varLength, setVarLength] = useState(0);
+  const [varList, setVarList] = useState([]);
+  const [inputVariables, setInputVariables] = useState([]);
 
   //btnVar
-  const [btnvarLength, setBtnVarLength] = React.useState(0);
-  const [btnvarList, setBtnVarList] = React.useState([]);
-  const [btninputVariables, setBtnInputVariables] = React.useState([]);
+  const [btnvarLength, setBtnVarLength] = useState(0);
+  const [btnvarList, setBtnVarList] = useState([]);
+  const [btninputVariables, setBtnInputVariables] = useState([]);
 
-  const [carVar, setCarVar] = React.useState({
+  const [carVar, setCarVar] = useState({
     length: 0,
     data: {},
   });
-  const [carVarInput, setCarVarInput] = React.useState([]);
+  const [carVarInput, setCarVarInput] = useState([]);
 
-  const [finalVarList, setFinalVarList] = React.useState([]);
+  const [finalVarList, setFinalVarList] = useState([]);
 
   async function handleFetchAgents() {
     try {
@@ -85,7 +85,7 @@ const RcsLiveChat = () => {
   async function handleFetchAllConvo() {
     if (!agentState?.id) return;
     try {
-       setIsLoading(true);
+      setIsLoading(true);
       const userActive = btnOption == "active" ? 1 : 0;
       const payload = {
         agentId: agentState?.id,
@@ -128,8 +128,8 @@ const RcsLiveChat = () => {
       toast.error("Error fetching conversations");
     } finally {
       setIsLoading(false);
+    }
   }
-}
 
   async function handleFetchSpecificConvo() {
     if (!chatState.active) return;
@@ -370,7 +370,7 @@ const RcsLiveChat = () => {
 
 
 
-   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 768px)");
@@ -416,13 +416,13 @@ const RcsLiveChat = () => {
       </div>
 
       <AnimatePresence>
-      {!chatState.active && !isSmallScreen && (
+        {!chatState.active && !isSmallScreen && (
           <motion.div
             key="empty-chat"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="relative flex flex-col items-center justify-center bg-gradient-to-br from-green-50 via-white to-green-100 border flex-1 border-tr-lg "
+            className="relative flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-100 border flex-1 border-tr-lg "
           >
             {/* Background Animation - Floating Bubbles */}
             <div className="absolute inset-0 overflow-hidden z-0 pointer-events-none">
@@ -435,7 +435,7 @@ const RcsLiveChat = () => {
                   repeatType: "mirror",
                   ease: "easeInOut",
                 }}
-                className="absolute left-10 top-10 w-64 h-64 bg-green-200 opacity-30 rounded-full"
+                className="absolute left-10 top-10 w-64 h-64 bg-blue-200 opacity-30 rounded-full"
               />
               <motion.div
                 initial={{ x: -100 }}
@@ -446,7 +446,7 @@ const RcsLiveChat = () => {
                   repeatType: "mirror",
                   ease: "easeInOut",
                 }}
-                className="absolute bottom-10 right-10 w-48 h-48 bg-green-300 opacity-30 rounded-full"
+                className="absolute bottom-10 right-10 w-48 h-48 bg-blue-300 opacity-30 rounded-full"
               />
             </div>
 
@@ -471,7 +471,7 @@ const RcsLiveChat = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-3xl font-semibold text-green-900 mb-2"
+                className="text-3xl font-semibold text-blue-900 mb-2"
               >
                 Welcome to LiveChat!
               </motion.h2>
@@ -486,8 +486,8 @@ const RcsLiveChat = () => {
               </motion.p>
             </motion.div>
           </motion.div>
-      )}
-      
+        )}
+
         {chatState.active && (
           <motion.div
             key="chat-screen"

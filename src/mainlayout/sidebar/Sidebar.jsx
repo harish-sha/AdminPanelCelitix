@@ -209,7 +209,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       type: "dropdown",
       links: [
         { to: "/wlaunchcampaign", label: "Launch Campaigns" },
-        { to: "/wlivechat", label: "Live Chats" },
+        // { to: "/wlivechat", label: "Live Chats" },
         { to: "/wmanagecampaign", label: "Manage Campaigns" },
         { to: "/managetemplate", label: "Manage Templates" },
         // { to: "/wmanageoptin", label: "Manage Optin" },
@@ -344,19 +344,19 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       links: [{ to: "/recharge", label: "Recharge" }],
       roles: ["ADMIN"],
     },
-    // {
-    //   id: "",
-    //   name: "chatManagement",
-    //   icon: <QuickreplyOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
+    {
+      id: "",
+      name: "chatManagement",
+      icon: <QuickreplyOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
 
-    //   label: "Chats Management",
-    //   type: "dropdown",
-    //   links: [
-    //     { to: "/liveChatMain/", label: "Chats Section" },
-    //     { to: "/combineLiveChatSettings", label: "Chats Settings" },
-    //   ],
-    //   roles: ["ADMIN"],
-    // },
+      label: "Chats Management",
+      type: "dropdown",
+      links: [
+        { to: "/liveChatMain/", label: "Chats Section" },
+        { to: "/combineLiveChatSettings", label: "Chats Settings" },
+      ],
+      roles: ["ADMIN"],
+    },
     {
       id: "",
       name: "Managecontacts",
@@ -477,6 +477,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       "CallBack",
       "Managecontacts",
       "Workflow",
+      "chatManagement",
     ];
 
     // menuItems.forEach((item) => {

@@ -12,7 +12,6 @@ export const TemplateDialog = ({
   templateState,
   setTemplateState,
   handleSendTemplateMessage,
-
   templateDetails,
   varList,
   setVarList,

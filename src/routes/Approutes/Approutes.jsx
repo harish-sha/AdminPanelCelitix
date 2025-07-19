@@ -169,6 +169,8 @@ import Details from "@/LeadManager/pages/details/Details";
 // CombineLiveChat
 import LiveChatDashboard from "@/CombineLiveChats/pages/LiveChatDashboard";
 import LiveChatLayout from "@/CombineLiveChats/pages/LiveChatLayout";
+import CombineLiveChatSettings from "@/CombineLiveChats/pages/CombineLiveChatSettings";
+import Pointingup from "@/CombineLiveChats/components/Settings/Pointingup";
 
 // dummy
 import Dummy from "../../dummy/Dummy";
@@ -364,6 +366,12 @@ const Approutes = () => {
         {/* Combine Live Chat */}
         <Route path="liveChatMain" element={<LiveChatLayout />}>
           <Route index element={<LiveChatDashboard />} />
+          <Route path=":channel" element={<Outlet />} />
+        </Route>
+
+        {/* Combine Live Chat setting */}
+        <Route path="combineLiveChatSettings" element={<CombineLiveChatSettings />}>
+          <Route index element={<Pointingup />} />
           <Route path=":channel" element={<Outlet />} />
         </Route>
       </Route>

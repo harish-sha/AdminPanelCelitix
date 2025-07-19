@@ -1346,12 +1346,12 @@ const WhatsappLiveChatSettings = () => {
       message: "",
       type: "off_hour_msg",
       tooltip: (
-    <>
-      <div><b>What it does:</b> Sends a one-time auto-reply to the user’s first message after business hours.</div>
-      
-      <div><b>Example:</b> “Our team is unavailable now. We’ll reply during our shift, 10 AM–7 PM.”</div>
-    </>
-  )
+        <>
+          <div><b>What it does:</b> Sends a one-time auto-reply to the user’s first message after business hours.</div>
+
+          <div><b>Example:</b> “Our team is unavailable now. We’ll reply during our shift, 10 AM–7 PM.”</div>
+        </>
+      )
     },
     {
       id: 3,
@@ -1370,11 +1370,11 @@ const WhatsappLiveChatSettings = () => {
       message: "",
       type: "inactive_agent_timing",
       tooltip: (
-    <>
-      <div><b>What it does:</b> Auto-replies when no agent is online based on shift time settings.</div>
-      
-      <div><b>Example:</b> “No agents are online right now. We'll respond after 10 AM.”</div>
-    </>)
+        <>
+          <div><b>What it does:</b> Auto-replies when no agent is online based on shift time settings.</div>
+
+          <div><b>Example:</b> “No agents are online right now. We'll respond after 10 AM.”</div>
+        </>)
     },
     // { id: 4, name: "Agent-No-Response", button: ["Configure Text"], desc: "Automatically greet customers when they message you during off hours.", message: "", type: "agent_no_response" },
   ];
@@ -1445,7 +1445,7 @@ const WhatsappLiveChatSettings = () => {
     }
     if (activeTab === "settings")
       return (
-        <div className="p-2 bg-white rounded-lg shadow">
+        <div className="p-2 bg-white rounded-lg shadow overflow-auto h-155 md:h-auto  pb-20 md:pb-0">
           <>
             <div
               // sx={{
@@ -1454,7 +1454,7 @@ const WhatsappLiveChatSettings = () => {
               //   px: 2,
               //   borderRadius: "20px",
               // }}
-              className="min-h-[89.4vh] bg-gradient-to-br from-indigo-50 via-white to-purple-50 rounded-xl py-6 px-4 shadow-lg"
+              className="min-h-[89.4vh] bg-gradient-to-br from-indigo-50 via-white to-purple-50 rounded-xl py-6 px-0 md:px-4 shadow-lg overflow-auto md:h-[100vh] pb-20 md:pb-30"
             >
               {/* <CannedMessageManager /> */}
 
@@ -1586,7 +1586,7 @@ const WhatsappLiveChatSettings = () => {
             </MotionPaper>
           </Grid>
         </Grid> */}
-              <div className="bg-white rounded-2xl shadow-lg flex flex-col items-center justify-center h-auto p-5 border-3 border-dashed border-indigo-200">
+              <div className="bg-white rounded-2xl shadow-lg flex flex-col items-center justify-center h-auto p-0 md:p-5 border-3 border-dashed border-indigo-200 ">
                 {wabaState.selected ? (
                   <div className=" flex flex-wrap justify-center items-center gap-5  mx-auto">
                     {liveChatCards.map((card) => {
@@ -1708,7 +1708,7 @@ const WhatsappLiveChatSettings = () => {
                     })}
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-138">
+                  <div className="flex flex-col items-center justify-center p-5 2xl:p-25">
                     <AnimatePresence>
                       <motion.div
                         initial={{ opacity: 0, y: 30 }}
@@ -1795,9 +1795,9 @@ const WhatsappLiveChatSettings = () => {
                           <Switch
                             sx={{
                               "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                                {
-                                  backgroundColor: "#34C759",
-                                },
+                              {
+                                backgroundColor: "#34C759",
+                              },
                               "& .MuiSwitch-switchBase.Mui-checked": {
                                 color: "#34C759",
                               },
@@ -1892,7 +1892,7 @@ const WhatsappLiveChatSettings = () => {
 
     if (activeTab === "users")
       return (
-        <div className="p-2 bg-white rounded-lg shadow">
+        <div className="p-2 bg-white rounded-lg shadow overflow-auto h-155 md:h-auto pb-20 md:pb-0">
           <div className="min-h-[89.4vh] bg-gradient-to-br from-indigo-50 via-white to-purple-50 rounded-xl py-6 px-4 shadow-lg">
             <div className=" mx-auto">
               <div className="text-center mb-4 ">
@@ -1920,129 +1920,132 @@ const WhatsappLiveChatSettings = () => {
                 />
               </div>
 
-              <div className="bg-white rounded-2xl shadow-lg p-5 h-150 border-3 border-dashed border-indigo-200">
-                {!selectedWaba ? (
-                  <div className="flex flex-col items-center justify-center h-full">
-                    <AnimatePresence>
-                      <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 30 }}
-                        transition={{ duration: 0.3 }}
-                        className="border-3 p-8 border-indigo-200 rounded-2xl border-dashed shadow-2xl"
-                      >
-                        <motion.div
-                          animate={{ y: [0, -10, 0] }}
-                          transition={{ repeat: Infinity, duration: 1.2 }}
-                          className="mb-2 flex items-center justify-center"
-                        >
-                          <FaHandPointDown
-                            className="text-5xl text-indigo-400"
-                            style={{ transform: "rotate(180deg)" }}
-                          />
-                        </motion.div>
-                        <h3 className="text-xl font-semibold text-green-800 mb-2">
-                          Please select a WABA account
-                        </h3>
-                        <p className="text-gray-500 text-center max-w-xs text-sm">
-                          Choose a WABA from the dropdown above to view blocked
-                          users.
-                        </p>
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
-                ) : loading ? (
-                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {skeletonCards}
-                  </div>
-                ) : blockedUsers.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full">
-                    <AnimatePresence>
-                      <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 30 }}
-                        transition={{ duration: 0.3 }}
-                        className="flex flex-col items-center w-max justify-center border-3 p-8 border-indigo-200 rounded-2xl border-dashed shadow-2xl"
-                      >
-                        <CgUnblock className="text-6xl text-indigo-400 animate-bounce mb-0" />
-                        <h3 className="text-lg font-semibold text-gray-700">
-                          No Blocked Users
-                        </h3>
-                        <p className="text-gray-500 text-center mt-2 max-w-xs text-sm">
-                          All clear! No users are currently blocked for this
-                          WABA.
-                        </p>
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
-                ) : (
-                  <>
-                    <div className="mb-6 flex justify-start">
-                      <input
-                        type="number"
-                        placeholder="Search number..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="border border-gray-300 rounded-lg px-3 py-1.5 w-full max-w-xs focus:outline-none "
-                      />
-                    </div>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 overflow-scroll h-120 border-t-2 border-dashed pt-2">
+              <div className="bg-white rounded-2xl shadow-lg flex flex-col items-center justify-center h-auto p-5 border-3 border-dashed border-indigo-200">
+                <div className="flex flex-col items-center justify-center p-5 2xl:p-25">
+
+                  {!selectedWaba ? (
+                    <div className="flex flex-col items-center justify-center h-auto md:h-full">
                       <AnimatePresence>
-                        {filteredUsers.length === 0 ? (
-                          <AnimatePresence>
-                            <motion.div
-                              initial={{ opacity: 0, y: 30 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: 30 }}
-                              transition={{ duration: 0.3 }}
-                              className="col-span-full flex flex-col items-center justify-center h-full"
-                            >
-                              <CgUnblock className="text-6xl text-indigo-400 animate-bounce mb-4" />
-                              <h3 className="text-xl font-semibold text-gray-700">
-                                No Blocked Users
-                              </h3>
-                              <p className="text-gray-500 text-center mt-2 max-w-xs text-sm">
-                                All clear! No users are currently blocked for
-                                this WABA.
-                              </p>
-                            </motion.div>
-                          </AnimatePresence>
-                        ) : (
-                          filteredUsers.map((user) => (
-                            <motion.div
-                              key={user.wa_id}
-                              initial={{ opacity: 0, y: 30 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: 30 }}
-                              transition={{ duration: 0.3 }}
-                              className="bg-white rounded-2xl shadow-md p-5 flex flex-col justify-between border border-indigo-50 h-35"
-                            >
-                              <div className="mb-4">
-                                <h3 className="text-md font-semibold text-gray-700">
-                                  {highlightMatch(user.wa_id, search)}
-                                </h3>
-                                <p className="text-sm text-gray-500">
-                                  Blocked from: {selectedWaba}
-                                </p>
-                              </div>
-                              <button
-                                onClick={() => {
-                                  setSelectedId(user.wa_id);
-                                  setDialogVisible(true);
-                                }}
-                                className="mt-auto inline-flex items-center justify-center gap-2 bg-red-100 text-red-700 hover:bg-red-200 transition px-4 py-2 rounded-lg text-sm font-medium cursor-pointer "
-                              >
-                                <CgUnblock size={18} />
-                                Unblock
-                              </button>
-                            </motion.div>
-                          ))
-                        )}
+                        <motion.div
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 30 }}
+                          transition={{ duration: 0.3 }}
+                          className="border-3 p-8 border-indigo-200 rounded-2xl border-dashed shadow-2xl"
+                        >
+                          <motion.div
+                            animate={{ y: [0, -10, 0] }}
+                            transition={{ repeat: Infinity, duration: 1.2 }}
+                            className="mb-2 flex items-center justify-center"
+                          >
+                            <FaHandPointDown
+                              className="text-5xl text-indigo-400"
+                              style={{ transform: "rotate(180deg)" }}
+                            />
+                          </motion.div>
+                          <h3 className="text-xl font-semibold text-green-800 mb-2">
+                            Please select a WABA account
+                          </h3>
+                          <p className="text-gray-500 text-center max-w-xs text-sm">
+                            Choose a WABA from the dropdown above to view blocked
+                            users.
+                          </p>
+                        </motion.div>
                       </AnimatePresence>
                     </div>
-                  </>
-                )}
+                  ) : loading ? (
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {skeletonCards}
+                    </div>
+                  ) : blockedUsers.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full">
+                      <AnimatePresence>
+                        <motion.div
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 30 }}
+                          transition={{ duration: 0.3 }}
+                          className="flex flex-col items-center w-max justify-center border-3 px-0 md:px-8 py-4 md:py-8 border-indigo-200 rounded-2xl border-dashed shadow-2xl"
+                        >
+                          <CgUnblock className="text-6xl text-indigo-400 animate-bounce mb-0" />
+                          <h3 className="text-lg font-semibold text-gray-700">
+                            No Blocked Users
+                          </h3>
+                          <p className="text-gray-500 text-center mt-2 max-w-xs text-sm">
+                            All clear! No users are currently blocked for this
+                            WABA.
+                          </p>
+                        </motion.div>
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mb-6 flex justify-start">
+                        <input
+                          type="number"
+                          placeholder="Search number..."
+                          value={search}
+                          onChange={(e) => setSearch(e.target.value)}
+                          className="border border-gray-300 rounded-lg px-3 py-1.5 w-full max-w-xs focus:outline-none "
+                        />
+                      </div>
+                      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 overflow-scroll h-120 border-t-2 border-dashed pt-2">
+                        <AnimatePresence>
+                          {filteredUsers.length === 0 ? (
+                            <AnimatePresence>
+                              <motion.div
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 30 }}
+                                transition={{ duration: 0.3 }}
+                                className="col-span-full flex flex-col items-center justify-center h-full"
+                              >
+                                <CgUnblock className="text-6xl text-indigo-400 animate-bounce mb-4" />
+                                <h3 className="text-xl font-semibold text-gray-700">
+                                  No Blocked Users
+                                </h3>
+                                <p className="text-gray-500 text-center mt-2 max-w-xs text-sm">
+                                  All clear! No users are currently blocked for
+                                  this WABA.
+                                </p>
+                              </motion.div>
+                            </AnimatePresence>
+                          ) : (
+                            filteredUsers.map((user) => (
+                              <motion.div
+                                key={user.wa_id}
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 30 }}
+                                transition={{ duration: 0.3 }}
+                                className="bg-white rounded-2xl shadow-md p-5 flex flex-col justify-between border border-indigo-50 h-35"
+                              >
+                                <div className="mb-4">
+                                  <h3 className="text-md font-semibold text-gray-700">
+                                    {highlightMatch(user.wa_id, search)}
+                                  </h3>
+                                  <p className="text-sm text-gray-500">
+                                    Blocked from: {selectedWaba}
+                                  </p>
+                                </div>
+                                <button
+                                  onClick={() => {
+                                    setSelectedId(user.wa_id);
+                                    setDialogVisible(true);
+                                  }}
+                                  className="mt-auto inline-flex items-center justify-center gap-2 bg-red-100 text-red-700 hover:bg-red-200 transition px-4 py-2 rounded-lg text-sm font-medium cursor-pointer "
+                                >
+                                  <CgUnblock size={18} />
+                                  Unblock
+                                </button>
+                              </motion.div>
+                            ))
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -2088,21 +2091,20 @@ const WhatsappLiveChatSettings = () => {
   };
 
   return (
-    <div className="flex h-full bg-gray-50">
+    <div className="flex flex-row flex-wrap h-full bg-gray-50">
       {/* Sidebar */}
-      <aside className="w-55 bg-white border-r rounded-lg shadow-sm">
-        <div className="p-4 text-xl font-bold text-gray-800">WhatsApp Chat</div>
-        <nav className="">
+      <aside className="w-full md:w-55 bg-white border-r rounded-lg shadow-sm md:mb-0 mb-2">
+        {/* <div className="p-4 text-xl font-bold text-gray-800">WhatsApp Chat</div> */}
+        <nav className="mt-2 flex md:flex-col md:gap-0 gap-3 w-full">
           {tabs.map((tab) => (
-            <div key={tab.key}>
+            <div key={tab.key} className="w-full p-1">
               <button
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center w-full px-4 py-3 mb-1 text-sm font-medium rounded-lg transition-colors hover:bg-gray-100 focus:outline-none ${
-                  activeTab === tab.key
-                    ? "bg-blue-100 text-blue-600"
-                    : "text-gray-700"
-                }`}
+                className={`flex items-center w-full px-4 py-3 mb-1 text-sm font-medium rounded-lg transition-colors hover:bg-gray-100 focus:outline-none ${activeTab === tab.key
+                  ? "bg-blue-100 text-blue-600"
+                  : "text-gray-700"
+                  }`}
               >
                 <span className="mr-2">{tab.icon}</span>
                 {tab.label}
@@ -2115,11 +2117,10 @@ const WhatsappLiveChatSettings = () => {
                       key={opt.key}
                       type="button"
                       onClick={() => setActiveSub(opt.key)}
-                      className={`flex items-center w-full px-3 py-2 text-sm rounded-md transition-colors hover:bg-blue-50 focus:outline-none ${
-                        activeSub === opt.key
-                          ? "bg-blue-50 text-blue-600 font-semibold"
-                          : "text-gray-600"
-                      }`}
+                      className={`flex items-center w-full px-3 py-2 text-sm rounded-md transition-colors hover:bg-blue-50 focus:outline-none ${activeSub === opt.key
+                        ? "bg-blue-50 text-blue-600 font-semibold"
+                        : "text-gray-600"
+                        }`}
                     >
                       <span className="mr-2">{opt.icon}</span>
                       {opt.label}
@@ -2134,7 +2135,7 @@ const WhatsappLiveChatSettings = () => {
       </aside>
 
       {/* Content Area */}
-      <main className="flex-1 overflow-auto">{renderContent()}</main>
+      <main className="md:flex-1 w-full overflow-auto">{renderContent()}</main>
     </div>
   );
 };

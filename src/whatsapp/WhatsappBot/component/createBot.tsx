@@ -1212,7 +1212,8 @@ const CreateWhatsAppBot = () => {
               nodesInputData={nodesInputData}
               setNodesInputData={setNodesInputData}
               details={details}
-               setIsVisible={setIsVisible}
+              setIsVisible={setIsVisible}
+              allVariables={allVariables}
             />
           ) : null}
 
@@ -1220,8 +1221,8 @@ const CreateWhatsAppBot = () => {
             <Button onClick={handleSaveNodeData}>Save</Button>
             <Button onClick={() => setIsVisible(false)}>Cancel</Button>
           </div>
-          
-           {type !== "template" && (
+
+          {type !== "template" && (
             <div className="flex gap-2">
               <Button onClick={handleSaveNodeData}>Save</Button>
               <Button onClick={() => setIsVisible(false)}>Cancel</Button>

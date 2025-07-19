@@ -15,9 +15,9 @@ import RcsChats from "@/CombineLiveChats/components/ServiceLayout/RcsChats";
 const LiveChatLayout = () => {
   const { channel } = useParams();
   const { user } = useUser();
-  // const allowedServiceIds =
-  //   user?.services?.map((s) => s.service_type_id.toString()) || [];
-  const allowedServiceIds = ["7", "8", "9", "10"]; // dummmy
+  const allowedServiceIds =
+    user?.services?.map((s) => s.service_type_id.toString()) || [];
+  // const allowedServiceIds = ["7", "8", "9", "10"]; // dummmy
 
   const { pathname } = useLocation();
   const tab = pathname.split("/")[2];
@@ -33,13 +33,13 @@ const LiveChatLayout = () => {
       case "rcslivechats":
         return allowedServiceIds.includes("3") ? <RcsLiveChat /> : <RcsChats />;
       case "instachats":
-        return allowedServiceIds.includes("4") ? (
+        return allowedServiceIds.includes("9") ? (
           <InstagramLiveChat />
         ) : (
           <InstagramChats />
         );
       case "messengerchats":
-        return allowedServiceIds.includes("5") ? (
+        return allowedServiceIds.includes("8") ? (
           <MessengerView />
         ) : (
           <MessengerChats />
@@ -49,7 +49,7 @@ const LiveChatLayout = () => {
     }
   };
   return (
-    <div className="h-[91vh] w-full flex flex-col rounded-2xl bg-gray-50">
+    <div className="h-[91vh] w-full flex flex-col rounded-2xl">
       <ChannelTabs />
       <div className="overflow-hidden pt-1">
         {/* <Outlet /> */}

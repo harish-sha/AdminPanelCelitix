@@ -130,16 +130,16 @@ const Login = () => {
         ...prev,
         systemInfo: uaResult.browser.name || "Unknown",
         ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // systemInfo: "chrome",
-        // ip: "183.83.52.139",
+        // systemInfo: "Chrome",
+        // ip: "183.83.52.251",
       }));
 
       const payloadd = {
         ...inputDetails,
         systemInfo: uaResult.browser.name || "Unknown",
         ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // systemInfo: "chrome",
-        // ip: "183.83.52.139",
+        // systemInfo: "Chrome",
+        // ip: "183.83.52.251",
       };
 
       delete payloadd.rememberMe;

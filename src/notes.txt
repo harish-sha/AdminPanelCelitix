@@ -17,5 +17,12 @@ pass: QZ@5x4bC
 =====================remember before build==========
 1.sidebar - replace menuitems to filteredItems
 2. login page - replace systeminfo and ip with live api
+3.apiclient - remove proxy 
 
+
+===============merge files user to reseller july19=====================
+
+===================RCS===================
+===================Whatsapp==============
+===================OBD===================
 
