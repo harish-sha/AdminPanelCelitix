@@ -263,20 +263,18 @@ export const TemplateNode = ({
               disabled={false}
             />
           </div>
-          {specificTemplate &&
-            (variablesData?.btn?.length > 0 ||
-              variablesData?.data?.length > 0) && (
-              <Variables
-                variablesData={variablesData}
-                setVariablesData={setVariablesData}
-                specificTemplate={specificTemplate}
-                fileRef={fileRef}
-                setBasicDetails={setBasicDetails}
-                fileData={fileData}
-                setFileData={setFileData}
-                allVariables={allVariables}
-              />
-            )}
+          {specificTemplate && (
+            <Variables
+              variablesData={variablesData}
+              setVariablesData={setVariablesData}
+              specificTemplate={specificTemplate}
+              fileRef={fileRef}
+              setBasicDetails={setBasicDetails}
+              fileData={fileData}
+              setFileData={setFileData}
+              allVariables={allVariables}
+            />
+          )}
           {templateType === "location" && (
             <div className="w-full mt-4 p-2">
               <h1 className="mb-2 text-lg font-semibold text-gray-700">
