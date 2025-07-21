@@ -405,6 +405,9 @@ const WhatsappFlows = () => {
     </div>
   );
 
+  const [positionAbove, setPositionAbove] = useState(false);
+
+
   return (
     <>
       <div className=" bg-white border border-gray-300 rounded-xl shadow-sm mb-3 md:px-3 px-0 pt-2">
@@ -501,7 +504,7 @@ const WhatsappFlows = () => {
           </div>
 
           {/* Flows */}
-          <div className="space-y-4 h-100  overflow-y-auto lg:overflow-y-hidden">
+          <div className="space-y-4 h-100 overflow-y-auto lg:overflow-y-hidden">
             {isLoading ? (
               <div className="w-full">
                 <div className="flex flex-col gap-3">
@@ -537,11 +540,9 @@ const WhatsappFlows = () => {
                 <div
                   key={index}
                   className="bg-blue-100 border border-blue-200 rounded-xl px-2 py-5 grid lg:grid-cols-6 xl:grid-cols-7 xs:grid-cols-1 md:grid-cols-4 gap-2 sm:grid-cols-3  items-center justify-between flex-wrap sm:flex-nowrap"
-
                 >
-                  <div className="flex items-center justify-start  gap-4">
+                  <div className="flex items-center justify-start gap-4">
                     <div className="bg-white flex items-center justify-center p-0.5 rounded-full shadow">
-
                       {flow.status === "DRAFT" && (
                         <RadioButtonCheckedOutlinedIcon
                           className="text-orange-500"
@@ -643,7 +644,16 @@ const WhatsappFlows = () => {
                               initial={{ opacity: 0, y: -10 }}
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -10 }}
-                              className="absolute z-10 mt-2 left-0 w-80 bg-white rounded-xl shadow-xl border border-gray-200 p-4"
+                              className={`absolute z-10 mt-2 left-0 w-80 bg-white rounded-xl shadow-xl border border-gray-200 p-4
+                                ${positionAbove ? "bottom-full mb-2" : "top-full mt-2"}
+                                `}
+                              ref={(el) => {
+                                if (el) {
+                                  const rect = el.getBoundingClientRect();
+                                  const viewportHeight = window.innerHeight;
+                                  setPositionAbove(rect.bottom > viewportHeight); // Flip if it would overflow
+                                }
+                              }}
                             >
                               <p className="text-sm text-gray-800 font-semibold">
                                 Are you sure you want to publish?

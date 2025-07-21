@@ -1396,7 +1396,7 @@ const SmsReports = () => {
             <Tab
               label={
                 <span>
-                  <GradingOutlinedIcon size={20} /> Campaigns Logs
+                  <GradingOutlinedIcon size={20} /> Campaign Logs
                 </span>
               }
               {...a11yProps(0)}

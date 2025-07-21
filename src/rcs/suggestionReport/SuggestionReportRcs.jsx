@@ -253,7 +253,7 @@ const SuggestionReportRcs = () => {
     },
     {
       field: "insertTime",
-      headerName: "Receive Time",
+      headerName: "Received Time",
       flex: 1,
       minWidth: 120,
       renderCell: (params) => (

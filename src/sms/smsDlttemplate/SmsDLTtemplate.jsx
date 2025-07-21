@@ -226,7 +226,7 @@ const SmsDLTtemplate = () => {
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 10 },
-    { field: "userid", headerName: "UserId", flex: 0, minWidth: 100 },
+    { field: "userid", headerName: "USER ID", flex: 0, minWidth: 100 },
     {
       field: "templatename",
       headerName: "Template Name",
@@ -681,7 +681,7 @@ const SmsDLTtemplate = () => {
                 <AnimatedDropdown
                   id="templateId"
                   name="templateId"
-                  label="Template Id"
+                  label="Template ID"
                   options={contactData?.headers?.map((header, index) => ({
                     label: header,
                     value: header,
@@ -753,7 +753,7 @@ const SmsDLTtemplate = () => {
                 <AnimatedDropdown
                   id="senderId"
                   name="senderId"
-                  label="senderId"
+                  label="sender ID"
                   options={contactData?.headers?.map((header, index) => ({
                     label: header,
                     value: header,
@@ -883,7 +883,7 @@ const SmsDLTtemplate = () => {
               <InputField
                 id="entityId"
                 name="entityId"
-                label="Entity Id"
+                label="Entity ID"
                 value={updateTemplateData.entityId}
                 onChange={(e) => {
                   setUpdateTemplateData({
@@ -895,7 +895,7 @@ const SmsDLTtemplate = () => {
               <InputField
                 id="templateId"
                 name="templateId"
-                label="Template Id"
+                label="Template ID"
                 value={updateTemplateData.templateId}
                 onChange={() => {
                   setUpdateTemplateData({
@@ -923,7 +923,7 @@ const SmsDLTtemplate = () => {
             <InputField
               id="senderId"
               name="senderId"
-              label="Sender Id"
+              label="Sender ID"
               value={updateTemplateData.senderId}
               onChange={(e) => {
                 setUpdateTemplateData({

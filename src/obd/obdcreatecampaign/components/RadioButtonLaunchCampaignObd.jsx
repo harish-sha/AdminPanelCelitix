@@ -279,7 +279,7 @@ const RadioButtonLaunchCampaignObd = ({
               htmlFor="radioOption1"
               className="text-gray-700 font-medium text-sm cursor-pointer"
             >
-              Select Group
+              Select Groups
             </label>
           </div>
         </div>
@@ -297,7 +297,7 @@ const RadioButtonLaunchCampaignObd = ({
               htmlFor="radioOption2"
               className="text-gray-700 font-medium text-sm cursor-pointer"
             >
-              import contact
+              Import Contacts
             </label>
           </div>
         </div>

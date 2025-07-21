@@ -127,7 +127,7 @@ export const PaginationTable = ({
                     )}
 
                     <Typography variant="body2">
-                        Total Records: <span className="font-semibold">{rows.length}</span>
+                        Total Records: <span className="font-semibold">{totalPage}</span>
                     </Typography>
                 </Box>
 

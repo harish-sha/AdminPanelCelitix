@@ -416,7 +416,7 @@ const DeliveryreportRcs = () => {
               <Tab
                 label={
                   <span>
-                    <GradingOutlinedIcon fontSize="small" /> Campaigns Logs
+                    <GradingOutlinedIcon fontSize="small" /> Campaign Logs
                   </span>
                 }
                 {...a11yProps(0)}

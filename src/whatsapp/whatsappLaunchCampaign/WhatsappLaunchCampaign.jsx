@@ -809,7 +809,7 @@ const WhatsappLaunchCampaign = () => {
                       </div>
                     </div>
                   )}
-                  <div className="flex flex-col w-full mt-2 mb-2 gap-2 border-2 p-2 rounded-md border-gray-300">
+                  {/* <div className="flex flex-col w-full mt-2 mb-2 gap-2 border-2 p-2 rounded-md border-gray-300">
                     <div className="flex items-center gap-2">
                       <input
                         type="checkbox"
@@ -843,7 +843,7 @@ const WhatsappLaunchCampaign = () => {
                         });
                       }}
                     />
-                  </div>
+                  </div> */}
                   <div>
                     {isFetching ? (
                       // <UniversalSkeleton height="15rem" width="100%" />
@@ -896,7 +896,10 @@ const WhatsappLaunchCampaign = () => {
                     setIsUploaded={setIsUploaded}
                     fileRef={fileRef}
                     setSelectedOption={setSelectedOption}
-                  // setIsCountryCodeChecked={setIsCountryCodeChecked}
+                    // setIsCountryCodeChecked={setIsCountryCodeChecked}
+                    workflowState={workflowState}
+                    setWorkflowState={setWorkflowState}
+                    allWorkflows={allWorkflows}
                   />
                 </div>
               </div>

@@ -79,20 +79,20 @@ const WhatsappLaunchPreview = ({
                 className="object-cover w-full h-48 bg-center bg-no-repeat border border-gray-200 rounded-md"
               />
               <div className="flex items-center justify-center w-full p-2 text-sm text-center bg-gray-100 border border-gray-300 rounded-md h-30">
-                No template selected
+                No Template Selected
               </div>
               <div className="flex flex-col gap-2">
                 <button className="flex items-center justify-center px-4 py-2 text-white bg-blue-500 rounded-md ">
                   <BsTelephoneFill className="mr-2" />
-                  Contact us
+                  Contact Us
                 </button>
                 <button className="flex items-center justify-center px-4 py-2 text-white bg-green-500 rounded-md ">
                   <FaExternalLinkAlt className="mr-2" />
-                  Visit us
+                  Visit Us
                 </button>
                 <button className="flex items-center justify-center w-full px-4 py-2 text-sm text-gray-800 bg-gray-200 rounded-md">
                   <FaReply className="mr-2" />
-                  View more
+                  View More
                 </button>
               </div>
             </div>

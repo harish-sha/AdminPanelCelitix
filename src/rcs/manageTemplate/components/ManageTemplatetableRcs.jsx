@@ -112,9 +112,10 @@ const ManageTemplatetableRcs = ({
       headerName: "Template Type",
       flex: 1,
       minWidth: 120,
+      renderCell: (params) => params.row.templateType?.toUpperCase(),
     },
-    { field: "insertTime", headerName: "Insert Time", flex: 1, minWidth: 120 },
-    { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+    { field: "insertTime", headerName: "Created On", flex: 1, minWidth: 120 },
+    { field: "status", headerName: "Status", flex: 1, minWidth: 120, renderCell: (params) => params.row.status?.toUpperCase(), },
     {
       field: "active",
       headerName: "Active",

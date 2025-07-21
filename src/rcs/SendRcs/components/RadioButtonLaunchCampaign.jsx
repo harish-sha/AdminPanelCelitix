@@ -149,7 +149,7 @@ export const RadioButtonLaunchCampaign = ({
                 htmlFor="radioOption1"
                 className="text-sm font-medium text-gray-700 cursor-pointer"
               >
-                Select Group
+                Select Groups
               </label>
               <CustomTooltip
                 title={"Choose a pre-saved contact group for this campaign."}
@@ -181,7 +181,7 @@ export const RadioButtonLaunchCampaign = ({
                 htmlFor="radioOption2"
                 className="text-sm font-medium text-gray-700 cursor-pointer"
               >
-                Import Contact
+                Import Contacts
               </label>
               <CustomTooltip
                 title={

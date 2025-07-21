@@ -308,10 +308,6 @@ const ObdManageVoiceClips = () => {
 
       if (res?.message === "Record not found") {
         setRows([]);
-
-        if (isSearchTriggered) {
-          toast.error("No data available");
-        }
         return;
       }
 
@@ -320,19 +316,11 @@ const ObdManageVoiceClips = () => {
           ? item.fileName.toLowerCase().includes(searchValue.name.toLowerCase())
           : true;
 
-        // const matchesStatus = searchValue?.user
-        //   ? item.status == searchValue.user
-        //   : true;
-
-        // const matchesAdminStatus = searchValue?.admin
-        //   ? item.adminStatus == searchValue.admin
-        //   : true;
-
         const matchesCategory = searchValue?.category !== ""
           ? item.isDynamic == searchValue.category
           : true;
 
-        const matchesType = searchValue?.type !== ""
+        const matchesType = searchValue?.type
           ? item.type == searchValue.type
           : true;
 
@@ -494,7 +482,7 @@ const ObdManageVoiceClips = () => {
           variableValue: dynamicVoice?.voiceName,
         };
         const res = await saveDynamicVoice(payload);
-         setIsVisible(false);
+        setIsVisible(false);
         // toast.success(res.msg);
         //  setDynamicVoice({});
       }
@@ -636,7 +624,7 @@ const ObdManageVoiceClips = () => {
                 placeholder="Search"
                 label="Search"
                 onClick={() => {
-                  setIsSearchTriggered(true);
+                  // setIsSearchTriggered(true);
                   handlefetchAllVoiceClips();
                 }}
                 icon={<IoSearch />}

@@ -498,8 +498,15 @@ const ManageCampaignTable = ({
       headerName: "Template Type",
       flex: 1,
       minWidth: 120,
+      renderCell: (params) => params.row.templateType?.toUpperCase(),
     },
-    { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+    {
+      field: "status",
+      headerName: "Status",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => params.row.status?.toUpperCase(),
+    },
     {
       field: "totalAudience",
       headerName: "Total Audience",
