@@ -6,6 +6,7 @@ import { RadioButton } from "primereact/radiobutton";
 import { Dropdown } from "primereact/dropdown";
 import toast from "react-hot-toast";
 import * as XLSX from "xlsx";
+import { LuWorkflow } from "react-icons/lu";
 
 import {
   campaignUploadFile,
@@ -32,6 +33,10 @@ function RadioButtonLaunchCampaign({
   fileRef,
   selectedOption,
   setSelectedOption,
+
+  workflowState,
+  setWorkflowState,
+  allWorkflows,
   // setIsCountryCodeChecked
 }) {
   // const [selectedOption, setSelectedOption] = useState("option2");
@@ -425,8 +430,9 @@ function RadioButtonLaunchCampaign({
                 <button
                   onClick={handleFileUpload}
                   disabled={isUploading}
-                  className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
-                    }`}
+                  className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
+                    isUploading ? "disabled" : ""
+                  }`}
                 >
                   <FileUploadOutlinedIcon
                     sx={{ color: "white", fontSize: "23px" }}
@@ -503,7 +509,6 @@ function RadioButtonLaunchCampaign({
                 }
               }}
             />
-
           </div>
         )}
 
@@ -609,6 +614,65 @@ function RadioButtonLaunchCampaign({
           </div>
         </div>
       )}
+
+      {/* workflow */}
+
+      <div className="p-4 border rounded-xl bg-gradient-to-b from-white to-gray-50 shadow hover:shadow-md transition-shadow duration-200">
+        {/* Toggle Section */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <LuWorkflow />
+            <label
+              htmlFor="toggleWorkflow"
+              className="text-sm font-semibold text-gray-700"
+            >
+              Add Workflow?
+            </label>
+          </div>
+
+          {/* Custom Toggle */}
+          <button
+            onClick={() => {
+              setWorkflowState({
+                workflowFlag: workflowState.workflowFlag === "1" ? "0" : "1",
+                workflowSrno: "",
+                workflowValueObject: {},
+              });
+            }}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
+              workflowState.workflowFlag === "1" ? "bg-blue-500" : "bg-gray-300"
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
+                workflowState.workflowFlag === "1"
+                  ? "translate-x-6"
+                  : "translate-x-1"
+              }`}
+            />
+          </button>
+        </div>
+
+        {/* Dropdown Section */}
+        <DropdownWithSearch
+          id="selectWorkflow"
+          name="selectWorkflow"
+          label="Select Workflow"
+          tooltipContent="Choose a predefined workflow to apply."
+          tooltipPlacement="right"
+          placeholder="Select a Workflow..."
+          disabled={!Number(workflowState.workflowFlag)}
+          options={allWorkflows}
+          value={workflowState.workflowSrno}
+          onChange={(value) => {
+            setWorkflowState({
+              ...workflowState,
+              workflowSrno: value,
+            });
+          }}
+          className="w-full"
+        />
+      </div>
     </div>
   );
 }

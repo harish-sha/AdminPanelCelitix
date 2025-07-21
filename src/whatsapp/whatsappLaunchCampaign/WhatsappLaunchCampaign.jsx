@@ -809,41 +809,7 @@ const WhatsappLaunchCampaign = () => {
                       </div>
                     </div>
                   )}
-                  <div className="flex flex-col w-full mt-2 mb-2 gap-2 border-2 p-2 rounded-md border-gray-300">
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 bg-gray-200 border-gray-300 rounded cursor-pointer"
-                        onChange={(e) => {
-                          setWorkflowState({
-                            workflowFlag: e.target.checked ? "1" : "0",
-                            workflowSrno: "",
-                            workflowValueObject: {},
-                          });
-                        }}
-                      />
-                      <label className="text-sm font-medium">
-                        Add Workflow?
-                      </label>
-                    </div>
-                    <DropdownWithSearch
-                      id="selectWorkflow"
-                      name="selectWorkflow"
-                      label="Select Workflow"
-                      tooltipContent=""
-                      tooltipPlacement="right"
-                      placeholder="Workflow"
-                      disabled={!Number(workflowState.workflowFlag)}
-                      options={allWorkflows}
-                      value={workflowState.workflowSrno}
-                      onChange={(value) => {
-                        setWorkflowState({
-                          ...workflowState,
-                          workflowSrno: value,
-                        });
-                      }}
-                    />
-                  </div>
+                  
                   <div>
                     {isFetching ? (
                       // <UniversalSkeleton height="15rem" width="100%" />
@@ -896,6 +862,9 @@ const WhatsappLaunchCampaign = () => {
                     setIsUploaded={setIsUploaded}
                     fileRef={fileRef}
                     setSelectedOption={setSelectedOption}
+                    workflowState={workflowState}
+                    setWorkflowState={setWorkflowState}
+                    allWorkflows={allWorkflows}
                   // setIsCountryCodeChecked={setIsCountryCodeChecked}
                   />
                 </div>
