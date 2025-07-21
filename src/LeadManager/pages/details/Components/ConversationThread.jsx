@@ -19,8 +19,8 @@ export default function ConversationThread() {
 
       {/* Reply box */}
       <div className="flex items-start space-x-3 bg-gray-50 p-4 rounded">
-        <div className="w-10 h-10 bg-gray-200 rounded-full grid place-content-center text-gray-500">P</div>
-        <div className="flex-1 space-x-2">
+        <div className="w-10 h-10 bg-gray-200 rounded-full grid place-content-center text-gray-500 ">P</div>
+        <div className="flex-1 space-y-2 md:space-x-2">
           <button className="btn-sm">Reply</button>
           <button className="btn-sm">Add note</button>
           <button className="btn-sm">Forward</button>

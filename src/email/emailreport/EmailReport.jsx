@@ -34,13 +34,13 @@ const EmailReport = () => {
       field: "templateName",
       headerName: "Template Name",
       flex: 1,
-      minWidth: 120,
+      minWidth: 170,
     },
     {
       field: "createOn",
       headerName: "Create On",
       flex: 1,
-      minWidth: 120,
+      minWidth: 160,
     },
     {
       field: "status",
@@ -264,21 +264,21 @@ const EmailReport = () => {
     <>
       <div className="w-full">
         <p className="text-xl font-semibold mt-4">Delivery Per Country</p>
-        <div className="flex flex-row gap-2 w-full justify-around">
+        <div className="flex md:flex-row flex-col gap-2 w-full justify-around">
           <div className="flex flex-row justify-ceneter items-center ">
             <DoughnutChartDemo />
           </div>
 
-          <div className="flex flex-row-reverse gap-5 mt-4">
+          <div className="flex md:flex-row-reverse flex-col-reverse gap-5 mt-4">
             <VerticalBarDemo />
-            <p className="flex-col  ml-10 text-xl font-semibold ">
+            <p className="flex-col  md:ml-10 ml-1 text-xl font-semibold ">
               Opens
               <br />
               <span className="text-sm ">Daily Page Hits</span>
             </p>
           </div>
         </div>
-        <div className="flex flex-row gap-3 mt-4 w-full">
+        <div className="flex md:flex-row flex-col gap-3 mt-4 w-full">
           <ActionAreaCard />
         </div>
 

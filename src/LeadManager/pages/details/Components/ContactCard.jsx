@@ -14,7 +14,7 @@ import TimelinePanel from "./TimelinePanel";
 
 export default function SidebarSections() {
   return (
-    <div className="flex-1 space-y-2 p-2 overflow-y-auto">
+    <div className="flex-1 space-y-2 p-3 overflow-y-auto h-">
       {/* Contact Details */}
       <Disclosure defaultOpen>
         {({ open }) => (

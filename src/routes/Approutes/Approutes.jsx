@@ -7,7 +7,6 @@ import Mainlayout from "@/mainlayout/Mainlayout";
 // dashboard
 import Dashboard from "@/dashboard/Dashboard";
 
-
 // Whatsapp
 import ManageTemplate from "@/whatsapp/managetemplate/Managetemplate";
 import WhatsappLaunchCampaign from "@/whatsapp/whatsappLaunchCampaign/WhatsappLaunchCampaign";
@@ -28,7 +27,6 @@ import WhatsappFlows from "@/whatsapp/whatsappFlows/Pages/WhatsappFlows";
 import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
 import SelfRecharge from "@/whatsapp/SelfRecharge/SelfRecharge";
 import { EditFlow } from "@/whatsapp/whatsappFlows/Pages/FlowEditPage";
-
 
 // manage funds
 import Recharge from "@/managefunds/recharge/Recharge";
@@ -116,7 +114,11 @@ import AuthenticatorSetting from "@/appauthenticator/authenticatorsettings/Authe
 
 // Email
 import EmailReport from "@/email/emailreport/EmailReport";
-import EmailTemplate from "@/email/emailtemplate/EmailTemplate";
+import EmailTemplateLayout from "@/email/emailtemplate/EmailTemplateLayout";
+import EmailDashboard from "@/email/emailtemplate/pages/EmailDashboard";
+import EmailLibrary from "@/email/emailtemplate/pages/EmailLibrary";
+import EmailTemplate from "@/email/emailtemplate/pages/EmailTemplate";
+import EmailSetting from "@/email/emailtemplate/pages/EmailSetting";
 
 // LeadManager
 import LeadManager from "@/LeadManager/LeadManager";
@@ -129,6 +131,10 @@ import LeadMain from "@/LeadManager/pages/LeadMain";
 import LeadForms from "@/LeadManager/pages/LeadForms";
 import Details from "@/LeadManager/pages/details/Details";
 
+// settings
+import MediaSettings from "@/MainSettings/pages/MediaSettings";
+import MainSettings from "@/MainSettings/pages/MainSettings";
+
 // Number Lookup
 import HlrLookup from "@/numberlookup/hlrlookup/HlrLookup";
 import HlrLookupReports from "@/numberlookup/hlrlookupreports/HlrLookupReports";
@@ -137,6 +143,12 @@ import HlrLookupReports from "@/numberlookup/hlrlookupreports/HlrLookupReports";
 import Callback from "@/callback/Callback";
 import { AddCallback } from "@/callback/page/addCallback";
 import { EditCallback } from "@/callback/page/editCallback";
+
+// Instagram
+import ManageInstaTemplate from "@/instagram/ManageInstaTemplate/ManageInstaTemplate";
+import ManageInstaProfile from "@/instagram/Manageprofile/ManageInstaProfile";
+import InstaReports from "@/instagram/InstaReports/InstaReports";
+import InstaLiveChats from "@/instagram/Livechats/InstaLiveChats";
 
 // Not Found Page
 import PageNotFound from "@/NotFound/PageNotFound";
@@ -147,11 +159,11 @@ import Arihant from "../../random/arihant";
 // import { AddCallback } from "@/callback/page/addCallback";
 import ResellerDashboard from "../../ResellerDashboard";
 
+
 const Approutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Mainlayout />}>
-
         {/* dashboard */}
         {/* <Route index element={<Dashboard />} /> */}
         <Route index element={<ResellerDashboard />} />
@@ -253,6 +265,10 @@ const Approutes = () => {
         {/* Settings */}
         <Route path="settings" element={<Settings />} />
 
+        {/* Media Settings */}
+        <Route path="mainsettings" element={<MainSettings />} />
+        <Route path="mediasettings" element={<MediaSettings />} />
+
         {/* manage funds */}
         <Route path="recharge" element={<Recharge />} />
         <Route path="transactions" element={<Transactions />} />
@@ -289,17 +305,28 @@ const Approutes = () => {
         <Route path="/addcallback" element={<AddCallback />} />
         <Route path="/editcallback" element={<EditCallback />} />
 
+        {/* Instagram */}
+        <Route path="/instareport" element={<InstaReports />} />
+        <Route path="/instalivechats" element={<InstaLiveChats />} />
+        <Route path="/manageinstaprofile" element={<ManageInstaProfile />} />
+        <Route path="/manageinstatemplate" element={<ManageInstaTemplate />} />
 
         {/* Appauthenticator */}
         <Route path="/authreports" element={<AppauthenticatorReports />} />
         <Route path="/authsettings" element={<AuthenticatorSetting />} />
 
         {/* Email */}
-        <Route path="/emailtemplate" element={<EmailTemplate />} />
+        {/* <Route path="/emailtemplate" element={<EmailTemplate />} /> */}
+        <Route path="emailmanagement" element={<EmailTemplateLayout />}>
+          <Route index element={<EmailDashboard />} />
+          <Route path="emaillibrary" element={<EmailLibrary />} />
+          <Route path="emailltemplates" element={<EmailTemplate />} />
+          <Route path="emaillsettings" element={<EmailSetting />} />
+        </Route>
         <Route path="/emailreports" element={<EmailReport />} />
 
         {/* Lead Manager */}
-        <Route path="leadmanagement" element={<LeadManager />} >
+        <Route path="leadmanagement" element={<LeadManager />}>
           <Route path="leaddash" element={<LeadDash />} />
           <Route path="leadanalytics" element={<Analytics />} />
           <Route path="leadforms" element={<LeadForms />} />
@@ -317,7 +344,6 @@ const Approutes = () => {
       <Route path="*" element={<PageNotFound />} />
 
       <Route path="/reseller" element={<ResellerDashboard />} />
-
     </Routes>
   );
 };

@@ -67,7 +67,7 @@ export default function LeadSettings() {
   return (
     <div className="p-6">
       {/* Single section */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex md:flex-row flex-col items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Agent Productivity</h1>
         <div className="text-sm text-gray-500">
           0 of {features.length} Configured <span className="text-green-500">✓</span>

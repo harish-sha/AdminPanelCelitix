@@ -15,7 +15,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Divider from "@mui/material/Divider";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
-import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
+import LeaderboardOutlinedIcon from "@mui/icons-material/LeaderboardOutlined";
 import rcsicon from "../../assets/icons/RCS02.svg";
 import twoway from "../../assets/icons/TWOWAY.svg";
 import callback from "../../assets/icons/Callback02.svg";
@@ -25,6 +25,7 @@ import ibd from "../../assets/icons/IBD02.svg";
 import numberlookup from "../../assets/icons/Numberlookup.svg";
 import clicktwocall from "../../assets/icons/Click2Call02.svg";
 import { LuWandSparkles } from "react-icons/lu";
+import InstagramIcon from "@mui/icons-material/Instagram";
 
 import { useUser } from "@/context/auth";
 import { all } from "axios";
@@ -236,13 +237,13 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       roles: ["ADMIN"],
     },
     {
-      id: "",
+      id: "4",
       name: "E-mail",
       icon: <MdOutlineEmail />,
       label: "E-mail",
       type: "dropdown",
       links: [
-        { to: "/emailtemplate", label: "Email Template" },
+        { to: "/emailmanagement/", label: "Manage Template" },
         { to: "/emailreports", label: "Reports" },
       ],
       roles: ["ADMIN"],
@@ -300,16 +301,34 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
       roles: ["ADMIN"],
     },
-    // {
-    //     name: 'settings',
-    //     icon: <IoSettingsOutline />,
-    //     label: 'Settings',
-    //     type: "dropdown",
-    //     links: [
-    //         { to: '/mainsettings', label: 'Profile' },
-    //         { to: '/mainaccount', label: 'Account' },
-    //     ],
-    // },
+    {
+      name: "settings",
+      icon: <IoSettingsOutline />,
+      label: "Settings",
+      type: "dropdown",
+      links: [
+        // { to: '/mainsettings', label: 'Profile' },
+        // { to: '/mainaccount', label: 'Account' },
+        { to: "/mainsettings", label: "MainSettings" },
+        { to: "/mediasettings", label: "MediaSettings" },
+      ],
+    },
+
+    {
+      name: "instagram",
+      icon: <InstagramIcon sx={{ fontSize: "20px" }} />,
+      label: "Instagram",
+      type: "dropdown",
+      links: [
+        {
+          to: "/manageinstaprofile",
+          label: "Manage Profile",
+        },
+        { to: "/instalivechats", label: "Live Chats" },
+        { to: "/manageinstatemplate", label: "Templates" },
+        { to: "/instareport", label: "Reports" },
+      ],
+    },
     {
       id: "",
       name: "CallBack",
@@ -330,9 +349,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       icon: <IoWalletOutline />,
       label: "Manage Funds",
       type: "dropdown",
-      links: [
-        { to: "/recharge", label: "Recharge" },
-      ],
+      links: [{ to: "/recharge", label: "Recharge" }],
       roles: ["ADMIN"],
     },
     // {
@@ -381,7 +398,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     {
       id: "",
       name: "Leadmanagement",
-      icon: <LeaderboardOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
+      icon: (
+        <LeaderboardOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />
+      ),
       label: "Lead Management",
       type: "single",
       to: "/leadmanagement/leaddash",
@@ -443,6 +462,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       "apiDocs",
       "CallBack",
       "Managecontacts",
+      "instagram"
     ];
 
     // menuItems.forEach((item) => {
@@ -509,7 +529,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         ${isCollapsed ? "items-center " : "space-y-0"}`}
       style={{ maxHeight: "calc(100vh - 4rem)" }}
     >
-      {filteredItems.map((item) =>
+      {menuItems.map((item) =>
         item.type === "dropdown" ? (
           <Tooltip
             key={item.name}

@@ -59,6 +59,19 @@ export const PermissionRoute = ({ children }) => {
       ],
       roles: ["ADMIN"],
     },
+
+    {
+      name: "instagram",
+      links:[
+        "/manageinstatemplate",
+        "/manageinstaprofile",
+        "/instalivechats",
+        "/instareport"
+      ],
+      roles:["ADMIN"],
+
+    },
+
     {
       name: "Number Lookup",
       links: ["/hlrlookup", "/lookupreports"],
@@ -71,7 +84,7 @@ export const PermissionRoute = ({ children }) => {
     },
     {
       name: "E-mail",
-      links: ["/emailtemplate", "/emailreports"],
+      links: ["/emailmanagement/", "/emailmanagement/emaildashboard", "/emailmanagement/emaillibrary", "/emailmanagement/emailltemplates", "/emailmanagement/emaillsettings", "/emailreports"],
       roles: ["ADMIN"],
     },
     {
@@ -172,6 +185,14 @@ export const PermissionRoute = ({ children }) => {
       links: "/dummy",
       roles: ["ADMIN"],
     },
+    {
+      name: "mainSettings",
+      links: [
+        "/mainsettings",
+        "/mediasettings",
+      ],
+      roles: ["ADMIN"],
+    },
   ];
 
   const currentPath = location.pathname;
@@ -217,6 +238,17 @@ export const PermissionRoute = ({ children }) => {
       if (item.name === "Leadmanagement") {
         allowedServices.push(item);
       }
+      if (item.name === "E-mail") {
+        allowedServices.push(item);
+      }
+      if (item.name === "mainSettings") {
+        allowedServices.push(item);
+      }
+
+      if (item.name === "instagram") {
+        allowedServices.push(item);
+      }
+      
     });
 
     return allowedServices;

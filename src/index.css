@@ -251,7 +251,7 @@ a {
 
 /*hamburger  */
 /* From Uiverse.io by JulanDeAlb */
->>>>>>>origin/main .hamburger {
+.hamburger {
   cursor: pointer;
 }
 
@@ -502,4 +502,45 @@ a {
   @apply inline-flex items-center px-1 sm:px-2 py-1 text-sm font-medium
          bg-white border border-gray-300 rounded hover:bg-gray-50
          transition;
+}
+
+/* button.p-button {
+  width: 50px !important;
+  height: 50px !important;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+} */
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  );
+  animation: shine 1.2s linear infinite;
+}
+
+.bluetxt {
+  background: linear-gradient(to right, #2b40b0, #8447c6, #36bae2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -background-clip: text;
+  -text-fill-color: transparent;
 }

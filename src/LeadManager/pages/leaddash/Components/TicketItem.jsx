@@ -21,46 +21,51 @@ export function TicketItem({
   onSelect,
 }) {
   const priorityColor =
-    priority === "Low" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
+    priority === "Low"
+      ? "bg-green-100 text-green-800"
+      : "bg-red-100 text-red-800";
 
   // compute human-readable times
   const createdAgo = formatDistanceToNowStrict(createdAt, { addSuffix: false });
-  const responseIn = formatDistanceToNowStrict(firstResponseBy, { addSuffix: false });
+  const responseIn = formatDistanceToNowStrict(firstResponseBy, {
+    addSuffix: false,
+  });
 
   return (
     <div
-      className={`flex items-start justify-between p-4 mb-2 rounded shadow-sm hover:shadow-md ${selected ? "bg-yellow-50" : "bg-white"
+      className={`flex flex-wrap items-start justify-start  md:justify-between p-4 mb-2 rounded shadow-sm hover:shadow-md ${selected ? "bg-yellow-50" : "bg-white"
         }`}
     >
       {/* LEFT: checkbox + avatar + subject */}
-      <div className="flex items-start space-x-4 space-y-4">
+      <div className="flex flex-col md:flex-row items-start space-x-4 space-y-4">
         <input
           type="checkbox"
           checked={selected}
           onChange={() => onSelect(id)}
           className="mt-2 h-4 w-4"
         />
+        
+          <img src={avatar} alt="" className="h-10 w-10 rounded-full" />
+      
 
-        <img src={avatar} alt="" className="h-10 w-10 rounded-full" />
-
-        <div className="space-y-2">
-            {isNew && (
+        <div className="space-y-2 gap-2 flex flex-col   items-start justify-start">
+          {isNew && (
               <span className="px-2 py-0.5 text-xs font-semibold uppercase text-green-800 bg-green-100 rounded">
                 New
               </span>
             )}
-          <div className="flex items-center space-x-2">
-            <h3 className="text-sm font-medium flex items-center space-x-1">
-              <Link
-                to={`/leadmanagement/leaddash/details`}
-                className="text-indigo-600 hover:underline"
-              >
-                {subject}
-              </Link>
-              <span className="text-gray-400">#{number}</span>
-            </h3>
-          </div>
-          <div className="flex items-center space-x-1 text-xs text-gray-500">
+            <div className="flex flex-row items-center space-x-2">
+              <h3 className="text-sm font-medium flex items-center space-x-1">
+                <Link
+                  to={`/leadmanagement/leaddash/details`}
+                  className="text-indigo-600 hover:underline"
+                >
+                  {subject}
+                </Link>
+                <span className="text-gray-400">#{number}</span>
+              </h3>
+            </div>
+          <div className="flex flex-col items-start md:flex-row md:items-center space-x-1 text-xs text-gray-500">
             <span>{emoji}</span>
             <span>{submitter}</span>
             <span>&bull;</span>
@@ -75,9 +80,7 @@ export function TicketItem({
 
       {/* RIGHT: priority + status */}
 
-      
-
-      <div className=" items-center space-y-2">
+      <div className="md:items-start space-y-2 flex flex-wrap gap-2 md:flex-col mt-4 md:ml-19 md:mt-0">
         {/* Priority dropdown */}
         <Menu as="div" className="relative">
           <Menu.Button
@@ -89,11 +92,13 @@ export function TicketItem({
         ${priorityColor}
         hover:brightness-95
         transition
-      `}
+       `}
           >
             <span
               className="w-2 h-2 rounded-full block"
-              style={{ backgroundColor: priority === "Low" ? "#22c55e" : "#ef4444" }}
+              style={{
+                backgroundColor: priority === "Low" ? "#22c55e" : "#ef4444",
+              }}
             />
             <span>{priority}</span>
             <FiChevronDown className="text-xs" />
@@ -128,7 +133,7 @@ export function TicketItem({
         bg-gray-100 rounded-full
         hover:bg-gray-200
         transition
-      "
+       "
           >
             <FiUser className="text-base" />
             <span>Escalation…</span>
@@ -163,8 +168,8 @@ export function TicketItem({
         text-sm font-medium text-gray-700
         bg-gray-100 rounded-full
         hover:bg-gray-200
-        transition
-      "
+         transition
+       "
           >
             <span>{status}</span>
             <FiChevronDown className="text-xs" />

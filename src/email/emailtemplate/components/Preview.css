@@ -1,0 +1,63 @@
+ @import "quill/dist/quill.snow.css";
+
+.quill-content h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.quill-content h2 {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+.quill-preview .ql-align-center {
+  text-align: center;
+}
+
+.quill-preview .ql-align-right {
+  text-align: right;
+}
+
+.quill-preview ol {
+  list-style-type: decimal !important;
+  padding-left: 1.5rem !important;
+}
+
+.quill-preview ul {
+  list-style-type: disc !important;
+  padding-left: 1.5rem !important;
+}
+
+.quill-preview [data-list="bullet"] {
+  list-style-type: disc !important;
+}
+
+.quill-preview [data-list="ordered"] {
+  list-style-type: decimal !important;
+}
+
+/* Apply font styles in preview or content */
+.quill-preview .ql-font-serif,
+.quill-content .ql-font-serif {
+  font-family: "Georgia", "Times New Roman", serif;
+}
+
+.quill-preview .ql-font-sans,
+.quill-content .ql-font-sans {
+  font-family: "Helvetica", "Arial", sans-serif;
+}
+
+.quill-preview .ql-font-monospace,
+.quill-content .ql-font-monospace {
+  font-family: "Courier New", monospace;
+}
+
+
+
+.quill-content strong {
+  font-weight: 600;
+}
+.quill-content em {
+  font-style: italic;
+} 
+
+
+
