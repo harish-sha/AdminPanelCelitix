@@ -370,7 +370,7 @@ const ResellerDashboard = () => {
     {
       name: "WHATSAPP",
       icon: WhatsApp,
-      displayName: "Whatsapp",
+      displayName: "WhatsApp",
       animation: Animationwhatsapp2,
       desc: "Send real-time notifications",
       color: "from-green-100 to-green-300",
@@ -412,7 +412,7 @@ const ResellerDashboard = () => {
       icon: Email,
       displayName: "Email",
       animation: email2,
-      desc: "Campaign and transactional email",
+      desc: "Send campaign and transactional emails",
       color: "from-blue-100 to-blue-300",
     },
     {
@@ -637,9 +637,11 @@ const ResellerDashboard = () => {
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 300 }}
-                  className={`relative rounded-xl bg-gradient-to-br ${service.color
-                    } p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${hasService ? "ring-1 ring-green-300" : "ring-1 ring-red-300"
-                    } `}
+                  className={`relative rounded-xl bg-gradient-to-br ${
+                    service.color
+                  } p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${
+                    hasService ? "ring-1 ring-green-300" : "ring-1 ring-red-300"
+                  } `}
                 >
                   {hasService && (
                     <>
