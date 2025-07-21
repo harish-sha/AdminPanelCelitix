@@ -290,3 +290,31 @@ export const updateSMPP = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
+export const liveMonitoringWhatsapp = async (data) => {
+  return await fetchWithAuth(`/liveMonitoring/whatsapp-report`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+export const liveMonitoringRCS = async (data) => {
+  return await fetchWithAuth(`/liveMonitoring/rcs-report`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+export const liveMonitoringRCSStatus = async (data) => {
+  return await fetchWithAuth(`/liveMonitoring/rcs-status-report`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+export const liveMonitoringSendingService = async (data) => {
+  return await fetchWithAuth(
+    `/liveMonitoring/sending-service-data?type=Sending Current Progress`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
+};
