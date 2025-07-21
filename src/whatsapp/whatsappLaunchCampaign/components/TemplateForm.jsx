@@ -323,7 +323,7 @@ const TemplateForm = ({
           Template Category - {selectedTemplateData?.category || "N/A"}
         </h3>
         <h3 className="text-[0.8rem] font-medium text-white tracking-wider ">
-          Template Type - {selectedTemplateData?.type || "N/A"}
+          Template Type - {selectedTemplateData?.type?.toUpperCase() || "N/A"}
         </h3>
       </div>
 

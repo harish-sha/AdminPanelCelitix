@@ -466,7 +466,8 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
       headerName: "Created On",
       flex: 1,
       minWidth: 120,
-      renderCell: (params) => moment(params.row.queTime).format("DD-MM-YYYY HH:mm"),
+      renderCell: (params) =>
+        moment(params.row.queTime).format("DD-MM-YYYY HH:mm"),
     },
     {
       field: "campaignName",
@@ -491,8 +492,15 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
       headerName: "Template Type",
       flex: 1,
       minWidth: 120,
+      renderCell: (params) => params.row.templateType?.toUpperCase(),
     },
-    { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+    {
+      field: "status",
+      headerName: "Status",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => params.row.status?.toUpperCase(),
+    },
     {
       field: "totalAudience",
       headerName: "Total Audience",
@@ -657,18 +665,18 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
 
   const rows = Array.isArray(sortedData)
     ? data.map((item, index) => ({
-      id: index + 1,
-      sn: index + 1,
-      // queTime: formatDate(item.queTime) || "N/A",
-      queTime: moment(item.queTime).format("YYYY-MM-DD HH:mm:ss") || "N/A",
-      campaignName: item.campaignName || "N/A",
-      templateName: item.templateName || "N/A",
-      templateCategory: item.templateCategory || "N/A",
-      templateType: item.templateType || "N/A",
-      status: item.status || "N/A",
-      totalAudience: item.totalAudience || "0",
-      campaignSrno: item.campaignSrno,
-    }))
+        id: index + 1,
+        sn: index + 1,
+        // queTime: formatDate(item.queTime) || "N/A",
+        queTime: moment(item.queTime).format("YYYY-MM-DD HH:mm:ss") || "N/A",
+        campaignName: item.campaignName || "N/A",
+        templateName: item.templateName || "N/A",
+        templateCategory: item.templateCategory || "N/A",
+        templateType: item.templateType || "N/A",
+        status: item.status || "N/A",
+        totalAudience: item.totalAudience || "0",
+        campaignSrno: item.campaignSrno,
+      }))
     : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);

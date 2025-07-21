@@ -6,8 +6,7 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import { FaLinkSlash } from "react-icons/fa6";
 import { Carousel } from "react-responsive-carousel";
 import whatsappImg from "../../../assets/images/whatsappdummy.webp";
-import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
-
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 
 const replaceVariablesInText = (text, variables, type = "body") => {
   return text.replace(
@@ -79,20 +78,20 @@ const WhatsappLaunchPreview = ({
                 className="object-cover w-full h-48 bg-center bg-no-repeat border border-gray-200 rounded-md"
               />
               <div className="flex items-center justify-center w-full p-2 text-sm text-center bg-gray-100 border border-gray-300 rounded-md h-30">
-                No template selected
+                No Template Selected
               </div>
               <div className="flex flex-col gap-2">
                 <button className="flex items-center justify-center px-4 py-2 text-white bg-blue-500 rounded-md ">
                   <BsTelephoneFill className="mr-2" />
-                  Contact us
+                  Contact Us
                 </button>
                 <button className="flex items-center justify-center px-4 py-2 text-white bg-green-500 rounded-md ">
                   <FaExternalLinkAlt className="mr-2" />
-                  Visit us
+                  Visit Us
                 </button>
                 <button className="flex items-center justify-center w-full px-4 py-2 text-sm text-gray-800 bg-gray-200 rounded-md">
                   <FaReply className="mr-2" />
-                  View more
+                  View More
                 </button>
               </div>
             </div>
@@ -231,9 +230,11 @@ const WhatsappLaunchPreview = ({
                 <>
                   <iframe
                     id="gmap"
-                    src={`https://www.google.com/maps?q=${extractCoordinates(locationData?.url)?.lat
-                      },${extractCoordinates(locationData?.url)?.lng
-                      }&hl=es;z=14&output=embed`}
+                    src={`https://www.google.com/maps?q=${
+                      extractCoordinates(locationData?.url)?.lat
+                    },${
+                      extractCoordinates(locationData?.url)?.lng
+                    }&hl=es;z=14&output=embed`}
                     width="100%"
                     height="200"
                     className="border-none "
@@ -241,8 +242,12 @@ const WhatsappLaunchPreview = ({
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                   ></iframe>
-                  <div className="text-sm text-gray-800 font-bold">{locationData.name}</div>
-                  <div className="text-sm text-gray-600 font-semibold" >{locationData.address}</div>
+                  <div className="text-sm text-gray-800 font-bold">
+                    {locationData.name}
+                  </div>
+                  <div className="text-sm text-gray-600 font-semibold">
+                    {locationData.address}
+                  </div>
                 </>
               )}
 
@@ -251,7 +256,6 @@ const WhatsappLaunchPreview = ({
                   {headerComponent.text}
                 </div>
               )}
-
 
               {/* {headerComponent &&
                 (headerComponent?.format === "IMAGE" ? (
