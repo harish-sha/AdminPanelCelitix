@@ -39,11 +39,14 @@ const WhatsappQrCode = () => {
   };
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(qrLink).then(() => {
-      toast.success("Copied to clipboard!");
-    }).catch(() => {
-      toast.error("Failed to copy to clipboard. Please try again.");
-    });
+    navigator.clipboard
+      .writeText(qrLink)
+      .then(() => {
+        toast.success("Copied to clipboard!");
+      })
+      .catch(() => {
+        toast.error("Failed to copy to clipboard. Please try again.");
+      });
   };
 
   return (
@@ -53,7 +56,7 @@ const WhatsappQrCode = () => {
           label="WhatsApp QR Code Generator"
           id="whatsAppqrCodeGenerator"
           name="whatsAppQrCodeGenerator"
-          placeholder="Ex.: 919876543210"
+          placeholder="Ex.: 91XXXXXXXXXX"
           type="number"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
@@ -118,7 +121,7 @@ const WhatsappQrCode = () => {
         <UniversalButton
           id="copytoclipboard"
           name="copytoclipboard"
-          label="Copy to clipboard"
+          label="Copy to Clipboard"
           onClick={copyToClipboard}
         />
         <UniversalButton

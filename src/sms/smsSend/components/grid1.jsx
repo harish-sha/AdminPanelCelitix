@@ -174,10 +174,10 @@ export const Grid1 = ({
               />
               {/* <div className="z-99999"> */}
               <DropdownWithSearch
-                label="Sender Id"
+                label="Sender ID"
                 id="senderid"
                 name="senderid"
-                placeholder="Select Sender id"
+                placeholder="Select Sender ID"
                 options={inputDetails?.sender?.map((sender) => ({
                   label: sender,
                   value: sender,

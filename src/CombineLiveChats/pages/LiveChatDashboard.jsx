@@ -161,7 +161,7 @@ const LiveChatDashboard = () => {
         transition={{ duration: 0.4 }}
         className="mb-5 flex flex-wrap items-center md:justify-between justify-center"
       >
-        <h2 className="text-2xl font-semibold text-gray-800 ">Live Chat Dashboard</h2>
+        <h2 className="text-2xl font-semibold text-gray-800">Live Chat Dashboard</h2>
         <p className="text-sm text-gray-700 ">
           Track live conversations, agent performance, and user activity at a glance.
         </p>

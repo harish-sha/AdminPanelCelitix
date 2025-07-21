@@ -285,7 +285,7 @@ import { load } from "@cashfreepayments/cashfree-js";
 import toast from "react-hot-toast";
 import Lottie from "lottie-react";
 import rechargeAnim from "../assets/animation/recharge.json";
-import { rechargeCreateOrderCashFree } from "@/apis/recharge/recharge";
+import { rechargeCreateOrderCashFree, verifyRechargeStatus } from "@/apis/recharge/recharge";
 
 export default function RechargeFullWidth() {
   const [cashfree, setCashfree] = useState(null);
@@ -317,7 +317,6 @@ export default function RechargeFullWidth() {
     if (!paymentSessionId) {
       // const orderId = `order_id${Date.now()}`;
       const orderId = generateOrderId();
-      console.log(orderId);
       // const domain = window.location.hostname;
       const domain = "https://app.celitix.com";
       try {
@@ -338,22 +337,41 @@ export default function RechargeFullWidth() {
           },
         }
         const res = await rechargeCreateOrderCashFree(payload)
-        console.log("response cashfree", res);
         if (res?.status === true && res?.paymentSessionId) {
           setPaymentSessionId(res.paymentSessionId);
           const result = await cashfree.checkout({
             paymentSessionId: res.paymentSessionId,
             redirectTarget: "_modal",
           });
+          console.log("final result", result)
         } else {
           console.error("Missing paymentSessionId in response:", res);
           toast.error("Failed to create payment session.");
           return;
         }
+        const rechargeStatus = await verifyRechargeStatus({
+          order_id: orderId,
+        });
+
+        // toast.succ
+
+        if (rechargeStatus?.status !== "received") {
+          return toast.error("Payment Failed!");
+        }
+        toast.success("Payment Received!");
+
+        setAmount("");
+        setPhone("");
+        setEmail("");
+        setName("");
+        // if (rechargeStatus?.status === "received") {
+        // }
       } catch (err) {
         console.error(err);
         toast.error("Error creating payment session.");
         return;
+      } finally {
+        setPaymentSessionId(null);
       }
     }
 

@@ -168,8 +168,8 @@ export default function ServiceUsageDashboard() {
     const record = usageData?.[usageKey]?.[0] || {};
     return {
       name: displayName,
-      totalSent: record.totalSent || 0,
-      totalCharge: record.totalCharge || 0,
+      "Total Sent": record.totalSent || 0,
+      "Total Charge": record.totalCharge || 0,
     };
   });
 
@@ -185,13 +185,13 @@ export default function ServiceUsageDashboard() {
           <Line
             yAxisId="left"
             type="monotone"
-            dataKey="totalSent"
+            dataKey="Total Sent"
             stroke="#3b82f6"
           />
           <Line
             yAxisId="right"
             type="monotone"
-            dataKey="totalCharge"
+            dataKey="Total Charge"
             stroke="#ef4444"
           />
         </ComposedChart>
@@ -202,7 +202,7 @@ export default function ServiceUsageDashboard() {
           <Tooltip />
           <Pie
             data={filteredData}
-            dataKey="totalSent"
+            dataKey="Total Sent"
             nameKey="name"
             outerRadius={120}
             fill="#8884d8"
@@ -223,10 +223,10 @@ export default function ServiceUsageDashboard() {
           data: filteredData.map((item) => ({
             x: item.name,
             y: [
-              item.totalSent * 0.8, // open
-              item.totalSent * 1.2, // high
-              item.totalSent * 0.5, // low
-              item.totalSent, // close
+              item["Total Sent"] * 0.8, // open
+              item["Total Sent"] * 1.2, // high
+              item["Total Sent"] * 0.5, // low
+              item["Total Sent"], // close
             ],
           })),
         },
@@ -267,8 +267,8 @@ export default function ServiceUsageDashboard() {
         <YAxis yAxisId="right" orientation="right" />
         <Tooltip />
         <Legend />
-        <Bar yAxisId="left" dataKey="totalSent" fill="#3b82f6" />
-        <Line yAxisId="right" dataKey="totalCharge" stroke="#ef4444" />
+        <Bar yAxisId="left" dataKey="Total Sent" fill="#3b82f6" />
+        <Line yAxisId="right" dataKey="Total Charge" stroke="#ef4444" />
       </ComposedChart>
     );
   };
@@ -316,11 +316,11 @@ export default function ServiceUsageDashboard() {
                   "bg-yellow-50",
                 ],
               }[service.toLowerCase()] || [
-                "from-gray-100",
-                "to-gray-300",
-                "text-black-600",
-                "bg-gray-50",
-              ];
+                  "from-gray-100",
+                  "to-gray-300",
+                  "text-black-600",
+                  "bg-gray-50",
+                ];
 
               const [from, to, txt, bg] = palette;
 
@@ -336,11 +336,10 @@ export default function ServiceUsageDashboard() {
                   }
                   className={`
                     flex flex-col sm:flex-row items-center sm:gap-2 gap-0 w-full px-2 py-2 rounded-lg transition cursor-pointer
-                         ${
-                           selected
-                             ? `bg-gradient-to-r ${from} ${to} ${txt} shadow-md`
-                             : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                         }
+                         ${selected
+                      ? `bg-gradient-to-r ${from} ${to} ${txt} shadow-md`
+                      : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                    }
                     `}
                 >
                   <span
@@ -352,7 +351,7 @@ export default function ServiceUsageDashboard() {
                     {icons[service] || "🔧"}
                   </span>
 
-                  <span className="flex-1 text-sm text-left font-medium lowercase">
+                  <span className="flex-1 text-sm text-left font-medium">
                     {service}
                   </span>
                 </button>
@@ -368,9 +367,8 @@ export default function ServiceUsageDashboard() {
               <button
                 key={type}
                 onClick={() => setChartType(type)}
-                className={`flex items-center justify-center gap-2 px-3 py-1 rounded-md ${
-                  chartType === type ? "bg-[#687efa] text-white" : "bg-gray-100"
-                }`}
+                className={`flex items-center justify-center gap-2 px-3 py-1 rounded-md ${chartType === type ? "bg-[#687efa] text-white" : "bg-gray-100"
+                  }`}
               >
                 {ICON_MAP[type] || <span className="w-5" />}
                 {/* label */}
@@ -393,13 +391,12 @@ export default function ServiceUsageDashboard() {
                 <div
                   key={item}
                   onClick={() => setFilter(item)}
-                  className={`relative px-4 py-1.5 rounded-full border cursor-pointer overflow-hidden transition-colors duration-300 ${
-                    filter === item
-                      ? "text-white scale-105"
-                      : "bg-white text-gray-700"
-                  }`}
+                  className={`relative px-4 py-1.5 rounded-full border cursor-pointer overflow-hidden transition-colors duration-300 ${filter === item
+                    ? "text-white scale-105"
+                    : "bg-white text-gray-700"
+                    }`}
                 >
-                  <span className="relative z-10">{item}</span>
+                  <span className="relative z-10">{item?.toUpperCase()}</span>
                   <span
                     className={`absolute inset-0 rounded-full transition-transform duration-300 ease-in-out bg-gradient-to-r from-[#687efa] to-[#687efa] z-0
         ${filter === item ? "translate-y-0" : "translate-y-full"}`}
@@ -477,18 +474,18 @@ export default function ServiceUsageDashboard() {
 
                 {/* Service Name + Sent */}
                 <div className="flex-1 px-2">
-                  <p className="text-md font-semibold text-gray-800 lowercase">
-                    {service.name}
+                  <p className="text-md font-semibold text-gray-800">
+                    {service.name?.toUpperCase()}
                   </p>
                   <p className="text-sm font-bold text-gray-900">
-                    {service.totalSent} Sent
+                    {service["Total Sent"]} Sent
                   </p>
                 </div>
 
                 {/* Charge */}
                 <div className="flex-1">
                   <p className="text-sm text-gray-700 font-semibold whitespace-nowrap">
-                    ₹{service.totalCharge.toFixed(2)}
+                    ₹{service["Total Charge"].toFixed(2)}
                   </p>
                 </div>
               </motion.div>

@@ -31,7 +31,7 @@ export const Preview = ({
   });
 
   useEffect(() => {
-    if (!templateDetails) return;
+    if (!templateDetails.length) return;
 
     let type = "text";
     let isCarousal = false;
@@ -58,12 +58,20 @@ export const Preview = ({
       (_, key) => variableValueMap[`{#${key}#}`] || `{#${key}#}`
     );
 
+    const base64PDF = templateDetails[0]["pdfBase64 "];
+    const byteCharacters = atob(base64PDF);
+    const byteNumbers = Array.from(byteCharacters).map((c) => c.charCodeAt(0));
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+
     setData({
       type,
       isCarousal,
       details: templateDetails,
       btnData: buttonSuggestions,
       replacedContent,
+      pdfUrl: url,
     });
   }, [templateDetails, inputVariables]);
 
@@ -148,7 +156,7 @@ export const Preview = ({
                   />
                 ) : (
                   <embed
-                    src={data?.details[0]?.imageUrl}
+                    src={data.pdfUrl}
                     type={"application/pdf"}
                     className="w-full overflow-x-hidden"
                   />

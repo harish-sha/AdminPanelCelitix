@@ -109,8 +109,8 @@ export default function InstagramChats() {
           </p> */}
 
           {/* Heading */}
-          <h2 className="text-2xl font-bold text-gray-800 text-center mb-3">
-            Connect to Instagram
+          <h2 className="text-2xl font-semibold text-gray-800 text-center mb-3">
+            Connect to Instagram to get more features
           </h2>
 
           {/* Subtext */}
@@ -142,21 +142,21 @@ export default function InstagramChats() {
           </div>
 
           {/* CTA Button */}
-          {/* <button className="group w-full flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-semibold py-3 rounded-lg hover:bg-blue-700 transition-all shadow-md hover:shadow-lg"
+          <button className="group w-full flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-semibold py-3 rounded-lg hover:bg-blue-700 transition-all shadow-md hover:shadow-lg"
             onClick={handleConnect}
           >
             <InstagramIcon sx={{ fontSize: 20 }} />
             <span className="group-hover:scale-105 transition-transform">
               Connect with instagram
             </span>
-          </button> */}
-          <button className="group w-full flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-semibold py-3 rounded-lg hover:bg-blue-700 transition-all shadow-md hover:shadow-lg"
+          </button>
+          {/* <button className="group w-full flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-semibold py-3 rounded-lg hover:bg-blue-700 transition-all shadow-md hover:shadow-lg"
           >
             <InstagramIcon sx={{ fontSize: 20 }} />
             <span className="group-hover:scale-105 transition-transform">
               Comming Soon
             </span>
-          </button>
+          </button> */}
 
           {authCode && (
             <p className="text-green-600 text-sm mt-4">

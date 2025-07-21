@@ -370,7 +370,7 @@ const ResellerDashboard = () => {
     {
       name: "WHATSAPP",
       icon: WhatsApp,
-      displayName: "Whatsapp",
+      displayName: "WhatsApp",
       animation: Animationwhatsapp2,
       desc: "Send real-time notifications",
       color: "from-green-100 to-green-300",
@@ -412,7 +412,7 @@ const ResellerDashboard = () => {
       icon: Email,
       displayName: "Email",
       animation: email2,
-      desc: "Campaign and transactional email",
+      desc: "Send campaign and transactional emails",
       color: "from-blue-100 to-blue-300",
     },
     {
