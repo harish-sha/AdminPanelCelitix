@@ -130,6 +130,15 @@ const ManageTemplateRcs = () => {
     },
   };
 
+  function base64ToUrl(base64) {
+    const base64PDF = base64;
+    const byteCharacters = atob(base64PDF);
+    const byteNumbers = Array.from(byteCharacters).map((c) => c.charCodeAt(0));
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    return url;
+  }
   return (
     <div className="w-full">
       <div className="flex flex-wrap items-end justify-end w-full gap-4 pb-1 align-middle">
@@ -272,7 +281,14 @@ const ManageTemplateRcs = () => {
                     className="w-full h-45 rounded-lg"
                   />
                 )}
-
+              {templateDetails?.data?.[0]?.templateType ===
+                "text_message_with_pdf" &&
+                templateDetails?.data?.[0]["pdfBase64 "] && (
+                  <iframe
+                    src={base64ToUrl(templateDetails?.data?.[0]["pdfBase64 "])}
+                    className="w-full h-45 rounded-lg"
+                  />
+                )}
 
               <div className="py-2 text-sm overflow-y-scroll max-h-80">
                 <h1 className="font-semibold">
@@ -337,7 +353,7 @@ const ManageTemplateRcs = () => {
                     />
                   )}
 
-                   {template.templateType === "video" && template?.imageUrl && (
+                  {template.templateType === "video" && template?.imageUrl && (
                     <video
                       src={template.imageUrl}
                       controls
