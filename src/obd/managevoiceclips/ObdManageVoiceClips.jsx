@@ -24,7 +24,7 @@ import {
   fetchVoiceClipUrl,
   saveDynamicVoice,
   saveStaticVoice,
-  ObdVariableList
+  ObdVariableList,
 } from "@/apis/obd/obd";
 
 const ObdManageVoiceClips = () => {
@@ -84,7 +84,7 @@ const ObdManageVoiceClips = () => {
     ],
   });
 
-  const [voiceName, setVoiceName] = useState("")
+  const [voiceName, setVoiceName] = useState("");
 
   const fileRef = useRef(null);
   const dynamicVoiceRef = useRef([]);
@@ -308,10 +308,6 @@ const ObdManageVoiceClips = () => {
 
       if (res?.message === "Record not found") {
         setRows([]);
-
-        if (isSearchTriggered) {
-          toast.error("No data available");
-        }
         return;
       }
 
@@ -320,19 +316,12 @@ const ObdManageVoiceClips = () => {
           ? item.fileName.toLowerCase().includes(searchValue.name.toLowerCase())
           : true;
 
-        // const matchesStatus = searchValue?.user
-        //   ? item.status == searchValue.user
-        //   : true;
+        const matchesCategory =
+          searchValue?.category !== ""
+            ? item.isDynamic == searchValue.category
+            : true;
 
-        // const matchesAdminStatus = searchValue?.admin
-        //   ? item.adminStatus == searchValue.admin
-        //   : true;
-
-        const matchesCategory = searchValue?.category !== ""
-          ? item.isDynamic == searchValue.category
-          : true;
-
-        const matchesType = searchValue?.type !== ""
+        const matchesType = searchValue?.type
           ? item.type == searchValue.type
           : true;
 
@@ -341,16 +330,16 @@ const ObdManageVoiceClips = () => {
 
       const formattedData = Array.isArray(filteredData)
         ? filteredData.map((item, index) => ({
-          sn: index + 1,
-          id: item.srNo,
-          ...item,
-        }))
+            sn: index + 1,
+            id: item.srNo,
+            ...item,
+          }))
         : [];
 
       setRows(formattedData);
     } catch (e) {
       toast.error("Something went wrong");
-      console.log(e)
+      console.log(e);
     }
   }
 
@@ -428,7 +417,8 @@ const ObdManageVoiceClips = () => {
     for (let i = 1; i < dynamicList.length; i++) {
       if (dynamicList[i].dynamicType === dynamicList[i - 1].dynamicType) {
         toast.error(
-          `Consecutive items at positions ${i} and ${i + 1
+          `Consecutive items at positions ${i} and ${
+            i + 1
           } have the same type "${dynamicList[i].dynamicType}"`
         );
         return true;
@@ -494,7 +484,7 @@ const ObdManageVoiceClips = () => {
           variableValue: dynamicVoice?.voiceName,
         };
         const res = await saveDynamicVoice(payload);
-         setIsVisible(false);
+        setIsVisible(false);
         // toast.success(res.msg);
         //  setDynamicVoice({});
       }
@@ -567,7 +557,7 @@ const ObdManageVoiceClips = () => {
 
   return (
     <div className="w-full">
-      <h1 className="text-2xl text-gray-600 text-center my-3 font-semibold" >
+      <h1 className="text-2xl text-gray-600 text-center my-3 font-semibold">
         Manage Voice Clips
       </h1>
       <div className="flex  items-end justify-between gap-3">
@@ -603,7 +593,6 @@ const ObdManageVoiceClips = () => {
                 setSearchValue({ ...searchValue, category: value });
               }}
             />
-
           </div>
           <div className="w-full sm:w-46">
             <AnimatedDropdown
@@ -613,8 +602,6 @@ const ObdManageVoiceClips = () => {
               label="Type"
               tooltipContent="Type"
               tooltipPlacement="right"
-
-
               placeholder="Type"
               options={[
                 { value: 2, label: "Transactional" },
@@ -624,9 +611,7 @@ const ObdManageVoiceClips = () => {
                 setSearchValue({ ...searchValue, type: value });
               }}
             />
-
           </div>
-
 
           <div className="flex items-center justify-center gap-4 mt-2">
             <div>
@@ -636,7 +621,7 @@ const ObdManageVoiceClips = () => {
                 placeholder="Search"
                 label="Search"
                 onClick={() => {
-                  setIsSearchTriggered(true);
+                  // setIsSearchTriggered(true);
                   handlefetchAllVoiceClips();
                 }}
                 icon={<IoSearch />}
@@ -677,7 +662,9 @@ const ObdManageVoiceClips = () => {
       >
         <div className="flex flex-col md:flex-row justify-between gap-2">
           <div className="flex flex-col">
-            <div className="text-sm font-medium text-gray-700 mb-2">Category</div>
+            <div className="text-sm font-medium text-gray-700 mb-2">
+              Category
+            </div>
             <div className="flex flex-row gap-2 bg-gray-100 p-1 md:p-2 rounded-xl border-2 border-dashed">
               <div className="flex gap-2 items-center border-2 p-1 md:p-2 rounded-full">
                 <RadioButton
@@ -687,9 +674,11 @@ const ObdManageVoiceClips = () => {
                   // visible={isVisible}
                   checked={selectedOption === "option1"}
                   onChange={handleChangeEnablePostpaid}
-                // onClick={()=>setIsChecked(false)}
+                  // onClick={()=>setIsChecked(false)}
                 />
-                <label className="text-sky-800 text-xs md:text-sm font-semibold">Static</label>
+                <label className="text-sky-800 text-xs md:text-sm font-semibold">
+                  Static
+                </label>
               </div>
               <div className="flex gap-2 items-center p-1 md:p-2 rounded-full border-2">
                 <RadioButton
@@ -701,7 +690,9 @@ const ObdManageVoiceClips = () => {
                   onChange={handleChangeEnablePostpaid}
                   onClick={() => setIsDynamic(true)}
                 />
-                <label className="text-xs md:text-sm text-sky-800 font-semibold">Dynamic</label>
+                <label className="text-xs md:text-sm text-sky-800 font-semibold">
+                  Dynamic
+                </label>
               </div>
             </div>
           </div>
@@ -715,9 +706,11 @@ const ObdManageVoiceClips = () => {
                   value="transactional"
                   checked={selecteTransactional === "transactional"}
                   onChange={handleChangeTransactional}
-                  onClick={() => { }}
+                  onClick={() => {}}
                 />
-                <label className="text-xs md:text-sm font-semibold">Transactional</label>
+                <label className="text-xs md:text-sm font-semibold">
+                  Transactional
+                </label>
               </div>
 
               <div className="flex gap-2 items-center border-2 p-1 md:p-2 rounded-full">
@@ -728,10 +721,11 @@ const ObdManageVoiceClips = () => {
                   checked={selecteTransactional === "promotional"}
                   onChange={handleChangeTransactional}
                 />
-                <label className="text-xs md:text-sm font-semibold">Promptional</label>
+                <label className="text-xs md:text-sm font-semibold">
+                  Promptional
+                </label>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -865,12 +859,8 @@ const ObdManageVoiceClips = () => {
             )}
           </>
         )}
-        <div className="flex items-center justify-center mt-2" >
-          <UniversalButton
-            id="submit"
-            label="save"
-            onClick={handleSave}
-          />
+        <div className="flex items-center justify-center mt-2">
+          <UniversalButton id="submit" label="save" onClick={handleSave} />
         </div>
       </Dialog>
       {/* Add Voice Files End */}
