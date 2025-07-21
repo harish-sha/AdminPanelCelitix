@@ -203,7 +203,7 @@ export const RadioButtonLaunchSms = ({
                 htmlFor="radioOption1"
                 className="text-sm font-medium text-gray-700 cursor-pointer"
               >
-                Select Group
+                Select Groups
               </label>
             </div>
           </label>
@@ -225,7 +225,7 @@ export const RadioButtonLaunchSms = ({
                 htmlFor="radioOption2"
                 className="text-sm font-medium text-gray-700 cursor-pointer"
               >
-                Import Contact
+                Import Contacts
               </label>
             </div>
           </label>

@@ -325,7 +325,7 @@ function RadioButtonLaunchCampaign({
                 htmlFor="radioOption1"
                 className="text-sm font-medium text-gray-700 cursor-pointer"
               >
-                Select Group
+                Select Groups
               </label>
             </div>
           </label>
@@ -344,7 +344,7 @@ function RadioButtonLaunchCampaign({
                 htmlFor="radioOption2"
                 className="text-sm font-medium text-gray-700 cursor-pointer"
               >
-                Import contact
+                Import contacts
               </label>
             </div>
           </label>
