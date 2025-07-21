@@ -27,7 +27,7 @@ export const Preview = ({ inputDetails }) => {
       <div className="smartphone-content">
         <div className="flex border-b items-center gap-2 px-4 py-2">
           <div className="border w-7 h-7 rounded-full bg-white"></div>
-          <p>{inputDetails?.senderId || "SenderId"}</p>
+          <p>{inputDetails?.senderId || "Sender ID"}</p>
         </div>
         <div className="p-3">
           {inputDetails.message && (
