@@ -469,6 +469,7 @@ export const RadioButtonLaunchSms = ({
           ]}
           onChange={handleAttachmentChange}
           value={inputDetails.attachmentType}
+          disabled={!inputDetails.templateId}
         />
         {inputDetails.attachmentType === "file" && (
           <div>
