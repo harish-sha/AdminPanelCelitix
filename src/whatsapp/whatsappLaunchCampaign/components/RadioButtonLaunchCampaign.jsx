@@ -617,7 +617,7 @@ function RadioButtonLaunchCampaign({
 
       {/* workflow */}
 
-      <div className="p-4 border rounded-xl bg-gradient-to-b from-white to-gray-50 shadow hover:shadow-md transition-shadow duration-200">
+      <div className="mt-2 p-4 border rounded-xl bg-gradient-to-b from-white to-gray-50 shadow hover:shadow-md transition-shadow duration-200">
         {/* Toggle Section */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
