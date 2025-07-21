@@ -155,6 +155,7 @@ export const PermissionRoute = () => {
           "/settings",
           "/transactions",
           "/tagmanager",
+          "/selfrecharge"
         ],
         roles: ["ADMIN"],
       },

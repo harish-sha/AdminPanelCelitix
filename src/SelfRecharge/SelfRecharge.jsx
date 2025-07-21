@@ -285,7 +285,10 @@ import { load } from "@cashfreepayments/cashfree-js";
 import toast from "react-hot-toast";
 import Lottie from "lottie-react";
 import rechargeAnim from "../assets/animation/recharge.json";
-import { rechargeCreateOrderCashFree } from "@/apis/recharge/recharge";
+import {
+  rechargeCreateOrderCashFree,
+  verifyRechargeStatus,
+} from "@/apis/recharge/recharge";
 
 export default function RechargeFullWidth() {
   const [cashfree, setCashfree] = useState(null);
@@ -295,14 +298,12 @@ export default function RechargeFullWidth() {
   const [name, setName] = useState("");
   const [paymentSessionId, setPaymentSessionId] = useState(null);
 
-
   useEffect(() => {
     load({ mode: "sandbox" }).then((cf) => setCashfree(cf));
   }, []);
 
   const handlePayNow = async (e) => {
     e.preventDefault();
-
 
     if (!name || !email || !phone || !amount) {
       toast.error("Please fill in all fields.");
@@ -317,11 +318,9 @@ export default function RechargeFullWidth() {
     if (!paymentSessionId) {
       // const orderId = `order_id${Date.now()}`;
       const orderId = generateOrderId();
-      console.log(orderId);
       // const domain = window.location.hostname;
       const domain = "https://app.celitix.com";
       try {
-
         const payload = {
           order_id: orderId,
           order_amount: amount,
@@ -336,9 +335,9 @@ export default function RechargeFullWidth() {
             // return_url: `${domain}/payment-status?order_id=${orderId}`,
             return_url: `${domain}/selfrecharge`,
           },
-        }
-        const res = await rechargeCreateOrderCashFree(payload)
-        console.log("response cashfree", res);
+        };
+        const res = await rechargeCreateOrderCashFree(payload);
+
         if (res?.status === true && res?.paymentSessionId) {
           setPaymentSessionId(res.paymentSessionId);
           const result = await cashfree.checkout({
@@ -348,15 +347,35 @@ export default function RechargeFullWidth() {
         } else {
           console.error("Missing paymentSessionId in response:", res);
           toast.error("Failed to create payment session.");
-          return;
+          // return;
         }
+
+        const rechargeStatus = await verifyRechargeStatus({
+          order_id: orderId,
+        });
+
+        // toast.succ
+
+        if (rechargeStatus?.status !== "received") {
+          return toast.error("Payment Failed!");
+        }
+
+        toast.success("Payment Received!");
+
+        setAmount("");
+        setPhone("");
+        setEmail("");
+        setName("");
+        // if (rechargeStatus?.status === "received") {
+        // }
       } catch (err) {
         console.error(err);
         toast.error("Error creating payment session.");
         return;
+      } finally {
+        setPaymentSessionId(null);
       }
     }
-
 
     // if (!cashfree) {
     //   toast.error("Payment SDK not loaded yet. Try again in a moment.");
@@ -385,7 +404,6 @@ export default function RechargeFullWidth() {
   return (
     <div className="flex flex-col items-center justify-center h-[90vh]">
       <div className="w-full max-w-6xl bg-white bg-opacity-90 backdrop-filter backdrop-blur-md rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border-4 border-dashed border-blue-300 p-3">
-
         {/* Lottie Panel */}
         <div className="md:w-1/2 relative h-64 md:h-auto bg-[#EDF5FF] rounded-2xl shadow-lg">
           <Lottie
@@ -395,7 +413,9 @@ export default function RechargeFullWidth() {
             className="w-full h-full object-cover"
           />
           <div className="absolute top-40 md:top-50 lg:top-75 right-6 md:right-8 lg:right-12 inset-0 bg-opacity-20 flex items-center justify-center">
-            <h2 className="text-black md:text-2xl lg:text-3xl font-bold">Recharge</h2>
+            <h2 className="text-black md:text-2xl lg:text-3xl font-bold">
+              Recharge
+            </h2>
           </div>
         </div>
 
