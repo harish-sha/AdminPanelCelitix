@@ -12,6 +12,7 @@ import { Switch } from "@mui/material";
 import SyncOutlinedIcon from "@mui/icons-material/SyncOutlined";
 import toast from "react-hot-toast";
 import { syncTemplateRcs } from "@/apis/rcs/rcs";
+import { render } from "timeago.js";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -112,9 +113,16 @@ const ManageTemplatetableRcs = ({
       headerName: "Template Type",
       flex: 1,
       minWidth: 120,
+      renderCell: (params) => params.row.templateType?.toUpperCase(),
     },
-    { field: "insertTime", headerName: "Insert Time", flex: 1, minWidth: 120 },
-    { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+    { field: "insertTime", headerName: "Created On", flex: 1, minWidth: 120 },
+    {
+      field: "status",
+      headerName: "Status",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => params.row.status?.toUpperCase(),
+    },
     {
       field: "active",
       headerName: "Active",
@@ -138,9 +146,9 @@ const ManageTemplatetableRcs = ({
                     color: "#34C759",
                   },
                   "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                  {
-                    backgroundColor: "#34C759",
-                  },
+                    {
+                      backgroundColor: "#34C759",
+                    },
                 }}
               />
             </CustomTooltip>
@@ -230,10 +238,10 @@ const ManageTemplatetableRcs = ({
 
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
-      id: item.srno,
-      sn: i + 1,
-      ...item,
-    }))
+        id: item.srno,
+        sn: i + 1,
+        ...item,
+      }))
     : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);

@@ -8,7 +8,11 @@ import Loader from "../../whatsapp/components/Loader.jsx";
 import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown.jsx";
 import SuggestionReportTableRcs from "./components/SuggestionReportTableRcs.jsx";
 import toast from "react-hot-toast";
-import { fetchAllAgents, fetchsuggestionReport, exportSuggestion } from "../../apis/rcs/rcs.js";
+import {
+  fetchAllAgents,
+  fetchsuggestionReport,
+  exportSuggestion,
+} from "../../apis/rcs/rcs.js";
 
 import moment from "moment";
 
@@ -29,7 +33,6 @@ const SuggestionReportRcs = () => {
   });
   const [suggestionTableData, setSuggestionTableData] = useState([]);
   const { triggerDownloadNotification } = useDownload();
-
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -180,7 +183,6 @@ const SuggestionReportRcs = () => {
       setIsFetching(true);
       const res = await fetchsuggestionReport(data);
       setSuggestionTableData(res);
-
     } catch (e) {
       // console.log(e);
       toast.error("Something went wrong.");
@@ -196,7 +198,7 @@ const SuggestionReportRcs = () => {
     setInitialLoad(false);
   }, [currentPage]);
 
-  async function fetchNextPageData() { }
+  async function fetchNextPageData() {}
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -253,7 +255,7 @@ const SuggestionReportRcs = () => {
     },
     {
       field: "insertTime",
-      headerName: "Receive Time",
+      headerName: "Received Time",
       flex: 1,
       minWidth: 120,
       renderCell: (params) => (
@@ -304,7 +306,6 @@ const SuggestionReportRcs = () => {
       }
       toast.success(res?.msg || "File Downloaded Successfully.");
       triggerDownloadNotification();
-
     } catch (e) {
       toast.error("Something went wrong.");
       return;
@@ -370,7 +371,6 @@ const SuggestionReportRcs = () => {
               }}
             />
           </div>
-
 
           {/* Mobile Number Input Field */}
           <div className="w-full sm:w-48">
