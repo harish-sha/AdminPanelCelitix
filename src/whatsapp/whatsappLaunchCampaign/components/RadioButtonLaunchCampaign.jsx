@@ -349,7 +349,7 @@ function RadioButtonLaunchCampaign({
                 htmlFor="radioOption2"
                 className="text-sm font-medium text-gray-700 cursor-pointer"
               >
-                Import contacts
+                Import Contacts
               </label>
             </div>
           </label>

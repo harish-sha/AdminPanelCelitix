@@ -297,7 +297,7 @@ const RadioButtonLaunchCampaignObd = ({
               htmlFor="radioOption2"
               className="text-gray-700 font-medium text-sm cursor-pointer"
             >
-              import contacts
+              import Contacts
             </label>
           </div>
         </div>
