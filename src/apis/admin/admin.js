@@ -291,30 +291,30 @@ export const updateSMPP = async (data) => {
   });
 };
 
-export const liveMonitoringWhatsapp = async (data) => {
+export const liveMonitoringWhatsapp = async () => {
   return await fetchWithAuth(`/liveMonitoring/whatsapp-report`, {
-    method: "POST",
-    body: JSON.stringify(data),
+    method: "GET",
+
   });
 };
-export const liveMonitoringRCS = async (data) => {
+export const liveMonitoringRCS = async () => {
   return await fetchWithAuth(`/liveMonitoring/rcs-report`, {
-    method: "POST",
-    body: JSON.stringify(data),
+    method: "GET",
+
   });
 };
-export const liveMonitoringRCSStatus = async (data) => {
+export const liveMonitoringRCSStatus = async () => {
   return await fetchWithAuth(`/liveMonitoring/rcs-status-report`, {
-    method: "POST",
-    body: JSON.stringify(data),
+    method: "GET",
+
   });
 };
-export const liveMonitoringSendingService = async (data) => {
+export const liveMonitoringSendingService = async () => {
   return await fetchWithAuth(
     `/liveMonitoring/sending-service-data?type=Sending Current Progress`,
     {
-      method: "POST",
-      body: JSON.stringify(data),
+      method: "GET",
+
     }
   );
 };
