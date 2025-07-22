@@ -57,6 +57,7 @@ import { Url } from "./components/url";
 import { HiOutlineTemplate } from "react-icons/hi";
 import { TemplateNode } from "./components/template";
 import { AiOutlineApi } from "react-icons/ai";
+import { Api } from "./components/api";
 
 const initialNodes = [];
 const initialEdges = [];
@@ -1235,6 +1236,13 @@ const CreateWhatsAppBot = () => {
               setNodesInputData={setNodesInputData}
               details={details}
               setIsVisible={setIsVisible}
+              allVariables={allVariables}
+            />
+          ) : type === "api" ? (
+            <Api
+              id={selectedNodeId}
+              nodesInputData={nodesInputData}
+              setNodesInputData={setNodesInputData}
               allVariables={allVariables}
             />
           ) : null}
