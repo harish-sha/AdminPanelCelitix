@@ -6,11 +6,18 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import { motion, AnimatePresence } from "framer-motion";
 import Lottie from "lottie-react";
 import Instagram from "@/assets/animation/Instagram.json";
+import { FaRegShareSquare } from "react-icons/fa";
+import { BiChat } from "react-icons/bi";
+import { FaRegUserCircle } from "react-icons/fa";
 // import Messengeranimation from "@/assets/animation/Messengeranimation.json";
 import { Dialog } from "primereact/dialog";
-import { exchangeCodeForToken, getLongLivedToken, getInstagramProfile } from "@/apis/instagram/instagram";
+import {
+  exchangeCodeForToken,
+  getLongLivedToken,
+  getInstagramProfile,
+} from "@/apis/instagram/instagram";
 
-export default function EmbeddedInstagram({ setStep }) {
+export default function EmbeddedInstagram({ setStep, userAceessToken, setUserAccessToken }) {
   const integrationUrl = `https://www.instagram.com/oauth/authorize?force_reauth=true&client_id=1321010562294068&redirect_uri=https://app.celitix.com/&response_type=code&scope=instagram_business_basic%2Cinstagram_business_manage_messages%2Cinstagram_business_manage_comments%2Cinstagram_business_content_publish%2Cinstagram_business_manage_insights`;
 
   const CLIENT_ID = "1321010562294068";
@@ -39,12 +46,13 @@ export default function EmbeddedInstagram({ setStep }) {
       `width=${width},height=${height},top=${top},left=${left}`
     );
 
-    const exchangeCode = "AQCYZKB2g95Z7AyAWiXviAkRvQssJhqnru4I6x4eHvV6htBZZPX6ktHlbKLOha6JttWYfwUhPhQQfH-_6_wVoB1_Q-c5Cwo_6cHJTokOD6bduOiJTgtdgpm8qCMpxZyO9-GvhhOLMhqzGZwRNKRfzNQ03dGMOuesusg86C_iPzWYxN823qzlCfAGnbzPvhscTtInWlwBz4CgSgnInaCI4LtGgcTW31oydDMgV5B1nOJTqA";
-    const accessToken = "IGAASxc71PYTRBZAE1ic3lnSTdmZAmh5YUx2ZAGhaMk52U2hIQ1ZAuSEJiWXNGYlFPa3JOUEI4bnM5WW9FcTN3RnVSWHNIVEViS2FMVUVKM0w5alQ3Nm9ZAOS1jZAktsWHZA2VG5YY0Ywa1A5Tlp3WWlMaGxkY2F3"
+    const exchangeCode =
+      "AQCYZKB2g95Z7AyAWiXviAkRvQssJhqnru4I6x4eHvV6htBZZPX6ktHlbKLOha6JttWYfwUhPhQQfH-_6_wVoB1_Q-c5Cwo_6cHJTokOD6bduOiJTgtdgpm8qCMpxZyO9-GvhhOLMhqzGZwRNKRfzNQ03dGMOuesusg86C_iPzWYxN823qzlCfAGnbzPvhscTtInWlwBz4CgSgnInaCI4LtGgcTW31oydDMgV5B1nOJTqA";
+    const accessToken =
+      "IGAASxc71PYTRBZAE1ic3lnSTdmZAmh5YUx2ZAGhaMk52U2hIQ1ZAuSEJiWXNGYlFPa3JOUEI4bnM5WW9FcTN3RnVSWHNIVEViS2FMVUVKM0w5alQ3Nm9ZAOS1jZAktsWHZA2VG5YY0Ywa1A5Tlp3WWlMaGxkY2F3";
 
-    // getExchangeToken(exchangeCode);
     // fetchLongLivedToken()
-    getUserInstagramProfile(accessToken)
+    // getUserInstagramProfile(accessToken)
     // Listen for messages from the popup
     const checkPopup = setInterval(() => {
       try {
@@ -62,8 +70,8 @@ export default function EmbeddedInstagram({ setStep }) {
           console.log("insta code", code);
           const errorParam = urlParams.get("error");
           console.log("insta error", errorParam);
-          if (exchangeCode) {
-            setAuthCode(exchangeCode);
+          if (code) {
+            setAuthCode(code);
           } else if (errorParam) {
             setError(errorParam);
           }
@@ -79,17 +87,37 @@ export default function EmbeddedInstagram({ setStep }) {
     // setStep(2);
   };
 
+  // const getExchangeToken = async (code) => {
+  //   try {
+  //     const tokenData = await exchangeCodeForToken({
+  //       client_id: "1321010562294068",
+  //       client_secret: "eec1c264a3ae337782fe1cdf103b8b52",
+  //       grant_type: "authorization_code",
+  //       redirect_uri: "https://localhost:5173/",
+  //       code: code,
+  //     });
+
+  //     console.log("Access Token:", tokenData);
+  //   } catch (err) {
+  //     console.error("Token exchange failed:", err);
+  //     setError("Token exchange failed");
+  //   }
+  // };
+
   const getExchangeToken = async (code) => {
     try {
-      const tokenData = await exchangeCodeForToken({
+      const tokenResponse = await exchangeCodeForToken({
         client_id: "1321010562294068",
         client_secret: "eec1c264a3ae337782fe1cdf103b8b52",
         grant_type: "authorization_code",
-        redirect_uri: "https://localhost:5174/",
+        redirect_uri: "https://localhost:5173/",
         code: code,
       });
 
-      console.log("Access Token:", tokenData);
+      const tokenData = await tokenResponse.json(); // Parse the JSON response
+      console.log("Access Token Data:", tokenData);
+
+      // Access token is in tokenData.access_token
     } catch (err) {
       console.error("Token exchange failed:", err);
       setError("Token exchange failed");
@@ -97,13 +125,15 @@ export default function EmbeddedInstagram({ setStep }) {
   };
 
   const fetchLongLivedToken = async () => {
-
     try {
       const longLivedToken = await getLongLivedToken({
         grant_type: "ig_exchange_token",
         client_secret: "eec1c264a3ae337782fe1cdf103b8b52",
-        access_token: "IGAASxc71PYTRBZAE55TmJBX1pPZA1J0SWpVUUdBVVNTNVBYbWQ4YjBoT0RUZAmJBZA3U4RVhGRW12ZAmY0cDF3dlppdDhsaGdJSzVYZAzJURjJDWDJ3Q3ZAFdlYzMjdJUkpBbzNyLWN1ZA0lkcGF2SDAxWEYyQWJXdlJBUHAxdjltS2NrZAmZAEaHlRbmZAueDJwVUlFTTFpOUo5NgZDZD",
+        access_token:
+          "IGAASxc71PYTRBZAE55TmJBX1pPZA1J0SWpVUUdBVVNTNVBYbWQ4YjBoT0RUZAmJBZA3U4RVhGRW12ZAmY0cDF3dlppdDhsaGdJSzVYZAzJURjJDWDJ3Q3ZAFdlYzMjdJUkpBbzNyLWN1ZA0lkcGF2SDAxWEYyQWJXdlJBUHAxdjltS2NrZAmZAEaHlRbmZAueDJwVUlFTTFpOUo5NgZDZD",
       });
+
+      setUserAccessToken(longLivedToken);
 
       console.log("Access Token:", longLivedToken);
     } catch (err) {
@@ -112,31 +142,19 @@ export default function EmbeddedInstagram({ setStep }) {
     }
   };
 
-  const getUserInstagramProfile = async (accessToken) => {
-    try {
-      const userProfile = await getInstagramProfile({
-        accessToken: accessToken
-      });
 
-      console.log("userProfile:", userProfile);
-    } catch (err) {
-      console.error("User Profile", err);
-      setError("Failed to fetch user profile");
+  useEffect(() => {
+    if (authCode) {
+      console.log("Exchanging code for token:", authCode);
+      getExchangeToken(authCode);
     }
-  };
-
-  // useEffect(() => {
-  //   if (authCode) {
-  //     console.log("Exchanging code for token:", authCode);
-  //     getExchangeToken(authCode);
-  //   }
-  // }, [authCode]);
+  }, [authCode]);
 
   // Reusable Feature component
   const Feature = ({ icon, text }) => (
-    <div className="flex items-start gap-3 hover:bg-blue-50 p-2 rounded-lg transition">
+    <div className="flex items-center gap-3 hover:bg-blue-50 p-2 py-2.5 rounded-lg transition border border-dashed">
       <div className="text-blue-600">{icon}</div>
-      <p className="text-xs text-gray-700">{text}</p>
+      <p className="text-[0.78rem] text-gray-700">{text}</p>
     </div>
   );
 
@@ -150,19 +168,14 @@ export default function EmbeddedInstagram({ setStep }) {
           className="w-120 max-w-md sm:max-w-lg md:max-w-xl bg-white rounded-3xl shadow-2xl p-3 sm:p-4 animate-fadeIn text-center"
         >
           {/* Instagram Badge */}
-          <div className="flex justify-center mb-4">
-            <Lottie
-              animationData={Instagram}
-              loop
-              autoplay
-              className="w-60"
-            />
+          <div className="flex justify-center mb-2">
+            <Lottie animationData={Instagram} loop autoplay className="w-60" />
           </div>
 
-          {/* <p className="text-green-600 text-sm mt-4">
+          {/* <p className="text-green-600 text-sm mt-4 text-wrap w-full break-words">
             Successfully received code: {authCode}
           </p>
-          <p className="text-red-600 text-sm mt-4">
+          <p className="text-red-600 text-sm mt-4 text-wrap w-full break-words">
             Authentication failed: {error}
           </p> */}
 
@@ -184,15 +197,15 @@ export default function EmbeddedInstagram({ setStep }) {
 
           <div className="space-y-4 mb-2">
             <Feature
-              icon={<ShareIcon sx={{ color: "#f9ce34" }} />}
+              icon={<FaRegShareSquare fontSize="20px" color="#f9ce34" />}
               text="Share stories, posts and ads across Facebook and Instagram"
             />
             <Feature
-              icon={<ChatBubbleOutlineIcon sx={{ color: "#ee2a7b" }} />}
+              icon={<BiChat fontSize="20px" color="#ee2a7b" />}
               text="Manage comments and messages in one place"
             />
             <Feature
-              icon={<AccountCircleIcon sx={{ color: "#6228d7" }} />}
+              icon={<FaRegUserCircle fontSize="20px" color="#6228d7" />}
               text="Sync profile info like name and website"
             />
           </div>

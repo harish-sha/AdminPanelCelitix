@@ -66,7 +66,8 @@ export const PermissionRoute = ({ children }) => {
         "/manageinstatemplate",
         "/manageinstaprofile",
         "/instalivechats",
-        "/instareport"
+        "/instareport",
+        "/instaadsmanager"
       ],
       roles:["ADMIN"],
 

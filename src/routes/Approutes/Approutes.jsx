@@ -149,6 +149,7 @@ import ManageInstaTemplate from "@/instagram/ManageInstaTemplate/ManageInstaTemp
 import ManageInstaProfile from "@/instagram/Manageprofile/ManageInstaProfile";
 import InstaReports from "@/instagram/InstaReports/InstaReports";
 import InstaLiveChats from "@/instagram/Livechats/InstaLiveChats";
+import InstaAdsManager from "@/instagram/instaAdsManager/InstaAdsManager";
 
 // Not Found Page
 import PageNotFound from "@/NotFound/PageNotFound";
@@ -310,6 +311,7 @@ const Approutes = () => {
         <Route path="/instalivechats" element={<InstaLiveChats />} />
         <Route path="/manageinstaprofile" element={<ManageInstaProfile />} />
         <Route path="/manageinstatemplate" element={<ManageInstaTemplate />} />
+        <Route path="/instaadsmanager" element={<InstaAdsManager />} />
 
         {/* Appauthenticator */}
         <Route path="/authreports" element={<AppauthenticatorReports />} />

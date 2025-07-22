@@ -326,6 +326,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         },
         { to: "/instalivechats", label: "Live Chats" },
         { to: "/manageinstatemplate", label: "Templates" },
+        { to: "/instaadsmanager", label: "Ads Manager" },
         { to: "/instareport", label: "Reports" },
       ],
     },
