@@ -59,6 +59,7 @@ export const TemplateNode = ({
     longitude: "",
     name: "",
     address: "",
+    url: "",
   });
 
   const fileRef = useRef(null);
@@ -296,6 +297,37 @@ export const TemplateNode = ({
     }
   }
 
+  const extractCoordinates = (url) => {
+    let regex = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
+    let match = url.match(regex);
+    if (match) {
+      return {
+        lat: match[1],
+        lng: match[2],
+      };
+    }
+
+    regex = /place\/.*\/@(-?\d+\.\d+),(-?\d+\.\d+)/;
+    match = url.match(regex);
+    if (match) {
+      return {
+        lat: match[1],
+        lng: match[2],
+      };
+    }
+
+    regex = /q=(-?\d+\.\d+),(-?\d+\.\d+)/;
+    match = url.match(regex);
+    if (match) {
+      return {
+        lat: match[1],
+        lng: match[2],
+      };
+    }
+
+    return null;
+  };
+
   return (
     <div className="w-full flex flex-col h-[calc(80vh-100px)]">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
@@ -348,6 +380,23 @@ export const TemplateNode = ({
                 <span className="text-red-500">*</span>
               </h1>
               <div className="space-y-2  rounded-b-xl">
+                <InputField
+                  maxLength={100}
+                  id="locationurl"
+                  name="locationurl"
+                  label={"Location URL (optional)"}
+                  onChange={(e) => {
+                    setLocationData((prev) => ({
+                      ...prev,
+                      url: e.target.value,
+                      latitude: extractCoordinates(e.target.value)?.lat,
+                      longitude: extractCoordinates(e.target.value)?.lng,
+                    }));
+                  }}
+                  tooltipContent="Paste map url then we automatically extract Latitude and Longitude"
+                  value={locationData.url}
+                  placeholder="Enter location url"
+                />
                 <div className="flex items-center gap-2">
                   <InputField
                     maxLength={100}
@@ -426,6 +475,7 @@ export const TemplateNode = ({
             specificTemplate={specificTemplate}
             variablesData={variablesData}
             basicDetails={basicDetails}
+            locationData={locationData}
           />
         </div>
       </div>
