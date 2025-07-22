@@ -1,7 +1,41 @@
-import React from 'react'
+import React from "react";
 
-export const RCS = () => {
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+
+import { motion } from "framer-motion";
+export const RCS = ({ rcsLiveData = [] }) => {
   return (
-    <div>RCS</div>
-  )
-}
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="bg-white p-4 rounded-2xl shadow-sm mt-2"
+    >
+      {rcsLiveData.length === 0 && (
+        <p className="text-center text-gray-500">No Data Available</p>
+      )}
+      <ResponsiveContainer width="100%" height={500}>
+        <BarChart data={rcsLiveData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="online" fill="#3498db" name="Online Sales" />
+          <Bar dataKey="offline" fill="#2ecc71" name="Offline Sales" />
+        </BarChart>
+      </ResponsiveContainer>
+    </motion.div>
+  );
+};

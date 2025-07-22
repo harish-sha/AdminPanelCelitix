@@ -19,6 +19,11 @@ import { SendingService } from "./components/SendingS";
 
 const GraphMain = () => {
   const [value, setValue] = React.useState(0);
+  const [rcsLiveData, setRcsLiveData] = React.useState([]);
+  const [rcsServiceData, setRcsServiceData] = React.useState([]);
+  const [whatsappLiveData, setwhatsappLiveData] = React.useState([]);
+  const [sendingServiceData, setsendingServiceData] = React.useState([]);
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -27,6 +32,10 @@ const GraphMain = () => {
     try {
       const res = await liveMonitoringWhatsapp();
       console.log("res-Whatsapp", res);
+      if (!res?.success) {
+        return toast.error(res?.message);
+      }
+      setwhatsappLiveData(res?.data);
     } catch (e) {
       console.log(e);
       toast.error("Something Went Wrong!");
@@ -36,6 +45,10 @@ const GraphMain = () => {
     try {
       const res = await liveMonitoringRCS();
       console.log("res-RCS", res);
+      if (!res?.success) {
+        return toast.error(res?.message);
+      }
+      setRcsLiveData(res?.data);
     } catch (e) {
       console.log(e);
       toast.error("Something Went Wrong!");
@@ -45,6 +58,10 @@ const GraphMain = () => {
     try {
       const res = await liveMonitoringRCSStatus();
       console.log("res-RCSStatus", res);
+      if (!res?.success) {
+        return toast.error(res?.message);
+      }
+      setRcsServiceData(res?.data);
     } catch (e) {
       console.log(e);
       toast.error("Something Went Wrong!");
@@ -54,6 +71,10 @@ const GraphMain = () => {
     try {
       const res = await liveMonitoringSendingService();
       console.log("res-SendingService", res);
+      if (!res?.success) {
+        return toast.error(res?.message);
+      }
+      setsendingServiceData(res?.data);
     } catch (e) {
       console.log(e);
       toast.error("Something Went Wrong!");
@@ -159,16 +180,16 @@ const GraphMain = () => {
       </Tabs>
 
       <CustomTabPanel value={value} index={0}>
-        <WhatsAppGraph />
+        <WhatsAppGraph whatsappLiveData={whatsappLiveData} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <RCS />
+        <RCS rcsLiveData={rcsLiveData} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        <RCSService />
+        <RCSService rcsServiceData={rcsServiceData} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
-        <SendingService />
+        <SendingService sendingServiceData={sendingServiceData} />
       </CustomTabPanel>
     </Box>
   );
