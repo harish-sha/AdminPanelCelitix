@@ -41,6 +41,7 @@ export const Request = ({
   }
 
   function handleRemoveParams(index: number) {
+    if (params.length === 1) return;
     setParams((prev) => prev.filter((_, i) => i !== index));
   }
   function handleAddHeader() {
@@ -55,6 +56,7 @@ export const Request = ({
   }
 
   function handleRemoveHeader(index: number) {
+    if (header.length === 1) return;
     setHeader((prev) => prev.filter((_, i) => i !== index));
   }
 

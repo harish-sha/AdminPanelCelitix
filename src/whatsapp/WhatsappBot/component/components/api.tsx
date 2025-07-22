@@ -46,7 +46,12 @@ export const Api = ({
           allVariables={allVariables}
         />
       ) : (
-        <Response />
+        <Response
+          id={id}
+          nodesInputData={nodesInputData}
+          setNodesInputData={setNodesInputData}
+          allVariables={allVariables}
+        />
       )}
     </div>
   );
