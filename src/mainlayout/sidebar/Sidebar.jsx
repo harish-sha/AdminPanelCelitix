@@ -4,6 +4,7 @@ import { MdExpandLess, MdExpandMore, MdOutlineEmail } from "react-icons/md";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import BlockOutlinedIcon from "@mui/icons-material/BlockOutlined";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
+import UnsubscribeOutlinedIcon from '@mui/icons-material/UnsubscribeOutlined';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaHome, FaSignOutAlt, FaWhatsapp } from "react-icons/fa";
 import { IoPersonOutline } from "react-icons/io5";
@@ -364,6 +365,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "Manage Contacts",
       type: "single",
       to: "/managecontacts",
+      roles: ["ADMIN", "DIRECTUSER"],
+    },
+    {
+      id: "",
+      name: "Unsubscribe",
+      icon: <UnsubscribeOutlinedIcon fontSize="20" />,
+      label: "Unsubscribe",
+      type: "single",
+      to: "/unsubscribe",
       roles: ["ADMIN", "DIRECTUSER"],
     },
     // {

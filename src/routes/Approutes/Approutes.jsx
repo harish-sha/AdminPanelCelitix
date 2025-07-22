@@ -172,6 +172,9 @@ import LiveChatLayout from "@/CombineLiveChats/pages/LiveChatLayout";
 import CombineLiveChatSettings from "@/CombineLiveChats/pages/CombineLiveChatSettings";
 import Pointingup from "@/CombineLiveChats/components/Settings/Pointingup";
 
+// Unsubscribe
+import Unsubscribe from "@/unsubscribe/Unsubscribe";
+
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
@@ -374,7 +377,11 @@ const Approutes = () => {
           <Route index element={<Pointingup />} />
           <Route path=":channel" element={<Outlet />} />
         </Route>
+        
+        {/* unsubscribe */}
+        <Route path="unsubscribe" element={<Unsubscribe />} />
       </Route>
+
 
       <Route path="dummy" element={<Dummy />} />
       <Route path="arihant" element={<Arihant />} />
