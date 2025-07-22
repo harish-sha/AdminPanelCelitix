@@ -413,21 +413,24 @@ export default function WhatsappLiveChat() {
 
   useEffect(() => {
     if (!wabaState?.selectedWaba) return;
-    let intervalId = null;
+    // let intervalId = null;
 
-    if (isSubscribe) {
-      // handleFetchAllConvo();
-      intervalId = setInterval(() => {
-        handleFetchAllConvo();
-      }, 5000);
-    } else {
-      handleFetchAllConvo();
-      setIsSubscribe(true);
-    }
+    // if (isSubscribe) {
+    //   // handleFetchAllConvo();
+    //   intervalId = setInterval(() => {
+    //     handleFetchAllConvo();
+    //   }, 5000);
+    // } else {
+    //   handleFetchAllConvo();
+    //   setIsSubscribe(true);
+    // }
 
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
+    // return () => {
+    //   if (intervalId) clearInterval(intervalId);
+    // };
+
+    handleFetchAllConvo();
+    setIsSubscribe(true);
   }, [wabaState.selectedWaba, btnOption, isSubscribe]);
 
   useEffect(() => {
@@ -883,9 +886,9 @@ export default function WhatsappLiveChat() {
     }
     // handleLoadNewChat();
     // handleIsView();
+    handleLoadNewChat();
+    handleIsView();
     const intervalId = setInterval(() => {
-      handleLoadNewChat();
-      handleIsView();
     }, 5000);
     return () => clearInterval(intervalId);
   }, [latestMessageData]);
@@ -966,8 +969,10 @@ export default function WhatsappLiveChat() {
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
       <div
-        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${chatState?.active ? "hidden md:block" : "block"
-          }`}>
+        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${
+          chatState?.active ? "hidden md:block" : "block"
+        }`}
+      >
         <InputData
           setSearch={setSearch}
           search={search}
@@ -991,7 +996,6 @@ export default function WhatsappLiveChat() {
         />
       </div>
       <AnimatePresence>
-
         {!chatState.active && !isSmallScreen && (
           <motion.div
             key="empty-chat"
@@ -1072,7 +1076,6 @@ export default function WhatsappLiveChat() {
           </motion.div>
         )}
 
-
         {chatState.active && (
           <motion.div
             key="chat-screen"
@@ -1101,7 +1104,7 @@ export default function WhatsappLiveChat() {
               setSendMessageDialogVisible={setSendMessageDialogVisible}
               setChatState={setChatState}
               chatState={chatState}
-            // specificConversation={specificConversation}
+              // specificConversation={specificConversation}
             />
           </motion.div>
         )}
@@ -1317,7 +1320,7 @@ export default function WhatsappLiveChat() {
         style={{ display: "none" }}
         onChange={handleFileChange}
         accept="image/* video/* audio/*"
-      // multiple
+        // multiple
       />
 
       {imagePreviewVisible && (

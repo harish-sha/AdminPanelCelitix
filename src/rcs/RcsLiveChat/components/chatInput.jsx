@@ -1,5 +1,5 @@
 import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 import { flushSync } from "react-dom";
 import { FiSend } from "react-icons/fi";
@@ -10,6 +10,7 @@ import FilePresentOutlinedIcon from "@mui/icons-material/FilePresentOutlined";
 import { BsJournalArrowDown } from "react-icons/bs";
 import { FaReply } from "react-icons/fa6";
 import { FaPlus } from "react-icons/fa";
+import CannedMessageDropdown from "@/cannedmessage/components/CannedMessageDropdown";
 
 export const ChatInput = ({
   input,
@@ -23,6 +24,7 @@ export const ChatInput = ({
   setIsTemplateMessage,
 }) => {
   // const [isSpeedDialOpen, setIsSpeedDialOpen] = React.useState(false);
+  const [showCannedDropdown, setShowCannedDropdown] = React.useState(false);
 
   const items = [
     {
@@ -101,7 +103,12 @@ export const ChatInput = ({
           placeholder="Type a message..."
           ref={inputRef}
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            setInput(value);
+            const lastChar = value[e.target.selectionStart - 1];
+            setShowCannedDropdown(lastChar === "/");
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
@@ -109,6 +116,32 @@ export const ChatInput = ({
             }
           }}
         />
+
+        <AnimatePresence>
+          {showCannedDropdown && (
+            <CannedMessageDropdown
+              onSelect={(msg) => {
+                const inputEl = inputRef.current;
+                if (!inputEl) return;
+
+                const start = inputEl.selectionStart;
+                const end = inputEl.selectionEnd;
+
+                const newText =
+                  input.substring(0, start - 1) + msg + input.substring(end);
+
+                setInput(newText);
+                setShowCannedDropdown(false);
+
+                requestAnimationFrame(() => {
+                  const pos = start - 1 + msg.length;
+                  inputEl.setSelectionRange(pos, pos);
+                  inputEl.focus();
+                });
+              }}
+            />
+          )}
+        </AnimatePresence>
         <button
           onClick={sendMessage}
           //   disabled={!selectedImage && !input}
