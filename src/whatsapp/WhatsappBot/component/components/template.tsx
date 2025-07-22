@@ -342,12 +342,12 @@ export const TemplateNode = ({
             />
           )}
           {templateType === "location" && (
-            <div className="w-full mt-4 p-2">
+            <div className="w-full mt-4 p-2 ">
               <h1 className="mb-2 text-lg font-semibold text-gray-700">
                 Location Details
                 <span className="text-red-500">*</span>
               </h1>
-              <div className="space-y-2 bg-gray-50 rounded-b-xl">
+              <div className="space-y-2  rounded-b-xl">
                 <div className="flex items-center gap-2">
                   <InputField
                     maxLength={100}
@@ -382,7 +382,7 @@ export const TemplateNode = ({
                   maxLength={20}
                   id="name"
                   name="name"
-                  label={"name"}
+                  label={"Name"}
                   onChange={(e) => {
                     setLocationData((prev) => ({
                       ...prev,
@@ -396,7 +396,7 @@ export const TemplateNode = ({
                   maxLength={100}
                   id="address"
                   name="address"
-                  label={"address"}
+                  label={"Address"}
                   onChange={(e) => {
                     setLocationData((prev) => ({
                       ...prev,
