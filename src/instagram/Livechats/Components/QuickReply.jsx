@@ -9,7 +9,7 @@ import { MdOutlineCancel } from "react-icons/md";
 const QuickReply = ({ open, setOpen }) => {
   const [inputText, setInputText] = useState("");
   const [textMessage, setTextMessage] = useState([]);
-    const [showQuickReply, setShowQuickReply] = useState(false);
+  const [showQuickReply, setShowQuickReply] = useState(false);
 
 
   const Max_Chip = 13;
@@ -41,13 +41,12 @@ const QuickReply = ({ open, setOpen }) => {
             placeholder="Message..."
             value={inputText}
             onChange={(e) => {
-               const value = e.target.value;
-               setInputText(value);
-               const lastChar = value[e.target.selectionStart - 1];
-                 setShowQuickReply(lastChar === "/");
+              const value = e.target.value;
+              setInputText(value);
+              const lastChar = value[e.target.selectionStart - 1];
+              setShowQuickReply(lastChar === "/");
             }}
             maxLength={20}
-            
           />
           <UniversalButton
             label="Add"
