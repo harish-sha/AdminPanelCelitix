@@ -1,7 +1,7 @@
 import InputField from "@/components/layout/InputField";
 import { Textarea } from "@/components/ui/textarea";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
-import React from "react";
+import React, { useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
 
@@ -22,6 +22,12 @@ export const Request = ({
       value: "",
     },
   ]);
+  const [header, setHeader] = React.useState([
+    {
+      key: "",
+      value: "",
+    },
+  ]);
 
   function handleAddParams() {
     if (params.length >= 5) return;
@@ -37,12 +43,64 @@ export const Request = ({
   function handleRemoveParams(index: number) {
     setParams((prev) => prev.filter((_, i) => i !== index));
   }
+  function handleAddHeader() {
+    if (header.length >= 5) return;
+    setHeader((prev) => [
+      ...prev,
+      {
+        key: "",
+        value: "",
+      },
+    ]);
+  }
+
+  function handleRemoveHeader(index: number) {
+    setHeader((prev) => prev.filter((_, i) => i !== index));
+  }
 
   function handleInsertParams(e, index, type) {
     const newParams = [...params];
     newParams[index][type] = e.target.value;
     setParams(newParams);
   }
+  function handleInsertHeader(e, index, type) {
+    const newHeaders = [...header];
+    newHeaders[index][type] = e.target.value;
+    setHeader(newHeaders);
+  }
+
+  function removeVariable(text: string) {
+    return text
+      .split(/\s+/)
+      .filter((word) => !(word.includes("{{") && word.includes("}}")))
+      .join(" ");
+  }
+  function handleInsertVar(e: string) {
+    const url = nodesInputData[id]?.apiUrl || "";
+    if (!url) return;
+    const removeVariableTag = removeVariable(url); // Remove variable tags to ensure only one variable is inserted
+    const variableTage = `{{${e}}}`;
+    const newUrl = removeVariableTag + "/" + variableTage;
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        //   variable: `{{${e}}}`,
+        apiUrl: newUrl,
+      },
+    }));
+  }
+
+  useEffect(() => {
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        params: params,
+        headers: header,
+      },
+    }));
+  }, [params, header]);
   return (
     <div className="space-y-2">
       <InputField
@@ -90,7 +148,7 @@ export const Request = ({
           { value: "none", label: "None" },
           { value: "parameter", label: "Parameter" },
           ...(nodesInputData[id]?.apiMethod === "POST"
-            ? [{ value: "requestJson", label: "Request JSON" }]
+            ? [{ value: "json", label: "Request JSON" }]
             : []),
         ]}
         value={nodesInputData[id]?.apiDatatype}
@@ -107,7 +165,7 @@ export const Request = ({
       />
 
       {nodesInputData[id]?.apiMethod === "POST" &&
-        nodesInputData[id]?.apiDatatype === "requestJson" && (
+        nodesInputData[id]?.apiDatatype === "json" && (
           <div>
             <label
               className="text-sm font-medium text-gray-800 font-p"
@@ -187,8 +245,78 @@ export const Request = ({
 
       {/* Header Params here make when  payload come */}
 
+      <div className="flex items-center gap-2 mt-2">
+        <input
+          type="checkbox"
+          id="addHeader"
+          name="addHeader"
+          onChange={(e) => {
+            setNodesInputData((prev) => ({
+              ...prev,
+              [id]: {
+                ...prev[id],
+                addHeader: e.target.checked,
+              },
+            }));
+          }}
+        />
+        <label
+          htmlFor="addHeader"
+          className="text-base font-medium text-gray-800 font-p"
+        >
+          Header
+        </label>
+      </div>
+
+      {nodesInputData[id]?.addHeader && (
+        <div className="mt-2">
+          <div className="flex justify-between items-end mb-2">
+            <p>API Header</p>
+            <button onClick={handleAddHeader}>
+              <FaPlus />
+            </button>
+          </div>
+
+          <div className="space-y-2">
+            {header?.map((param, index) => (
+              <div className="flex gap-2">
+                <InputField
+                  label=""
+                  name="headerKey"
+                  id="headerKey"
+                  placeholder={`Header Key ${index + 1}`}
+                  value={header[index]?.key}
+                  onChange={(e) => {
+                    handleInsertHeader(e, index, "key");
+                  }}
+                  maxLength={100}
+                />
+                <InputField
+                  label=""
+                  name="headerValue"
+                  id="headerValue"
+                  placeholder={`Header Value ${index + 1}`}
+                  value={header[index]?.value}
+                  onChange={(e) => {
+                    handleInsertHeader(e, index, "value");
+                  }}
+                  maxLength={100}
+                />
+
+                <button
+                  className="text-red-500"
+                  onClick={() => handleRemoveHeader(index)}
+                >
+                  <MdOutlineDeleteForever size={20} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Uncomment when payload come */}
-      {/* <AnimatedDropdown
+      <AnimatedDropdown
         id="variable"
         name="variable"
         label="Select Variable"
@@ -198,17 +326,10 @@ export const Request = ({
         }))}
         value={nodesInputData[id]?.variable}
         onChange={(e) => {
-          setNodesInputData((prev) => ({
-            ...prev,
-            [id]: {
-              ...prev[id],
-              //   variable: `{{${e}}}`,
-              variable: e,
-            },
-          }));
+          handleInsertVar(e);
         }}
-        placeholder="Select API Data Type"
-      /> */}
+        placeholder="Select Variable"
+      />
     </div>
   );
 };
