@@ -58,12 +58,19 @@ export const Preview = ({
       (_, key) => variableValueMap[`{#${key}#}`] || `{#${key}#}`
     );
 
-    const base64PDF = templateDetails[0]["pdfBase64 "];
-    const byteCharacters = atob(base64PDF);
-    const byteNumbers = Array.from(byteCharacters).map((c) => c.charCodeAt(0));
-    const byteArray = new Uint8Array(byteNumbers);
-    const blob = new Blob([byteArray], { type: "application/pdf" });
-    const url = URL.createObjectURL(blob);
+
+    let url = "";
+
+    if (templateDetails[0]?.templateType === "text_message_with_pdf") {
+      const base64PDF = templateDetails[0]["pdfBase64 "];
+      const byteCharacters = atob(base64PDF);
+      const byteNumbers = Array.from(byteCharacters).map((c) =>
+        c.charCodeAt(0)
+      );
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+    }
 
     setData({
       type,

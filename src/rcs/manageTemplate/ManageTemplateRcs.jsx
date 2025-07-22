@@ -179,10 +179,10 @@ const ManageTemplateRcs = () => {
               { label: "Text", value: "text" },
               { label: "Image", value: "image" },
               { label: "Video", value: "video" },
-              // {
-              //   label: "Rich Card Stand Alone",
-              //   value: "richcardstandalone",
-              // },
+              {
+                label: "Text with PDF",
+                value: "text_message_with_pdf",
+              },
               // {
               //   label: "Rich Card Carausel",
               //   value: "richcardcarousel",
