@@ -1,4 +1,5 @@
 import InputField from "@/components/layout/InputField";
+import { Textarea } from "@/components/ui/textarea";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import React from "react";
 import { FaPlus } from "react-icons/fa";
@@ -21,6 +22,7 @@ export const Request = ({
       value: "",
     },
   ]);
+
   function handleAddParams() {
     if (params.length >= 5) return;
     setParams((prev) => [
@@ -87,6 +89,9 @@ export const Request = ({
         options={[
           { value: "none", label: "None" },
           { value: "parameter", label: "Parameter" },
+          ...(nodesInputData[id]?.apiMethod === "POST"
+            ? [{ value: "requestJson", label: "Request JSON" }]
+            : []),
         ]}
         value={nodesInputData[id]?.apiDatatype}
         onChange={(e) => {
@@ -100,6 +105,38 @@ export const Request = ({
         }}
         placeholder="Select API Data Type"
       />
+
+      {nodesInputData[id]?.apiMethod === "POST" &&
+        nodesInputData[id]?.apiDatatype === "requestJson" && (
+          <div>
+            <label
+              className="text-sm font-medium text-gray-800 font-p"
+              htmlFor="requestJson"
+            >
+              Request JSON
+            </label>
+
+            <Textarea
+              id="requestJson"
+              name="requestJson"
+              value={nodesInputData[id]?.apiRequestJson}
+              onChange={(e) => {
+                setNodesInputData((prev) => ({
+                  ...prev,
+                  [id]: {
+                    ...prev[id],
+                    apiRequestJson: e.target.value,
+                  },
+                }));
+              }}
+              placeholder={`{
+    "key": "value"
+}
+                `}
+              className="mt-2 resize-none h-40"
+            />
+          </div>
+        )}
 
       {nodesInputData[id]?.apiDatatype === "parameter" && (
         <div className="mt-2">
