@@ -100,7 +100,7 @@ export const ChatInput = ({
         <textarea
           type="text"
           className="max-h-50 p-3 w-full focus:outline-none resize-none"
-          placeholder="Type a message..."
+          placeholder="Type / for canned messages"
           ref={inputRef}
           value={input}
           onChange={(e) => {
