@@ -357,6 +357,13 @@ export const TemplateNode = ({
                   btn: [],
                   btnInput: [],
                 });
+                setLocationData({
+                  url: "",
+                  latitude: "",
+                  longitude: "",
+                  address: "",
+                  name: "",
+                });
               }}
               disabled={false}
             />
