@@ -126,23 +126,29 @@ const Login = () => {
 
       const ipResponse = await getIpAddress();
 
-      setInputDetails((prev) => ({
-        ...prev,
-        systemInfo: uaResult.browser.name || "Unknown",
-        ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // systemInfo: "Chrome",
-        // ip: "183.83.52.251",
-      }));
+      // setInputDetails((prev) => ({
+      //   ...prev,
+      //   systemInfo: uaResult.browser.name || "Unknown",
+      //   ip: ipResponse?.data?.clientIp || "0.0.0.0",
+      //   // systemInfo: "Chrome",
+      //   // ip: "183.83.52.251",
+      // }));
+
+      // const payloadd = {
+      //   ...inputDetails,
+      //   systemInfo: uaResult.browser.name || "Unknown",
+      //   ip: ipResponse?.data?.clientIp || "0.0.0.0",
+      //   // systemInfo: "Chrome",
+      //   // ip: "183.83.52.251",
+      // };
+
+      // delete payloadd.rememberMe;
 
       const payloadd = {
         ...inputDetails,
-        systemInfo: uaResult.browser.name || "Unknown",
-        ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // systemInfo: "Chrome",
-        // ip: "183.83.52.251",
+        systemInfo: "Chrome",
+        ip: "43.224.1.229",
       };
-
-      delete payloadd.rememberMe;
       const res = await login(payloadd);
 
       if (res?.data?.validateOtp) {
@@ -436,8 +442,9 @@ const Login = () => {
                     </button> */}
                     <div className="flex items-center justify-center ">
                       <button
-                        className={`custom-signin-btn ${loading ? "loading" : ""
-                          }`}
+                        className={`custom-signin-btn ${
+                          loading ? "loading" : ""
+                        }`}
                         disabled={loading}
                         onClick={handleLogin}
                       >
@@ -687,7 +694,8 @@ const Login = () => {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
-                  className="h-full md:flex flex-col items-center justify-center bg-gradient-to-r from-[#2b40b0] to-[#8447c6] text-white p-6 hidden">
+                  className="h-full md:flex flex-col items-center justify-center bg-gradient-to-r from-[#2b40b0] to-[#8447c6] text-white p-6 hidden"
+                >
                   <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
