@@ -75,37 +75,8 @@ export const TemplateNode = ({
     return variables;
   }
 
-  // async function handleFetchWaba() {
-  //   try {
-  //     const data = nodesInputData[id];
-
-  //     const res = await getWabaList();
-  //     const wabaMbNo = res.find(
-  //       (item) => item.wabaSrno == data?.wabanumber
-  //     )?.mobileNo;
-
-  //     const selectedMobile = wabaMbNo || "";
-  //     setWabaState({
-  //       waba: res,
-  //       selected: selectedMobile,
-  //     });
-
-  //     setVariablesData((prev) => ({
-  //       ...prev,
-  //       input: data?.variables,
-  //       btnInput: data?.urlValues ? [data?.urlValues] : [],
-  //     }));
-  //   } catch (e) {
-  //     return toast.error("Error fetching Waba Details");
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   handleFetchWaba();
-  // }, []);
-
   async function handleFetchAllTemplates() {
-    const data = nodesInputData[id];
+    const data = JSON.parse(nodesInputData[id]?.json);
     if (!details.selected) return;
     try {
       const res = await getWabaTemplateDetails(details.selected);
@@ -114,7 +85,42 @@ export const TemplateNode = ({
       );
 
       setAllTemplates(approvedTemplates);
-      setSelectedTemplate(Number(data?.whatsappTemplate));
+
+      let tempId = null;
+      if (data?.template?.name) {
+        tempId = approvedTemplates.find(
+          (item) => item.templateName === data?.template?.name
+        )?.templateSrno;
+      }
+
+      const body = data?.template?.components?.find(
+        (item) => item.type === "BODY"
+      );
+      const btn = data?.template?.components?.find(
+        (item) => item.type === "button"
+      );
+      const regex = /{{(\d+)}}/g;
+      const index = [];
+      const variable = body?.parameters.map((item, i) => {
+        const match = regex.exec(item?.text);
+        index.push(i);
+        return match ? match[1] : null;
+      });
+
+      const btnVar = btn?.parameters.map((item, i) => {
+        const match = regex.exec(item?.text);
+        return match ? match[1] : null;
+      });
+
+      setVariablesData({
+        length: variable?.length || 0,
+        data: index,
+        input: variable,
+        btn: btnVar,
+        btnInput: btnVar,
+      });
+
+      setSelectedTemplate(tempId);
     } catch (e) {
       return toast.error("Error fetching all templates");
     }
@@ -183,7 +189,6 @@ export const TemplateNode = ({
         tempName: template?.templateName,
         waba: details?.selected,
       });
-      console.log("curlData", curlData);
 
       const botData = {
         ...curlData,
@@ -211,6 +216,17 @@ export const TemplateNode = ({
               parameters: [
                 {
                   text: `{{${variables[index]}}}`,
+                  type: "text",
+                },
+              ],
+            };
+          }
+          if (component.type === "button") {
+            return {
+              ...component,
+              parameters: [
+                {
+                  text: `{{${btnVar[index]}}}`,
                   type: "text",
                 },
               ],
@@ -276,7 +292,6 @@ export const TemplateNode = ({
 
       setIsVisible(false);
     } catch (e) {
-      console.log(e);
       return toast.error("Error saving template data");
     }
   }
