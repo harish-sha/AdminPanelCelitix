@@ -841,6 +841,7 @@ import {
   BiUserCircle,
   BiChevronRight,
 } from "react-icons/bi";
+import { MdOutlineUnsubscribe } from "react-icons/md";
 import { AiOutlineRobot } from "react-icons/ai";
 import {
   deleteAutoAction,
@@ -861,6 +862,9 @@ import StorageIcon from "@mui/icons-material/Storage";
 import { CgUnblock } from "react-icons/cg";
 import { Datasource } from "./components/Datasource";
 import { Ai } from "./components/Ai";
+import CustomTooltip from "../components/CustomTooltip";
+import { AiOutlineInfoCircle } from "react-icons/ai";
+import Unsubscribe from "../unsubscribe/Unsubscribe";
 
 const MotionPaper = motion(Paper);
 
@@ -872,6 +876,7 @@ const tabs = [
   // },
   { key: "settings", label: "Chat Settings", icon: <BiCog size={20} /> },
   { key: "users", label: "Block User", icon: <BiUserCircle size={20} /> },
+  { key: "unsubscribe", label: "Unsubscribe Report", icon: <MdOutlineUnsubscribe size={20} /> },
 ];
 
 const chatSubOptions = [
@@ -1329,34 +1334,50 @@ const WhatsappLiveChatSettings = () => {
     {
       id: 1,
       name: "Welcome Message",
-      button: ["Configure Text"],
-      desc: "Automatically greet customers when they message you during off hours..",
+      button: ["Configure"],
+      desc: "Greets users automatically when they message for the first time. Helps create a quick and professional first response.",
       message: "",
       type: "Welcome_message",
+      tooltip:
+        "“Hi! 👋 Thanks for reaching out. Our team will connect with you shortly.”",
     },
     {
       id: 2,
       name: "Off Hours Message",
-      button: ["Configure Text", "Configure Time"],
-      desc: "Configure automated reply for user's first query during off hours.",
+      button: ["Configure", "Configure Time"],
+      desc: "Sends a reply to the user’s first message received outside business hours. Useful for informing users about support timing.",
       message: "",
       type: "off_hour_msg",
+      tooltip: (
+        <>
+          <div><b>What it does:</b> Sends a one-time auto-reply to the user’s first message after business hours.</div>
+
+          <div><b>Example:</b> “Our team is unavailable now. We’ll reply during our shift, 10 AM–7 PM.”</div>
+        </>
+      )
     },
     {
       id: 3,
       name: "Agent-Change",
-      button: ["Configure Text"],
-      desc: "Automatically greet customers when they message you during off hours.",
+      button: ["Configure"],
+      desc: "Sends an automated message when a chat is reassigned or the agent becomes inactive. Keeps the user informed during off-hours.",
       message: "",
       type: "agent_assign_message",
+      tooltip: "“All agents are currently unavailable. We’ll reconnect soon.”",
     },
     {
       id: 4,
       name: "Inactive-Agent-Timings",
-      button: ["Configure Text"],
-      desc: "Automatically greet customers when they message you during off hours.",
+      button: ["Configure"],
+      desc: "Activates auto-replies during agent off-shift times. Ensures customers receive a response even when no one is online.",
       message: "",
       type: "inactive_agent_timing",
+      tooltip: (
+        <>
+          <div><b>What it does:</b> Auto-replies when no agent is online based on shift time settings.</div>
+
+          <div><b>Example:</b> “No agents are online right now. We'll respond after 10 AM.”</div>
+        </>)
     },
     // { id: 4, name: "Agent-No-Response", button: ["Configure Text"], desc: "Automatically greet customers when they message you during off hours.", message: "", type: "agent_no_response" },
   ];
@@ -1425,9 +1446,10 @@ const WhatsappLiveChatSettings = () => {
           return null;
       }
     }
+
     if (activeTab === "settings")
       return (
-        <div className="p-2 bg-white rounded-lg shadow">
+        <div className="p-2 bg-white rounded-lg shadow overflow-auto h-155 md:h-auto  pb-20 md:pb-0">
           <>
             <div
               // sx={{
@@ -1436,7 +1458,7 @@ const WhatsappLiveChatSettings = () => {
               //   px: 2,
               //   borderRadius: "20px",
               // }}
-              className="min-h-[89.4vh] bg-gradient-to-br from-indigo-50 via-white to-purple-50 rounded-xl py-6 px-4 shadow-lg"
+              className="min-h-[89.4vh] bg-gradient-to-br from-indigo-50 via-white to-purple-50 rounded-xl py-6 px-0 md:px-4 shadow-lg overflow-auto md:h-[100vh] pb-20 md:pb-30"
             >
               {/* <CannedMessageManager /> */}
 
@@ -1473,117 +1495,22 @@ const WhatsappLiveChatSettings = () => {
                   />
                 </div>
               </div>
-
-              {/* <Grid container spacing={5} justifyContent="center" maxWidth="lg">
-          <Grid item xs={12} sm={6}>
-            <MotionPaper
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              elevation={5}
-              sx={{
-                borderRadius: 4,
-                p: 4,
-                display: "flex",
-                flexDirection: "column",
-                gap: 2,
-                border: "1px solid #d1fae5",
-                backgroundColor: "#ecfdf5",
-                transition: "all 0.3s ease",
-              }}
-            >
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                <Box display="flex" alignItems="center" gap={2}>
-                  <Box
-                    sx={{
-                      backgroundColor: "#25D3661A",
-                      p: 1.5,
-                      borderRadius: 2,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <WhatsAppIcon sx={{ color: "#25D366", fontSize: 28 }} />
-                  </Box>
-                  <Typography variant="h6" fontWeight={700} color="#1f2937">
-                    Welcome Message
-                  </Typography>
-                </Box>
-
-                <Box display="flex" alignItems="center" gap={1}>
-                  <Switch
-                    color="success"
-                    checked={cardDetails["welcome_message"]?.message || 0}
-                    inputProps={{ "aria-label": "welcome-message-toggle" }}
-                    value={cardDetails["welcome_message"]?.status || false}
-                    onClick={(e) => deleteAction("welcome_message")}
-                  />
-                </Box>
-              </Box>
-
-              <Typography variant="body2" color="text.secondary">
-                Automatically greet customers when they message you during
-                working hours.
-              </Typography>
-
-              <Box
-                sx={{
-                  backgroundColor: "#fff",
-                  border: "1px solid #d1d5db",
-                  borderRadius: 2,
-                  p: 2,
-                }}
-              >
-                <Typography
-                  variant="body2"
-                  fontWeight={600}
-                  color="text.primary"
-                >
-                  {cardDetails["welcome_message"]?.message ||
-                    "Click to configure"}
-                </Typography>
-              </Box>
-              <Tooltip title="Click to configure" arrow>
-                <Button
-                  variant="contained"
-                  size="medium"
-                  sx={{
-                    mt: 1,
-                    alignSelf: "flex-start",
-                    backgroundColor: "#25D366",
-                    fontWeight: 600,
-                    textTransform: "none",
-                    px: 3,
-                    ":hover": { backgroundColor: "#1ebc59" },
-                  }}
-                  onClick={() => handleConfigure("welcome_message")}
-                >
-                  Configure
-                </Button>
-              </Tooltip>
-            </MotionPaper>
-          </Grid>
-        </Grid> */}
-              <div className="bg-white rounded-2xl shadow-lg flex flex-col items-center justify-center h-auto p-5 border-3 border-dashed border-indigo-200">
+              <div className="bg-white rounded-2xl shadow-lg flex flex-col items-center justify-center h-auto p-0 md:p-5 border-3 border-dashed border-indigo-200 ">
                 {wabaState.selected ? (
-                  <div className=" flex flex-wrap justify-center items-center gap-5 space-y-8 mx-auto">
+                  <div className=" flex flex-wrap justify-center items-center gap-5  mx-auto">
                     {liveChatCards.map((card) => {
                       return (
                         <>
                           <div
                             key={card.id}
-                            className="relative flex w-90 flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md hover:shadow-xl transition-all duration-400 hover:-translate-y-1 mt-8"
+                            className="relative flex w-90 flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md hover:shadow-xl transition-all duration-400 hover:-translate-y-1"
                           >
-                            <div className="relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-blue-gray-500 bg-clip-border text-white shadow-lg shadow-blue-gray-500/40 bg-gradient-to-r from-green-100 to-green-50">
+                            <div className=" mx-3 mt-3 h-30 overflow-hidden rounded-xl bg-blue-gray-500 bg-clip-border text-white  shadow-blue-gray-500/40 bg-gradient-to-r from-green-100 to-green-50">
                               <Box
                                 display="flex"
                                 alignItems="center"
                                 justifyContent="space-between"
-                                marginTop={6}
+                                marginTop={4}
                               >
                                 <Box display="flex" alignItems="center" gap={2}>
                                   <Box
@@ -1628,9 +1555,18 @@ const WhatsappLiveChatSettings = () => {
                               </Box>
                             </div>
 
-                            <div className="p-4">
-                              <p className="mb-2 block font-sans text-sm  font-normal tracking-normal text-gray-600 antialiased">
+                            <div className="p-3">
+                              <p className="mb-2 flex font-sans text-sm  font-normal tracking-normal text-gray-600 antialiased">
                                 {card.desc}
+                                <CustomTooltip
+                                  title={card.tooltip}
+                                  placement="top"
+                                  arrow
+                                >
+                                  <span className="">
+                                    <AiOutlineInfoCircle className="text-gray-500 cursor-pointer" />
+                                  </span>
+                                </CustomTooltip>
                               </p>
                               <div className="border border-gray-300 rounded-md p-2 bg-gray-100 h-50 overflow-scroll text-wrap">
                                 <pre className="text-sm font-normal text-gray-600 text-wrap">
@@ -1664,7 +1600,7 @@ const WhatsappLiveChatSettings = () => {
                                         toast.error("Please select WABA");
                                         return;
                                       }
-                                      if (btnLabel === "Configure Text")
+                                      if (btnLabel === "Configure")
                                         handleConfigure(card.type);
                                       else if (btnLabel === "Configure Time")
                                         setWorkingHoursDialog(true);
@@ -1681,7 +1617,7 @@ const WhatsappLiveChatSettings = () => {
                     })}
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-138">
+                  <div className="flex flex-col items-center justify-center p-5 2xl:p-25">
                     <AnimatePresence>
                       <motion.div
                         initial={{ opacity: 0, y: 30 }}
@@ -1865,7 +1801,7 @@ const WhatsappLiveChatSettings = () => {
 
     if (activeTab === "users")
       return (
-        <div className="p-2 bg-white rounded-lg shadow">
+        <div className="p-2 bg-white rounded-lg shadow overflow-auto h-155 md:h-auto pb-20 md:pb-0">
           <div className="min-h-[89.4vh] bg-gradient-to-br from-indigo-50 via-white to-purple-50 rounded-xl py-6 px-4 shadow-lg">
             <div className=" mx-auto">
               <div className="text-center mb-4 ">
@@ -1893,129 +1829,132 @@ const WhatsappLiveChatSettings = () => {
                 />
               </div>
 
-              <div className="bg-white rounded-2xl shadow-lg p-5 h-150 border-3 border-dashed border-indigo-200">
-                {!selectedWaba ? (
-                  <div className="flex flex-col items-center justify-center h-full">
-                    <AnimatePresence>
-                      <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 30 }}
-                        transition={{ duration: 0.3 }}
-                        className="border-3 p-8 border-indigo-200 rounded-2xl border-dashed shadow-2xl"
-                      >
-                        <motion.div
-                          animate={{ y: [0, -10, 0] }}
-                          transition={{ repeat: Infinity, duration: 1.2 }}
-                          className="mb-2 flex items-center justify-center"
-                        >
-                          <FaHandPointDown
-                            className="text-5xl text-indigo-400"
-                            style={{ transform: "rotate(180deg)" }}
-                          />
-                        </motion.div>
-                        <h3 className="text-xl font-semibold text-green-800 mb-2">
-                          Please select a WABA account
-                        </h3>
-                        <p className="text-gray-500 text-center max-w-xs text-sm">
-                          Choose a WABA from the dropdown above to view blocked
-                          users.
-                        </p>
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
-                ) : loading ? (
-                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {skeletonCards}
-                  </div>
-                ) : blockedUsers.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full">
-                    <AnimatePresence>
-                      <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 30 }}
-                        transition={{ duration: 0.3 }}
-                        className="flex flex-col items-center w-max justify-center border-3 p-8 border-indigo-200 rounded-2xl border-dashed shadow-2xl"
-                      >
-                        <CgUnblock className="text-6xl text-indigo-400 animate-bounce mb-0" />
-                        <h3 className="text-lg font-semibold text-gray-700">
-                          No Blocked Users
-                        </h3>
-                        <p className="text-gray-500 text-center mt-2 max-w-xs text-sm">
-                          All clear! No users are currently blocked for this
-                          WABA.
-                        </p>
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
-                ) : (
-                  <>
-                    <div className="mb-6 flex justify-start">
-                      <input
-                        type="number"
-                        placeholder="Search number..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="border border-gray-300 rounded-lg px-3 py-1.5 w-full max-w-xs focus:outline-none "
-                      />
-                    </div>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 overflow-scroll h-120 border-t-2 border-dashed pt-2">
+              <div className="bg-white rounded-2xl shadow-lg flex flex-col items-center justify-center h-auto p-5 border-3 border-dashed border-indigo-200">
+                <div className="flex flex-col items-center justify-center p-5 2xl:p-25">
+
+                  {!selectedWaba ? (
+                    <div className="flex flex-col items-center justify-center h-auto md:h-full">
                       <AnimatePresence>
-                        {filteredUsers.length === 0 ? (
-                          <AnimatePresence>
-                            <motion.div
-                              initial={{ opacity: 0, y: 30 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: 30 }}
-                              transition={{ duration: 0.3 }}
-                              className="col-span-full flex flex-col items-center justify-center h-full"
-                            >
-                              <CgUnblock className="text-6xl text-indigo-400 animate-bounce mb-4" />
-                              <h3 className="text-xl font-semibold text-gray-700">
-                                No Blocked Users
-                              </h3>
-                              <p className="text-gray-500 text-center mt-2 max-w-xs text-sm">
-                                All clear! No users are currently blocked for
-                                this WABA.
-                              </p>
-                            </motion.div>
-                          </AnimatePresence>
-                        ) : (
-                          filteredUsers.map((user) => (
-                            <motion.div
-                              key={user.wa_id}
-                              initial={{ opacity: 0, y: 30 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: 30 }}
-                              transition={{ duration: 0.3 }}
-                              className="bg-white rounded-2xl shadow-md p-5 flex flex-col justify-between border border-indigo-50 h-35"
-                            >
-                              <div className="mb-4">
-                                <h3 className="text-md font-semibold text-gray-700">
-                                  {highlightMatch(user.wa_id, search)}
-                                </h3>
-                                <p className="text-sm text-gray-500">
-                                  Blocked from: {selectedWaba}
-                                </p>
-                              </div>
-                              <button
-                                onClick={() => {
-                                  setSelectedId(user.wa_id);
-                                  setDialogVisible(true);
-                                }}
-                                className="mt-auto inline-flex items-center justify-center gap-2 bg-red-100 text-red-700 hover:bg-red-200 transition px-4 py-2 rounded-lg text-sm font-medium cursor-pointer "
-                              >
-                                <CgUnblock size={18} />
-                                Unblock
-                              </button>
-                            </motion.div>
-                          ))
-                        )}
+                        <motion.div
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 30 }}
+                          transition={{ duration: 0.3 }}
+                          className="border-3 p-8 border-indigo-200 rounded-2xl border-dashed shadow-2xl"
+                        >
+                          <motion.div
+                            animate={{ y: [0, -10, 0] }}
+                            transition={{ repeat: Infinity, duration: 1.2 }}
+                            className="mb-2 flex items-center justify-center"
+                          >
+                            <FaHandPointDown
+                              className="text-5xl text-indigo-400"
+                              style={{ transform: "rotate(180deg)" }}
+                            />
+                          </motion.div>
+                          <h3 className="text-xl font-semibold text-green-800 mb-2">
+                            Please select a WABA account
+                          </h3>
+                          <p className="text-gray-500 text-center max-w-xs text-sm">
+                            Choose a WABA from the dropdown above to view blocked
+                            users.
+                          </p>
+                        </motion.div>
                       </AnimatePresence>
                     </div>
-                  </>
-                )}
+                  ) : loading ? (
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {skeletonCards}
+                    </div>
+                  ) : blockedUsers.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full">
+                      <AnimatePresence>
+                        <motion.div
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 30 }}
+                          transition={{ duration: 0.3 }}
+                          className="flex flex-col items-center w-max justify-center border-3 px-0 md:px-8 py-4 md:py-8 border-indigo-200 rounded-2xl border-dashed shadow-2xl"
+                        >
+                          <CgUnblock className="text-6xl text-indigo-400 animate-bounce mb-0" />
+                          <h3 className="text-lg font-semibold text-gray-700">
+                            No Blocked Users
+                          </h3>
+                          <p className="text-gray-500 text-center mt-2 max-w-xs text-sm">
+                            All clear! No users are currently blocked for this
+                            WABA.
+                          </p>
+                        </motion.div>
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mb-6 flex justify-start">
+                        <input
+                          type="number"
+                          placeholder="Search number..."
+                          value={search}
+                          onChange={(e) => setSearch(e.target.value)}
+                          className="border border-gray-300 rounded-lg px-3 py-1.5 w-full max-w-xs focus:outline-none "
+                        />
+                      </div>
+                      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 overflow-scroll h-120 border-t-2 border-dashed pt-2">
+                        <AnimatePresence>
+                          {filteredUsers.length === 0 ? (
+                            <AnimatePresence>
+                              <motion.div
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 30 }}
+                                transition={{ duration: 0.3 }}
+                                className="col-span-full flex flex-col items-center justify-center h-full"
+                              >
+                                <CgUnblock className="text-6xl text-indigo-400 animate-bounce mb-4" />
+                                <h3 className="text-xl font-semibold text-gray-700">
+                                  No Blocked Users
+                                </h3>
+                                <p className="text-gray-500 text-center mt-2 max-w-xs text-sm">
+                                  All clear! No users are currently blocked for
+                                  this WABA.
+                                </p>
+                              </motion.div>
+                            </AnimatePresence>
+                          ) : (
+                            filteredUsers.map((user) => (
+                              <motion.div
+                                key={user.wa_id}
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 30 }}
+                                transition={{ duration: 0.3 }}
+                                className="bg-white rounded-2xl shadow-md p-5 flex flex-col justify-between border border-indigo-50 h-35"
+                              >
+                                <div className="mb-4">
+                                  <h3 className="text-md font-semibold text-gray-700">
+                                    {highlightMatch(user.wa_id, search)}
+                                  </h3>
+                                  <p className="text-sm text-gray-500">
+                                    Blocked from: {selectedWaba}
+                                  </p>
+                                </div>
+                                <button
+                                  onClick={() => {
+                                    setSelectedId(user.wa_id);
+                                    setDialogVisible(true);
+                                  }}
+                                  className="mt-auto inline-flex items-center justify-center gap-2 bg-red-100 text-red-700 hover:bg-red-200 transition px-4 py-2 rounded-lg text-sm font-medium cursor-pointer "
+                                >
+                                  <CgUnblock size={18} />
+                                  Unblock
+                                </button>
+                              </motion.div>
+                            ))
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -2057,21 +1996,25 @@ const WhatsappLiveChatSettings = () => {
           </div>
         </div>
       );
+
+    if (activeTab === "unsubscribe")
+      return (
+        <Unsubscribe />
+      )
     return null;
   };
 
   return (
-    <div className="flex h-full bg-gray-50">
+    <div className="flex flex-row flex-wrap md:h-full bg-gray-50 rounded-2xl">
       {/* Sidebar */}
-      <aside className="w-55 bg-white border-r rounded-lg shadow-sm">
-        <div className="p-4 text-xl font-bold text-gray-800">WhatsApp Chat</div>
-        <nav className="">
+      <aside className="w-full md:w-55 bg-white border-r md:mb-0 mb-0 h-full rounded-l-2xl">
+        <nav className="mt-0 md:mt-2 flex md:flex-col md:gap-0 gap-3  overflow-x-auto">
           {tabs.map((tab) => (
-            <div key={tab.key}>
+            <div key={tab.key} className="w-full p-1">
               <button
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center w-full px-4 py-3 mb-1 text-sm font-medium rounded-lg transition-colors hover:bg-gray-100 focus:outline-none ${activeTab === tab.key
+                className={`flex items-center w-full px-4 py-3 mb-1 text-sm font-medium rounded-lg transition-colors cursor-pointer hover:bg-gray-100 focus:outline-none ${activeTab === tab.key
                   ? "bg-blue-100 text-blue-600"
                   : "text-gray-700"
                   }`}
@@ -2105,7 +2048,7 @@ const WhatsappLiveChatSettings = () => {
       </aside>
 
       {/* Content Area */}
-      <main className="flex-1 overflow-auto">{renderContent()}</main>
+      <main className="md:flex-1 w-full h-[86vh]">{renderContent()}</main>
     </div>
   );
 };
