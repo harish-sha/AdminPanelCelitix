@@ -4,6 +4,8 @@ import InputVariable from "@/whatsapp/whatsappLaunchCampaign/components/InputVar
 import InputField from "@/components/layout/InputField";
 import { Dialog } from "primereact/dialog";
 import { FaPlus } from "react-icons/fa";
+import UniversalButton from "@/components/common/UniversalButton";
+import { MdOutlineDeleteForever } from "react-icons/md";
 
 export const Response = ({
   id,
@@ -85,9 +87,11 @@ export const Response = ({
               apiResponse: {
                 ...prev[id]?.apiResponse,
                 responseType: e,
+                varName: "",
               },
             },
           }));
+          setJsonVar([{ key: "", value: "" }]);
         }}
         placeholder="Select Request Type"
       />
@@ -171,7 +175,7 @@ export const Response = ({
                 <InputField
                   id="variableKey"
                   name="variableKey"
-                  label="Variable Key"
+                  label={`Variable Key ${index + 1}`}
                   value={jsonVar[index]?.key}
                   onChange={(e) => {
                     handleJsonVarChange(index, "key", e.target.value);
@@ -182,7 +186,7 @@ export const Response = ({
                 <InputField
                   id="varValue"
                   name="varValue"
-                  label="Variable Value"
+                  label={`Variable Value ${index + 1}`}
                   value={jsonVar[index]?.value}
                   onChange={(e) => {
                     handleJsonVarChange(index, "value", e.target.value);
@@ -192,13 +196,25 @@ export const Response = ({
                 />
                 <div className="flex justify-end mb-2">
                   <button
+                    title="Add Variable"
                     className=" border bg-black text-white rounded-md p-2 flex gap-2 items-center"
                     onClick={() => {
                       setIsOpen(true);
                       setIndex(index);
                     }}
                   >
-                    <FaPlus /> Variable
+                    <FaPlus />
+                  </button>
+                </div>
+                <div className="flex justify-end mb-2">
+                  <button
+                    title="Delete Item"
+                    className=" border bg-red-500 text-white rounded-md p-2 flex gap-2 items-center"
+                    onClick={() => {
+                      handleRemoveJsonVar(index);
+                    }}
+                  >
+                    <MdOutlineDeleteForever />
                   </button>
                 </div>
               </div>
@@ -217,20 +233,36 @@ export const Response = ({
           setIndex(0);
         }}
       >
-        <AnimatedDropdown
-          id="selectVariable"
-          name="selectVariable"
-          label="Select Variable"
-          onChange={(e) => {
-            handleInputVariable(e);
-            setSelectedVariable(e);
-          }}
-          value={selectedVariable}
-          options={allVariables?.map((variable) => ({
-            value: variable,
-            label: variable,
-          }))}
-        />
+        <div className="w-[30rem]">
+          <AnimatedDropdown
+            id="selectVariable"
+            name="selectVariable"
+            label="Select Variable"
+            onChange={(e) => {
+              handleInputVariable(e);
+              setSelectedVariable(e);
+            }}
+            value={selectedVariable}
+            options={allVariables?.map((variable) => ({
+              value: variable,
+              label: variable,
+            }))}
+          />
+        </div>
+        <div className="mt-2">
+          <UniversalButton
+            id="addVariable"
+            name="addVariable"
+            label="Add Variable"
+            type="submit"
+            onClick={() => {
+              setIsOpen(false);
+              setSelectedVariable("");
+              setIndex(0);
+            }}
+            style={{}}
+          />
+        </div>
       </Dialog>
     </div>
   );
