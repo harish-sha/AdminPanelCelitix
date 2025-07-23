@@ -20,11 +20,10 @@ function generateBotPayload(
 
     const incomingEdge = edges.find((edge) => edge.target === node.id);
     const prevNode = incomingEdge
-      ? `${
-          nodes.find((n) => n.id === incomingEdge.source)?.type === "starting"
-            ? "START"
-            : nodes.find((n) => n.id === incomingEdge.source)?.type
-        }_${incomingEdge.source}`
+      ? `${nodes.find((n) => n.id === incomingEdge.source)?.type === "starting"
+        ? "START"
+        : nodes.find((n) => n.id === incomingEdge.source)?.type
+      }_${incomingEdge.source}`
       : "";
 
     const outgoingEdges = edges.filter((edge) => edge.source === node.id);
@@ -133,6 +132,10 @@ function generateBotPayload(
         (entry["urlbuttonUrl"] = nodeInput?.urlbuttonUrl),
         (entry["selectedOption"] = nodeInput?.selectedOption || "");
     }
+    if (finalType === "api") {
+      generateApiPayload(entry, nodeInput);
+
+    }
 
     if (prevNode) entry["prevNode"] = prevNode;
 
@@ -148,6 +151,63 @@ function generateBotPayload(
   });
 
   return { body: payload };
+}
+
+function generateApiPayload(entry, nodeInput) {
+  if (!entry.apiResponse) {
+    entry.apiResponse = {};
+  }
+  console.log("nodeInput", nodeInput);
+
+  (entry["apiUrl"] = nodeInput?.apiUrl),
+    (entry["apiMethod"] = nodeInput?.apiMethod),
+    (entry["apiDatatype"] = nodeInput?.apiDatatype),
+    (entry["apiHeader"] = generateKeyValue(nodeInput?.headers, true)),
+
+
+    (entry["apiResponse"]["responseType"] = nodeInput?.apiResponse?.responseType),
+    (entry["apiResponse"]["actionType"] = nodeInput?.apiResponse?.actionType),
+    (entry["apiResponse"]["storeInVariable"] = nodeInput?.apiResponse?.storeInVariable),
+    (entry["responseType"] = nodeInput?.responseType)
+
+  if (nodeInput?.apiResponse?.responseType === "text") {
+    (entry["apiResponse"]["storedData"] = [
+      {
+        varName: nodeInput?.apiResponse?.varName
+      }
+    ])
+  }
+
+  if (nodeInput?.apiDatatype === "parameter") {
+    (entry["apiJson"] = generateKeyValue(nodeInput?.params, true))
+  }
+  if (nodeInput?.apiDatatype === "json") {
+    (entry["apiJson"] = JSON.parse(nodeInput?.apiRequestJson))
+  }
+  else if (nodeInput?.apiResponse?.responseType === "json") {
+    (entry["apiResponse"]["storedData"] = [
+      ...nodeInput?.jsonVar
+    ])
+  }
+
+}
+
+function generateKeyValue(item, isJson = false) {
+  if (!isJson) {
+    return item?.map((i: { key: string, value: string }) => {
+      if(!i.key || !i.value) return {};
+      return {
+        [i.key]: i.value
+      }
+    })
+  }
+  else {
+    const obj = {}
+    item?.map((i: { key: string, value: string }) => {
+      obj[i.key] = i.value
+    })
+    return obj
+  }
 }
 
 export default generateBotPayload;
