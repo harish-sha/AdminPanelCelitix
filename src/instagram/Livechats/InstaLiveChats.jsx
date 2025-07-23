@@ -3,8 +3,9 @@ import CustomEmojiPicker from "@/admin/components/CustomEmojiPicker";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { LuUndo2 } from "react-icons/lu";
-import QuickReply from "./Components/QuickReply";
+import QuickReply, { ShowQuickReply } from "./Components/QuickReply";
 import { Dialog } from "primereact/dialog";
+import { AnimatePresence, motion } from "framer-motion";
 
 const InstaLiveChats = () => {
   const [text, setText] = useState("");
@@ -13,6 +14,9 @@ const InstaLiveChats = () => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const textRef = useRef(null);
   const [open, setOpen] = useState(false);
+  const [showQuickDrop, setShowQuickDrop] = useState(false);
+  const [filteredReplies, setFilteredReplies] = useState([]);
+  const [cursorPos, setCursorPos] = useState(0);
 
   const handleEmojiSelect = (setState, emoji, maxLength = 1000) => {
     if (!textRef.current) return;
@@ -107,7 +111,6 @@ const InstaLiveChats = () => {
                     onClick={() => handleEdit(idx)}
                     className="text-white flex items-center gap-2 "
                   >
-
                     <EditOutlinedIcon sx={{ fontSize: 17 }} /> Edit
                   </button>
                   <button
@@ -129,16 +132,28 @@ const InstaLiveChats = () => {
         </div>
 
         <div className="p-4 border-t flex items-center gap-2 relative">
+
           <input
             type="text"
-            placeholder="Message..."
+            placeholder="Type / for quick reply or Message..."
             ref={textRef}
             value={text}
-            onChange={(e) => setText(e.target.value)}
-            className="flex-1 border rounded-full px-4 py-2 outline-none"
+            // onChange={(e) => setText(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              setText(value);
+              const lastChar = value[e.target.selectionStart - 1];
+              setShowQuickDrop(lastChar === "/");
+            }}
+            className="flex-1 border rounded-full px-4 py-2 outline-none text-sm"
           />
+          <AnimatePresence>
+            {showQuickDrop && (
+              <ShowQuickReply />
+            )}
+          </AnimatePresence>
 
-          <div className="absolute bottom-6 right-23">
+          <div className="absolute bottom-5 right-23">
             <CustomEmojiPicker
               onSelect={(emoji) => handleEmojiSelect(setText, emoji)}
               position="top"
@@ -156,13 +171,13 @@ const InstaLiveChats = () => {
             +
           </button>
         </div>
-        {open && (
+        {/* {open && (
           <QuickReply
             open={open}
             setOpen={setOpen}
           />
-
-        )}
+        )} */}
+        <QuickReply open={open} setOpen={setOpen} />
       </div>
     </div>
   );

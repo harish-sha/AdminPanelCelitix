@@ -1,86 +1,105 @@
-import React, { useState } from "react";
-import InputField from "@/whatsapp/components/InputField";
-import UniversalButton from "@/admin/components/UniversalButton";
-import { Dialog } from "primereact/dialog";
-import { Chip } from "@mui/material";
-import toast from "react-hot-toast";
+import React from "react";
+import {
+  Tabs,
+  TabsHeader,
+  TabsBody,
+  Tab,
+  TabPanel,
+} from "@material-tailwind/react";
+import {
+  Square3Stack3DIcon,
+  UserCircleIcon,
+  Cog6ToothIcon,
+} from "@heroicons/react/24/solid";
 
-const QuickReply = ({ open, setOpen }) => {
-  const [inputText, setInputText] = useState("");
-  const [textMessage, setTextMessage] = useState([]);
-
-  const Max_Chip = 13;
-
-  const handleSave = () => {
-    if (textMessage.length >= Max_Chip) {
-      toast.error("You reached the maximum limit.");
-      return; // Stop adding chips
-    }
-
-    if (inputText.trim()) {
-      setTextMessage((prev) => [...prev, inputText.trim()]);
-      setInputText("");
-    }
-  };
-
+export function TabsWithIcon() {
+  const data = [
+    {
+      label: "Dashboard",
+      value: "dashboard",
+      icon: Square3Stack3DIcon,
+      desc: `It really matters and then like it really doesn't matter.
+      What matters is the people who are sparked by it. And the people
+      who are like offended by it, it doesn't matter.`,
+    },
+    {
+      label: "Profile",
+      value: "profile",
+      icon: UserCircleIcon,
+      desc: `Because it's about motivating the doers. Because I'm here
+      to follow my dreams and inspire other people to follow their dreams, too.`,
+    },
+    {
+      label: "Settings",
+      value: "settings",
+      icon: Cog6ToothIcon,
+      desc: `We're not always in the position that we want to be at.
+      We're constantly growing. We're constantly making mistakes. We're
+      constantly trying to express ourselves and actualize our dreams.`,
+    },
+  ];
   return (
-    <>
-      <Dialog
-        header="Add Quick Replies"
-        visible={open}
-        style={{ width: "35rem" }}
-        onHide={() => setOpen(false)}
-        draggable={false}
-      >
-        <div className="w-full my-2">
-          <InputField
-            label="Message"
-            placeholder="Message..."
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            maxLength={20}
-          />
-        </div>
+    <Tabs value="dashboard">
+      <TabsHeader>
+        {data.map(({ label, value, icon }) => (
+          <Tab key={value} value={value}>
+            <div className="flex items-center gap-2">
+              {React.createElement(icon, { className: "w-5 h-5" })}
+              {label}
+            </div>
+          </Tab>
+        ))}
+      </TabsHeader>
+      <TabsBody>
+        {data.map(({ value, desc }) => (
+          <TabPanel key={value} value={value}>
+            {desc}
+          </TabPanel>
+        ))}
+      </TabsBody>
+    </Tabs>
+  );
+}
 
-        {/* Character and Chip Count */}
-        <div className="flex items-center justify-between my-2">
-          <div className="text-xs font-semibold">
-            Total Chars {inputText.length}/20
-          </div>
-          <div
-            className={`text-xs font-semibold ${textMessage.length >= Max_Chip ? "text-red-500" : ""
-              }`}
-          >
-            Quick Reply {textMessage.length}/{Max_Chip}
-          </div>
-        </div>
+import React from "react";
+import CustomTabs from "./CustomTabs";
+import {
+  Square3Stack3DIcon,
+  UserCircleIcon,
+  Cog6ToothIcon,
+} from "@heroicons/react/24/solid";
 
-        {/* Chip Display */}
-        <div className="flex flex-wrap gap-2 mt-2">
-          {textMessage.map((text, index) => (
-            <Chip
-              sx={{ padding: 1 }}
-              key={index}
-              label={text}
-              onDelete={() =>
-                setTextMessage((prev) => prev.filter((_, i) => i !== index))
-              }
-            />
-          ))}
-        </div>
+import DashboardComponent from "./DashboardComponent";
+import ProfileComponent from "./ProfileComponent";
+import SettingsComponent from "./SettingsComponent";
 
-        {/* Buttons */}
-        <div className="flex flex-row gap-3 mt-4 justify-center items-center">
-          <UniversalButton
-            label="Save"
-            onClick={handleSave}
-            disabled={textMessage.length >= Max_Chip}
-          />
-          <UniversalButton label="Cancel" onClick={() => setInputText("")} />
-        </div>
-      </Dialog>
-    </>
+const tabsData = [
+  {
+    label: "Dashboard",
+    value: "dashboard",
+    icon: Square3Stack3DIcon,
+    content: <DashboardComponent />, // any component or JSX
+  },
+  {
+    label: "Profile",
+    value: "profile",
+    icon: UserCircleIcon,
+    content: <ProfileComponent />,
+  },
+  {
+    label: "Settings",
+    value: "settings",
+    icon: Cog6ToothIcon,
+    content: <SettingsComponent />,
+  },
+];
+
+const App = () => {
+  return (
+    <div className="p-6">
+      <CustomTabs tabsData={tabsData} defaultValue="dashboard" />
+    </div>
   );
 };
 
-export default QuickReply;
+export default App;

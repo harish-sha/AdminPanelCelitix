@@ -159,6 +159,8 @@ import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
 // import { AddCallback } from "@/callback/page/addCallback";
 import ResellerDashboard from "../../ResellerDashboard";
+import InstaSettings from "@/instagram/settings/InstaSettings";
+
 
 
 const Approutes = () => {
@@ -312,6 +314,7 @@ const Approutes = () => {
         <Route path="/manageinstaprofile" element={<ManageInstaProfile />} />
         <Route path="/manageinstatemplate" element={<ManageInstaTemplate />} />
         <Route path="/instaadsmanager" element={<InstaAdsManager />} />
+        <Route path="/instasettings" element={<InstaSettings />} />
 
         {/* Appauthenticator */}
         <Route path="/authreports" element={<AppauthenticatorReports />} />

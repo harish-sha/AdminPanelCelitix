@@ -288,9 +288,8 @@ const ManageInstaProfile = () => {
                   autoPlay
                   loop
                   playsInline
-                  className={`w-full h-full object-cover transition-opacity duration-300 ${
-                    loaded ? "opacity-100" : "opacity-0"
-                  }`}
+                  className={`w-full h-full object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"
+                    }`}
                   onLoadedData={() => setLoaded(true)}
                 />
               )}
@@ -460,13 +459,13 @@ const ManageInstaProfile = () => {
         userAceessToken={userAceessToken}
         setUserAccessToken={setUserAccessToken}
       />
-      <div className="bg-blue-50 w-full min-h-screen text-gray-800 dark:text-white p-10">
+      {/* <div className="bg-blue-50 w-full min-h-screen text-gray-800 dark:text-white p-10">
         {selectedProfile
           ? renderSingleProfile(selectedProfile)
           : userProfileDetails?.length === 1
-          ? renderSingleProfile(userProfileDetails[0])
-          : renderMultipleProfiles()}
-      </div>
+            ? renderSingleProfile(userProfileDetails[0])
+            : renderMultipleProfiles()}
+      </div> */}
     </>
   );
 };
