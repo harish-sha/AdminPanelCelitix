@@ -173,7 +173,7 @@ import CombineLiveChatSettings from "@/CombineLiveChats/pages/CombineLiveChatSet
 import Pointingup from "@/CombineLiveChats/components/Settings/Pointingup";
 
 // Unsubscribe
-import Unsubscribe from "@/unsubscribe/Unsubscribe";
+import Unsubscribe from "@/whatsapp/unsubscribe/Unsubscribe";
 
 // dummy
 import Dummy from "../../dummy/Dummy";

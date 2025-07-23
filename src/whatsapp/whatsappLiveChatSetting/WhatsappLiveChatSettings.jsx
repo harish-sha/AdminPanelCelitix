@@ -841,6 +841,7 @@ import {
   BiUserCircle,
   BiChevronRight,
 } from "react-icons/bi";
+import { MdOutlineUnsubscribe } from "react-icons/md";
 import { AiOutlineRobot } from "react-icons/ai";
 import {
   deleteAutoAction,
@@ -863,6 +864,7 @@ import { Datasource } from "./components/Datasource";
 import { Ai } from "./components/Ai";
 import CustomTooltip from "../components/CustomTooltip";
 import { AiOutlineInfoCircle } from "react-icons/ai";
+import Unsubscribe from "../unsubscribe/Unsubscribe";
 
 const MotionPaper = motion(Paper);
 
@@ -874,6 +876,7 @@ const tabs = [
   // },
   { key: "settings", label: "Chat Settings", icon: <BiCog size={20} /> },
   { key: "users", label: "Block User", icon: <BiUserCircle size={20} /> },
+  { key: "unsubscribe", label: "Unsubscribe Report", icon: <MdOutlineUnsubscribe size={20} /> },
 ];
 
 const chatSubOptions = [
@@ -1443,6 +1446,7 @@ const WhatsappLiveChatSettings = () => {
           return null;
       }
     }
+
     if (activeTab === "settings")
       return (
         <div className="p-2 bg-white rounded-lg shadow overflow-auto h-155 md:h-auto  pb-20 md:pb-0">
@@ -1491,101 +1495,6 @@ const WhatsappLiveChatSettings = () => {
                   />
                 </div>
               </div>
-
-              {/* <Grid container spacing={5} justifyContent="center" maxWidth="lg">
-          <Grid item xs={12} sm={6}>
-            <MotionPaper
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              elevation={5}
-              sx={{
-                borderRadius: 4,
-                p: 4,
-                display: "flex",
-                flexDirection: "column",
-                gap: 2,
-                border: "1px solid #d1fae5",
-                backgroundColor: "#ecfdf5",
-                transition: "all 0.3s ease",
-              }}
-            >
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                <Box display="flex" alignItems="center" gap={2}>
-                  <Box
-                    sx={{
-                      backgroundColor: "#25D3661A",
-                      p: 1.5,
-                      borderRadius: 2,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <WhatsAppIcon sx={{ color: "#25D366", fontSize: 28 }} />
-                  </Box>
-                  <Typography variant="h6" fontWeight={700} color="#1f2937">
-                    Welcome Message
-                  </Typography>
-                </Box>
-
-                <Box display="flex" alignItems="center" gap={1}>
-                  <Switch
-                    color="success"
-                    checked={cardDetails["welcome_message"]?.message || 0}
-                    inputProps={{ "aria-label": "welcome-message-toggle" }}
-                    value={cardDetails["welcome_message"]?.status || false}
-                    onClick={(e) => deleteAction("welcome_message")}
-                  />
-                </Box>
-              </Box>
-
-              <Typography variant="body2" color="text.secondary">
-                Automatically greet customers when they message you during
-                working hours.
-              </Typography>
-
-              <Box
-                sx={{
-                  backgroundColor: "#fff",
-                  border: "1px solid #d1d5db",
-                  borderRadius: 2,
-                  p: 2,
-                }}
-              >
-                <Typography
-                  variant="body2"
-                  fontWeight={600}
-                  color="text.primary"
-                >
-                  {cardDetails["welcome_message"]?.message ||
-                    "Click to configure"}
-                </Typography>
-              </Box>
-              <Tooltip title="Click to configure" arrow>
-                <Button
-                  variant="contained"
-                  size="medium"
-                  sx={{
-                    mt: 1,
-                    alignSelf: "flex-start",
-                    backgroundColor: "#25D366",
-                    fontWeight: 600,
-                    textTransform: "none",
-                    px: 3,
-                    ":hover": { backgroundColor: "#1ebc59" },
-                  }}
-                  onClick={() => handleConfigure("welcome_message")}
-                >
-                  Configure
-                </Button>
-              </Tooltip>
-            </MotionPaper>
-          </Grid>
-        </Grid> */}
               <div className="bg-white rounded-2xl shadow-lg flex flex-col items-center justify-center h-auto p-0 md:p-5 border-3 border-dashed border-indigo-200 ">
                 {wabaState.selected ? (
                   <div className=" flex flex-wrap justify-center items-center gap-5  mx-auto">
@@ -2087,21 +1996,25 @@ const WhatsappLiveChatSettings = () => {
           </div>
         </div>
       );
+
+    if (activeTab === "unsubscribe")
+      return (
+        <Unsubscribe />
+      )
     return null;
   };
 
   return (
-    <div className="flex flex-row flex-wrap h-full bg-gray-50">
+    <div className="flex flex-row flex-wrap md:h-full bg-gray-50 rounded-2xl">
       {/* Sidebar */}
-      <aside className="w-full md:w-55 bg-white border-r rounded-lg shadow-sm md:mb-0 mb-2">
-        {/* <div className="p-4 text-xl font-bold text-gray-800">WhatsApp Chat</div> */}
-        <nav className="mt-2 flex md:flex-col md:gap-0 gap-3 w-full">
+      <aside className="w-full md:w-55 bg-white border-r md:mb-0 mb-0 h-full rounded-l-2xl">
+        <nav className="mt-0 md:mt-2 flex md:flex-col md:gap-0 gap-3  overflow-x-auto">
           {tabs.map((tab) => (
             <div key={tab.key} className="w-full p-1">
               <button
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center w-full px-4 py-3 mb-1 text-sm font-medium rounded-lg transition-colors hover:bg-gray-100 focus:outline-none ${activeTab === tab.key
+                className={`flex items-center w-full px-4 py-3 mb-1 text-sm font-medium rounded-lg transition-colors cursor-pointer hover:bg-gray-100 focus:outline-none ${activeTab === tab.key
                   ? "bg-blue-100 text-blue-600"
                   : "text-gray-700"
                   }`}
@@ -2135,7 +2048,7 @@ const WhatsappLiveChatSettings = () => {
       </aside>
 
       {/* Content Area */}
-      <main className="md:flex-1 w-full overflow-auto">{renderContent()}</main>
+      <main className="md:flex-1 w-full h-[86vh]">{renderContent()}</main>
     </div>
   );
 };

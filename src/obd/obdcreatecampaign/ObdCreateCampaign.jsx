@@ -861,8 +861,8 @@ const ObdCreateCampaign = () => {
                         />
 
                         {slectedDynamicVoiceFile && (
-                          <div className="border-2 p-2 rounded-md border-dashed border-gray-500 relative">
-                            <div className="text-red-800 text-xs font-medium text-center">
+                          <div className="border-2 p-2 rounded-md border-dashed border-gray-500 relative bg-white shadow">
+                            <div className="text-red-800 text-xs font-medium text-center ">
                               Please fill all the variable fields! (remaining
                               sequence are the voice clips)
                             </div>
