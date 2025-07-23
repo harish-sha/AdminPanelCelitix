@@ -1,5 +1,5 @@
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
-import React from "react";
+import React, { useEffect } from "react";
 import InputVariable from "@/whatsapp/whatsappLaunchCampaign/components/InputVariable";
 import InputField from "@/components/layout/InputField";
 import { Dialog } from "primereact/dialog";
@@ -23,8 +23,8 @@ export const Response = ({
   const [index, setIndex] = React.useState(0);
   const [jsonVar, setJsonVar] = React.useState([
     {
-      key: "",
-      value: "",
+      paramName: "",
+      varName: "",
     },
   ]);
 
@@ -33,8 +33,8 @@ export const Response = ({
     setJsonVar((prev) => [
       ...prev,
       {
-        key: "",
-        value: "",
+        paramName: "",
+        varName: "",
       },
     ]);
   }
@@ -53,7 +53,7 @@ export const Response = ({
     const tag = `{{${e}}}`;
     if (nodesInputData[id]?.apiResponse?.responseType === "json") {
       const newJsonVar = [...jsonVar];
-      newJsonVar[index] = { ...newJsonVar[index], value: tag };
+      newJsonVar[index] = { ...newJsonVar[index], varName: tag };
       setJsonVar(newJsonVar);
     }
     setNodesInputData((prev) => ({
@@ -67,6 +67,16 @@ export const Response = ({
       },
     }));
   }
+
+  useEffect(() => {
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        jsonVar: jsonVar,
+      },
+    }));
+  }, [jsonVar]);
   return (
     <div className="space-y-2">
       <AnimatedDropdown
@@ -88,10 +98,11 @@ export const Response = ({
                 ...prev[id]?.apiResponse,
                 responseType: e,
                 varName: "",
+                actionType: "-1",
               },
             },
           }));
-          setJsonVar([{ key: "", value: "" }]);
+          setJsonVar([{ paramName: "", varName: "" }]);
         }}
         placeholder="Select Request Type"
       />
@@ -103,6 +114,7 @@ export const Response = ({
             name="selectAction"
             label="Select Action"
             options={[
+              { value: "none", label: "None" },
               { value: "storeInVariable", label: "Store in Variable" },
               ...(nodesInputData[id]?.apiResponse?.responseType === "json"
                 ? [{ value: "createListNode", label: "Create List Node" }]
@@ -117,7 +129,7 @@ export const Response = ({
                   apiResponse: {
                     ...prev[id]?.apiResponse,
                     actionType: e,
-                    [e]: 1,
+                    [e]: e === "none" ? -1 : 1,
                   },
                   responseType: e,
                 },
@@ -176,9 +188,9 @@ export const Response = ({
                   id="variableKey"
                   name="variableKey"
                   label={`Variable Key ${index + 1}`}
-                  value={jsonVar[index]?.key}
+                  value={jsonVar[index]?.paramName}
                   onChange={(e) => {
-                    handleJsonVarChange(index, "key", e.target.value);
+                    handleJsonVarChange(index, "paramName", e.target.value);
                   }}
                   placeholder="Enter Variable Key"
                   maxLength={100}
@@ -187,9 +199,9 @@ export const Response = ({
                   id="varValue"
                   name="varValue"
                   label={`Variable Value ${index + 1}`}
-                  value={jsonVar[index]?.value}
+                  value={jsonVar[index]?.varName}
                   onChange={(e) => {
-                    handleJsonVarChange(index, "value", e.target.value);
+                    handleJsonVarChange(index, "varName", e.target.value);
                   }}
                   placeholder="Enter Variable Value"
                   maxLength={100}
