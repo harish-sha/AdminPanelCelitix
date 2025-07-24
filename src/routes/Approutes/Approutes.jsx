@@ -150,6 +150,8 @@ import ManageInstaProfile from "@/instagram/Manageprofile/ManageInstaProfile";
 import InstaReports from "@/instagram/InstaReports/InstaReports";
 import InstaLiveChats from "@/instagram/Livechats/InstaLiveChats";
 import InstaAdsManager from "@/instagram/instaAdsManager/InstaAdsManager";
+import InstaSettings from "@/instagram/settings/InstaSettings";
+import CommentModeration from "@/instagram/CommentModeration/CommentModeration";
 
 // Not Found Page
 import PageNotFound from "@/NotFound/PageNotFound";
@@ -159,7 +161,6 @@ import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
 // import { AddCallback } from "@/callback/page/addCallback";
 import ResellerDashboard from "../../ResellerDashboard";
-import InstaSettings from "@/instagram/settings/InstaSettings";
 
 
 
@@ -315,6 +316,7 @@ const Approutes = () => {
         <Route path="/manageinstatemplate" element={<ManageInstaTemplate />} />
         <Route path="/instaadsmanager" element={<InstaAdsManager />} />
         <Route path="/instasettings" element={<InstaSettings />} />
+        <Route path="/commentmoderation" element={<CommentModeration />} />
 
         {/* Appauthenticator */}
         <Route path="/authreports" element={<AppauthenticatorReports />} />

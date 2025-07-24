@@ -159,7 +159,21 @@ export default function EmbeddedInstagram({ setStep, userAceessToken, setUserAcc
   );
 
   return (
-    <div className="bg-gradient-to-br from-[#fdeba2] via-[#f6a4c3] to-[#a693f5] h-[91vh] flex items-center justify-center rounded-3xl overflow-scroll shadow-2xl">
+    <motion.div
+      style={{
+        background: "linear-gradient(270deg, #fdeba2, #f6a4c3, #a693f5)",
+        backgroundSize: "400% 400%",
+      }}
+      animate={{
+        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+      }}
+      transition={{
+        duration: 40,
+        ease: "easeInOut",
+        repeat: Infinity,
+      }}
+
+      className="bg-gradient-to-br from-[#fdeba2] via-[#f6a4c3] to-[#a693f5] h-[91vh] flex items-center justify-center rounded-3xl overflow-scroll shadow-2xl">
       <div className="flex justify-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -229,6 +243,6 @@ export default function EmbeddedInstagram({ setStep, userAceessToken, setUserAcc
           </button>
         </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -62,15 +62,16 @@ export const PermissionRoute = ({ children }) => {
 
     {
       name: "instagram",
-      links:[
+      links: [
         "/manageinstatemplate",
         "/manageinstaprofile",
         "/instalivechats",
         "/instareport",
         "/instaadsmanager",
-        "/instasettings"
+        "/instasettings",
+        "/commentmoderation"
       ],
-      roles:["ADMIN"],
+      roles: ["ADMIN"],
 
     },
 
@@ -250,7 +251,7 @@ export const PermissionRoute = ({ children }) => {
       if (item.name === "instagram") {
         allowedServices.push(item);
       }
-      
+
     });
 
     return allowedServices;

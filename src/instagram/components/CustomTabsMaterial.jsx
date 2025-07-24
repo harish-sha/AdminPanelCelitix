@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
     Tabs,
     TabsHeader,
@@ -6,6 +6,8 @@ import {
     Tab,
     TabPanel,
 } from "@material-tailwind/react";
+import { motion } from "framer-motion";
+
 
 /**
  * CustomTabs Component
@@ -17,10 +19,10 @@ const CustomTabsMaterial = ({ tabsData, defaultValue, className = "" }) => {
     return (
         <Tabs value={defaultValue || (tabsData.length > 0 ? tabsData[0].value : "")} className={className}>
             {/* Tabs Header */}
-            <TabsHeader>
+            <TabsHeader >
                 {tabsData.map(({ label, value, icon: Icon }) => (
                     <Tab key={value} value={value}>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 ">
                             {Icon && <Icon className="w-5 h-5" />}
                             {label}
                         </div>

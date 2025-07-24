@@ -1,105 +1,62 @@
-import React from "react";
-import {
-  Tabs,
-  TabsHeader,
-  TabsBody,
-  Tab,
-  TabPanel,
-} from "@material-tailwind/react";
-import {
-  Square3Stack3DIcon,
-  UserCircleIcon,
-  Cog6ToothIcon,
-} from "@heroicons/react/24/solid";
+import React, { useState, useRef, useEffect } from "react";
+import { Tabs, TabsHeader, TabsBody, Tab, TabPanel } from "@material-tailwind/react";
+import { motion } from "framer-motion";
 
-export function TabsWithIcon() {
-  const data = [
-    {
-      label: "Dashboard",
-      value: "dashboard",
-      icon: Square3Stack3DIcon,
-      desc: `It really matters and then like it really doesn't matter.
-      What matters is the people who are sparked by it. And the people
-      who are like offended by it, it doesn't matter.`,
-    },
-    {
-      label: "Profile",
-      value: "profile",
-      icon: UserCircleIcon,
-      desc: `Because it's about motivating the doers. Because I'm here
-      to follow my dreams and inspire other people to follow their dreams, too.`,
-    },
-    {
-      label: "Settings",
-      value: "settings",
-      icon: Cog6ToothIcon,
-      desc: `We're not always in the position that we want to be at.
-      We're constantly growing. We're constantly making mistakes. We're
-      constantly trying to express ourselves and actualize our dreams.`,
-    },
-  ];
+const CustomTabsWithIcons = ({ tabsData, defaultValue = "", className = "" }) => {
+  const [activeTab, setActiveTab] = useState(defaultValue || tabsData[0]?.value || "");
+  const [indicatorStyle, setIndicatorStyle] = useState({});
+  const tabRefs = useRef({});
+
+  // Update indicator position on active tab change
+  useEffect(() => {
+    if (tabRefs.current[activeTab]) {
+      const tabElement = tabRefs.current[activeTab];
+      setIndicatorStyle({
+        width: tabElement.offsetWidth,
+        left: tabElement.offsetLeft,
+      });
+    }
+  }, [activeTab, tabsData]);
+
   return (
-    <Tabs value="dashboard">
-      <TabsHeader>
-        {data.map(({ label, value, icon }) => (
-          <Tab key={value} value={value}>
-            <div className="flex items-center gap-2">
-              {React.createElement(icon, { className: "w-5 h-5" })}
-              {label}
-            </div>
-          </Tab>
-        ))}
-      </TabsHeader>
-      <TabsBody>
-        {data.map(({ value, desc }) => (
-          <TabPanel key={value} value={value}>
-            {desc}
-          </TabPanel>
-        ))}
-      </TabsBody>
-    </Tabs>
-  );
-}
+    <div className={className}>
+      <Tabs value={activeTab}>
+        {/* Tabs Header */}
+        <div className="relative">
+          <TabsHeader className="flex relative">
+            {tabsData.map(({ label, value, icon: Icon }) => (
+              <button
+                key={value}
+                ref={(el) => (tabRefs.current[value] = el)}
+                onClick={() => setActiveTab(value)}
+                className={`relative flex items-center gap-2 px-4 py-2 font-medium transition-colors duration-300 ${activeTab === value ? "text-blue-600" : "text-gray-500 hover:text-gray-800"
+                  }`}
+              >
+                {Icon && <Icon className="w-5 h-5" />}
+                {label}
+              </button>
+            ))}
+          </TabsHeader>
+          {/* Sliding Indicator */}
+          <motion.div
+            layout
+            className="absolute bottom-0 h-[2px] bg-blue-600 rounded"
+            animate={indicatorStyle}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+          />
+        </div>
 
-import React from "react";
-import CustomTabs from "./CustomTabs";
-import {
-  Square3Stack3DIcon,
-  UserCircleIcon,
-  Cog6ToothIcon,
-} from "@heroicons/react/24/solid";
-
-import DashboardComponent from "./DashboardComponent";
-import ProfileComponent from "./ProfileComponent";
-import SettingsComponent from "./SettingsComponent";
-
-const tabsData = [
-  {
-    label: "Dashboard",
-    value: "dashboard",
-    icon: Square3Stack3DIcon,
-    content: <DashboardComponent />, // any component or JSX
-  },
-  {
-    label: "Profile",
-    value: "profile",
-    icon: UserCircleIcon,
-    content: <ProfileComponent />,
-  },
-  {
-    label: "Settings",
-    value: "settings",
-    icon: Cog6ToothIcon,
-    content: <SettingsComponent />,
-  },
-];
-
-const App = () => {
-  return (
-    <div className="p-6">
-      <CustomTabs tabsData={tabsData} defaultValue="dashboard" />
+        {/* Tabs Content */}
+        <TabsBody>
+          {tabsData.map(({ value, content }) => (
+            <TabPanel key={value} value={value}>
+              {activeTab === value && content}
+            </TabPanel>
+          ))}
+        </TabsBody>
+      </Tabs>
     </div>
   );
 };
 
-export default App;
+export default CustomTabsWithIcons;
