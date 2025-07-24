@@ -175,6 +175,7 @@ import Pointingup from "@/CombineLiveChats/components/Settings/Pointingup";
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
+import { ReelPost } from "@/Instagram/InstagramLiveChat/reels";
 
 const Approutes = () => {
   return (
@@ -345,6 +346,9 @@ const Approutes = () => {
         <Route path="workflow/create" element={<WorkflowCreate />} />
         <Route path="workflow/edit" element={<UpdateWorkflow />} />
 
+
+        <Route path="instagram/reel" element={<ReelPost />} />
+
         {/* Ai Configuration */}
         <Route path="aiconfiguration" element={<GptConfiguration />} />
 
@@ -374,6 +378,7 @@ const Approutes = () => {
           <Route index element={<Pointingup />} />
           <Route path=":channel" element={<Outlet />} />
         </Route>
+        
       </Route>
 
       <Route path="dummy" element={<Dummy />} />
