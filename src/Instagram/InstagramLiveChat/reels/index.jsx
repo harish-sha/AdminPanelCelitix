@@ -35,9 +35,13 @@ export const ReelPost = () => {
 
       const fileUrl = await uploadImageFile(data.video);
 
-      console.log("fileUrl", fileUrl);
+      if (!fileUrl) {
+        return toast.error(fileUrl?.msg || "Failed to upload video");
+      }
 
-      setData({ ...data, video_url: fileUrl });
+      toast.success("Video uploaded successfully");
+
+      setData({ ...data, video_url: fileUrl?.fileUrl });
     } catch (e) {
       console.log(e);
       toast.error("Error selecting video");
