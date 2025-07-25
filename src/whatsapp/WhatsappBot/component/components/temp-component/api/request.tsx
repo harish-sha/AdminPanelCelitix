@@ -72,6 +72,13 @@ export const Request = ({
   }
 
   function removeVariable(text: string) {
+    const regex = /{{(\d+)}}/g;
+
+    const match = text.match(regex);
+
+    if (match) {
+      return text;
+    }
     return text
       .split(/\s+/)
       .filter((word) => !(word.includes("{{") && word.includes("}}")))
@@ -80,7 +87,8 @@ export const Request = ({
   function handleInsertVar(e: string) {
     const url = nodesInputData[id]?.apiUrl || "";
     if (!url) return;
-    const removeVariableTag = removeVariable(url); // Remove variable tags to ensure only one variable is inserted
+    if (!e) return;
+    const removeVariableTag = removeVariable(url);
     const variableTage = `{{${e}}}`;
     const newUrl = removeVariableTag + "/" + variableTage;
     setNodesInputData((prev) => ({
@@ -120,7 +128,7 @@ export const Request = ({
             },
           }));
         }}
-        maxLength={100}
+        maxLength={1000}
       />
       <AnimatedDropdown
         id="requestType"

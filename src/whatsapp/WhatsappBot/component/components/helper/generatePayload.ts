@@ -157,16 +157,14 @@ function generateApiPayload(entry, nodeInput) {
   if (!entry.apiResponse) {
     entry.apiResponse = {};
   }
-  console.log("nodeInput", nodeInput);
-
   (entry["apiUrl"] = nodeInput?.apiUrl),
     (entry["apiMethod"] = nodeInput?.apiMethod),
-    (entry["apiDatatype"] = nodeInput?.apiDatatype),
+    (entry["apiDatatype"] = nodeInput?.apiDatatype || ""),
     (entry["apiHeader"] = generateKeyValue(nodeInput?.headers, true)),
 
 
-    (entry["apiResponse"]["responseType"] = nodeInput?.apiResponse?.responseType),
-    (entry["apiResponse"]["actionType"] = nodeInput?.apiResponse?.actionType),
+    (entry["apiResponse"]["responseType"] = nodeInput?.apiResponse?.responseType || "none"),
+    (entry["apiResponse"]["actionType"] = nodeInput?.apiResponse?.actionType || "-1"),
     (entry["apiResponse"]["storeInVariable"] = nodeInput?.apiResponse?.storeInVariable),
     (entry["responseType"] = nodeInput?.responseType)
 
