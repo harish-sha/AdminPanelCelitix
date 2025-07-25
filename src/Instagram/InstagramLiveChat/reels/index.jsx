@@ -60,7 +60,6 @@ export const ReelPost = () => {
           <InputField
             label="Select Video"
             id="video_url"
-            label="Video Url"
             type="file"
             onChange={handleVideoSelect}
             accept="video/*"

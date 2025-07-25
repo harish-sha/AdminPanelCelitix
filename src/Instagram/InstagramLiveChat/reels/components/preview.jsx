@@ -34,6 +34,8 @@ export const Preview = ({ data }) => {
   useEffect(() => {
     if (data.video_url && videoRef.current) {
       videoRef.current.src = data.video_url;
+    } else {
+      videoRef.current.src = "";
     }
   }, [data]);
 
@@ -122,12 +124,9 @@ export const Preview = ({ data }) => {
                     </div>
 
                     {/* Caption */}
-                    <div className="text-white text-sm mb-2">
-                      <p>Amazing sunset vibes! 🌅✨</p>
-                      <p className="text-white/80 text-xs mt-1">
-                        #sunset #vibes #nature
-                      </p>
-                    </div>
+                    <pre className="text-white text-sm mb-2 font-medium whitespace-pre-wrap break-words max-w-[200px] max-h-[9rem] overflow-y-auto">
+                      {data.caption || ""}
+                    </pre>
 
                     {/* Music Info */}
                     <div className="flex items-center text-white/80 text-xs">
