@@ -50,6 +50,7 @@ export const Response = ({
     setJsonVar(newJsonVar);
   }
   function handleInputVariable(e) {
+    if (!e) return;
     const tag = `{{${e}}}`;
     if (nodesInputData[id]?.apiResponse?.responseType === "json") {
       const newJsonVar = [...jsonVar];
@@ -77,6 +78,13 @@ export const Response = ({
       },
     }));
   }, [jsonVar]);
+
+  useEffect(() => {
+    const jsonVar = nodesInputData[id]?.apiResponse?.storedData || [];
+    if(!jsonVar.length) return
+
+    setJsonVar(jsonVar);
+  }, []);
   return (
     <div className="space-y-2">
       <AnimatedDropdown
