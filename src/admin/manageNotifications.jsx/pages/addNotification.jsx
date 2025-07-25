@@ -14,6 +14,24 @@ import { SMS } from "../components/sms";
 
 export const AddNotification = () => {
   const [value, setValue] = React.useState(0);
+  const [data, setData] = React.useState({});
+
+  async function handleSaveWhatsappNotification() {
+    // payload
+    //     {
+    //   "wabaSrno": "1",
+    //   "templateSrno": "51",
+    //   "mediaPath": "http://localhost:9090/cpaas/Whatsapp/whatsapp193871753251992378.mp4",
+    //   "variableList": "\"{#last_name#}\"",
+    //   "urlVariable": "",
+    //   "reminderSrno": "2",
+    //   "whatsappReminderSrno": "0", //for save pass it as 0 or skip  // for update get value
+    //   "templateType": "video",
+    //   "templateName": "welcome_registration",
+    //   "templateLanguage": "mr",
+    //   "notificationStatus": "on"
+    // }
+  }
   return (
     <Box
       sx={{
@@ -107,16 +125,20 @@ export const AddNotification = () => {
       </Tabs>
 
       <CustomTabPanel value={value} index={0}>
-        <Whatsapp />
+        <Whatsapp
+          handleSaveWhatsappNotification={handleSaveWhatsappNotification}
+          data={data}
+          setData={setData}
+        />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <RCS />
+        <RCS data={data} setData={setData} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        <Email />
+        <Email data={data} setData={setData} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
-        <SMS />
+        <SMS data={data} setData={setData} />
       </CustomTabPanel>
     </Box>
   );

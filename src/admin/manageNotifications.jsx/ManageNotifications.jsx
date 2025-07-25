@@ -36,8 +36,14 @@ const ManageNotifications = () => {
   const cols = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     {
-      field: "mobileNo",
-      headerName: "Mobile Number",
+      field: "remarks",
+      headerName: "Remarks",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "emailfor",
+      headerName: "emailfor",
       flex: 1,
       minWidth: 120,
     },
@@ -50,8 +56,16 @@ const ManageNotifications = () => {
         overflow: "hidden",
       }}
     >
-      <div className="flex justify-between">
-        <p className="text-xl font-semibold mb-2">Notification List</p>
+      <div className="flex justify-between mb-2">
+        <div className="flex gap-2 justify-center items-end">
+          <p className="text-xl font-semibold mb-2 ">Notification List</p>
+          <UniversalButton
+            id="addNotification"
+            name="addNotification"
+            label={"Refresh"}
+            onClick={fetchNotifications}
+          />
+        </div>
         <UniversalButton
           id="addNotification"
           name="addNotification"
