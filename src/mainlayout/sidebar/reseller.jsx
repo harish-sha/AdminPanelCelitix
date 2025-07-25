@@ -149,6 +149,15 @@ export const resellerItems = [
     ],
     roles: ["ADMIN"],
   },
+  {
+    id: "",
+    name: "notifications",
+    icon: <IoWalletOutline />,
+    label: "Notifications",
+    type: "single",
+    to: "/notification",
+    roles: ["ADMIN"],
+  },
   // {
   //   id: "",
   //   name: "Managecontacts",

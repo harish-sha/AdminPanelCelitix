@@ -168,7 +168,7 @@ const Approutes = () => {
         <Route path="managerouting" element={<ManageRouting />} />
         <Route path="manageprefix" element={<ManagePrefix />} />
         <Route path="blacklist" element={<Blacklist />} />
-        <Route path="managenotifications" element={<ManageNotifications />} />
+        <Route path="notification" element={<ManageNotifications />} />
         <Route path="addrouting" element={<AddRouting />} />
         <Route path="editrouting" element={<EditRouting />} />
         <Route path="SMPPerrorcode" element={<SMPPErrorCode />} />
