@@ -26,6 +26,8 @@ import numberlookup from "../../assets/icons/Numberlookup.svg";
 import clicktwocall from "../../assets/icons/Click2Call02.svg";
 import { LuWandSparkles } from "react-icons/lu";
 import InstagramIcon from "@mui/icons-material/Instagram";
+import Insight from "@/instagram/Insight/Insight";
+
 
 import { useUser } from "@/context/auth";
 import { all } from "axios";
@@ -330,6 +332,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/instareport", label: "Reports" },
         { to: "/commentmoderation", label: "Comment Moderation" },
         { to: "/instasettings", label: "Settings" },
+        {to: "/insight", label: "Insight"},
+        { to: "/createpost", label: "Create Post" }
       ],
     },
     {

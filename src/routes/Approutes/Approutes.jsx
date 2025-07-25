@@ -152,6 +152,9 @@ import InstaLiveChats from "@/instagram/Livechats/InstaLiveChats";
 import InstaAdsManager from "@/instagram/instaAdsManager/InstaAdsManager";
 import InstaSettings from "@/instagram/settings/InstaSettings";
 import CommentModeration from "@/instagram/CommentModeration/CommentModeration";
+import Insight from "@/instagram/Insight/Insight";
+import InstaCreatePost from "@/instagram/CreatePost/InstaCreatePost"
+
 
 // Not Found Page
 import PageNotFound from "@/NotFound/PageNotFound";
@@ -317,6 +320,8 @@ const Approutes = () => {
         <Route path="/instaadsmanager" element={<InstaAdsManager />} />
         <Route path="/instasettings" element={<InstaSettings />} />
         <Route path="/commentmoderation" element={<CommentModeration />} />
+        <Route path= "/insight" element={<Insight/>} />
+        <Route path= "/createpost" element={<InstaCreatePost/>} />
 
         {/* Appauthenticator */}
         <Route path="/authreports" element={<AppauthenticatorReports />} />
