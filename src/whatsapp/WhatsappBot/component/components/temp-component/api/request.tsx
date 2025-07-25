@@ -29,6 +29,8 @@ export const Request = ({
     },
   ]);
 
+  const [addHeader, setAddHeader] = React.useState(false);
+
   function handleAddParams() {
     if (params.length >= 5) return;
     setParams((prev) => [
@@ -101,16 +103,80 @@ export const Request = ({
     }));
   }
 
+  function generateKeyValue(item, isJson = false) {
+    if (!isJson) {
+      return item?.map((i: { key: string; value: string }) => {
+        if (!i.key || !i.value) return {};
+        return {
+          [i.key]: i.value,
+        };
+      });
+    } else {
+      const obj = {};
+      item?.map((i: { key: string; value: string }) => {
+        obj[i.key] = i.value;
+      });
+      return obj;
+    }
+  }
+
   useEffect(() => {
+    const updatedParams = generateKeyValue(params, true);
+    const updatedHeaders = generateKeyValue(header, true);
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
         ...prev[id],
-        params: params,
-        headers: header,
+        params: updatedParams,
+        headers: updatedHeaders,
       },
     }));
   }, [params, header]);
+
+
+  useEffect(() => {
+    const headers = nodesInputData[id]?.apiHeader || {};
+    const params = nodesInputData[id]?.apiJson || {};
+
+    let header = [];
+    Object.keys(headers).map((h) => {
+      header.push({
+        key: h,
+        value: headers[h],
+      });
+    });
+
+    let param = [];
+    Object.keys(params).map((h) => {
+      param.push({
+        key: h,
+        value: params[h],
+      });
+    });
+
+    setAddHeader(header.length > 0);
+
+    setHeader(
+      header?.length > 0
+        ? header
+        : [
+            {
+              key: "",
+              value: "",
+            },
+          ]
+    );
+    setParams(
+      param?.length > 0
+        ? param
+        : [
+            {
+              key: "",
+              value: "",
+            },
+          ]
+    );
+  }, []);
   return (
     <div className="space-y-2">
       <InputField
@@ -261,14 +327,9 @@ export const Request = ({
           id="addHeader"
           name="addHeader"
           onChange={(e) => {
-            setNodesInputData((prev) => ({
-              ...prev,
-              [id]: {
-                ...prev[id],
-                addHeader: e.target.checked,
-              },
-            }));
+            setAddHeader(e.target.checked);
           }}
+          checked={nodesInputData[id]?.addHeader}
         />
         <label
           htmlFor="addHeader"
@@ -278,7 +339,7 @@ export const Request = ({
         </label>
       </div>
 
-      {nodesInputData[id]?.addHeader && (
+      {addHeader && (
         <div className="mt-2">
           <div className="flex justify-between items-end mb-2">
             <p>API Header</p>

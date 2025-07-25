@@ -160,7 +160,7 @@ function generateApiPayload(entry, nodeInput) {
   (entry["apiUrl"] = nodeInput?.apiUrl),
     (entry["apiMethod"] = nodeInput?.apiMethod),
     (entry["apiDatatype"] = nodeInput?.apiDatatype || ""),
-    (entry["apiHeader"] = generateKeyValue(nodeInput?.headers, true)),
+    (entry["apiHeader"] = nodeInput?.headers || []),
 
 
     (entry["apiResponse"]["responseType"] = nodeInput?.apiResponse?.responseType || "none"),
@@ -177,7 +177,7 @@ function generateApiPayload(entry, nodeInput) {
   }
 
   if (nodeInput?.apiDatatype === "parameter") {
-    (entry["apiJson"] = generateKeyValue(nodeInput?.params, true))
+    (entry["apiJson"] = nodeInput?.params)
   }
   if (nodeInput?.apiDatatype === "json") {
     (entry["apiJson"] = JSON.parse(nodeInput?.apiRequestJson))
@@ -190,22 +190,5 @@ function generateApiPayload(entry, nodeInput) {
 
 }
 
-function generateKeyValue(item, isJson = false) {
-  if (!isJson) {
-    return item?.map((i: { key: string, value: string }) => {
-      if(!i.key || !i.value) return {};
-      return {
-        [i.key]: i.value
-      }
-    })
-  }
-  else {
-    const obj = {}
-    item?.map((i: { key: string, value: string }) => {
-      obj[i.key] = i.value
-    })
-    return obj
-  }
-}
 
 export default generateBotPayload;
