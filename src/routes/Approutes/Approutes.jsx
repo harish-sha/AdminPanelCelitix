@@ -368,7 +368,7 @@ const Approutes = () => {
 
         {/* Combine Live Chat */}
         <Route path="liveChatMain" element={<LiveChatLayout />}>
-          <Route index element={<LiveChatDashboard />} />
+          {/* <Route index element={<LiveChatDashboard />} /> */}
           <Route path=":channel" element={<Outlet />} />
         </Route>
 
@@ -377,11 +377,10 @@ const Approutes = () => {
           <Route index element={<Pointingup />} />
           <Route path=":channel" element={<Outlet />} />
         </Route>
-        
+
         {/* unsubscribe */}
         <Route path="unsubscribe" element={<Unsubscribe />} />
       </Route>
-
 
       <Route path="dummy" element={<Dummy />} />
       <Route path="arihant" element={<Arihant />} />

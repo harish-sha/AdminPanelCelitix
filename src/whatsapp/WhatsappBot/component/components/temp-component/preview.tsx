@@ -5,7 +5,12 @@ import { TbLocationShare } from "react-icons/tb";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { FaReply } from "react-icons/fa6";
 
-export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
+export const Preview = ({
+  specificTemplate,
+  variablesData,
+  basicDetails,
+  locationData,
+}) => {
   const getBtnIcon = (type) => {
     switch (type) {
       case "phoneDisplay":
@@ -37,6 +42,37 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
       default:
         return `Visit us: ${url}`;
     }
+  };
+
+  const extractCoordinates = (url) => {
+    let regex = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
+    let match = url.match(regex);
+    if (match) {
+      return {
+        lat: match[1],
+        lng: match[2],
+      };
+    }
+
+    regex = /place\/.*\/@(-?\d+\.\d+),(-?\d+\.\d+)/;
+    match = url.match(regex);
+    if (match) {
+      return {
+        lat: match[1],
+        lng: match[2],
+      };
+    }
+
+    regex = /q=(-?\d+\.\d+),(-?\d+\.\d+)/;
+    match = url.match(regex);
+    if (match) {
+      return {
+        lat: match[1],
+        lng: match[2],
+      };
+    }
+
+    return null;
   };
 
   const MediaRenderer = ({ format, fileUrl, fallbackUrl }) => {
@@ -117,6 +153,31 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
               />
             )}
           </div>
+
+          {specificTemplate.templateType === "location" && (
+            <>
+              <iframe
+                id="gmap"
+                src={`https://www.google.com/maps?q=${
+                  extractCoordinates(locationData?.url)?.lat
+                },${
+                  extractCoordinates(locationData?.url)?.lng
+                }&hl=es;z=14&output=embed`}
+                width="100%"
+                height="200"
+                className="border-none "
+                allowFullScreen={false}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+              <div className="text-sm text-gray-800 font-bold">
+                {locationData.name}
+              </div>
+              <div className="text-sm text-gray-600 font-semibold">
+                {locationData.address}
+              </div>
+            </>
+          )}
 
           {specificTemplate?.message && (
             <pre className="whitespace-pre-wrap">

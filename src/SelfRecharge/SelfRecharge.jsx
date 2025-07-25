@@ -297,8 +297,24 @@ export default function RechargeFullWidth() {
 
 
   useEffect(() => {
-    load({ mode: "sandbox" }).then((cf) => setCashfree(cf));
+    // load({ mode: "sandbox" }).then((cf) => setCashfree(cf));
+    var initializeSDK = async function () {
+      const cashfreeInit = await load({
+        mode: "sandbox",
+      });
+      setCashfree(cashfreeInit);
+    };
+
+    initializeSDK();
   }, []);
+
+  const errorMessages = {
+    "customer_details.customer_phone_invalid": "Invalid phone number",
+    "customer_details.customer_email_invalid": "Invalid email address",
+    "customer_details.customer_name_invalid": "Invalid name format",
+    "customer_details.customer_address_invalid": "Invalid address format",
+    // Add more error mappings as needed
+  };
 
   const handlePayNow = async (e) => {
     e.preventDefault();
@@ -334,31 +350,54 @@ export default function RechargeFullWidth() {
           order_meta: {
             // return_url: `${domain}/payment-status?order_id=${orderId}`,
             return_url: `${domain}/selfrecharge`,
+            // notify_url:
+            //   "https://webhook.site/fe86c8d7-fa74-4ad7-819c-af7b9f612511",
           },
         }
         const res = await rechargeCreateOrderCashFree(payload)
-        if (res?.status === true && res?.paymentSessionId) {
-          setPaymentSessionId(res.paymentSessionId);
-          const result = await cashfree.checkout({
-            paymentSessionId: res.paymentSessionId,
-            redirectTarget: "_modal",
-          });
-          console.log("final result", result)
-        } else {
-          console.error("Missing paymentSessionId in response:", res);
+        // if (res?.status === true && res?.paymentSessionId) {
+        //   setPaymentSessionId(res.paymentSessionId);
+        //   const result = await cashfree.checkout({
+        //     paymentSessionId: res.paymentSessionId,
+        //     redirectTarget: "_modal",
+        //   });
+        //   console.log("final result", result)
+        // } else {
+        //   console.error("Missing paymentSessionId in response:", res);
+        //   toast.error("Failed to create payment session.");
+        //   return;
+        // }
+
+        if (res?.cashfree_error?.code) {
+          const message =
+            errorMessages[res?.cashfree_error?.code] ||
+            "Something went wrong. Please try again.";
+          if (message) {
+            toast.error(message);
+            return;
+          }
+        }
+
+        const paymentSessionId = res?.paymentSessionId;
+
+        if (!paymentSessionId) {
           toast.error("Failed to create payment session.");
           return;
         }
+
+        await cashfree.checkout({
+          paymentSessionId,
+          redirectTarget: "_modal",
+        });
         const rechargeStatus = await verifyRechargeStatus({
           order_id: orderId,
         });
 
-        // toast.succ
 
         if (rechargeStatus?.status !== "received") {
           return toast.error("Payment Failed!");
         }
-        toast.success("Payment Received!");
+        toast.success("Payment successful!");
 
         setAmount("");
         setPhone("");
@@ -466,7 +505,14 @@ export default function RechargeFullWidth() {
                 type="tel"
                 placeholder="Enter your phone number"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                // onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => {
+                  const numberRegex = /^[0-9]*$/;
+                  if (numberRegex.test(e.target.value)) {
+                    setPhone(e.target.value);
+                  }
+                }}
+                disabled={paymentSessionId !== null && phone.length === 13}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 transition"
               />
             </div>

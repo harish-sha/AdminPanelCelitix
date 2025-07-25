@@ -59,6 +59,7 @@ export const TemplateNode = ({
     longitude: "",
     name: "",
     address: "",
+    url: "",
   });
 
   const fileRef = useRef(null);
@@ -75,37 +76,8 @@ export const TemplateNode = ({
     return variables;
   }
 
-  // async function handleFetchWaba() {
-  //   try {
-  //     const data = nodesInputData[id];
-
-  //     const res = await getWabaList();
-  //     const wabaMbNo = res.find(
-  //       (item) => item.wabaSrno == data?.wabanumber
-  //     )?.mobileNo;
-
-  //     const selectedMobile = wabaMbNo || "";
-  //     setWabaState({
-  //       waba: res,
-  //       selected: selectedMobile,
-  //     });
-
-  //     setVariablesData((prev) => ({
-  //       ...prev,
-  //       input: data?.variables,
-  //       btnInput: data?.urlValues ? [data?.urlValues] : [],
-  //     }));
-  //   } catch (e) {
-  //     return toast.error("Error fetching Waba Details");
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   handleFetchWaba();
-  // }, []);
-
   async function handleFetchAllTemplates() {
-    const data = nodesInputData[id];
+    const data = JSON.parse(nodesInputData[id]?.json);
     if (!details.selected) return;
     try {
       const res = await getWabaTemplateDetails(details.selected);
@@ -114,7 +86,42 @@ export const TemplateNode = ({
       );
 
       setAllTemplates(approvedTemplates);
-      setSelectedTemplate(Number(data?.whatsappTemplate));
+      // setSelectedTemplate(Number(data?.whatsappTemplate));
+      let tempId = null;
+      if (data?.template?.name) {
+        tempId = approvedTemplates.find(
+          (item) => item.templateName === data?.template?.name
+        )?.templateSrno;
+      }
+
+      const body = data?.template?.components?.find(
+        (item) => item.type === "BODY"
+      );
+      const btn = data?.template?.components?.find(
+        (item) => item.type === "button"
+      );
+      const regex = /{{(\d+)}}/g;
+      const index = [];
+      const variable = body?.parameters.map((item, i) => {
+        const match = regex.exec(item?.text);
+        index.push(i);
+        return match ? match[1] : null;
+      });
+
+      const btnVar = btn?.parameters.map((item, i) => {
+        const match = regex.exec(item?.text);
+        return match ? match[1] : null;
+      });
+
+      setVariablesData({
+        length: variable?.length || 0,
+        data: index,
+        input: variable,
+        btn: btnVar,
+        btnInput: btnVar,
+      });
+
+      setSelectedTemplate(tempId);
     } catch (e) {
       return toast.error("Error fetching all templates");
     }
@@ -183,7 +190,6 @@ export const TemplateNode = ({
         tempName: template?.templateName,
         waba: details?.selected,
       });
-      console.log("curlData", curlData);
 
       const botData = {
         ...curlData,
@@ -211,6 +217,17 @@ export const TemplateNode = ({
               parameters: [
                 {
                   text: `{{${variables[index]}}}`,
+                  type: "text",
+                },
+              ],
+            };
+          }
+          if (component.type === "button") {
+            return {
+              ...component,
+              parameters: [
+                {
+                  text: `{{${btnVar[index]}}}`,
                   type: "text",
                 },
               ],
@@ -276,10 +293,40 @@ export const TemplateNode = ({
 
       setIsVisible(false);
     } catch (e) {
-      console.log(e);
       return toast.error("Error saving template data");
     }
   }
+
+  const extractCoordinates = (url) => {
+    let regex = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
+    let match = url.match(regex);
+    if (match) {
+      return {
+        lat: match[1],
+        lng: match[2],
+      };
+    }
+
+    regex = /place\/.*\/@(-?\d+\.\d+),(-?\d+\.\d+)/;
+    match = url.match(regex);
+    if (match) {
+      return {
+        lat: match[1],
+        lng: match[2],
+      };
+    }
+
+    regex = /q=(-?\d+\.\d+),(-?\d+\.\d+)/;
+    match = url.match(regex);
+    if (match) {
+      return {
+        lat: match[1],
+        lng: match[2],
+      };
+    }
+
+    return null;
+  };
 
   return (
     <div className="w-full flex flex-col h-[calc(80vh-100px)]">
@@ -310,6 +357,13 @@ export const TemplateNode = ({
                   btn: [],
                   btnInput: [],
                 });
+                setLocationData({
+                  url: "",
+                  latitude: "",
+                  longitude: "",
+                  address: "",
+                  name: "",
+                });
               }}
               disabled={false}
             />
@@ -332,7 +386,24 @@ export const TemplateNode = ({
                 Location Details
                 <span className="text-red-500">*</span>
               </h1>
-              <div className="space-y-2 bg-gray-50 rounded-b-xl">
+              <div className="space-y-2rounded-b-xl">
+                <InputField
+                  maxLength={100}
+                  id="locationurl"
+                  name="locationurl"
+                  label={"Location URL (optional)"}
+                  onChange={(e) => {
+                    setLocationData((prev) => ({
+                      ...prev,
+                      url: e.target.value,
+                      latitude: extractCoordinates(e.target.value)?.lat,
+                      longitude: extractCoordinates(e.target.value)?.lng,
+                    }));
+                  }}
+                  tooltipContent="Paste map url then we automatically extract Latitude and Longitude"
+                  value={locationData.url}
+                  placeholder="Enter location url"
+                />
                 <div className="flex items-center gap-2">
                   <InputField
                     maxLength={100}
@@ -367,7 +438,7 @@ export const TemplateNode = ({
                   maxLength={20}
                   id="name"
                   name="name"
-                  label={"name"}
+                  label={"Name"}
                   onChange={(e) => {
                     setLocationData((prev) => ({
                       ...prev,
@@ -381,7 +452,7 @@ export const TemplateNode = ({
                   maxLength={100}
                   id="address"
                   name="address"
-                  label={"address"}
+                  label={"Address"}
                   onChange={(e) => {
                     setLocationData((prev) => ({
                       ...prev,
@@ -411,6 +482,7 @@ export const TemplateNode = ({
             specificTemplate={specificTemplate}
             variablesData={variablesData}
             basicDetails={basicDetails}
+            locationData={locationData}
           />
         </div>
       </div>

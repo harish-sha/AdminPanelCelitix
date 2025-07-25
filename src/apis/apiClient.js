@@ -56,6 +56,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
       // console.log(error);
       return error;
     }
+    return error?.response?.data;
     // console.error("Network Error:", error);
   }
 };

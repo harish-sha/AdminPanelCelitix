@@ -18,12 +18,12 @@ import { FaAngleDoubleUp } from "react-icons/fa";
 import { useUser } from "@/context/auth";
 
 const channels = [
-  {
-    service_type_id: "1",
-    label: "Dashboard",
-    value: "",
-    icon: <RiDashboardLine className="text-blue-400 text-xl" />,
-  },
+  // {
+  //   service_type_id: "1",
+  //   label: "Dashboard",
+  //   value: "",
+  //   icon: <RiDashboardLine className="text-blue-400 text-xl" />,
+  // },
   {
     service_type_id: "2",
     label: "WhatsApp",

@@ -721,7 +721,7 @@ const TemplateForm = ({
           <InputField
             id="name"
             name="name"
-            label={"name"}
+            label={"Name"}
             onChange={(e) => {
               setLocationData((prev) => ({
                 ...prev,
@@ -735,7 +735,7 @@ const TemplateForm = ({
           <InputField
             id="address"
             name="address"
-            label={"address"}
+            label={"Address"}
             onChange={(e) => {
               setLocationData((prev) => ({
                 ...prev,
