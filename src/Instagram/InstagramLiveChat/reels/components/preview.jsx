@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { FaComment, FaHeart, FaShareAlt } from "react-icons/fa";
+import { FaShare } from "react-icons/fa6";
 
 export const Preview = ({ data }) => {
   const [isPlaying, setIsPlaying] = useState(true);
@@ -148,62 +150,25 @@ export const Preview = ({ data }) => {
                   {/* Right Side - Action Buttons */}
                   <div className="flex flex-col items-center space-y-4">
                     {/* Like Button */}
-                    <button className="flex flex-col items-center">
-                      <div className="w-12 h-12 flex items-center justify-center">
-                        <svg
-                          className="w-7 h-7 text-white"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
+                    <button className="flex flex-col items-center space-y-2">
+                      <FaHeart className="size-5 text-white " />
+
                       <span className="text-white text-xs font-medium">
                         1.2K
                       </span>
                     </button>
 
                     {/* Comment Button */}
-                    <button className="flex flex-col items-center">
-                      <div className="w-12 h-12 flex items-center justify-center">
-                        <svg
-                          className="w-7 h-7 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                          />
-                        </svg>
-                      </div>
+                    <button className="flex flex-col items-center space-y-2">
+                      <FaComment className="size-5 text-white " />
+
                       <span className="text-white text-xs font-medium">89</span>
                     </button>
 
                     {/* Share Button */}
-                    <button className="flex flex-col items-center">
-                      <div className="w-12 h-12 flex items-center justify-center">
-                        <svg
-                          className="w-7 h-7 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                          />
-                        </svg>
-                      </div>
+                    <button className="flex flex-col items-center space-y-2">
+                      <FaShareAlt className="size-5 text-white " />
+
                       <span className="text-white text-xs font-medium">
                         Share
                       </span>
