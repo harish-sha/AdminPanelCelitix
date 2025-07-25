@@ -58,11 +58,10 @@ export const Preview = ({
       (_, key) => variableValueMap[`{#${key}#}`] || `{#${key}#}`
     );
 
-
     let url = "";
 
-    if (templateDetails[0]?.templateType === "text_message_with_pdf") {
-      const base64PDF = templateDetails[0]["pdfBase64 "];
+    if (templateDetails[0]?.templateType === "text_message_with_pdf" && templateDetails[0]["pdfBase64 "]) {
+      const base64PDF = templateDetails[0]["pdfBase64 "] || "";
       const byteCharacters = atob(base64PDF);
       const byteNumbers = Array.from(byteCharacters).map((c) =>
         c.charCodeAt(0)
@@ -148,18 +147,24 @@ export const Preview = ({
         {!data.isCarousal ? (
           <div className="rounded-md border px-1">
             {data.type !== "text" && (
-              <div className="mb-0 w-full h-35">
+              <div className="mb-2 w-full h-35">
                 {data.type === "image" ? (
                   <img
                     src={data?.details[0]?.imageUrl}
                     alt="Uploaded content"
                     className="h-full w-full"
                   />
+                ) : data?.type === "video" ? (
+                  <video
+                    controls
+                    src={data?.details[0]?.imageUrl}
+                    className="w-full overflow-x-hidden"
+                  />
                 ) : (
                   <embed
                     src={data.pdfUrl}
-                    type="your-file-type"
-                    className="w-[70%] overflow-x-hidden"
+                    type={"application/pdf"}
+                    className="w-full overflow-x-hidden"
                   />
                 )}
               </div>
@@ -215,16 +220,24 @@ export const Preview = ({
             }}
           >
             {data?.details.map((item, index) => {
+              const type = item?.templateType?.toLowerCase();
               return (
                 <>
                   <div key={index} className="text-start p-2">
-                    {item.imageUrl && (
-                      <img
-                        src={item.imageUrl}
-                        alt={item.contentTitle}
-                        className="h-30 p-1 rounded-xl"
-                      />
-                    )}
+                    {item.imageUrl &&
+                      (type === "image" ? (
+                        <img
+                          src={item.imageUrl}
+                          alt={item.contentTitle}
+                          className="h-30 p-1 rounded-xl"
+                        />
+                      ) : type === "video" ? (
+                        <video
+                          src={item.imageUrl}
+                          controls
+                          className="rounded-xl w-full"
+                        />
+                      ) : null)}
                     <p className="text-md text-start p-2">
                       {item.contentTitle}
                     </p>

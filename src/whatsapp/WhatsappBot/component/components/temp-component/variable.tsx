@@ -25,9 +25,6 @@ export const Variables = ({
   setFileData: any;
   allVariables: any[];
 }) => {
-  useEffect(() => {
-    console.log("specificTemplate", specificTemplate);
-  }, [specificTemplate]);
   function handleFileChange(e) {
     const file = e.target.files[0];
     setFileData((prev) => ({ ...prev, file: file }));
@@ -115,7 +112,7 @@ export const Variables = ({
                     {`{{${variablesData?.btn[index]}}}`}
                   </label>
                   <InputField
-                    label={`{{${variablesData?.btn[index]}}}`}
+                    label={""}
                     placeholder="{{name}}"
                     id="templateMessage"
                     name="templateMessage"

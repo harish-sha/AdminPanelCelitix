@@ -56,6 +56,8 @@ import {
 import { Url } from "./components/url";
 import { HiOutlineTemplate } from "react-icons/hi";
 import { TemplateNode } from "./components/template";
+import { AiOutlineApi } from "react-icons/ai";
+import { Api } from "./components/api";
 
 const initialNodes = [];
 const initialEdges = [];
@@ -149,6 +151,7 @@ function NodeComponent({
         {data.type === "button" && <p>Button Node ({id})</p>}
         {data.type === "urlbutton" && <p>Url Node ({id})</p>}
         {data.type === "template" && <p>Template Node ({id})</p>}
+        {data.type === "api" && <p>API Node ({id})</p>}
       </div>
       {data?.type !== "list" && data?.type !== "button" && (
         <Handle
@@ -600,6 +603,17 @@ const CreateWhatsAppBot = () => {
           isBtnDisable={isSettingBtnDisables}
         />
       ),
+      api: (node: any) => (
+        <NodeComponent
+          id={node.id}
+          data={node.data}
+          onDelete={deleteNode}
+          isConnecting={isConnecting}
+          setIsVisible={setIsVisible}
+          connectionType={connectionType}
+          setNodesInputData={setNodesInputData}
+        />
+      ),
     }),
     [deleteNode, isConnecting, nodesInputData, isSettingBtnDisables]
   );
@@ -685,6 +699,7 @@ const CreateWhatsAppBot = () => {
       },
       urlbutton: {},
       template: {},
+      api: {},
     };
     const nodeData = nodesInputData[selectedNodeId];
     const requiredFields = data[type];
@@ -832,6 +847,7 @@ const CreateWhatsAppBot = () => {
       },
       urlbutton: {},
       template: {},
+      api: {},
     };
 
     let name = "";
@@ -1090,6 +1106,15 @@ const CreateWhatsAppBot = () => {
               <HiOutlineTemplate className="size-6" />
               Template
             </Button>
+            {/* <Button
+              draggable
+              onDragStart={(event) => handleDragStart(event, "api")}
+              onClick={() => addNode("api")}
+              className={commonButtonClass}
+            >
+              <AiOutlineApi className="size-6" />
+              API
+            </Button> */}
             <Button
               draggable
               onDragStart={(event) => handleDragStart(event, "answer")}
@@ -1215,12 +1240,14 @@ const CreateWhatsAppBot = () => {
               setIsVisible={setIsVisible}
               allVariables={allVariables}
             />
+          ) : type === "api" ? (
+            <Api
+              id={selectedNodeId}
+              nodesInputData={nodesInputData}
+              setNodesInputData={setNodesInputData}
+              allVariables={allVariables}
+            />
           ) : null}
-
-          <div className="flex gap-2">
-            <Button onClick={handleSaveNodeData}>Save</Button>
-            <Button onClick={() => setIsVisible(false)}>Cancel</Button>
-          </div>
 
           {type !== "template" && (
             <div className="flex gap-2">
