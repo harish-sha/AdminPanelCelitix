@@ -349,7 +349,7 @@ export const deleteNotification = async (data) => {
   );
 };
 
-export const deleteNotification = async (type, data) => {
+export const saveNotification = async (type, data) => {
   return await fetchWithAuth(
     `/notification/save-notification?type=${type}`,
     {
