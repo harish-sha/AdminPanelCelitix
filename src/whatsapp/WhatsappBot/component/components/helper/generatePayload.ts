@@ -160,10 +160,17 @@ function generateApiPayload(entry, nodeInput) {
   (entry["apiUrl"] = nodeInput?.apiUrl),
     (entry["apiMethod"] = nodeInput?.apiMethod),
     (entry["apiDatatype"] = nodeInput?.apiDatatype || ""),
-    (entry["apiHeader"] = nodeInput?.headers || []),
+    (entry["apiHeader"] = nodeInput?.headers || [])
+
+  if (nodeInput?.apiDatatype === "parameter") {
+    (entry["apiJson"] = nodeInput?.params)
+  }
+  if (nodeInput?.apiDatatype === "json") {
+    (entry["apiJson"] = JSON.parse(nodeInput?.apiRequestJson))
+  }
 
 
-    (entry["apiResponse"]["responseType"] = nodeInput?.apiResponse?.responseType || "none"),
+  (entry["apiResponse"]["responseType"] = nodeInput?.apiResponse?.responseType || "none"),
     (entry["apiResponse"]["actionType"] = nodeInput?.apiResponse?.actionType || "-1"),
     (entry["apiResponse"]["storeInVariable"] = nodeInput?.apiResponse?.storeInVariable),
     (entry["responseType"] = nodeInput?.responseType)
@@ -174,13 +181,6 @@ function generateApiPayload(entry, nodeInput) {
         varName: nodeInput?.apiResponse?.varName
       }
     ])
-  }
-
-  if (nodeInput?.apiDatatype === "parameter") {
-    (entry["apiJson"] = nodeInput?.params)
-  }
-  if (nodeInput?.apiDatatype === "json") {
-    (entry["apiJson"] = JSON.parse(nodeInput?.apiRequestJson))
   }
   else if (nodeInput?.apiResponse?.responseType === "json") {
     (entry["apiResponse"]["storedData"] = [

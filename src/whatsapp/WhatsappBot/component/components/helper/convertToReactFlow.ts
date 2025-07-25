@@ -37,8 +37,8 @@ export const convertToReactFlow = (data) => {
     const nextNodes = isMultiTarget
       ? nodeData.nextNode || []
       : nodeData.nextNode
-      ? [nodeData.nextNode]
-      : [];
+        ? [nodeData.nextNode]
+        : [];
 
     nextNodes.forEach((nextVal, index) => {
       const targetEntry = Object.entries(rawNodes).find(
@@ -105,6 +105,8 @@ export const transformNodesById = (parsedFlowData) => {
       fileCaption:
         node?.imageCaption || node?.videoCaption || node?.documentCaption || "",
       variableId: node?.answerText,
+      // apiJson: node?.apiRequestJson || node?.params
+      apiRequestJson: JSON.stringify(node?.apiJson)
     };
   });
 
