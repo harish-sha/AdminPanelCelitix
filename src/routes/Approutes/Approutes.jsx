@@ -32,7 +32,6 @@ import MmLite from "@/whatsapp/mmlite/MmLite";
 // Canned Message Manager
 import CannedMessage from "@/cannedmessage/CannedMessage";
 
-
 // manage funds
 import Recharge from "@/managefunds/recharge/Recharge";
 import Transactions from "@/managefunds/transactions/Transactions";
@@ -143,8 +142,7 @@ import { WorkflowCreate } from "@/workflow/create";
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
-
-
+import { AddNotification } from "@/admin/manageNotifications.jsx/pages/addNotification";
 
 const Approutes = () => {
   return (
@@ -178,10 +176,7 @@ const Approutes = () => {
           path="createwhatsapptemplateadmin"
           element={<CreateWhatsappTemplateAdmin />}
         />
-        <Route
-          path="managewabaadmin"
-          element={<ManageWabaAdmin />}
-        />
+        <Route path="managewabaadmin" element={<ManageWabaAdmin />} />
 
         {/* SMS */}
         <Route path="sendsms" element={<SendSms />} />
@@ -234,6 +229,11 @@ const Approutes = () => {
         <Route path="wblockuser" element={<BlockUser />} />
         <Route path="wmmlite" element={<MmLite />} />
 
+        <Route path="/notification">
+          <Route index element={<ManageNotifications />} />
+          {/* <Route path=":id" element={<NotificationDetail />} /> */}
+          <Route path="add" element={<AddNotification />} />
+        </Route>
 
         {/* RCS */}
         <Route path="sendrcs" element={<SendRcs />} />
@@ -280,7 +280,10 @@ const Approutes = () => {
         <Route path="/obdmanagevoiceclips" element={<ObdManageVoiceClips />} />
         <Route path="/obdIntegration" element={<ObdIntegration />} />
         <Route path="/obdmanagecampaign" element={<ObdCampaignReports />} />
-        <Route path='/obdCampaignDetailslog' element={<CampaignDetailsReports />} />
+        <Route
+          path="/obdCampaignDetailslog"
+          element={<CampaignDetailsReports />}
+        />
 
         {/* MissedCall */}
         <Route path="/missedcallhistory" element={<HistoryMissedCall />} />

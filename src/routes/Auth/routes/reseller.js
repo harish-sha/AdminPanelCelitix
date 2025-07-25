@@ -83,7 +83,9 @@ export const resellerItems = [
       "/profile",
       "/settings",
       "/transactions",
-      "/notification"
+      "/notification",
+      "/notification/add",
+
     ],
     roles: ["ADMIN"],
   },
