@@ -318,3 +318,43 @@ export const liveMonitoringSendingService = async () => {
     }
   );
 };
+
+export const getNotificationList = async () => {
+  return await fetchWithAuth(
+    `/notification/list`,
+    {
+      method: "GET",
+
+    }
+  );
+};
+
+export const getNotification = async (data) => {
+  return await fetchWithAuth(
+    `/notification/get-notification?reminderSrno=${data.reminderSrno}&type=${data.type}`,
+    {
+      method: "GET",
+
+    }
+  );
+};
+
+export const deleteNotification = async (data) => {
+  return await fetchWithAuth(
+    `/notification/delete-notification?reminderSrno=${data.reminderSrno}&notificationStatus=${data.status}&type=${data.type}`,
+    {
+      method: "DELETE",
+
+    }
+  );
+};
+
+export const deleteNotification = async (type, data) => {
+  return await fetchWithAuth(
+    `/notification/save-notification?type=${type}`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
+};
