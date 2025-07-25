@@ -16,7 +16,7 @@ export const fetchUserbySrno = async (srNo) => {
   });
 };
 
-// update user by srno
+// upate user by srno
 export const updateUserbySrno = async (data) => {
   return await fetchWithAuth("/user/updateUserById", {
     method: "POST",
