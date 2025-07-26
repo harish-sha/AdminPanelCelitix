@@ -89,7 +89,7 @@ export default function IceBreaker() {
               onChange={(e) => setMessageText(e.target.value)}
               className="w-full text-sm"
             />
-            
+
             <InputField
               label="Ice Breaker Answer"
               placeholder="Type your answer here..."
@@ -103,9 +103,9 @@ export default function IceBreaker() {
           <div className="w-max-content flex flex-col items-center">
             <UniversalButton label="Add" onClick={handleAdd} />
             <div className="text-xs font-semibold mt-1">
-            Total IceBreaker: {qaList.length}/4
-          </div>
-           
+              Total IceBreaker: {qaList.length}/4
+            </div>
+
           </div>
         </div>
 
@@ -129,7 +129,7 @@ export default function IceBreaker() {
                         the Ice Breaker API.
                       </p>
                     </div>
-                    
+
                   </div>
                 </>
               ) : (

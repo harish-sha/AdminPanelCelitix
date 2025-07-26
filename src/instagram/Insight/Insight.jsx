@@ -5,6 +5,7 @@ import AgeRangeInsights from "@/instagram/Insight/components/AgeRange";
 import TopCitiesInsight from "@/instagram/Insight/components/TownCities";
 import ProfileActivity from "@/instagram/Insight/components/ProfileActivity";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
+import HashtagSearch  from "@/instagram/Insight/components/HashtagSearch"
 
 const Insight = () => {
   const [selectedTab, setSelectedTab] = useState("7days");
@@ -99,140 +100,8 @@ const Insight = () => {
     { label: "Image10", value: "Image10" },
   ];
 
-  
-    const userAccounts = [
-      {
-        user_id: 1,
-        username: "PixelFrame",
-        profile_picture_url:
-          "https://images.unsplash.com/photo-1682687220198-88e9bdea9931?...",
-        description: "Capturing moments one pixel at a time. 📷",
-        location: "Bangalore, India",
-        media_count: 9,
-        followers_count: 3024,
-        follows_count: 311,
-        dummyPosts: [
-          {
-            type: "image",
-            likes: 120,
-            comments: 15,
-            caption: "A beautiful sunset over the mountains.",
-            commentsDetails: ["Great shot!", "Love this!"],
-            src: "https://images.unsplash.com/photo-1752867494500-9ea9322f58c9?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          },
-          {
-            type: "image",
-            likes: 920,
-            comments: 65,
-            commentsDetails: ["Great shot!", "Love this!"],
-            src: "https://images.unsplash.com/photo-1682685797857-97de838c192e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          },
-          {
-            type: "image",
-            likes: 120,
-            comments: 15,
-            src: "https://images.unsplash.com/photo-1744039016504-9927d8e7e101?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxMDl8fHxlbnwwfHx8fHw%3D",
-          },
-          {
-            type: "video",
-            likes: 120,
-            comments: 15,
-            src: "https://cdn.pixabay.com/video/2024/02/28/202368-918049003_large.mp4",
-          },
-          {
-            type: "image",
-            likes: 120,
-            comments: 15,
-            src: "https://images.unsplash.com/photo-1682687219640-b3f11f4b7234?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          },
-          {
-            type: "video",
-            likes: 120,
-            comments: 15,
-            src: "https://videos.pexels.com/video-files/33005130/14067143_2560_1440_60fps.mp4",
-          },
-          {
-            type: "video",
-            likes: 120,
-            comments: 15,
-            src: "https://videos.pexels.com/video-files/7857990/7857990-uhd_1440_2560_24fps.mp4",
-          },
-          {
-            type: "video",
-            likes: 120,
-            comments: 15,
-            src: "https://videos.pexels.com/video-files/32921141/14031244_2560_1440_30fps.mp4",
-          },
-          {
-            type: "image",
-            likes: 120,
-            comments: 15,
-            src: "https://images.unsplash.com/photo-1741696482470-37544b32e8e6?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0Nnx8fGVufDB8fHx8fA%3D%3D",
-          },
-          {
-            type: "tags",
-            likes: 120,
-            comments: 15,
-            src: "https://images.pexels.com/photos/3910065/pexels-photo-3910065.jpeg",
-          },
-        ],
-      },
-      {
-        user_id: 2,
-        username: "NatureSoul",
-        profile_picture_url:
-          "https://plus.unsplash.com/premium_photo-1661952578770-79010299a9f9?...",
-        description: "Exploring the wild & living slow 🌿 #NatureLover",
-        location: "Manali, Himachal",
-        media_count: 10,
-        followers_count: 4120,
-        follows_count: 500,
-        dummyPosts: [
-          {
-            type: "image",
-            src: "https://images.unsplash.com/photo-1597167231350-d057a45dc868?q=80&w=1682&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          },
-          {
-            type: "video",
-            src: "https://videos.pexels.com/video-files/4763824/4763824-uhd_2560_1440_24fps.mp4",
-          },
-          {
-            type: "image",
-            src: "https://images.unsplash.com/photo-1634019580756-22eb6d705cf2?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          },
-          {
-            type: "image",
-            src: "https://plus.unsplash.com/premium_photo-1697729733902-f8c92710db07?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          },
-          {
-            type: "video",
-            src: "https://videos.pexels.com/video-files/6981411/6981411-hd_1920_1080_25fps.mp4",
-          },
-          {
-            type: "video",
-            src: "https://videos.pexels.com/video-files/3214448/3214448-uhd_2560_1440_25fps.mp4",
-          },
-          {
-            type: "video",
-            src: "https://videos.pexels.com/video-files/5147455/5147455-hd_1080_1920_30fps.mp4",
-          },
-          {
-            type: "image",
-            src: "https://images.unsplash.com/photo-1657894736581-ccc35d62d9e2?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          },
-          {
-            type: "image",
-            src: "https://images.unsplash.com/photo-1581791534721-e599df4417f7?q=80&w=1631&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          },
-          {
-            type: "video",
-            src: "https://videos.pexels.com/video-files/4919750/4919750-uhd_2732_1440_25fps.mp4",
-          },
-        ],
-      },
-    ];
-
-  
+  const accessToken = "YOUR_ACCESS_TOKEN";
+  const userId = "YOUR_IG_USER_ID";
 
   return (
     <>
@@ -282,7 +151,6 @@ const Insight = () => {
         )}
       </div>
 
-
       <div className=" mx-auto px-4 py-6 space-y-6 bg-gray-50">
         {/* Tabs */}
         <div className="flex gap-2">
@@ -302,7 +170,6 @@ const Insight = () => {
           ))}
         </div>
 
-
         {/* Summary Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {stats.map(({ label, value }) => (
@@ -315,89 +182,6 @@ const Insight = () => {
             </div>
           ))}
         </div>
-
-        {/* Post Info Section */}
-        {(() => {
-          // Find the selected account from userAccounts (from useEffect)
-          let selectedAccount = null;
-          if (Array.isArray(accountSelection)) {
-            // If accountSelection is the array of accounts (initial load)
-            selectedAccount = null;
-          } else if (accountSelection && accountSelection.label) {
-            // If accountSelection is the selected dropdown value
-            const allAccounts = [
-              {
-                user_id: 1,
-                username: "PixelFrame",
-                dummyPosts: [
-                  {
-                    type: "image",
-                    likes: 120,
-                    comments: 15,
-                    caption: "A beautiful sunset over the mountains.",
-                    commentsDetails: ["Great shot!", "Love this!"],
-                    src: "https://images.unsplash.com/photo-1752867494500-9ea9322f58c9?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                  },
-                  {
-                    type: "image",
-                    likes: 920,
-                    comments: 65,
-                    commentsDetails: ["Great shot!", "Love this!"],
-                    src: "https://images.unsplash.com/photo-1682685797857-97de838c192e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                  },
-                  // ... (add the rest of PixelFrame's dummyPosts here)
-                ],
-              },
-              {
-                user_id: 2,
-                username: "NatureSoul",
-                dummyPosts: [
-                  {
-                    type: "image",
-                    src: "https://images.unsplash.com/photo-1597167231350-d057a45dc868?q=80&w=1682&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                  },
-                  {
-                    type: "video",
-                    src: "https://videos.pexels.com/video-files/4763824/4763824-uhd_2560_1440_24fps.mp4",
-                  },
-                  // ... (add the rest of NatureSoul's dummyPosts here)
-                ],
-              },
-            ];
-            selectedAccount = allAccounts.find(
-              acc => acc.username === accountSelection.label
-            );
-          }
-          if (selectedAccount && selectedAccount.dummyPosts) {
-            return (
-              <div className="my-6">
-                <h3 className="text-lg font-semibold mb-2">Posts Info</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {selectedAccount.dummyPosts.map((post, idx) => (
-                    <div key={idx} className="bg-white rounded-xl shadow p-4">
-                      <div className="mb-2">
-                        {post.type === "image" ? (
-                          <img src={post.src} alt="post" className="w-full h-40 object-cover rounded" />
-                        ) : post.type === "video" ? (
-                          <video src={post.src} controls className="w-full h-40 object-cover rounded" />
-                        ) : null}
-                      </div>
-                      {post.caption && <p className="text-sm mb-1">{post.caption}</p>}
-                      {typeof post.likes !== 'undefined' && <p className="text-xs">Likes: {post.likes}</p>}
-                      {typeof post.comments !== 'undefined' && <p className="text-xs">Comments: {post.comments}</p>}
-                      {post.commentsDetails && (
-                        <ul className="text-xs text-gray-500 mt-1">
-                          {post.commentsDetails.map((c, i) => <li key={i}>- {c}</li>)}
-                        </ul>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            );
-          }
-          return null;
-        })()}
 
         {/* Chart Section */}
 
@@ -538,9 +322,13 @@ const Insight = () => {
               }}
             /> */}
 
-            <ProfileActivity/>
+            <ProfileActivity />
           </div>
         </div>
+      </div>
+
+      <div className="min-h-screen bg-gray-100 p-6">
+        <HashtagSearch accessToken={accessToken} userId={userId} />
       </div>
     </>
   );

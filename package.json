@@ -82,6 +82,7 @@
     "sass": "^1.89.0",
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.14",
+    "swiper": "^11.2.10",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.3",
     "timeago.js": "^4.0.2",
