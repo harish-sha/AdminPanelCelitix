@@ -699,7 +699,7 @@ const CreateWhatsAppBot = () => {
       },
       urlbutton: {},
       template: {},
-      api:{}
+      api: {},
     };
     const nodeData = nodesInputData[selectedNodeId];
     const requiredFields = data[type];
@@ -847,7 +847,7 @@ const CreateWhatsAppBot = () => {
       },
       urlbutton: {},
       template: {},
-      api:{}
+      api: {},
     };
 
     let name = "";
@@ -1246,6 +1246,9 @@ const CreateWhatsAppBot = () => {
               nodesInputData={nodesInputData}
               setNodesInputData={setNodesInputData}
               allVariables={allVariables}
+              addNode={addNode}
+              lastPosition={lastPosition}
+               nodes={nodes}
             />
           ) : null}
 
