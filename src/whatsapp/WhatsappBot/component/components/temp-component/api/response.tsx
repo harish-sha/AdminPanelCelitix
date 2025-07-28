@@ -117,21 +117,22 @@ export const Response = ({
       const newListId = Number(id) + 1;
 
       if (!res || !res.length) return;
-      if (nodes[newListId] && nodes[newListId].type === "list") {
-        const requiredData = res?.map((item) => {
-          const newItem = {};
-          if (rowTitle in item) newItem[rowTitle] = item[rowTitle];
-          if (rowValue in item) newItem[rowValue] = item[rowValue];
-          return newItem;
-        });
 
+      const requiredData = res?.map((item) => {
+        const newItem = {};
+        if (rowTitle in item) newItem[rowTitle] = item[rowTitle];
+        if (rowValue in item) newItem[rowValue] = item[rowValue];
+        return newItem;
+      });
+      if (nodes[newListId] && nodes[newListId].type === "list") {
         addDatainListNode(newListId, res, requiredData, rowTitle, rowValue);
       } else {
         addNode("list", { x: lastPosition.x + 50, y: lastPosition.y + 50 });
+        addDatainListNode(newListId, res, requiredData, rowTitle, rowValue);
       }
     }
 
-    if (nodesInputData[id]?.apiResponse?.actionType === "createListNode") {
+    if (nodesInputData[id]?.apiResponse?.actionType === "createNewNode") {
       createListNode();
     }
   }, [
@@ -180,7 +181,7 @@ export const Response = ({
               { value: "none", label: "None" },
               { value: "storeInVariable", label: "Store in Variable" },
               ...(nodesInputData[id]?.apiResponse?.responseType === "json"
-                ? [{ value: "createListNode", label: "Create List Node" }]
+                ? [{ value: "createNewNode", label: "Create List Node" }]
                 : []),
             ]}
             value={nodesInputData[id]?.apiResponse?.actionType}
@@ -197,6 +198,7 @@ export const Response = ({
                   responseType: e,
                 },
               }));
+              setJsonVar([{ paramName: "", varName: "" }]);
             }}
             placeholder="Select Request Type"
           />
@@ -297,7 +299,7 @@ export const Response = ({
           </div>
         )}
 
-      {nodesInputData[id]?.apiResponse?.actionType === "createListNode" && (
+      {nodesInputData[id]?.apiResponse?.actionType === "createNewNode" && (
         <div className="mt-2 flex gap-2">
           <InputField
             id="rowTitle"

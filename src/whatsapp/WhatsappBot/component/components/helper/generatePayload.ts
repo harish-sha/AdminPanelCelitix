@@ -105,12 +105,14 @@ function generateBotPayload(
 
       entry["type"] = finalType;
 
+      // console.log("nodeInput?.options",nodeInput?.options)
       if (Array.isArray(nodeInput?.options)) {
         entry["listItems"] = nodeInput.options.map((item: any) => [
-          item.option?.trim() || "",
-          item.value?.trim() || "",
+          item?.option?.toString().trim() || "",
+          item?.value?.toString().trim() || "",
         ]);
       }
+
     }
     if (finalType === "answer") {
       (entry["answerOption"] = nodeInput?.type),
@@ -175,17 +177,23 @@ function generateApiPayload(entry, nodeInput) {
     (entry["apiResponse"]["storeInVariable"] = nodeInput?.apiResponse?.storeInVariable),
     (entry["responseType"] = nodeInput?.responseType)
 
-  if (nodeInput?.apiResponse?.responseType === "text") {
+  if (nodeInput?.apiResponse?.responseType === "text" && nodeInput?.apiResponse?.actionType !== "createNewNode") {
     (entry["apiResponse"]["storedData"] = [
       {
         varName: nodeInput?.apiResponse?.varName
       }
     ])
   }
-  else if (nodeInput?.apiResponse?.responseType === "json") {
+  else if (nodeInput?.apiResponse?.responseType === "json" && nodeInput?.apiResponse?.actionType !== "createNewNode") {
     (entry["apiResponse"]["storedData"] = [
       ...nodeInput?.jsonVar
     ])
+  }
+
+  if (nodeInput?.apiResponse?.actionType === "createNewNode") {
+    (entry["apiResponse"]["conditionName"] = nodeInput?.apiResponse?.rowTitle),
+      // (entry["apiResponse"]["conditionValue"] = nodeInput?.apiResponse?.rowValue),
+      (entry["apiResponse"]["storeInVariable"] = undefined)
   }
 
 }
