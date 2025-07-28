@@ -15,7 +15,8 @@ export const ChatSidebar = ({
   setSelectedAgentList,
   selectedWaba,
   setSelectedGroupList,
-  isLoading
+  isLoading,
+  setChatIndex,
 }) => {
   // const isLoading =
   //   selectedWaba &&
@@ -52,8 +53,6 @@ export const ChatSidebar = ({
     }
   }
 
-
-
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -88,7 +87,7 @@ export const ChatSidebar = ({
               loop
               autoplay
               className="w-60 h-45"
-            // style={{ width: "full", height: "48px" }}
+              // style={{ width: "full", height: "48px" }}
             />
           </motion.div>
           <motion.p
@@ -134,11 +133,12 @@ export const ChatSidebar = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
-              className={`group p-4 rounded-xl cursor-pointer transition-all duration-200 mb-2 shadow-sm ${chatState?.active?.srno === chat.srno
-                ? // ? "bg-gradient-to-br from-blue-600 to-indigo-400 border-l-6 border-[#22577E] text-white "
-                "bg-gradient-to-br from-[#5584AC] to-[#5584AC] border-l-6 border-[#22577E] text-white "
-                : "bg-gradient-to-br from-gray-100 to-blue-100 hover:from-gray-200 hover:to-blue-200 text-gray-800"
-                }`}
+              className={`group p-4 rounded-xl cursor-pointer transition-all duration-200 mb-2 shadow-sm ${
+                chatState?.active?.srno === chat.srno
+                  ? // ? "bg-gradient-to-br from-blue-600 to-indigo-400 border-l-6 border-[#22577E] text-white "
+                    "bg-gradient-to-br from-[#5584AC] to-[#5584AC] border-l-6 border-[#22577E] text-white "
+                  : "bg-gradient-to-br from-gray-100 to-blue-100 hover:from-gray-200 hover:to-blue-200 text-gray-800"
+              }`}
               onClick={async () => {
                 const agentName = await getUserAgent(chat?.mobileNo);
                 const grpSrno = await fetchGrpList(agentName?.groupName);
@@ -150,6 +150,7 @@ export const ChatSidebar = ({
                   isReply: false,
                   agentName: agentName,
                 }));
+                setChatIndex(1);
                 setSelectedAgentList(chat?.agentSrno);
                 setSelectedGroupList(grpSrno);
               }}
@@ -165,10 +166,11 @@ export const ChatSidebar = ({
                       />
                     ) : (
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center  font-semibold text-sm ${chatState?.active?.srno === chat.srno
-                          ? "bg-white text-blue-600"
-                          : "bg-gray-300 text-gray-900"
-                          }`}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center  font-semibold text-sm ${
+                          chatState?.active?.srno === chat.srno
+                            ? "bg-white text-blue-600"
+                            : "bg-gray-300 text-gray-900"
+                        }`}
                       >
                         {chat.contectName?.charAt(0)?.toUpperCase() || "?"}
                       </div>
