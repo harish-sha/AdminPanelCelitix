@@ -22,6 +22,7 @@ import UniversalButton from "@/components/common/UniversalButton.jsx";
 import Loader from "@/whatsapp/components/Loader.jsx";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch.jsx";
 import { RadioButton } from "primereact/radiobutton";
+import { saveNotification } from "@/apis/admin/admin.js";
 
 const extractVariablesFromText = (text) => {
   const regex = /{{(\d+)}}/g;
@@ -35,7 +36,7 @@ const extractVariablesFromText = (text) => {
   return variables;
 };
 
-export const Whatsapp = ({ handleSaveWhatsappNotification, data, setData }) => {
+export const Whatsapp = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const [selectedWaba, setSelectedWaba] = useState("");
@@ -242,7 +243,7 @@ export const Whatsapp = ({ handleSaveWhatsappNotification, data, setData }) => {
       })
       ?.join(",");
 
-    const sampleData = {
+    const payload = {
       wabaSrno: selectedWabaData?.wabaSrno || "",
       templateSrno: selectedTemplateData?.templateSrno || "",
       mediaPath: imageFile || "",
@@ -254,11 +255,63 @@ export const Whatsapp = ({ handleSaveWhatsappNotification, data, setData }) => {
       templateName: selectedTemplateData?.templateName,
       templateLanguage: selectedLanguage,
       notificationStatus: "on",
-      remarks:"arihant-whatsapp",
-      emailFor:"arihant-whatsapp-for"
+      remarks: "arihant-whatsapp",
+      emailFor: "arihant-whatsapp-for",
     };
 
-    handleSaveWhatsappNotification(sampleData);
+    try {
+      const res = await saveNotification("whatsapp", data);
+      if (!res?.success) {
+        return toast.error(res?.message);
+      }
+      toast.success(res?.message);
+      setIsLoading(false);
+      setSelectedTemplate("");
+      setSelectedWaba("");
+      setSelectedWabaMobileNo([]);
+      setInputValue("");
+      // setTemplateOptions([]);
+      setTemplateDataNew(null);
+      setWabaAccountId("");
+      // setWabaList(null);
+      setTemplateData({});
+      // setFormData({});
+      setImageFile(null);
+      setSelectedOption("option2");
+      setFileHeaders([]);
+      // setTemplateList([]);
+      setImagePreview(null);
+      setSending(false);
+      setIsFetching(false);
+      setSelectedLanguage(null);
+      setSelectedGroups([]);
+      setUploadedFile(null);
+      setIsUploaded(false);
+
+      // setGroups([]);
+
+      setXlsxPath("");
+      setTotalRecords("");
+      setSelectedCountryCode("");
+      setSelectedMobileColumn("");
+      setIsGroup(-1);
+      setUrlIndex(null);
+
+      setTestMobileNumber("");
+      setSchedule(false);
+      setScheduledDateTime(new Date());
+      setDialogVisible(false);
+      setIsSubmitting(false);
+      setIsCountryCodeChecked(false);
+      setVarLength(0);
+      setFileData([]);
+      setIsGroup(-1);
+      // fileRef.current.value = "";
+      fileRef.current && (fileRef.current.value = "");
+    } catch (e) {
+      console.log(e);
+      toast.error("Something Went Wrong!");
+    }
   };
 
   const handleOptionChange = (value) => {
