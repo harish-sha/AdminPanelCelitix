@@ -1,0 +1,95 @@
+.file-upload-container {
+  margin-top: 0.7rem;
+  padding: 1rem;
+  border: 2px dashed #6b7280;
+  border-radius: 1rem;
+  background-color: #f9fafb;
+  text-align: center;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  position: relative;
+}
+
+.file-upload-container:hover {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.file-upload-container.drag-active {
+  border-color: #10b981;
+  background-color: #d1fae5;
+}
+
+.file-upload-preview {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #374151;
+  text-align: left;
+}
+
+.file-upload-preview strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.MuiBox-root .css-19kzrtu {
+  padding: 15px 10px !important;
+}
+
+/* Custom styles for the MultiSelect component */
+.custom-multiselect {
+  width: 100%;
+  /* max-width: 24rem; */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0px;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
+.custom-multiselect:focus-within {
+  border-color: none;
+  box-shadow: none;
+}
+
+.p-multiselect-panel .p-multiselect-header {
+  padding: 0.4rem 0.5rem;
+}
+
+.p-multiselect-panel .p-multiselect-items {
+  padding: 0;
+}
+
+.p-multiselect-panel .p-multiselect-items .p-multiselect-item {
+  padding: 0.6rem 0.6rem;
+  font-size: 14px;
+}
+
+.p-multiselect-panel .p-multiselect-items .p-multiselect-item.p-highlight {
+  color: #0e7490;
+  background: #458af23f;
+}
+
+.p-checkbox.p-highlight .p-checkbox-box {
+  border-color: #458bf2;
+  background: #458bf2;
+  height: 20px;
+  width: 20px;
+}
+
+.p-inputtext {
+  padding: 0.2rem 0.2rem;
+}
+
+.p-inputtext:focus {
+  border: 1px solid #999;
+  outline: none;
+  box-shadow: none;
+}

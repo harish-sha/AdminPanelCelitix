@@ -11,12 +11,23 @@ import { Whatsapp } from "../components/whatsapp";
 import { RCS } from "../components/rcs";
 import { Email } from "../components/email";
 import { SMS } from "../components/sms";
+import { saveNotification } from "@/apis/admin/admin";
 
 export const AddNotification = () => {
   const [value, setValue] = React.useState(0);
   const [data, setData] = React.useState({});
 
-  async function handleSaveWhatsappNotification() {
+  async function handleSaveWhatsappNotification(data) {
+    try {
+      const res = await saveNotification("whatsapp", data);
+      if (!res?.success) {
+        return toast.error(res?.message);
+      }
+      toast.success(res?.message);
+    } catch (e) {
+      console.log(e);
+      toast.error("Something Went Wrong!");
+    }
     // payload
     //     {
     //   "wabaSrno": "1",
@@ -40,7 +51,7 @@ export const AddNotification = () => {
         overflow: "hidden",
       }}
     >
-      <div className="text-2xl font-semibold mb-2">Live Monitoring</div>
+      <div className="text-2xl font-semibold mb-2">Add Notification</div>
       <Tabs
         value={value}
         onChange={(e, newValue) => {
