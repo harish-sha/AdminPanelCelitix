@@ -114,7 +114,7 @@ export const Response = ({
       const rowTitle = nodesInputData[id]?.apiResponse?.rowTitle;
       const rowValue = nodesInputData[id]?.apiResponse?.rowValue;
       const res = await fetchApi(nodesInputData[id]);
-      const newListId = Number(id) + 1;
+      const newListId = String(Number(id) + 1);
 
       if (!res || !res.length) return;
 
@@ -124,7 +124,10 @@ export const Response = ({
         if (rowValue in item) newItem[rowValue] = item[rowValue];
         return newItem;
       });
-      if (nodes[newListId] && nodes[newListId].type === "list") {
+
+      const isListAvailable = nodes.find((node) => node.id == newListId)?.type;
+
+      if (isListAvailable) {
         addDatainListNode(newListId, res, requiredData, rowTitle, rowValue);
       } else {
         addNode("list", { x: lastPosition.x + 50, y: lastPosition.y + 50 });
