@@ -248,7 +248,7 @@ function RadioButtonLaunchCampaign({
 
         onFileUpload(
           response.filepath,
-          fileHeaders,
+          response.headers || [],
           totalRecords,
           selectedCountryCode,
           selectedMobileColumn
