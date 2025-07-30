@@ -13,6 +13,7 @@ export const Variables = ({
   setBasicDetails,
   fileData,
   setFileData,
+  headers,
 }: {
   variablesData: any;
   setVariablesData: any;
@@ -21,6 +22,7 @@ export const Variables = ({
   setBasicDetails: any;
   fileData: any;
   setFileData: any;
+  headers: any[];
 }) => {
   function handleFileChange(e) {
     const file = e.target.files[0];

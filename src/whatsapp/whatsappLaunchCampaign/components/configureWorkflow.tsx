@@ -259,6 +259,7 @@ export const ConfigureWorkflow = ({ data, headers }) => {
           nodesInputData={nodesInputData}
           setNodesInputData={setNodesInputData}
           setDetailsDialogVisible={setDetailsDialogVisible}
+          headers={headers}
         />
       </Dialog>
     </>

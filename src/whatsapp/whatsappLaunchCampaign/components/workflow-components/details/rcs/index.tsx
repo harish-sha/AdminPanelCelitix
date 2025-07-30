@@ -15,11 +15,13 @@ export const RCS = ({
   nodesInputData,
   setNodesInputData,
   setDetailsDialogVisible,
+  headers,
 }: {
   id: number;
   nodesInputData: any;
   setNodesInputData: React.Dispatch<React.SetStateAction<{}>>;
   setDetailsDialogVisible: React.Dispatch<React.SetStateAction<{}>>;
+  headers: any[];
 }) => {
   //basic Details
   const [allAgents, setAllAgents] = useState([]);
@@ -49,7 +51,6 @@ export const RCS = ({
     data: {},
   });
   const [carVarInput, setCarVarInput] = useState([]);
-  const [headers, setHeaders] = useState([]);
   const [finalVarList, setFinalVarList] = useState([]);
 
   function extractVariable(data) {
@@ -112,7 +113,7 @@ export const RCS = ({
         setSelectedTemplate(Number(data?.rcs_template));
 
         setInputVariables(data?.variables || {});
-        setBtnInputVariables(data?.variables || {});
+        // setBtnInputVariables(data?.variables || {});
       } catch (e) {
         toast.error("Something went wrong.");
       }
@@ -172,6 +173,10 @@ export const RCS = ({
     Object.keys(btninputVariables).map((key) => {
       btnVar.push(btninputVariables[key]);
     });
+
+
+    console.log("btnvarList",btnvarList)
+    console.log("btnVar.length",btninputVariables)
 
     if (btnvarList.length !== btnVar.length) {
       return toast.error("Please fill all the button variables");

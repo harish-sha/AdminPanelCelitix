@@ -4,6 +4,7 @@ import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { Carousel } from "react-responsive-carousel";
+import InputVariable from "../../../InputVariable";
 
 export const VariableManager = ({
   templateDetails,
@@ -77,6 +78,15 @@ export const VariableManager = ({
     [inputVariables, setInputVariables]
   );
 
+  const handleAddVariable = (e, index) => {
+    const inputData = inputVariables[index] || "";
+    console.log("inputData", inputData);
+    setInputVariables((prev) => ({
+      ...prev,
+      [index]: inputData + `{#${e}#}`,
+    }));
+  };
+
   const renderSimpleInput = () =>
     varList?.map((label, index) => (
       <div className="relative w-full p-2" key={index}>
@@ -87,6 +97,7 @@ export const VariableManager = ({
           >
             {label}
           </label>
+
           <InputField
             id={`variable${index + 1}`}
             ref={textBoxRef}
@@ -94,14 +105,20 @@ export const VariableManager = ({
             placeholder={`Enter variable ${index + 1}`}
             value={inputVariables[index]}
             onChange={(e) => handleInputVariable(e.target.value, index)}
-            sx={{ width: "100%", marginBottom: "1rem" }}
+            // sx={{ width: "100%", marginBottom: "1rem" }}
             maxLength={100}
             label=""
           />
         </div>
 
-        <div className="absolute top-[0.8rem] right-4">
+        <div className="absolute top-[0.8rem] right-9">
           <CustomEmojiPicker onSelect={(e) => handleEmojiAdd(e, index)} />
+        </div>
+        <div className="absolute top-[0.5rem] right-2">
+          <InputVariable
+            onSelect={(e) => handleAddVariable(e, index)}
+            variables={headers}
+          />
         </div>
       </div>
     ));
@@ -169,7 +186,7 @@ export const VariableManager = ({
                   handleCarInputVariable(e.target.value, index, nestedIndex)
                 }
                 value={carVar.data[item][nestedIndex]}
-                className="w-full  border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-100 transition"
+                // className="w-full  border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-100 transition"
               />
             </div>
           ))}
@@ -200,7 +217,6 @@ export const VariableManager = ({
                 placeholder={`Enter variable ${index + 1}`}
                 value={btninputVariables[index]}
                 onChange={(e) => handleBtnInputVariable(e.target.value, index)}
-                sx={{ width: "100%", marginBottom: "1rem" }}
               />
             </div>
 

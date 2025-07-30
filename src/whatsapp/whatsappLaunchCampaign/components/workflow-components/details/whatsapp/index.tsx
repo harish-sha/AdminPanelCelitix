@@ -16,11 +16,13 @@ export const Whatsapp = ({
   nodesInputData,
   setNodesInputData,
   setDetailsDialogVisible,
+  headers,
 }: {
   id: number;
   nodesInputData: any;
   setNodesInputData: React.Dispatch<React.SetStateAction<{}>>;
   setDetailsDialogVisible: React.Dispatch<React.SetStateAction<{}>>;
+  headers: any[];
 }) => {
   const [wabaState, setWabaState] = useState({
     waba: [],
@@ -265,6 +267,7 @@ export const Whatsapp = ({
                 setBasicDetails={setBasicDetails}
                 fileData={fileData}
                 setFileData={setFileData}
+                 headers={headers}
               />
             )}
         </div>
