@@ -10,12 +10,14 @@ export const DetailsDialog = ({
   nodesInputData,
   setNodesInputData,
   setDetailsDialogVisible,
+  headers,
 }: {
   type: string;
   id: number;
   nodesInputData: any;
   setNodesInputData: React.Dispatch<React.SetStateAction<{}>>;
   setDetailsDialogVisible: React.Dispatch<React.SetStateAction<{}>>;
+  headers: any[];
 }) => {
   return (
     <>
@@ -25,6 +27,7 @@ export const DetailsDialog = ({
           nodesInputData={nodesInputData}
           setNodesInputData={setNodesInputData}
           setDetailsDialogVisible={setDetailsDialogVisible}
+          headers={headers}
         />
       )}
       {type === "rcs" && (
@@ -33,6 +36,7 @@ export const DetailsDialog = ({
           nodesInputData={nodesInputData}
           setNodesInputData={setNodesInputData}
           setDetailsDialogVisible={setDetailsDialogVisible}
+          headers={headers}
         />
       )}
       {type === "sms" && (
@@ -41,6 +45,7 @@ export const DetailsDialog = ({
           nodesInputData={nodesInputData}
           setNodesInputData={setNodesInputData}
           setDetailsDialogVisible={setDetailsDialogVisible}
+          headers={headers}
         />
       )}
       {type === "voice" && (
@@ -49,6 +54,7 @@ export const DetailsDialog = ({
           nodesInputData={nodesInputData}
           setNodesInputData={setNodesInputData}
           setDetailsDialogVisible={setDetailsDialogVisible}
+          headers={headers}
         />
       )}
     </>

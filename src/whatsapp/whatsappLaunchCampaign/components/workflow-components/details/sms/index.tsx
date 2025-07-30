@@ -11,11 +11,13 @@ export const SMS = ({
   nodesInputData,
   setNodesInputData,
   setDetailsDialogVisible,
+  headers
 }: {
   id: number;
   nodesInputData: any;
   setNodesInputData: React.Dispatch<React.SetStateAction<{}>>;
   setDetailsDialogVisible: React.Dispatch<React.SetStateAction<{}>>;
+  headers: any[]
 }) => {
   const [inputDetails, setInputDetails] = useState({
     campaingName: "",
@@ -115,6 +117,7 @@ export const SMS = ({
           setInputDetails={setInputDetails}
           inputDetails={inputDetails}
           allTemplates={allTemplates}
+           headers={headers}
         />
         <Preview inputDetails={inputDetails} />
       </div>

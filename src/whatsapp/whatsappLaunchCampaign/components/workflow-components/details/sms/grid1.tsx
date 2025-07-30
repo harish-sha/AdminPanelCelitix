@@ -4,7 +4,7 @@ import { RadioButton } from "primereact/radiobutton";
 import React from "react";
 import { Variable } from "./variable";
 
-export const Grid1 = ({ inputDetails, setInputDetails, allTemplates }) => {
+export const Grid1 = ({ inputDetails, setInputDetails, allTemplates,headers }) => {
   function getSmsUnit(message: string, isUnicode = false) {
     const length = message?.length;
 
@@ -243,6 +243,7 @@ export const Grid1 = ({ inputDetails, setInputDetails, allTemplates }) => {
           <Variable
             setInputDetails={setInputDetails}
             inputDetails={inputDetails?.message}
+             headers={headers}
           />
         </div>
 
