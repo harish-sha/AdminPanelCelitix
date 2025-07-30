@@ -185,6 +185,63 @@ const ResellerDashboard = () => {
     getBalance();
   }, []);
 
+
+  //==================================daily amount usage start================================
+  const [startsDate, setStartsDate] = useState(new Date()); // From Today
+  const [endsDate, setEndsDate] = useState(new Date());
+  const [walletUsage, setWalletUsage] = useState(343.8);
+  const [walletUsagesData, setWalletUsagesData] = useState([]);
+const [totalWalletUsage, setTotalWalletUsage] = useState(0);
+
+ const dailyAmountUsage = async () => {
+  const payload = {
+    userSrno: 0,
+    fromDate: moment(startsDate).format("YYYY-MM-DD"),
+    toDate: moment(endsDate).format("YYYY-MM-DD"),
+  };
+
+  console.log("date payload", payload);
+  setIsLoading(true);
+
+  try {
+    const response = await dailyWalletUsage(payload);
+    console.log("daily wallet usage", response.data);
+
+    const data = response.data || [];
+
+    if (data.length > 1) {
+      setWalletUsagesData(data);
+
+      // Calculate total difference between consecutive walletUsage values
+      let totalDifference = 0;
+      for (let i = 0; i < data.length - 1; i++) {
+        const current = Number(data[i].walletUsage || 0);
+        const next = Number(data[i + 1].walletUsage || 0);
+        totalDifference += Math.abs(current - next);
+      }
+
+      setTotalWalletUsage(totalDifference);
+      console.log("Total Wallet Usage (difference):", totalDifference);
+    } else {
+      setWalletUsagesData([]);
+      setTotalWalletUsage(0);
+    }
+  } catch (error) {
+    console.error("Error daily wallet usage:", error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
+
+  useEffect(() => {
+    dailyAmountUsage(); // Fetch data when the component mounts or when date range changes
+  }, [startsDate, endsDate]);
+  
+  //==================================daily amount usage end================================
+
+
   // =======================================daily service usage end=================================================
 
   const [startDate, setStartDate] = useState(new Date());
@@ -204,28 +261,7 @@ const ResellerDashboard = () => {
   const [filter, setFilter] = useState("Day");
   const [usageData, setUsageData] = useState(null);
 
-  // const dailyAmountUsage = async () => {
-  //   const payload = {
-  //     userSrno: 0,
-  //     // fromDate: moment(startDate).format("YYYY-MM-DD"),
-  //     date: moment(endDate).format("YYYY-MM-DD"),
-  //   };
-  //   console.log("date payload", payload);
-  //   setIsLoading(true);
-  //   try {
-  //     const response = await dailyWalletUsage(payload);
-  //     console.log("daily wallet usage", response.data);
-  //     if (response.data && response.data.length > 0) {
-  //       setWalletUsageData(response.data);
-  //     } else {
-  //       setWalletUsageData([]);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error daily wallet usage:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+
 
   const dailyServiceUsage = async () => {
     const payload = {
@@ -250,6 +286,7 @@ const ResellerDashboard = () => {
       setIsLoading(false);
     }
   };
+  
 
   const servicesDailyUsage = ["whatsapp", "voice", "rcs", "sms"];
 
@@ -262,13 +299,11 @@ const ResellerDashboard = () => {
     };
   });
 
-  // useEffect(() => {
-  //   dailyAmountUsage();
-  // }, []);
+  useEffect(() => {
+    dailyAmountUsage();
+  }, []);
 
-  // useEffect(() => {
-  //   dailyAmountUsage(); // Fetch data when the component mounts or when date range changes
-  // }, [startDate, endDate]);
+
   // useEffect(() => {
   //   dailyServiceUsage();
   // }, []);
@@ -462,7 +497,7 @@ const ResellerDashboard = () => {
     },
   ];
 
-  // Add Integrations start
+  //==================================== Add Integrations start=============================================
   const [oldApiKey, setOldApiKey] = useState("");
   const [visible, setVisible] = useState(false);
   const openDialog = () => setVisible(true);
@@ -486,63 +521,7 @@ const ResellerDashboard = () => {
   }, []);
 
   const integrationUrl = `https://int.celitix.com/?user_id=${oldApiKey}&api_key=AIzaSyBqlfMk-_yK_3ICUUYej_nVUDXz0cP327Y`;
-
   // console.log("final integration url", integrationUrl);
-
-  // https://int.celitix.com/?user_id=22b917b78dXX&api_key=AIzaSyBqlfMk-_yK_3ICUUYej_nVUDXz0cP327Y
-
-  // const integrations = [
-  //   {
-  //     name: "Zoho",
-  //     icon: <AiFillApi size={40} />,
-  //     url: iframeSrcMap.zoho,
-  //   },
-  //   {
-  //     name: "WebEngage",
-  //     icon: <FaFacebookMessenger size={40} />,
-  //     url: iframeSrcMap.messenger,
-  //   },
-  //   {
-  //     name: "Freshdesk",
-  //     icon: <MdSupportAgent size={40} />,
-  //     url: iframeSrcMap.freshdesk,
-  //   },
-  //   {
-  //     name: "Shopify",
-  //     icon: <FaShopify size={40} />,
-  //     url: iframeSrcMap.shopify,
-  //   },
-  //   {
-  //     name: "Messenger",
-  //     icon: <FaFacebookMessenger size={40} />,
-  //     url: iframeSrcMap.messenger,
-  //   },
-  //   {
-  //     name: "WordPress",
-  //     icon: <FaFacebookMessenger size={40} />,
-  //     url: iframeSrcMap.messenger,
-  //   },
-  //   {
-  //     name: "Zapier",
-  //     icon: <FaFacebookMessenger size={40} />,
-  //     url: iframeSrcMap.messenger,
-  //   },
-  //   {
-  //     name: "WooCommerce",
-  //     icon: <FaFacebookMessenger size={40} />,
-  //     url: iframeSrcMap.messenger,
-  //   },
-  //   {
-  //     name: "Cronberry",
-  //     icon: <FaFacebookMessenger size={40} />,
-  //     url: iframeSrcMap.messenger,
-  //   },
-  //   {
-  //     name: "Google Sheets",
-  //     icon: <FaFacebookMessenger size={40} />,
-  //     url: iframeSrcMap.messenger,
-  //   },
-  // ];
 
   const iconSize = 48;
 
@@ -620,6 +599,7 @@ const ResellerDashboard = () => {
         </div>
       </motion.div>
 
+      {/* service cards start */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -683,6 +663,7 @@ const ResellerDashboard = () => {
           })}
         </Grid>
       </motion.div>
+      {/* service cards end */}
 
       {/* Add Integrations Start */}
       <motion.div
@@ -692,67 +673,6 @@ const ResellerDashboard = () => {
         onClick={openDialog}
         className="cursor-pointer group relative p-6 rounded-2xl shadow-md bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 hover:shadow-xl transition-all overflow-hidden"
       >
-        {/* <div className="absolute inset-0 overflow-hidden opacity-20 group-hover:opacity-30 transition-opacity">
-          <svg
-            className="absolute inset-0 w-full h-full"
-            preserveAspectRatio="xMidYMid slice"
-            viewBox="0 0 100 100"
-          >
-            <defs>
-              <linearGradient
-                id="connectionGradient"
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="0%"
-              >
-                <stop offset="0%" stopColor="#2b40b0" />
-                <stop offset="50%" stopColor="#8447c6" />
-                <stop offset="100%" stopColor="#36bae2" />
-              </linearGradient>
-            </defs>
-            {[...Array(8)].map((_, i) => (
-              <motion.path
-                key={i}
-                d={generateRandomPath()}
-                // stroke="#3b82f6"
-                stroke="url(#connectionGradient)"
-                strokeWidth="0.2"
-                fill="none"
-                initial={{ pathLength: 0, pathOffset: 1 }}
-                animate={{ pathLength: 1, pathOffset: 0 }}
-                transition={{
-                  duration: 4 + Math.random() * 4,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              />
-            ))}
-
-            {[...Array(12)].map((_, i) => (
-              <motion.circle
-                key={`dot-${i}`}
-                cx={10 + Math.random() * 80}
-                cy={10 + Math.random() * 80}
-                r={0.3 + Math.random() * 0.7}
-                // fill="#3b82f6"
-                fill="url(#connectionGradient)"
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{
-                  opacity: [0, 0.8, 0],
-                  scale: [0, 1.2, 0],
-                }}
-                transition={{
-                  duration: 3 + Math.random() * 5,
-                  delay: Math.random() * 3,
-                  repeat: Infinity,
-                  repeatDelay: Math.random() * 5,
-                }}
-              />
-            ))}
-          </svg>
-        </div> */}
-
         <div className="relative flex flex-col md:flex-row items-center justify-around space-y-2">
           {/* <AiOutlineAppstoreAdd size={48} className="text-blue-600" /> */}
           <div className="flex flex-col items-center">
@@ -775,26 +695,6 @@ const ResellerDashboard = () => {
             layout
             className="flex justify-center items-center flex-wrap mt-4 transition-all duration-500 gap-12 group-hover:gap-13"
           >
-            {/* {[
-              { icon: <AiFillApi size={iconSize} />, color: "text-purple-600 hover:text-purple-800" },
-              { icon: <FaFacebookMessenger size={iconSize} />, color: "text-blue-500 hover:text-blue-700" },
-              { icon: <MdSupportAgent size={iconSize} />, color: "text-amber-600 hover:text-amber-800" },
-              { icon: <FaShopify size={iconSize} />, color: "text-green-600 hover:text-green-800" },
-              { icon: <SiZendesk size={iconSize} />, color: "text-green-400 hover:text-green-600" },
-              { icon: <SiZapier size={iconSize} />, color: "text-orange-500 hover:text-orange-700" },
-              { icon: <SiZoho size={iconSize} />, color: "text-red-500 hover:text-red-700" },
-              { icon: <FaSlack size={iconSize} />, color: "text-indigo-500 hover:text-indigo-700" }
-            ].map((item, idx) => (
-              <motion.div
-                key={idx}
-                className={`transition-all duration-300 ${item.color}`}
-                whileHover={{ scale: 1.25 }}
-                animate={{ scale: 1 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {item.icon}
-              </motion.div>
-            ))} */}
             {[
               { icon: <img src={zohoicon} alt="" className="w-22" /> },
               { icon: <img src={zapier} alt="" className="w-12" /> },
@@ -844,6 +744,69 @@ const ResellerDashboard = () => {
         ></iframe>
       </Dialog>
       {/* Add Integrations End */}
+
+      {/* daily use */}
+
+      {/* <div className="flex items-center justify-center">
+        <div className="w-full bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-10 border border-white/20">
+          
+          <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] rounded-3xl p-8 text-white shadow-[0_0_25px_rgba(0,255,200,0.3)] transition-all duration-500 hover:scale-[1.04] hover:shadow-[0_0_40px_rgba(0,255,200,0.5)] overflow-hidden">
+     
+            <div className="absolute inset-0 bg-gradient-to-tr from-green-400/20 to-green-600/10 blur-3xl opacity-50"></div>
+
+        
+            <div className="relative z-10 flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-green-300 drop-shadow-md">
+                Wallet Overview
+              </h2>
+              <div className="px-4 py-1 bg-green-500/30 rounded-full text-sm font-semibold tracking-wide border border-green-400/40">
+                Active
+              </div>
+            </div>
+
+       
+            <div className="relative z-10 mb-6">
+              <span className="text-sm text-gray-300">Current Balance</span>
+              <p className="text-4xl font-extrabold bg-gradient-to-r from-green-300 via-white to-green-200 bg-clip-text text-transparent animate-[pulse_2.5s_infinite]">
+                ₹ {walletUsage}
+              </p>
+            </div>
+
+            
+            <div className="relative z-10 mb-6">
+              <span className="text-sm text-gray-300">Used Balance</span>
+              <p className="text-2xl font-bold text-green-200">₹ {totalWalletUsage.toFixed(2)}</p>
+            </div>
+
+          
+            <div className="relative z-10 flex flex-col sm:flex-row justify-between text-sm text-gray-300 border-t border-green-400/30 pt-4 gap-4">
+            
+              <div className="flex flex-col">
+                <label className="font-medium text-white mb-2">From:</label>
+                <input
+                  type="date"
+                  value={startsDate}
+                  onChange={(e) => setStartsDate(e.target.value)}
+                  className="bg-white/10 text-white font-semibold px-4 py-2 rounded-lg border border-green-400/30 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all hover:scale-105 shadow-md"
+                />
+              </div>
+
+            
+              <div className="flex flex-col">
+                <label className="font-medium text-white mb-2">To:</label>
+                <input
+                  type="date"
+                  value={endsDate}
+                  onChange={(e) => setEndsDate(e.target.value)}
+                  className="bg-white/10 text-white font-semibold px-4 py-2 rounded-lg border border-green-400/30 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all hover:scale-105 shadow-md"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> */}
+
+      {/* daily use */}
 
       {/* <ParticleRing /> */}
 

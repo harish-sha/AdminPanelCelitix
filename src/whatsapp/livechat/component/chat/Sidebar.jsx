@@ -94,6 +94,7 @@ export const ChatSidebar = ({
   setSelectedAgentList,
   selectedWaba,
   setSelectedGroupList,
+  setChatIndex,
   // isLoading
 }) => {
   const isLoading =
@@ -229,6 +230,7 @@ export const ChatSidebar = ({
                   isReply: false,
                   agentName: agentName,
                 }));
+                setChatIndex(1);
                 setSelectedAgentList(chat?.agentSrno);
                 setSelectedGroupList(grpSrno);
               }}

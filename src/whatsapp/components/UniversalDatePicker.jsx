@@ -3,6 +3,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import CustomTooltip from "./CustomTooltip";
+import { useEffect, useState } from "react";
+import Alert from '@mui/material/Alert';
 
 const UniversalDatePicker = ({
     id,
@@ -20,6 +22,17 @@ const UniversalDatePicker = ({
     defaultValue,
     views
 }) => {
+    const [cleared, setCleared] = useState(false);
+    useEffect(() => {
+        if (cleared) {
+            const timeout = setTimeout(() => {
+                setCleared(false);
+            }, 1500);
+
+            return () => clearTimeout(timeout);
+        }
+        return () => { };
+    }, [cleared]);
     return (
         <div className='w-full'>
             <div className='flex items-center gap-2 mb-2'>
@@ -104,9 +117,18 @@ const UniversalDatePicker = ({
                                 shrink: true,
                             },
                         },
+                        field: { clearable: true, onClear: () => setCleared(true) },
                     }}
                 />
             </LocalizationProvider>
+            {/* {cleared && (
+                <Alert
+                    sx={{ position: 'absolute', bottom: 0, right: 0 }}
+                    severity="success"
+                >
+                    Field cleared!
+                </Alert>
+            )} */}
         </div>
     );
 };

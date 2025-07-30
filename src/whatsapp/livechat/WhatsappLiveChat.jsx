@@ -121,6 +121,9 @@ export default function WhatsappLiveChat() {
 
   const [cardIndex, setCardIndex] = useState(0);
 
+  const [chatIndex, setChatIndex] = useState(1);
+  const [chatLoading, setChatLoading] = useState(false);
+
   function handleNextCard() {
     setCardIndex(cardIndex + 1);
   }
@@ -486,21 +489,26 @@ export default function WhatsappLiveChat() {
     const year = String(date.getFullYear()).slice(-2);
     return `${day}/${month}/${year}`;
   };
-  async function handleFetchSpecificConversation() {
+  async function handleFetchSpecificConversation(olderChatFetch = false) {
+    if (!chatIndex) return;
+    console.log("chatIndex", chatIndex);
+    setChatLoading(true);
     const payload = {
       mobileNo: chatState?.active?.mobileNo,
       wabaMobile: chatState?.active?.wabaNumber,
-      chatNo: 0,
+      chatNo: chatIndex,
     };
 
     try {
       const res = await fetchSpecificConversations(payload);
       const messages = [...(res?.conversationEntityList || [])].reverse();
 
-      setLatestMessageData({
-        srno: res?.conversationEntityList[0]?.srno,
-        replayTime: res?.conversationEntityList[0]?.replyTime,
-      });
+      if (!olderChatFetch) {
+        setLatestMessageData({
+          srno: res?.conversationEntityList[0]?.srno,
+          replayTime: res?.conversationEntityList[0]?.replyTime,
+        });
+      }
 
       const enrichedMessages = await Promise.all(
         messages.map(async (msg) => {
@@ -519,18 +527,17 @@ export default function WhatsappLiveChat() {
             isReply = true;
           }
 
-          // if (msg.isReceived && msg?.replyType === "image") {
-          //   try {
-          //     mediaPath = await downloadAttachment({
-          //       waba: wabaState.selectedWaba,
-          //       id: msg.mediaId,
-          //       conversionSrno: msg.srno,
-          //     });
-          //   } catch (err) {
-          //     console.error(`Failed to fetch media for srno ${msg.srno}`, err);
-          //   }
-          // } else {
-          // }
+          if (msg.isReceived && msg?.replyType === "image") {
+            try {
+              mediaPath = await downloadAttachment({
+                waba: wabaState.selectedWaba,
+                id: msg.mediaId,
+                conversionSrno: msg.srno,
+              });
+            } catch (err) {
+              console.error(`Failed to fetch media for srno ${msg.srno}`, err);
+            }
+          }
 
           mediaPath = msg.mediaPath;
           return {
@@ -566,6 +573,8 @@ export default function WhatsappLiveChat() {
     } catch (e) {
       console.error("Error in handleFetchSpecificConversation:", e);
       toast.error("Error fetching specific conversation");
+    } finally {
+      setChatLoading(false);
     }
   }
 
@@ -844,13 +853,16 @@ export default function WhatsappLiveChat() {
 
   async function handleLoadNewChat() {
     if (!wabaState.selectedWaba || !chatState?.active) return;
+    if (!latestMessageData.srno) return;
 
     try {
       const data = {
         mobile: chatState?.active.mobileNo,
         wabaNumber: wabaState.selectedWaba,
         ...latestMessageData,
-        replayTime: moment(replayTime).format("YYYY-MM-DD HH:mm:ss"),
+        replayTime: moment(latestMessageData.replayTime).format(
+          "YYYY-MM-DD HH:mm:ss"
+        ),
       };
       const res = await loadNewChat(data);
 
@@ -863,7 +875,7 @@ export default function WhatsappLiveChat() {
       // });
       await handleFetchSpecificConversation();
     } catch (e) {
-      console.log(e);
+      oast.error("Error loading new chat");
     }
   }
   useEffect(() => {
@@ -988,6 +1000,7 @@ export default function WhatsappLiveChat() {
           selectedWaba={selectedWaba}
           setSelectedGroupList={setSelectedGroupList}
           isLoading={isFetching}
+          setChatIndex={setChatIndex}
         />
       </div>
       <AnimatePresence>
@@ -1101,6 +1114,10 @@ export default function WhatsappLiveChat() {
               setSendMessageDialogVisible={setSendMessageDialogVisible}
               setChatState={setChatState}
               chatState={chatState}
+              setChatIndex={setChatIndex}
+              chatIndex={chatIndex}
+              handleFetchSpecificConversation={handleFetchSpecificConversation}
+              chatLoading={chatLoading}
             // specificConversation={specificConversation}
             />
           </motion.div>

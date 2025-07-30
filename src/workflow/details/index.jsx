@@ -193,7 +193,7 @@ export const WorkflowDetails = () => {
               </div>
             </div>
           ) : paginatedFlows.length === 0 ? (
-            <div className="bg-white border border-gray-300 rounded-xl shadow-sm flex flex-col items-center justify-center py-2 h-110">
+            <div className="bg-white border-2 border-dashed border-blue-300 rounded-xl shadow-sm flex flex-col items-center justify-center py-2 h-120">
               <div className="flex flex-col items-center justify-center border-2 border-dashed p-5 rounded-3xl shadow-2xl border-blue-300">
                 <div className="w-60 h-60">
                   <Lottie animationData={nothinganimation} loop={true} />
@@ -202,7 +202,7 @@ export const WorkflowDetails = () => {
                   No workflows found.
                   <br />
                   <span className="text-base font-normal text-gray-400">
-                    Start your professional journey by creating a new flow!
+                    Start your professional journey by creating a new workflow!
                   </span>
                 </div>
                 <div className="mt-4">
@@ -263,7 +263,7 @@ export const WorkflowDetails = () => {
                 </div>
 
                 <div className="text-sm flex flex-col items-start md:items-center">
-                  <div className="font-semibold mb-1">Is Otp Workflow</div>
+                  <div className="font-semibold mb-1">Is OTP Workflow</div>
                   <div className="text-gray-600">
                     {flow.isOtpWorkflow === 1 ? "Yes" : "No"}
                   </div>
@@ -272,7 +272,8 @@ export const WorkflowDetails = () => {
                 <div className="text-sm flex flex-col items-start md:items-center">
                   <div className="font-semibold mb-1">Inserted Time</div>
                   <div className="text-gray-700">
-                    {moment(flow.insertTime).format("DD-MM-YYYY")}
+                    {/* {moment(flow.insert_time).format("DD-MM-YYYY")} */}
+                    {flow.insert_time}
                   </div>
                 </div>
 

@@ -77,7 +77,7 @@ export const TemplateNode = ({
   }
 
   async function handleFetchAllTemplates() {
-    const data = JSON.parse(nodesInputData[id]?.json);
+    const data = JSON.parse(nodesInputData[id]?.json || "{}");
     if (!details.selected) return;
     try {
       const res = await getWabaTemplateDetails(details.selected);

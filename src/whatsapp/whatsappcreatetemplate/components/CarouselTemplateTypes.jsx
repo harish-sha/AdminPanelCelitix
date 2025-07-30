@@ -22,6 +22,7 @@ const CarouselTemplateTypes = ({
   uploadImageFile,
   setFileUploadUrl,
   setvariables,
+  ref,
 }) => {
   const [file, setFile] = useState(null);
   const [lastUploadedFileName, setLastUploadedFileName] = useState("");
@@ -135,6 +136,7 @@ const CarouselTemplateTypes = ({
             onChange={(e) => setTemplateFormat(e.target.value)}
             maxLength={1024}
             placeholder="Enter template format"
+            ref={ref}
           />
           <div className="absolute top-0 right-0 mt-2 mr-2 flex space-x-2 ">
             <CustomEmojiPicker
@@ -166,8 +168,8 @@ const CarouselTemplateTypes = ({
             templateFormat={templateFormat}
             setTemplateFormat={setTemplateFormat}
             onUpdateVariables={updateVariables}
+            ref={ref}
           />
-
         </div>
       </div>
 

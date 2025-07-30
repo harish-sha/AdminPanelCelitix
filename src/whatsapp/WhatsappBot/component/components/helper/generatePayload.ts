@@ -106,10 +106,11 @@ function generateBotPayload(
 
       entry["type"] = finalType;
 
+      // console.log("nodeInput?.options",nodeInput?.options)
       if (Array.isArray(nodeInput?.options)) {
         entry["listItems"] = nodeInput.options.map((item: any) => [
-          item.option?.trim() || "",
-          item.value?.trim() || "",
+          item?.option?.toString().trim() || "",
+          item?.value?.toString().trim() || "",
         ]);
       }
     }
@@ -157,51 +158,46 @@ function generateApiPayload(entry, nodeInput) {
   if (!entry.apiResponse) {
     entry.apiResponse = {};
   }
-  console.log("nodeInput", nodeInput);
-
   (entry["apiUrl"] = nodeInput?.apiUrl),
     (entry["apiMethod"] = nodeInput?.apiMethod),
-    (entry["apiDatatype"] = nodeInput?.apiDatatype),
-    (entry["apiHeader"] = generateKeyValue(nodeInput?.headers, true)),
-    (entry["apiResponse"]["responseType"] =
-      nodeInput?.apiResponse?.responseType),
-    (entry["apiResponse"]["actionType"] = nodeInput?.apiResponse?.actionType),
+    (entry["apiDatatype"] = nodeInput?.apiDatatype || ""),
+    (entry["apiHeader"] = nodeInput?.headers || []);
+
+  if (nodeInput?.apiDatatype === "parameter") {
+    entry["apiJson"] = nodeInput?.params;
+  }
+  if (nodeInput?.apiDatatype === "json") {
+    entry["apiJson"] = JSON.parse(nodeInput?.apiRequestJson);
+  }
+
+  (entry["apiResponse"]["responseType"] =
+    nodeInput?.apiResponse?.responseType || "none"),
+    (entry["apiResponse"]["actionType"] =
+      nodeInput?.apiResponse?.actionType || "-1"),
     (entry["apiResponse"]["storeInVariable"] =
       nodeInput?.apiResponse?.storeInVariable),
     (entry["responseType"] = nodeInput?.responseType);
 
-  if (nodeInput?.apiResponse?.responseType === "text") {
+  if (
+    nodeInput?.apiResponse?.responseType === "text" &&
+    nodeInput?.apiResponse?.actionType !== "createNewNode"
+  ) {
     entry["apiResponse"]["storedData"] = [
       {
         varName: nodeInput?.apiResponse?.varName,
       },
     ];
-  }
-
-  if (nodeInput?.apiDatatype === "parameter") {
-    entry["apiJson"] = generateKeyValue(nodeInput?.params, true);
-  }
-  if (nodeInput?.apiDatatype === "json") {
-    entry["apiJson"] = JSON.parse(nodeInput?.apiRequestJson);
-  } else if (nodeInput?.apiResponse?.responseType === "json") {
+  } else if (
+    nodeInput?.apiResponse?.responseType === "json" &&
+    nodeInput?.apiResponse?.actionType !== "createNewNode"
+  ) {
     entry["apiResponse"]["storedData"] = [...nodeInput?.jsonVar];
   }
-}
 
-function generateKeyValue(item, isJson = false) {
-  if (!isJson) {
-    return item?.map((i: { key: string; value: string }) => {
-      if (!i.key || !i.value) return {};
-      return {
-        [i.key]: i.value,
-      };
-    });
-  } else {
-    const obj = {};
-    item?.map((i: { key: string; value: string }) => {
-      obj[i.key] = i.value;
-    });
-    return obj;
+  if (nodeInput?.apiResponse?.actionType === "createNewNode") {
+    (entry["apiResponse"]["conditionName"] = nodeInput?.apiResponse?.rowTitle),
+      // (entry["apiResponse"]["conditionValue"] = nodeInput?.apiResponse?.rowValue),
+      (entry["apiResponse"]["storeInVariable"] = undefined);
   }
 }
 

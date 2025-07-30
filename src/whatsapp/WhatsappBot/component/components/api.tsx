@@ -7,11 +7,17 @@ export const Api = ({
   nodesInputData,
   setNodesInputData,
   allVariables,
+  addNode,
+  lastPosition,
+  nodes,
 }: {
   id: number;
   nodesInputData: any;
   setNodesInputData: React.Dispatch<React.SetStateAction<{}>>;
   allVariables: any[];
+  addNode: any;
+  lastPosition: any;
+  nodes: any;
 }) => {
   const [selectedOption, setSelectedOption] = React.useState("request");
 
@@ -51,6 +57,9 @@ export const Api = ({
           nodesInputData={nodesInputData}
           setNodesInputData={setNodesInputData}
           allVariables={allVariables}
+          addNode={addNode}
+          lastPosition={lastPosition}
+          nodes={nodes}
         />
       )}
     </div>

@@ -4,6 +4,7 @@ import {
   Routes,
   Route,
   Outlet,
+  Navigate,
 } from "react-router-dom";
 
 // mainlayout
@@ -369,6 +370,7 @@ const Approutes = () => {
         {/* Combine Live Chat */}
         <Route path="liveChatMain" element={<LiveChatLayout />}>
           {/* <Route index element={<LiveChatDashboard />} /> */}
+          <Route index element={<Navigate to="wlivechat" replace />} />
           <Route path=":channel" element={<Outlet />} />
         </Route>
 
