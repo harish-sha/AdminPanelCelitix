@@ -56,6 +56,10 @@ const WhatsappLaunchCampaign = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [workflowEditDialog, setWorkflowEditDialog] = useState({
+    isOpen: false,
+    data: null,
+  });
 
   const [groups, setGroups] = useState([]);
 
@@ -107,11 +111,11 @@ const WhatsappLaunchCampaign = () => {
 
       const mappedData = Array.isArray(res)
         ? res?.map((item) => ({
-          value: item.sr_no,
-          label: item.workflow_name,
-        }))
+            value: item.sr_no,
+            label: item.workflow_name,
+          }))
         : [];
-      setAllWorkflows(mappedData);
+      setAllWorkflows(res);
     } catch (e) {
       toast.error("Error fetching workflows.");
     }
@@ -776,7 +780,9 @@ const WhatsappLaunchCampaign = () => {
                               inputId="radioOptionSend1"
                               name="radioGroupSend"
                               value="2"
-                              onChange={(e) => setMarketingType(parseInt(e.target.value))}
+                              onChange={(e) =>
+                                setMarketingType(parseInt(e.target.value))
+                              }
                               checked={marketingType === 2}
                             />
                             <label
@@ -795,7 +801,9 @@ const WhatsappLaunchCampaign = () => {
                               inputId="radioOptionSend2"
                               name="radioGroupSend"
                               value="1"
-                              onChange={(e) => setMarketingType(parseInt(e.target.value))}
+                              onChange={(e) =>
+                                setMarketingType(parseInt(e.target.value))
+                              }
                               checked={marketingType === 1}
                             />
                             <label
@@ -809,7 +817,7 @@ const WhatsappLaunchCampaign = () => {
                       </div>
                     </div>
                   )}
-                  
+
                   <div>
                     {isFetching ? (
                       // <UniversalSkeleton height="15rem" width="100%" />
@@ -865,7 +873,9 @@ const WhatsappLaunchCampaign = () => {
                     workflowState={workflowState}
                     setWorkflowState={setWorkflowState}
                     allWorkflows={allWorkflows}
-                  // setIsCountryCodeChecked={setIsCountryCodeChecked}
+                    // setIsCountryCodeChecked={setIsCountryCodeChecked}
+                    setWorkflowEditDialog={setWorkflowEditDialog}
+                    workflowEditDialog={setWorkflowEditDialog}
                   />
                 </div>
               </div>
@@ -917,7 +927,10 @@ const WhatsappLaunchCampaign = () => {
                     ?.name || "N/A"}
                 </p>
                 <span className="font-semibold font-m">Template Name : </span>
-                <p className=""> {selectedTemplateData?.templateName || "N/A"}</p>
+                <p className="">
+                  {" "}
+                  {selectedTemplateData?.templateName || "N/A"}
+                </p>
                 <span className="font-semibold font-m">Template Type : </span>
                 <p className="">{selectedTemplateData?.type || "N/A"}</p>
                 <span className="font-semibold font-m">
