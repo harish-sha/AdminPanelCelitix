@@ -22,6 +22,7 @@ export const DynamicBroadcast = ({
             value: data.srno,
             label: data.fileName,
           }))}
+           disabled={true}
           value={basicDetails.dynamicBroadcast}
           onChange={(value) => {
             setBasicDetails((prev) => ({
@@ -44,9 +45,11 @@ export const DynamicBroadcast = ({
                   <div
                     key={`variable-${item.sequence}`}
                     className="relative mt-4"
+                    
                   >
                     <InputField
                       id={`variable-${item.sequence}`}
+                       disabled={true}
                       name={`variable-${item.sequence}`}
                       label={`Sequence Variable ${item.sequence}`}
                       value={item.variableSampleValue}

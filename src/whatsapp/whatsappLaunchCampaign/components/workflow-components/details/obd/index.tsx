@@ -9,7 +9,7 @@ import {
   fetchVoiceClips,
   ObdDynamicVoiceClip,
   ObdVariableList,
-} from "@/apis/Obd/obd";
+} from "@/apis/obd/obd";
 import toast from "react-hot-toast";
 import { DynamicBroadcast } from "./dynamicBroadcast";
 import UniversalButton from "@/components/common/UniversalButton";
@@ -176,6 +176,7 @@ export const OBD = ({
                         type: "transactional",
                       }));
                     }}
+                    disabled={true}
                     checked={basicDetails.type === "transactional"}
                   />
                   <label
@@ -188,6 +189,7 @@ export const OBD = ({
                 <div className="flex gap-2 border border-gray-300 rounded-lg w-1/2 px-3 py-2">
                   <RadioButton
                     inputId="radioOptionPromotional"
+                    disabled={true}
                     name="radioGroupCampaign"
                     value="promotional"
                     onChange={() => {
@@ -231,6 +233,7 @@ export const OBD = ({
                     label="OBD Type:"
                     id="obdType"
                     name="obdType"
+                    disabled={true}
                     options={[
                       { value: "TTS", label: "Text To Speech" },
                       {
@@ -259,7 +262,6 @@ export const OBD = ({
                                       Text To Speech Convert text messages to speech for the broadcast.
                                       Simple Broadcast Broadcast a single message to all recipients.
                                       Multi Broadcast Broadcast multiple messages in a sequence."
-                    disabled={false}
                   />
                 </div>
                 {basicDetails?.templateType === "TTS" && (
@@ -298,6 +300,7 @@ export const OBD = ({
                       { value: "3", label: "3" },
                       { value: "4", label: "4" },
                     ]}
+                    disabled={true}
                     value={basicDetails.retry}
                     onChange={(value) => {
                       setBasicDetails((prev) => ({
@@ -313,6 +316,7 @@ export const OBD = ({
                   <AnimatedDropdown
                     id="interval"
                     name="interval"
+                    disabled={true}
                     options={[
                       { value: "1", label: "10s" },
                       { value: "2", label: "20s" },

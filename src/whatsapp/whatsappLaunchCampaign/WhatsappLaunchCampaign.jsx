@@ -1013,7 +1013,7 @@ const WhatsappLaunchCampaign = () => {
           {/* Dialog to configure the workflow */}
           <Dialog
             header="Review & Confirm"
-            visible={workflowEditDialog.isOpen}
+            visible={workflowEditDialog.isOpen && workflowEditDialog.data}
             style={{ width: "70rem" }}
             onHide={() => setWorkflowEditDialog({ isOpen: false, data: null })}
             draggable={false}

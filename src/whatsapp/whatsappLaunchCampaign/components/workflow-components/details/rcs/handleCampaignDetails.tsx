@@ -25,6 +25,7 @@ export const HandleCampaignDetails = ({
             name="selectAgent"
             label="Select Agent"
             tooltipContent="Select your Agent "
+            disabled={true}
             tooltipPlacement="right"
             options={allAgents?.map((agent) => ({
               value: agent.agent_id,
@@ -73,6 +74,7 @@ export const HandleCampaignDetails = ({
             id="selectRcsTemplate"
             name="selectRcsTemplate"
             label="Select RCS Template"
+            disabled={true}
             tooltipContent="Select RCS Template"
             tooltipPlacement="right"
             options={allTemplates?.map((template) => ({
@@ -92,7 +94,6 @@ export const HandleCampaignDetails = ({
               });
             }}
             placeholder="Select Template"
-            disabled={false}
           />
         </div>
       </div>

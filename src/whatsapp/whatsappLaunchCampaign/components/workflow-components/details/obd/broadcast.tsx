@@ -13,6 +13,7 @@ export const Broadcast = ({ setBasicDetails, basicDetails, voiceListData }) => {
               value: data.srNo,
               label: data.fileName,
             }))}
+             disabled={true}
             value={basicDetails.simpleBroadcast}
             onChange={(value) => {
               setBasicDetails((prev) => ({
@@ -23,7 +24,7 @@ export const Broadcast = ({ setBasicDetails, basicDetails, voiceListData }) => {
             }}
             placeholder="Select Voice Clip 1"
             label="Voice Clip 1"
-            disabled={false}
+
           />
         </div>
         {basicDetails.templateType === "MB" && (
@@ -45,6 +46,7 @@ export const Broadcast = ({ setBasicDetails, basicDetails, voiceListData }) => {
               }}
               placeholder="Select Voice Clip 2"
               label="Voice Clip 2"
+               disabled={true}
             />
           </div>
         )}

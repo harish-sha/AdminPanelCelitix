@@ -29,6 +29,7 @@ export const Grid1 = ({ inputDetails, setInputDetails, allTemplates }) => {
             inputId="smsTypetrans"
             name="smsTypetrans"
             value={1}
+             disabled={true}
             onChange={() => {
               setInputDetails({
                 campaingName: "",
@@ -52,6 +53,7 @@ export const Grid1 = ({ inputDetails, setInputDetails, allTemplates }) => {
         </div>
         <div className="flex items-center gap-2 border border-gray-300 rounded-md p-2">
           <RadioButton
+           disabled={true}
             inputId="smsTypepro"
             name="smsTypepro"
             value={2}
@@ -78,6 +80,7 @@ export const Grid1 = ({ inputDetails, setInputDetails, allTemplates }) => {
         </div>
         <div className="flex items-center gap-2 border border-gray-300 rounded-md p-2">
           <RadioButton
+           disabled={true}
             inputId="smsTypeIntl"
             name="smsTypeIntl"
             value={3}
@@ -123,6 +126,7 @@ export const Grid1 = ({ inputDetails, setInputDetails, allTemplates }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             <DropdownWithSearch
               label="DLT Template"
+               disabled={true}
               id="Dlt Template"
               name="Dlt Template"
               options={allTemplates?.map((template) => ({
@@ -140,7 +144,7 @@ export const Grid1 = ({ inputDetails, setInputDetails, allTemplates }) => {
                   entityId: entity?.entityId,
                 }));
               }}
-              disabled={false}
+
             />
             {/* <div className="z-99999"> */}
             <DropdownWithSearch
@@ -159,7 +163,7 @@ export const Grid1 = ({ inputDetails, setInputDetails, allTemplates }) => {
                   senderId: e,
                 }));
               }}
-              disabled={false}
+               disabled={true}
             />
           </div>
           // </div>
@@ -169,6 +173,7 @@ export const Grid1 = ({ inputDetails, setInputDetails, allTemplates }) => {
           <div>
             <InputField
               label="Sender Id"
+               disabled={true}
               id="senderid"
               name="senderid"
               placeholder="Select Sender id"
@@ -180,6 +185,7 @@ export const Grid1 = ({ inputDetails, setInputDetails, allTemplates }) => {
                 }));
               }}
               maxLength={"13"}
+
             />
           </div>
         )}

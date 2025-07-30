@@ -165,7 +165,9 @@ export const ConfigureWorkflow = ({ data }) => {
   );
   const [nodeId, setNodeId] = useState(1);
   const [name, setName] = useState("");
-  const [nodesInputData, setNodesInputData] = useState({});
+  const [nodesInputData, setNodesInputData] = useState(
+    formattedData?.nodedata || {}
+  );
   const [type, setType] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const [connectionType, setConnectionType] = useState("");
@@ -242,6 +244,7 @@ export const ConfigureWorkflow = ({ data }) => {
           onNodeClick={onNodeClick}
           deleteKeyCode={"Backspace"}
           nodeTypes={nodeTypes}
+          fitView
         >
           <Background />
           <MiniMap />

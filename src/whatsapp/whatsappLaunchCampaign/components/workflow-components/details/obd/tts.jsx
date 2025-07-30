@@ -19,6 +19,7 @@ export const TTS = ({ setBasicDetails, basicDetails }) => {
                 }));
               }
             }}
+             disabled={true}
             className="w-full p-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:border-blue-500"
             placeholder="Enter text..."
             label="Voice Text"
