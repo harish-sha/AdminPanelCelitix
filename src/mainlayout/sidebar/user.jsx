@@ -142,7 +142,7 @@ export const userItems = [
     label: "Live Chat",
     type: "dropdown",
     links: [
-      { to: "/liveChatMain/", label: "Channels" },
+      { to: "/liveChatMain/", label: "Chats" },
       { to: "/combineLiveChatSettings", label: "Chats Settings" },
       { to: "/cannedmessagemanager", label: "Canned Message" },
     ],

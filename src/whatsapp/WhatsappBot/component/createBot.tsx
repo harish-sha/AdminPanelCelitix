@@ -1246,6 +1246,9 @@ const CreateWhatsAppBot = () => {
               nodesInputData={nodesInputData}
               setNodesInputData={setNodesInputData}
               allVariables={allVariables}
+              addNode={addNode}
+              lastPosition={lastPosition}
+              nodes={nodes}
             />
           ) : null}
 

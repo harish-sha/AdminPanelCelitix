@@ -17,6 +17,8 @@ import CustomTooltip from "../../components/common/CustomTooltip";
 import { DataTable } from "@/components/layout/DataTable";
 import MusicPlayerSlider from "./components/ObdAudioplayer";
 import { DynamicFile } from "./components/DynamicFile";
+import moment from "moment";
+import { LuAudioLines } from "react-icons/lu";
 
 import {
   deleteVoiceClip,
@@ -24,8 +26,9 @@ import {
   fetchVoiceClipUrl,
   saveDynamicVoice,
   saveStaticVoice,
-  ObdVariableList
+  ObdVariableList,
 } from "@/apis/obd/obd";
+import UniversalDatePicker from "@/whatsapp/components/UniversalDatePicker";
 
 const ObdManageVoiceClips = () => {
   const [fileName, setFileName] = useState();
@@ -55,6 +58,7 @@ const ObdManageVoiceClips = () => {
   const [isOpenPlay, setIsOpenPlay] = useState(false);
 
   const [isSearchTriggered, setIsSearchTriggered] = useState(false);
+  const [voiceDate, setVoiceDate] = useState(null);
 
   const [searchValue, setSearchValue] = useState({
     name: "",
@@ -84,7 +88,7 @@ const ObdManageVoiceClips = () => {
     ],
   });
 
-  const [voiceName, setVoiceName] = useState("")
+  const [voiceName, setVoiceName] = useState("");
 
   const fileRef = useRef(null);
   const dynamicVoiceRef = useRef([]);
@@ -188,7 +192,7 @@ const ObdManageVoiceClips = () => {
       field: "fileType",
       headerName: "File Format",
       flex: 1,
-      minWidth: 100,
+      minWidth: 120,
       renderCell: (params) => {
         return params.row.fileType ? params.row.fileType : "Dynamic";
       },
@@ -196,14 +200,22 @@ const ObdManageVoiceClips = () => {
     {
       field: "size(kb)",
       headerName: "Size(kb)",
-      flex: 1,
-      minWidth: 100,
+      flex: 0,
+      minWidth: 140,
     },
     {
       field: "duration(sec)",
       headerName: "Duration(sec)",
+      flex: 0,
+      minWidth: 140,
+    },
+    {
+      field: "insertDate",
+      headerName: "Created On",
       flex: 1,
-      minWidth: 100,
+      renderCell: (params) => {
+        return moment(params.row.insertDate).format("YYYY-MM-DD h:mm:ss a");
+      },
     },
     {
       field: "type",
@@ -316,15 +328,20 @@ const ObdManageVoiceClips = () => {
           ? item.fileName.toLowerCase().includes(searchValue.name.toLowerCase())
           : true;
 
-        const matchesCategory = searchValue?.category !== ""
-          ? item.isDynamic == searchValue.category
-          : true;
+        const matchesCategory =
+          searchValue?.category !== ""
+            ? item.isDynamic == searchValue.category
+            : true;
 
         const matchesType = searchValue?.type
           ? item.type == searchValue.type
           : true;
 
-        return matchesName && matchesCategory && matchesType;
+        const matchesDate = voiceDate
+          ? moment(item.insertDate).isSame(moment(voiceDate), "day")
+          : true;
+
+        return matchesName && matchesCategory && matchesType && matchesDate;
       });
 
       const formattedData = Array.isArray(filteredData)
@@ -338,7 +355,7 @@ const ObdManageVoiceClips = () => {
       setRows(formattedData);
     } catch (e) {
       toast.error("Something went wrong");
-      console.log(e)
+      console.log(e);
     }
   }
 
@@ -555,11 +572,21 @@ const ObdManageVoiceClips = () => {
 
   return (
     <div className="w-full">
-      <h1 className="text-2xl text-gray-600 text-center my-3 font-semibold" >
-        Manage Voice Clips
-      </h1>
+      <div className="text-2xl text-gray-600 text-center font-semibold flex items-center gap-3 justify-center my-2">
+        Manage Voice Clips <LuAudioLines className="text-blue-600" />
+      </div>
       <div className="flex  items-end justify-between gap-3">
         <div className="flex flex-wrap items-end gap-2">
+          <div className="w-full sm:w-56 ">
+            <UniversalDatePicker
+              value={voiceDate}
+              label="Created Date"
+              // defaultValue={new Date()}
+              placeholder="Pick a date"
+              tooltipContent="Search by date"
+              onChange={(newDate) => setVoiceDate(newDate)}
+            />
+          </div>
           <div className="w-full sm:w-46 ">
             <InputField
               id="obdmanagevoiceclipsfilename"
@@ -591,7 +618,6 @@ const ObdManageVoiceClips = () => {
                 setSearchValue({ ...searchValue, category: value });
               }}
             />
-
           </div>
           <div className="w-full sm:w-46">
             <AnimatedDropdown
@@ -601,8 +627,6 @@ const ObdManageVoiceClips = () => {
               label="Type"
               tooltipContent="Type"
               tooltipPlacement="right"
-
-
               placeholder="Type"
               options={[
                 { value: 2, label: "Transactional" },
@@ -612,11 +636,9 @@ const ObdManageVoiceClips = () => {
                 setSearchValue({ ...searchValue, type: value });
               }}
             />
-
           </div>
 
-
-          <div className="flex items-center justify-center gap-4 mt-2">
+          <div className="flex items-center justify-center gap-2">
             <div>
               <UniversalButton
                 id="obdvoicesearchbtn"
@@ -635,8 +657,8 @@ const ObdManageVoiceClips = () => {
               <UniversalButton
                 id="obdvoiceaddfilebtn"
                 name="obdvoiceaddfilebtn"
-                label="Add file"
-                placeholder="Add file"
+                label="Add Audio File"
+                icon={<LuAudioLines />}
                 onClick={() => setIsVisible(true)}
               />
             </div>
@@ -665,7 +687,9 @@ const ObdManageVoiceClips = () => {
       >
         <div className="flex flex-col md:flex-row justify-between gap-2">
           <div className="flex flex-col">
-            <div className="text-sm font-medium text-gray-700 mb-2">Category</div>
+            <div className="text-sm font-medium text-gray-700 mb-2">
+              Category
+            </div>
             <div className="flex flex-row gap-2 bg-gray-100 p-1 md:p-2 rounded-xl border-2 border-dashed">
               <div className="flex gap-2 items-center border-2 p-1 md:p-2 rounded-full">
                 <RadioButton
@@ -677,7 +701,9 @@ const ObdManageVoiceClips = () => {
                   onChange={handleChangeEnablePostpaid}
                 // onClick={()=>setIsChecked(false)}
                 />
-                <label className="text-sky-800 text-xs md:text-sm font-semibold">Static</label>
+                <label className="text-sky-800 text-xs md:text-sm font-semibold">
+                  Static
+                </label>
               </div>
               <div className="flex gap-2 items-center p-1 md:p-2 rounded-full border-2">
                 <RadioButton
@@ -689,7 +715,9 @@ const ObdManageVoiceClips = () => {
                   onChange={handleChangeEnablePostpaid}
                   onClick={() => setIsDynamic(true)}
                 />
-                <label className="text-xs md:text-sm text-sky-800 font-semibold">Dynamic</label>
+                <label className="text-xs md:text-sm text-sky-800 font-semibold">
+                  Dynamic
+                </label>
               </div>
             </div>
           </div>
@@ -705,7 +733,9 @@ const ObdManageVoiceClips = () => {
                   onChange={handleChangeTransactional}
                   onClick={() => { }}
                 />
-                <label className="text-xs md:text-sm font-semibold">Transactional</label>
+                <label className="text-xs md:text-sm font-semibold">
+                  Transactional
+                </label>
               </div>
 
               <div className="flex gap-2 items-center border-2 p-1 md:p-2 rounded-full">
@@ -716,10 +746,11 @@ const ObdManageVoiceClips = () => {
                   checked={selecteTransactional === "promotional"}
                   onChange={handleChangeTransactional}
                 />
-                <label className="text-xs md:text-sm font-semibold">Promptional</label>
+                <label className="text-xs md:text-sm font-semibold">
+                  Promptional
+                </label>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -853,12 +884,8 @@ const ObdManageVoiceClips = () => {
             )}
           </>
         )}
-        <div className="flex items-center justify-center mt-2" >
-          <UniversalButton
-            id="submit"
-            label="save"
-            onClick={handleSave}
-          />
+        <div className="flex items-center justify-center mt-2">
+          <UniversalButton id="submit" label="save" onClick={handleSave} />
         </div>
       </Dialog>
       {/* Add Voice Files End */}
@@ -928,23 +955,35 @@ const ObdManageVoiceClips = () => {
           setIsOpenPlay(false);
           setSelectedRow(null);
         }}
-        className="lg:w-[30rem] md:w-[40rem] w-[20rem] "
+        className="w-auto "
         draggable={false}
       >
         {/* <MusicPlayerSlider data={selectedRow} /> */}
         {selectedRow?.isDynamic ? (
-          <div className="flex flex-col md:flex-row justify-around">
+          <div className="flex flex-col md:flex-row justify-around gap-2">
             {voiceVariables.map((item, index) => (
-              <div key={index} className="mb-4 w-[260px]">
+              <div
+                key={index}
+                className="mb-4 w-[260px] border border-gray-300 rounded-xl shadow-lg p-4 hover:shadow-xl hover:border-blue-500 transition duration-300"
+              >
                 {/* <p className="text-sm font-medium mb-1">
                   {item.variableSampleValue !== "-" ? item.variableSampleValue : `Clip ${index + 1}`}
                 </p> */}
                 <MusicPlayerSlider data={item} />
+                <p className="text-sm text-gray-600 mt-3">
+                  {item.fileTitle || `Clip ${index + 1}`}
+                </p>
               </div>
             ))}
           </div>
         ) : (
-          <MusicPlayerSlider data={selectedRow} />
+          <>
+            <div
+              className="mb-4 w-[260px] border border-gray-300 rounded-xl shadow-lg p-4 hover:shadow-xl hover:border-blue-500 transition duration-300"
+            >
+              <MusicPlayerSlider data={selectedRow} />
+            </div>
+          </>
         )}
       </Dialog>
       {/* Audio Player end */}

@@ -36,6 +36,7 @@ import {
   getAllCampaignWhatsapp,
   getWhatsappCampaignScheduledReport,
   downloadCustomWhatsappReport,
+  cancelCampaign,
 } from "../../apis/whatsapp/whatsapp.js";
 import CampaignLogCard from "./components/CampaignLogCard.jsx";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";

@@ -900,14 +900,14 @@ const WhatsappManageWaba = ({ id, name }) => {
                   onClick={handleWabaCreate}
                 />
               </div>
-              {/* <div className="w-max-content">
+              <div className="w-max-content">
                 <UniversalButton
                   label="Onboard MM LIte"
                   id="wabammliteonboard"
                   name="wabammliteonboard"
                   onClick={handleWabaMMCreate}
                 />
-              </div> */}
+              </div>
               {/* <div className="w-max-content">
                 <UniversalButton
                   label="Celebrate"

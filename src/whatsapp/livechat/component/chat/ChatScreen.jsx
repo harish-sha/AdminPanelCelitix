@@ -29,6 +29,7 @@ import {
   blockUser,
 } from "@/apis/whatsapp/whatsapp";
 import CircularProgress from "@mui/material/CircularProgress";
+import { LuHistory } from "react-icons/lu";
 
 import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
@@ -47,6 +48,7 @@ import { MdBlock } from "react-icons/md";
 import { CgUnblock } from "react-icons/cg";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import BotPreview from "../BotPreview";
+
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -68,6 +70,10 @@ export const ChatScreen = ({
   specificConversation,
   chatState,
   setChatState,
+  handleFetchSpecificConversation,
+  setChatIndex,
+  chatIndex,
+  chatLoading,
 }) => {
   const messageRef = useRef(null);
   const endOfMessagesRef = useRef(null);
@@ -444,6 +450,18 @@ export const ChatScreen = ({
         ref={messageRef}
         className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col mb-35 md:mb-18 md:-mt-5 bg-[url(/WB.png)]"
       >
+        <div className="flex items-center justify-center mt-2">
+          <button
+            className="bg-[#22577E] text-white px-4 py-2 rounded-md flex gap-2 items-center"
+            onClick={() => {
+              setChatIndex((prev) => prev + 1);
+              handleFetchSpecificConversation(true);
+            }}
+          >
+            <LuHistory />
+            Load Older
+          </button>
+        </div>
         {chatState.specificConversation?.map((group, groupIndex) => (
           <div key={groupIndex}>
             <div className="my-4 text-xs text-center text-black font-semibold">

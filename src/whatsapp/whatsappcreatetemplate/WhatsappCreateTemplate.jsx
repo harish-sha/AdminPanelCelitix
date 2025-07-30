@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useOutletContext } from "react-router-dom";
@@ -69,6 +69,7 @@ const WhatsappCreateTemplate = () => {
       uploadUrl: "",
     },
   ]);
+  const textAreaRef = useRef(null)
   const [variables, setVariables] = useState([]);
   const [templatePreview, setTemplatePreview] = useState("");
   const [carouselMediaType, setCarouselMediaType] = useState("");
@@ -977,6 +978,7 @@ const WhatsappCreateTemplate = () => {
                                 setFileUploadUrl={setFileUploadUrl}
                                 uploadImageFile={uploadImageFile}
                                 setvariables={setVariables}
+                                ref={textAreaRef}
                               />
                               <CarouselInteractiveActions
                                 cards={cards}

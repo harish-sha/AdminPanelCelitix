@@ -9,7 +9,11 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { useState } from "react";
-
+import { FaChevronCircleRight } from "react-icons/fa";
+import { FaChevronUp } from "react-icons/fa";
+import { FaChevronCircleLeft } from "react-icons/fa";
+import { FaFilter } from "react-icons/fa";
+import { CiMenuKebab } from "react-icons/ci";
 export const InputData = ({
   setSearch,
   search,
@@ -23,6 +27,7 @@ export const InputData = ({
   setIsSubscribed,
   // setSelectedWaba
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
   const handleChipClick = () => {
@@ -117,64 +122,95 @@ export const InputData = ({
         </DialogActions>
       </Dialog>
       <div className="flex flex-col gap-2">
-        <AnimatedDropdown
-          id="createSelectWaba"
-          name="createSelectWaba"
-          label="Select WABA"
-          tooltipContent="Select your whatsapp business account"
-          tooltipPlacement="right"
-          options={wabaState.waba?.map((waba) => ({
-            value: waba.mobileNo,
-            label: waba.name,
-          }))}
-          value={wabaState?.selectedWaba}
-          onChange={(value) => {
-            const wabaSrno = wabaState?.waba?.find(
-              (waba) => waba.mobileNo === value
-            )?.wabaSrno;
+        <div className="relative">
+          {/* Toggle Button */}
+          {!isOpen ? (
+            <button
+              onClick={() => setIsOpen(true)}
+              className="absolute -left-3 top-4 transform -translate-y-1/2 z-99 text-3xl text-gray-700 hover:text-blue-500 animate-pulse "
+            >
+              <FaChevronCircleRight className="text-2xl" />
+            </button>
+          ) : (
+            <button
+              onClick={() => setIsOpen(false)}
+              className="absolute -left-3 top-4 transform -translate-y-1/2 z-50 text-3xl text-gray-700 hover:text-blue-500 animate-pulse"
+            >
+              <FaChevronCircleLeft className="text-2xl" />
+            </button>
+          )}
+          {/* Sliding Panel */}
+          <div
+            className={`absolute top-0 -left-8 w-full md:w-88 shadow-lg z-40 transform transition-transform duration-300 md:ml-4 ${isOpen ? "translate-x-0 left-0" : "-translate-x-full"
+              }`}
+          >
+            <AnimatedDropdown
+              id="createSelectWaba"
+              name="createSelectWaba"
+              // label="Select WABA"
+              tooltipContent="Select your whatsapp business account"
+              tooltipPlacement="right"
+              options={wabaState.waba?.map((waba) => ({
+                value: waba.mobileNo,
+                label: waba.name,
+              }))}
+              value={wabaState?.selectedWaba}
+              onChange={(value) => {
+                const wabaSrno = wabaState?.waba?.find(
+                  (waba) => waba.mobileNo === value
+                )?.wabaSrno;
 
-            setWabaState({ ...wabaState, selectedWaba: value, wabaSrno });
+                setWabaState({ ...wabaState, selectedWaba: value, wabaSrno });
 
-            setChatState({
-              active: null,
-              input: "",
-              allConversations: [],
-              specificConversation: [],
-              latestMessage: {
-                srno: "",
-                replayTime: "",
-              },
-              replyData: "",
-              isReply: false,
-            });
-            setSelectedWaba(value);
-          }}
-          placeholder="Select WABA"
-        />
-        {/* </div> */}
-        <div
-          id="input"
-          className="flex items-center justify-center px-3 py-2 border-gray-300 rounded-full border"
-        >
-          <input
-            type="text"
-            name="search"
-            id="search"
-            placeholder="Search"
-            className="flex-grow bg-transparent outline-none text-sm"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSearch();
-              }
-            }}
-          />
-          <button onClick={handleSearch}>
-            <SearchOutlined className=" text-gray-500 hover:text-blue-600 transition" />
-          </button>
+                setChatState({
+                  active: null,
+                  input: "",
+                  allConversations: [],
+                  specificConversation: [],
+                  latestMessage: {
+                    srno: "",
+                    replayTime: "",
+                  },
+                  replyData: "",
+                  isReply: false,
+                });
+                setSelectedWaba(value);
+                setIsOpen(false);
+              }}
+              placeholder="Select WABA"
+            />
+          </div>
+          {/* </div> */}
+          <div className="flex items-center justify-between gap-3">
+            <div
+              id="input"
+              className="flex items-center justify-center w-full px-3 py-1 border-gray-300 rounded-full border ml-4"
+            >
+              <input
+                type="text"
+                name="search"
+                id="search"
+                placeholder="Search"
+                className="flex-grow bg-transparent outline-none text-sm"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSearch();
+                  }
+                }}
+              />
+              <button onClick={handleSearch}>
+                <SearchOutlined className=" text-gray-500 hover:text-blue-600 transition" />
+              </button>
+            </div>
+            <div className="flex items-center gap-2 mt-1">
+              <FaFilter />
+              <CiMenuKebab />
+            </div>
+          </div>
         </div>
       </div>
       {wabaState.selectedWaba && (
@@ -263,8 +299,8 @@ export const InputData = ({
                 setIsSubscribed(false);
               }}
               className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "active"
-                ? "text-white font-semibold"
-                : "text-gray-700"
+                  ? "text-white font-semibold"
+                  : "text-gray-700"
                 }`}
             >
               Active
@@ -275,8 +311,8 @@ export const InputData = ({
                 setIsSubscribed(false);
               }}
               className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "close"
-                ? "text-white font-semibold"
-                : "text-gray-700"
+                  ? "text-white font-semibold"
+                  : "text-gray-700"
                 }`}
             >
               Close

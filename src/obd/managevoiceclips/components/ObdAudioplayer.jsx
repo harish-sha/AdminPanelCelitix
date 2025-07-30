@@ -61,16 +61,16 @@ const Widget = styled("div")(({ theme }) => ({
   }),
 }));
 
-const CoverImage = styled('div')({
+const CoverImage = styled("div")({
   width: 100,
   height: 100,
-  objectFit: 'cover',
-  overflow: 'hidden',
+  objectFit: "cover",
+  overflow: "hidden",
   flexShrink: 0,
   borderRadius: 8,
-  backgroundColor: 'rgba(0,0,0,0.08)',
-  '& > img': {
-    width: '100%',
+  backgroundColor: "rgba(0,0,0,0.08)",
+  "& > img": {
+    width: "100%",
   },
 });
 
@@ -119,6 +119,7 @@ export default function MusicPlayerSlider({ data }) {
     audioRef.current.currentTime = value;
     setPosition(value);
   };
+
   return (
     <Box sx={{ width: "100%", overflow: "hidden", position: "relative", p: 3 }}>
       <audio
@@ -149,7 +150,22 @@ export default function MusicPlayerSlider({ data }) {
         min={0}
         step={1}
         max={duration}
-        onChange={(_, value) => setPosition(value)}
+        onChange={handleSliderChange}
+        onClick={(e) => {
+          const slider = e.currentTarget.getBoundingClientRect();
+          const clickX = e.clientX - slider.left;
+          const clickPercent = clickX / slider.width;
+          const clickValue = Math.floor(duration * clickPercent);
+          // Determine direction
+          if (clickValue < position) {
+            // Clicked left side -> reverse
+            audioRef.current.currentTime = Math.max(0, position - 5); // 5 sec back
+          } else {
+            // Clicked right side -> forward
+            audioRef.current.currentTime = Math.min(duration, position + 5); // 5 sec forward
+          }
+          setPosition(Math.floor(audioRef.current.currentTime));
+        }}
         sx={(t) => ({
           color: "rgba(0,0,0,0.87)",
           height: 4,
@@ -188,7 +204,7 @@ export default function MusicPlayerSlider({ data }) {
         }}
       >
         <TinyText>{formatDuration(position)}</TinyText>
-        <TinyText>-{formatDuration(duration - position)}</TinyText>
+        <TinyText>{formatDuration(duration)}</TinyText>
       </Box>
       {/* <Stack
         spacing={2}

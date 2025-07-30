@@ -2,6 +2,7 @@ import React from "react";
 import {
   BrowserRouter as Router, Routes, Route,
   Outlet,
+  Navigate,
 } from "react-router-dom";
 
 // mainlayout
@@ -321,7 +322,8 @@ const Approutes = () => {
 
         {/* Combine Live Chat */}
         <Route path="liveChatMain" element={<LiveChatLayout />}>
-          <Route index element={<LiveChatDashboard />} />
+          {/* <Route index element={<LiveChatDashboard />} /> */}
+          <Route index element={<Navigate to="wlivechat" replace />} />
           <Route path=":channel" element={<Outlet />} />
         </Route>
 

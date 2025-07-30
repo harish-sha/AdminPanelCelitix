@@ -6,17 +6,24 @@ import { Dialog } from "primereact/dialog";
 import { FaPlus } from "react-icons/fa";
 import UniversalButton from "@/components/common/UniversalButton";
 import { MdOutlineDeleteForever } from "react-icons/md";
+import { fetchApi } from "../../helper/fetchApi";
 
 export const Response = ({
   id,
   nodesInputData,
   setNodesInputData,
   allVariables,
+  addNode,
+  lastPosition,
+  nodes,
 }: {
   id: number;
   nodesInputData: any;
   setNodesInputData: React.Dispatch<React.SetStateAction<{}>>;
   allVariables: any[];
+  addNode: any;
+  lastPosition: any;
+  nodes: any;
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [selectedVariable, setSelectedVariable] = React.useState("");
@@ -50,6 +57,7 @@ export const Response = ({
     setJsonVar(newJsonVar);
   }
   function handleInputVariable(e) {
+    if (!e) return;
     const tag = `{{${e}}}`;
     if (nodesInputData[id]?.apiResponse?.responseType === "json") {
       const newJsonVar = [...jsonVar];
@@ -77,6 +85,65 @@ export const Response = ({
       },
     }));
   }, [jsonVar]);
+
+  useEffect(() => {
+    const jsonVar = nodesInputData[id]?.apiResponse?.storedData || [];
+    if (!jsonVar.length) return;
+
+    setJsonVar(jsonVar);
+  }, []);
+
+  function addDatainListNode(id, data, requiredData, rowTitle, rowValue) {
+    const formattedData = requiredData
+      .map((item) => ({
+        option: item[rowTitle] || "",
+        value: item[rowValue],
+      }))
+      .slice(0, 10);
+
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        options: formattedData,
+      },
+    }));
+  }
+  useEffect(() => {
+    async function createListNode() {
+      const rowTitle = nodesInputData[id]?.apiResponse?.rowTitle;
+      const rowValue = nodesInputData[id]?.apiResponse?.rowValue;
+      const res = await fetchApi(nodesInputData[id]);
+      const newListId = String(Number(id) + 1);
+
+      if (!res || !res.length) return;
+
+      const requiredData = res?.map((item) => {
+        const newItem = {};
+        if (rowTitle in item) newItem[rowTitle] = item[rowTitle];
+        if (rowValue in item) newItem[rowValue] = item[rowValue];
+        return newItem;
+      });
+
+      const isListAvailable = nodes.find((node) => node.id == newListId)?.type;
+
+      if (isListAvailable) {
+        addDatainListNode(newListId, res, requiredData, rowTitle, rowValue);
+      } else {
+        addNode("list", { x: lastPosition.x + 50, y: lastPosition.y + 50 });
+        addDatainListNode(newListId, res, requiredData, rowTitle, rowValue);
+      }
+    }
+
+    if (nodesInputData[id]?.apiResponse?.actionType === "createNewNode") {
+      createListNode();
+    }
+  }, [
+    nodesInputData[id]?.apiResponse?.actionType,
+    nodesInputData[id]?.apiResponse?.rowTitle,
+    nodesInputData[id]?.apiResponse?.rowValue,
+  ]);
+
   return (
     <div className="space-y-2">
       <AnimatedDropdown
@@ -117,7 +184,7 @@ export const Response = ({
               { value: "none", label: "None" },
               { value: "storeInVariable", label: "Store in Variable" },
               ...(nodesInputData[id]?.apiResponse?.responseType === "json"
-                ? [{ value: "createListNode", label: "Create List Node" }]
+                ? [{ value: "createNewNode", label: "Create List Node" }]
                 : []),
             ]}
             value={nodesInputData[id]?.apiResponse?.actionType}
@@ -134,6 +201,7 @@ export const Response = ({
                   responseType: e,
                 },
               }));
+              setJsonVar([{ paramName: "", varName: "" }]);
             }}
             placeholder="Select Request Type"
           />
@@ -233,6 +301,51 @@ export const Response = ({
             ))}
           </div>
         )}
+
+      {nodesInputData[id]?.apiResponse?.actionType === "createNewNode" && (
+        <div className="mt-2 flex gap-2">
+          <InputField
+            id="rowTitle"
+            name="rowTitle"
+            value={nodesInputData[id]?.apiResponse?.rowTitle}
+            onChange={(e) => {
+              setNodesInputData((prev) => ({
+                ...prev,
+                [id]: {
+                  ...prev[id],
+                  apiResponse: {
+                    ...prev[id]?.apiResponse,
+                    rowTitle: e.target.value,
+                  },
+                },
+              }));
+            }}
+            label="Row Title"
+            placeholder="Enter Row Title"
+            maxLength={100}
+          />
+          <InputField
+            id="rowValue"
+            name="rowValue"
+            value={nodesInputData[id]?.apiResponse?.rowValue}
+            onChange={(e) => {
+              setNodesInputData((prev) => ({
+                ...prev,
+                [id]: {
+                  ...prev[id],
+                  apiResponse: {
+                    ...prev[id]?.apiResponse,
+                    rowValue: e.target.value,
+                  },
+                },
+              }));
+            }}
+            label="Row Value"
+            placeholder="Enter Row Value"
+            maxLength={100}
+          />
+        </div>
+      )}
 
       {/* Dialog */}
 

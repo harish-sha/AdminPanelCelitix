@@ -16,9 +16,10 @@ import CustomTooltip from "../../components/common/CustomTooltip";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { DataTable } from "../../components/layout/DataTable";
-import { fetchTransactions } from "../../apis/settings/setting";
+import { dailyWalletUsage, fetchTransactions } from "../../apis/settings/setting";
 import moment from "moment";
 import { exportToExcel } from "@/utils/utills";
+import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
 
 import toast from "react-hot-toast";
 
@@ -48,27 +49,14 @@ const Transactions = () => {
   const [value, setValue] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
-  const [filteredData, setFilteredData] = useState([]);
-  const [selectedMultiHistory, setSelectedMultiHistory] = useState(null);
-  const [selectedMultiSummary, setSelectedMultiSummary] = useState(null);
-  const [selectedHistoryFrom, setSelectedHistoryFrom] = useState(null);
-  const [selectedHistoryTo, setSelectedHistoryTo] = useState(new Date());
-  const [selectedFromSummary, setselectedFromSummary] = useState(new Date());
-  const [selectedToSummary, setselectedToSummary] = useState(new Date());
-  const [selectedHistoryService, setSelectedHistoryService] = useState("");
-  const [selectedHistoryType, setSelectedHistoryType] = useState("");
   const [inputValue, setInputValue] = useState("");
-  const [inputValueMobileLogs, setInputValueMobileLogs] = useState("");
-  const [selectedOptionServiceSummary, setSelectedOptionServiceSummary] =
-    useState("");
-  const [selectedOptionTypeSummary, setSelectedOptionTypeSummary] =
-    useState("");
 
   const [filterData, setFilterData] = useState({
     rechargeType: 0,
     toDate: new Date(),
     startDate: new Date(),
   });
+
   const [transactionalData, setTransactionalData] = useState([]);
 
   const handleSearch = async () => {
@@ -88,15 +76,15 @@ const Transactions = () => {
     }
   };
 
-
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, width: 70 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 10 },
     { field: "user", headerName: "UserName", flex: 1, minWidth: 120 },
     {
       field: "rechargeDate",
       headerName: "Recharge Date",
       flex: 1,
       minWidth: 120,
+
     },
     {
       field: "before",
@@ -138,102 +126,32 @@ const Transactions = () => {
   ];
 
   const rows = Array.isArray(transactionalData)
-    ? transactionalData.map((item, index) => ({
-      ...item,
-      sn: index + 1,
-      id: index + 1,
-      balance: Number(item.balance).toFixed(2),
-    }))
+    ? transactionalData
+      .sort(
+        (a, b) =>
+          moment(b.rechargeDate, "DD-MM-YYYY").toDate() -
+          moment(a.rechargeDate, "DD-MM-YYYY").toDate()
+      )
+      .map((item, index) => ({
+        ...item,
+        sn: index + 1,
+        id: index + 1,
+        balance: Number(item.balance).toFixed(2),
+      }))
+
     : [];
 
-  const multiHistory = [
-    { name: "New York", code: "NY" },
-    { name: "Rome", code: "RM" },
-    { name: "London", code: "LDN" },
-    { name: "Istanbul", code: "IST" },
-    { name: "Paris", code: "PRS" },
-  ];
-  const multiSummary = [
-    { name: "New York", code: "NY" },
-    { name: "Rome", code: "RM" },
-    { name: "London", code: "LDN" },
-  ];
-
-  const options2 = [
-    { value: "obd", label: "OBD" },
-    { value: "ibd", label: "IBD" },
-    { value: "c2c", label: "C2C" },
-  ];
-
-  const options3 = [
-    { value: "Credit", label: "Credit" },
-    { value: "Debit", label: "Debit" },
-  ];
-
-  const service = [
-    { value: "obd", label: "OBD" },
-    { value: "ibd", label: "IBD" },
-    { value: "c2c", label: "C2C" },
-  ];
   const type = [
     { value: "Credit", label: "Credit" },
     { value: "Debit", label: "Debit" },
   ];
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setIsLoading(false);
-    };
-    fetchData();
-  }, []);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-  const handleInputChangeMobileLogs = (e) => {
-    setInputValueMobileLogs(e.target.value);
-  };
-
-  const handleShowSearch = async () => {
-    setIsFetching(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsFetching(false);
-    setFilteredData([]); // Reset data
-  };
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
-  };
-
-  const handleSearchHistory = async () => {
-    // console.log("Search Filters:");
-    // console.log({
-    //   user: selectedMultiHistory,
-    //   dateFrom: selectedHistoryFrom,
-    //   dateTo: selectedHistoryTo,
-    //   service: selectedHistoryService,
-    //   type: selectedHistoryType,
-    // });
-    setIsFetching(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsFetching(false);
-    setFilteredData([]);
-  };
-
-  const handleSearchSummary = async () => {
-    // console.log("Search Filters:");
-    // console.log({
-    //   user: selectedMultiSummary,
-    //   dateFrom: selectedFromSummary,
-    //   dateTo: selectedToSummary,
-    //   service: selectedOptionServiceSummary,
-    //   type: selectedOptionTypeSummary,
-    // });
-    setIsFetching(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate data fetch
-    setIsFetching(false);
-    setFilteredData([]); // Replace this with actual API data
   };
 
   function handleExport() {
@@ -248,17 +166,62 @@ const Transactions = () => {
     toast.success("File Downloaded Successfully");
   }
 
-  // function handleExport() {
-  //   // columns
-  //   if (!rows.length) return toast.error("No data to download");
-  //   const col = columns.map((col) => col.field);
+  function handleExportWalletUsage() {
+    // columns
+    if (!walletusagerows.length) return toast.error("No data to download");
+    const col = walletusagecolumns.map((col) => col.field);
 
-  //   const row = rows.map((row) => col.map((field) => row[field] ?? ""));
+    const row = walletusagerows.map((row) => col.map((field) => row[field] ?? ""));
 
-  //   const name = "Transaction Data";
-  //   exportToExcel(col, row, name);
-  //   toast.success("File Downloaded Successfully");
-  // }
+    const name = "wallet_usage_data";
+    exportToExcel(col, row, name);
+    toast.success("File Downloaded Successfully");
+  }
+
+  const [filterDataWalletUsage, setFilterDataWalletUsage] = useState({
+    // rechargeType: 0,
+    endDate: new Date(),
+    startDate: new Date(),
+  });
+
+
+  const [walletUsageData, setWalletUsageData] = useState([]);
+  const walletusagecolumns = [
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 100 },
+    { field: "recordDate", headerName: "Date", width: 300 },
+    { field: "walletUsage", headerName: "Wallet Usage (₹)", width: 300 },
+  ];
+
+  const dailyAmountUsage = async () => {
+    const payload = {
+      fromDate: moment(filterDataWalletUsage.startDate).format("YYYY-MM-DD"),
+      toDate: moment(filterDataWalletUsage.endDate).format("YYYY-MM-DD"),
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await dailyWalletUsage(payload);
+      setWalletUsageData(response.data || []);
+    } catch (error) {
+      console.error("Error daily wallet usage:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const walletusagerows = Array.isArray(walletUsageData)
+    ? walletUsageData.map((item, index) => ({
+      ...item,
+      sn: index + 1,
+      id: index + 1,
+      recordDate: item.recordDate,
+      walletUsage: item.walletUsage,
+    }))
+    : [];
+
+  // useEffect(() => {
+  //   dailyAmountUsage();
+  // }, [filterDataWalletUsage.startDate, filterDataWalletUsage.endDate]);
 
   return (
     <div className="w-full ">
@@ -290,18 +253,25 @@ const Transactions = () => {
                 },
               }}
             />
-          </Tabs>
-          <div className="w-max-content">
-            <UniversalButton
-              id="manageCampaignExportBtn"
-              name="manageCampaignExportBtn"
-              label="Export"
-              // icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
-              variant="primary"
-              onClick={handleExport}
-            // onClick={handleExport}
+            <Tab
+              label={
+                <span className="flex items-center gap-2">
+                  <BsJournalArrowDown size={18} /> wallet Usage
+                </span>
+              }
+              {...a11yProps(1)}
+              sx={{
+                textTransform: 'none',
+                fontWeight: 'bold',
+                color: 'text.secondary',
+                '&:hover': {
+                  color: 'primary.main',
+                  backgroundColor: '#f0f4ff',
+                  borderRadius: '8px',
+                },
+              }}
             />
-          </div>
+          </Tabs>
         </div>
         <CustomTabPanel value={value} index={0} className="">
           <div className="w-full">
@@ -310,7 +280,7 @@ const Transactions = () => {
                 <UniversalDatePicker
                   id="transactionshistoryfrom"
                   name="transactionshistoryfrom"
-                  label="From"
+                  label="From Date"
                   defaultValue={new Date()}
                   // placeholder="Pick a start date"
                   tooltipContent="Select the starting date for your project"
@@ -329,7 +299,7 @@ const Transactions = () => {
                 <UniversalDatePicker
                   id="transactionshistoryto"
                   name="transactionshistoryto"
-                  label="To"
+                  label="To Date"
                   // placeholder="Pick a start date"
                   tooltipContent="Select the starting date for your project"
                   tooltipPlacement="right"
@@ -367,7 +337,6 @@ const Transactions = () => {
                   }}
                 />
               </div>
-
               <div className="w-max-content ">
                 <UniversalButton
                   id="manageCampaignSearchBtn"
@@ -377,6 +346,16 @@ const Transactions = () => {
                   onClick={handleSearch}
                   variant="primary"
                   disabled={isFetching}
+                />
+              </div>
+              <div className="w-max-content">
+                <UniversalButton
+                  id="manageCampaignExportBtn"
+                  name="manageCampaignExportBtn"
+                  label="Export"
+                  icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
+                  variant="primary"
+                  onClick={handleExport}
                 />
               </div>
             </div>
@@ -396,118 +375,84 @@ const Transactions = () => {
             )}
           </div>
         </CustomTabPanel>
-        {/* <CustomTabPanel value={value} index={1}>
-                    <div className='w-full' >
-                        <div className='flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap' >
-                            <div className="w-full sm:w-56">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <label className="text-sm font-medium text-gray-700">User</label>
+        <CustomTabPanel value={value} index={1}>
+          <div className='w-full' >
+            <div className='flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap' >
+              <div className="w-full sm:w-56">
+                <UniversalDatePicker
+                  id="walletUsage"
+                  name="walletUsage"
+                  label="From Date"
+                  defaultValue={new Date()}
+                  // value={startsDate}
+                  // onChange={(e) => setStartsDate(e.target.value)}
+                  placeholder="Pick a start date"
+                  value={setFilterDataWalletUsage.startDate}
+                  onChange={(newValue) => {
+                    setFilterDataWalletUsage({
+                      ...filterDataWalletUsage,
+                      startDate: newValue,
+                    });
+                  }}
+                />
+              </div>
+              <div className="w-full sm:w-56">
+                <UniversalDatePicker
+                  id="walletUsage"
+                  name="walletUsage"
+                  label="To"
+                  placeholder="Pick a start date"
+                  defaultValue={new Date()}
+                  // value={endsDate}
+                  // onChange={(e) => setEndsDate(e.target.value)}
+                  value={setFilterDataWalletUsage.endDate}
+                  onChange={(newValue) => {
+                    setFilterDataWalletUsage({
+                      ...filterDataWalletUsage,
+                      endDate: newValue,
+                    });
+                  }}
+                />
+              </div>
+              <div className="w-max-content">
+                <UniversalButton
+                  id='walletUsage'
+                  name='walletUsage'
+                  label={isFetching ? "Searching..." : "Search"}
+                  icon={<IoSearch />}
+                  onClick={dailyAmountUsage}
+                  variant="primary"
+                  disabled={isFetching}
+                />
+              </div>
+              <div className="w-max-content">
+                <UniversalButton
+                  id="manageCampaignExportBtn"
+                  name="manageCampaignExportBtn"
+                  label="Export"
+                  icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
+                  variant="primary"
+                  onClick={handleExportWalletUsage}
+                />
+              </div>
+            </div>
 
-                                    <CustomTooltip
-                                        title="Select User"
-                                        placement="right"
-                                        arrow
-                                    >
-                                        <span>
-                                            <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
-                                        </span>
-                                    </CustomTooltip>
-                                </div>
-                                <MultiSelect
-                                    className="custom-multiselect"
-                                    placeholder="Select Groups"
-                                    maxSelectedLabels={0}
-                                    optionLabel="name"
-                                    options={multiSummary}
-                                    value={selectedMultiSummary}
-                                    onChange={(e) => setSelectedMultiSummary(e.value)}
-                                    filter
-
-                                />
-                            </div>
-                            <div className="w-full sm:w-56">
-                                <UniversalDatePicker
-                                    id="transactionssummaryfrom"
-                                    name="transactionssummaryfrom"
-                                    label="From"
-                                    value={selectedFromSummary}
-                                    onChange={(newValue) => setselectedFromSummary(newValue)}
-                                    placeholder="Pick a start date"
-                                    tooltipContent="Select the starting date for your project"
-                                    tooltipPlacement="right"
-                                    error={!selectedFromSummary}
-                                    errorText="Please select a valid date"
-                                />
-                            </div>
-                            <div className="w-full sm:w-56">
-                                <UniversalDatePicker
-                                    id="transactionssummarytoday"
-                                    name="transactionssummarytoday"
-                                    label="To"
-                                    value={selectedToSummary}
-                                    onChange={(newValue) => setselectedToSummary(newValue)}
-                                    placeholder="Pick a start date"
-                                    tooltipContent="Select the starting date for your project"
-                                    tooltipPlacement="right"
-                                    error={!selectedToSummary}
-                                    errorText="Please select a valid date"
-                                />
-                            </div>
-
-                            <div className="w-full sm:w-56" >
-                                <AnimatedDropdown
-                                    id='transactionssummarySource'
-                                    name='transactionssummarySource'
-                                    label="Service"
-                                    tooltipContent="Select Service"
-                                    tooltipPlacement="right"
-                                    options={service}
-                                    value={selectedOptionServiceSummary}
-                                    onChange={(value) => setSelectedOptionServiceSummary(value)}
-                                    placeholder="Service"
-                                />
-                            </div>
-                            <div className="w-full sm:w-56" >
-                                <AnimatedDropdown
-                                    id='transactionssummarytype'
-                                    name='transactionssummarytype'
-                                    label="Type"
-                                    tooltipContent="Select Type"
-                                    tooltipPlacement="right"
-                                    options={type}
-                                    value={selectedOptionTypeSummary}
-                                    onChange={(value) => setSelectedOptionTypeSummary(value)}
-                                    placeholder="Type"
-                                />
-                            </div>
-
-                            <div className="w-max-content ">
-                                <UniversalButton
-                                    id='manageCampaignLogsShowhBtn'
-                                    name='manageCampaignLogsShowhBtn'
-                                    label={isFetching ? "Searching..." : "Search"}
-                                    icon={<IoSearch />}
-                                    onClick={handleSearchSummary}
-                                    variant="primary"
-                                    disabled={isFetching}
-                                />
-                            </div>
-                        </div>
-
-                        {isFetching ? (
-                            <div className='' >
-                                <UniversalSkeleton height='35rem' width='100%' />
-                            </div>
-                        ) : (
-                            <div className='w-full'>
-                                <TransactionsSummaryTable
-                                    id='transactionssummarytable'
-                                    name='transactionssummarytable'
-                                />
-                            </div>
-                        )}
-                    </div>
-                </CustomTabPanel> */}
+            {isFetching ? (
+              <div className="">
+                <UniversalSkeleton height="35rem" width="100%" />
+              </div>
+            ) : (
+              <div className="w-full">
+                <DataTable
+                  id="walletusage"
+                  name="walletusage"
+                  col={walletusagecolumns}
+                  rows={walletusagerows}
+                />
+              </div>
+            )}
+          </div>
+        </CustomTabPanel>
       </Box>
     </div>
   );
