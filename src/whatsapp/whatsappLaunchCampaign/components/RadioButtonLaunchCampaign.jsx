@@ -473,7 +473,7 @@ function RadioButtonLaunchCampaign({
 
       {/* workflow */}
 
-      {selectedOption === "option2" && (
+      {selectedOption === "option2" && fileHeaders.length > 0 && (
         <div className="mt-2 p-4 border rounded-xl bg-gradient-to-b from-white to-gray-50 shadow hover:shadow-md transition-shadow duration-200">
           {/* Toggle Section */}
           <div className="flex items-center justify-between mb-4">
@@ -517,11 +517,10 @@ function RadioButtonLaunchCampaign({
               className="bg-gray-200 p-2 rounded-full"
               disabled={!Number(workflowState.workflowSrno)}
               onClick={() => {
-
                 const workFlowData = allWorkflows.find(
                   (item) => item.sr_no == workflowState.workflowSrno
                 )?.node_json;
-               
+
                 setWorkflowEditDialog({
                   isOpen: true,
                   data: workFlowData || "{}",

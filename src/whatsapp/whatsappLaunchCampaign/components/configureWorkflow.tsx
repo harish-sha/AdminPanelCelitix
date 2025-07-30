@@ -17,6 +17,8 @@ import { HiOutlineDocument } from "react-icons/hi2";
 import { DetailsDialog } from "../components/workflow-components/details";
 import { Dialog } from "primereact/dialog";
 import { convertPaylaod } from "@/workflow/edit/helpers/convertPaylaod";
+import UniversalButton from "@/components/common/UniversalButton";
+import { generatePayload } from "@/workflow/create/helpers/generatePayload";
 
 function NodeComponent({
   id,
@@ -140,7 +142,12 @@ function NodeComponent({
   );
 }
 
-export const ConfigureWorkflow = ({ data, headers }) => {
+export const ConfigureWorkflow = ({
+  data,
+  headers,
+  onClose,
+  setWorkflowState,
+}) => {
   if (!data) return null;
   const formattedData = convertPaylaod(data);
   let node = [];
@@ -168,6 +175,13 @@ export const ConfigureWorkflow = ({ data, headers }) => {
     setType(node.type);
     setSelectedNodeId(node.id);
   };
+
+  async function handleSaveWorkflow() {
+    const payload = generatePayload(nodesInputData, nodes, edges);
+    console.log(payload);
+    setWorkflowState(payload);
+    onClose();
+  }
 
   const commonButtonClass =
     "cursor-pointer flex flex-col h-auto text-[0.7rem] bg-white text-gray-900 border-2 border-gray-500 shadow-lg hover:bg-gradient-to-br hover:from-blue-200 hover:to-blue-300 hover:text-gray-900 hover:shadow-2xl hover:scale-105";
@@ -262,6 +276,14 @@ export const ConfigureWorkflow = ({ data, headers }) => {
           headers={headers}
         />
       </Dialog>
+
+      <UniversalButton
+        style={{}}
+        id="saveWorkflow"
+        name="saveWorkflow"
+        label="Save Workflow"
+        onClick={handleSaveWorkflow}
+      />
     </>
   );
 };

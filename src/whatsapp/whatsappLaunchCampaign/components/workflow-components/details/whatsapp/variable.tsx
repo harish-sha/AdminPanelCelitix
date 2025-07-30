@@ -82,7 +82,7 @@ export const Variables = ({
                       onSelect={(e) => {
                         const updatedData = [...variablesData.input];
                         const message = updatedData[index] || "";
-                        updatedData[index] = message + `{#${e}#}`;
+                        updatedData[index] = message + `{{${e}}}`;
                         setVariablesData((prev) => ({
                           ...prev,
                           input: updatedData,
@@ -128,7 +128,7 @@ export const Variables = ({
                     onSelect={(e) => {
                       const updatedData = [...variablesData.btnInput];
                       const message = updatedData[index];
-                      updatedData[index] = message + `{#${e}#}`;
+                      updatedData[index] = message + `{{${e}}}`;
                       setVariablesData((prev) => ({
                         ...prev,
                         btnInput: updatedData,

@@ -95,6 +95,10 @@ const WhatsappLaunchCampaign = () => {
     workflowValueObject: {},
   });
 
+  useEffect(() => {
+    console.log(workflowState);
+  }, [workflowState]);
+
   const [templateType, setTemplateType] = useState("");
 
   const [locationData, setLocationData] = useState({
@@ -1018,7 +1022,19 @@ const WhatsappLaunchCampaign = () => {
             onHide={() => setWorkflowEditDialog({ isOpen: false, data: null })}
             draggable={false}
           >
-            <ConfigureWorkflow data={workflowEditDialog.data} headers={fileHeaders} />
+            <ConfigureWorkflow
+              data={workflowEditDialog.data}
+              headers={fileHeaders}
+              onClose={() =>
+                setWorkflowEditDialog({ isOpen: false, data: null })
+              }
+              setWorkflowState={(e) =>
+                setWorkflowState((prev) => ({
+                  ...prev,
+                  workflowValueObject: e,
+                }))
+              }
+            />
           </Dialog>
         </>
       )}
