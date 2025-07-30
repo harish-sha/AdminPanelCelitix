@@ -1018,7 +1018,7 @@ const WhatsappLaunchCampaign = () => {
             onHide={() => setWorkflowEditDialog({ isOpen: false, data: null })}
             draggable={false}
           >
-            <ConfigureWorkflow data={workflowEditDialog.data} />
+            <ConfigureWorkflow data={workflowEditDialog.data} headers={fileHeaders} />
           </Dialog>
         </>
       )}

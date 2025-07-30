@@ -84,19 +84,9 @@ function NodeComponent({
         />
       </button>
 
-      <button
-        className="absolute -left-2 p-0 text-xs -top-2"
-        onClick={() => {
-          setIsVisible(true);
-        }}
-        title="Settings"
-      >
-        <SettingsOutlinedIcon fontSize="small" />
-      </button>
-
       {id !== "1" && (
         <button
-          className="absolute left-5 -top-2 p-0 text-xs"
+          className="absolute left-0 -top-2 p-0 text-xs"
           onClick={() => setDetailsDialogVisible(true)}
           title={`Configure ${data.type} node`}
         >
@@ -150,7 +140,7 @@ function NodeComponent({
   );
 }
 
-export const ConfigureWorkflow = ({ data }) => {
+export const ConfigureWorkflow = ({ data, headers }) => {
   if (!data) return null;
   const formattedData = convertPaylaod(data);
   let node = [];
