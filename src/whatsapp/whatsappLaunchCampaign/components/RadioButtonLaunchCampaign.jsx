@@ -524,7 +524,7 @@ function RadioButtonLaunchCampaign({
                
                 setWorkflowEditDialog({
                   isOpen: true,
-                  data: JSON.parse(workFlowData || "{}") || {},
+                  data: workFlowData || "{}",
                 });
               }}
             >

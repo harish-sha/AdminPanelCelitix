@@ -22,6 +22,7 @@ import UniversalButton from "../components/UniversalButton.jsx";
 import Loader from "../components/Loader";
 import DropdownWithSearch from "../components/DropdownWithSearch.jsx";
 import { RadioButton } from "primereact/radiobutton";
+import { ConfigureWorkflow } from "./components/configureWorkflow.jsx";
 
 const extractVariablesFromText = (text) => {
   const regex = /{{(\d+)}}/g;
@@ -1007,6 +1008,17 @@ const WhatsappLaunchCampaign = () => {
                 />
               </div>
             </div>
+          </Dialog>
+
+          {/* Dialog to configure the workflow */}
+          <Dialog
+            header="Review & Confirm"
+            visible={workflowEditDialog.isOpen}
+            style={{ width: "70rem" }}
+            onHide={() => setWorkflowEditDialog({ isOpen: false, data: null })}
+            draggable={false}
+          >
+            <ConfigureWorkflow data={workflowEditDialog.data} />
           </Dialog>
         </>
       )}
