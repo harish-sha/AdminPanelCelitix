@@ -267,7 +267,7 @@ export const Whatsapp = ({
                 setBasicDetails={setBasicDetails}
                 fileData={fileData}
                 setFileData={setFileData}
-                 headers={headers}
+                headers={headers}
               />
             )}
         </div>

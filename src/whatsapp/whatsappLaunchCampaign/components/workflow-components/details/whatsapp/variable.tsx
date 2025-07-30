@@ -4,6 +4,7 @@ import React from "react";
 import toast from "react-hot-toast";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { MdOutlineDeleteForever } from "react-icons/md";
+import InputVariable from "../../../InputVariable";
 
 export const Variables = ({
   variablesData,
@@ -57,22 +58,39 @@ export const Variables = ({
                 <label htmlFor="templateMessage">
                   {`{{${variablesData?.data[index]}}}`}
                 </label>
-                <InputField
-                  label=""
-                  placeholder="{{name}}"
-                  id="templateMessage"
-                  name="templateMessage"
-                  value={variablesData?.input[index]}
-                  onChange={(e) => {
-                    const updatedData = [...variablesData.input];
-                    updatedData[index] = e.target.value;
-                    setVariablesData((prev) => ({
-                      ...prev,
-                      input: updatedData,
-                    }));
-                  }}
-                  className="flex-1 w-full focus:outline-none"
-                />
+                <div className="relative w-full">
+                  <InputField
+                    label=""
+                    placeholder="{{name}}"
+                    id="templateMessage"
+                    name="templateMessage"
+                    value={variablesData?.input[index]}
+                    onChange={(e) => {
+                      const updatedData = [...variablesData.input];
+                      updatedData[index] = e.target.value;
+                      setVariablesData((prev) => ({
+                        ...prev,
+                        input: updatedData,
+                      }));
+                    }}
+                    className="flex-1 w-full focus:outline-none"
+                  />
+
+                  <div className="absolute top-[0] right-0">
+                    <InputVariable
+                      variables={headers}
+                      onSelect={(e) => {
+                        const updatedData = [...variablesData.input];
+                        const message = updatedData[index] || "";
+                        updatedData[index] = message + `{#${e}#}`;
+                        setVariablesData((prev) => ({
+                          ...prev,
+                          input: updatedData,
+                        }));
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -86,22 +104,39 @@ export const Variables = ({
               <label htmlFor="templateMessage">
                 {`{{${variablesData?.btn[index]}}}`}
               </label>
-              <InputField
-                label={`{{${variablesData?.btn[index]}}}`}
-                placeholder="{{name}}"
-                id="templateMessage"
-                name="templateMessage"
-                value={variablesData?.btnInput[index]}
-                onChange={(e) => {
-                  const updatedData = [...variablesData.btnInput];
-                  updatedData[index] = e.target.value;
-                  setVariablesData((prev) => ({
-                    ...prev,
-                    btnInput: updatedData,
-                  }));
-                }}
-                className="flex-1 w-full focus:outline-none"
-              />
+              <div className="relative w-full">
+                <InputField
+                  label={`{{${variablesData?.btn[index]}}}`}
+                  placeholder="{{name}}"
+                  id="templateMessage"
+                  name="templateMessage"
+                  value={variablesData?.btnInput[index]}
+                  onChange={(e) => {
+                    const updatedData = [...variablesData.btnInput];
+                    updatedData[index] = e.target.value;
+                    setVariablesData((prev) => ({
+                      ...prev,
+                      btnInput: updatedData,
+                    }));
+                  }}
+                  className="flex-1 w-full focus:outline-none"
+                />
+
+                <div className="absolute top-[0] right-0">
+                  <InputVariable
+                    variables={headers}
+                    onSelect={(e) => {
+                      const updatedData = [...variablesData.btnInput];
+                      const message = updatedData[index];
+                      updatedData[index] = message + `{#${e}#}`;
+                      setVariablesData((prev) => ({
+                        ...prev,
+                        btnInput: updatedData,
+                      }));
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         ))}
