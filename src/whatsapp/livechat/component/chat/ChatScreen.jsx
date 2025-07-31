@@ -452,7 +452,7 @@ export const ChatScreen = ({
             className="bg-[#22577E] text-white px-4 py-2 rounded-md flex gap-2 items-center"
             onClick={() => {
               setChatIndex((prev) => prev + 1);
-              handleFetchSpecificConversation(true);
+              // handleFetchSpecificConversation(true);
             }}
           >
             <LuHistory />
@@ -807,6 +807,19 @@ export const ChatScreen = ({
             </div>
           </div>
         ))}
+
+        {chatIndex > 1 && (
+          <button
+            className="bg-[#22577E] text-white px-4 py-2 rounded-md flex gap-2 items-center ml-auto mr-auto"
+            onClick={() => {
+              setChatIndex((prev) => prev - 1);
+              // handleFetchSpecificConversation(true);
+            }}
+          >
+            <LuHistory />
+            Load more
+          </button>
+        )}
 
         <div ref={endOfMessagesRef} />
       </div>

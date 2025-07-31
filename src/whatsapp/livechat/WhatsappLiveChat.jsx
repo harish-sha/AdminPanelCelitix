@@ -122,6 +122,7 @@ export default function WhatsappLiveChat() {
   const [cardIndex, setCardIndex] = useState(0);
 
   const [chatIndex, setChatIndex] = useState(1);
+
   const [chatLoading, setChatLoading] = useState(false);
 
   function handleNextCard() {
@@ -493,8 +494,7 @@ export default function WhatsappLiveChat() {
     return `${day}/${month}/${year}`;
   };
   async function handleFetchSpecificConversation(olderChatFetch = false) {
-    if (!chatIndex) return;
-    console.log("chatIndex", chatIndex);
+    // if (!chatIndex) return;
     setChatLoading(true);
     const payload = {
       mobileNo: chatState?.active?.mobileNo,
@@ -581,13 +581,9 @@ export default function WhatsappLiveChat() {
     }
   }
 
-  // useEffect(() => {
-  //   console.log(messageRef.current?.scrollTop);
-  //   console.log(messageRef.current?.scrollHeight);
-  //   if (messageRef.current) {
-  //     messageRef.current.scrollTop = messageRef.current.scrollHeight;
-  //   }
-  // }, [chatState?.active, specificConversation]);
+  useEffect(() => {
+    handleFetchSpecificConversation(true);
+  }, [chatIndex]);
 
   useEffect(() => {
     handleFetchSpecificConversation();
