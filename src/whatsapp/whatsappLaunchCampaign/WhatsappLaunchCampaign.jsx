@@ -56,6 +56,10 @@ const WhatsappLaunchCampaign = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [workflowEditDialog, setWorkflowEditDialog] = useState({
+    isOpen: false,
+    data: null,
+  });
 
   const [groups, setGroups] = useState([]);
 
@@ -111,7 +115,7 @@ const WhatsappLaunchCampaign = () => {
           label: item.workflow_name,
         }))
         : [];
-      setAllWorkflows(mappedData);
+      setAllWorkflows(res);
     } catch (e) {
       toast.error("Error fetching workflows.");
     }
@@ -900,6 +904,9 @@ const WhatsappLaunchCampaign = () => {
                     workflowState={workflowState}
                     setWorkflowState={setWorkflowState}
                     allWorkflows={allWorkflows}
+                    // setIsCountryCodeChecked={setIsCountryCodeChecked}
+                    setWorkflowEditDialog={setWorkflowEditDialog}
+                    workflowEditDialog={setWorkflowEditDialog}
                   />
                 </div>
               </div>

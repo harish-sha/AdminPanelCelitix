@@ -299,8 +299,8 @@ export const InputData = ({
                 setIsSubscribed(false);
               }}
               className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "active"
-                  ? "text-white font-semibold"
-                  : "text-gray-700"
+                ? "text-white font-semibold"
+                : "text-gray-700"
                 }`}
             >
               Active
@@ -311,8 +311,8 @@ export const InputData = ({
                 setIsSubscribed(false);
               }}
               className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "close"
-                  ? "text-white font-semibold"
-                  : "text-gray-700"
+                ? "text-white font-semibold"
+                : "text-gray-700"
                 }`}
             >
               Close
