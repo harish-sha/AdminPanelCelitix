@@ -19,11 +19,13 @@ export const OBD = ({
   nodesInputData,
   setNodesInputData,
   setDetailsDialogVisible,
+  headers
 }: {
   id: number;
   nodesInputData: any;
   setNodesInputData: React.Dispatch<React.SetStateAction<{}>>;
   setDetailsDialogVisible: React.Dispatch<React.SetStateAction<{}>>;
+  headers :any[]
 }) => {
   const variableRef = useRef([]);
 
@@ -268,6 +270,7 @@ export const OBD = ({
                   <TTS
                     setBasicDetails={setBasicDetails}
                     basicDetails={basicDetails}
+                    headers={headers}
                   />
                 )}
                 {(basicDetails?.templateType === "SB" ||

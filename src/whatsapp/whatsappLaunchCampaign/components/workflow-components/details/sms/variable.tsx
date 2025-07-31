@@ -21,7 +21,7 @@ export const Variable = ({ setInputDetails, inputDetails, headers }) => {
         <UniversalTextArea
           label="Message*"
           id="manage"
-          disabled={true}
+          disabled={false}
           name="manage"
           placeholder="Type your message here..."
           className="resize-none h-32 pr-7 scroll-ml-0.5 overflow-y-auto scrollbar-left"

@@ -1,7 +1,8 @@
 import UniversalTextArea from "@/whatsapp/components/UniversalTextArea";
 import React from "react";
+import InputVariable from "../../../InputVariable";
 
-export const TTS = ({ setBasicDetails, basicDetails }) => {
+export const TTS = ({ setBasicDetails, basicDetails, headers }) => {
   return (
     <>
       <div className="my-2">
@@ -19,7 +20,7 @@ export const TTS = ({ setBasicDetails, basicDetails }) => {
                 }));
               }
             }}
-             disabled={true}
+            disabled={false}
             className="w-full p-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:border-blue-500"
             placeholder="Enter text..."
             label="Voice Text"
@@ -28,6 +29,20 @@ export const TTS = ({ setBasicDetails, basicDetails }) => {
 
             // tooltipContent="Enter Value which you want to convert in (TTS) on select variable either convert the text dynamic"
           />
+
+          <div className="absolute top-[2rem] right-[0.3rem]">
+            <InputVariable
+              variables={headers}
+              onSelect={(e) => {
+                const message = basicDetails.tts || "";
+                const newMessage = message + `{#${e}#}`;
+                setBasicDetails((prev) => ({
+                  ...prev,
+                  tts: newMessage,
+                }));
+              }}
+            />
+          </div>
         </div>
         <div className="text-gray-600 text-xs flex justify-end">
           Chars: {basicDetails?.tts?.length}/1000
