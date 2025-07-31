@@ -376,7 +376,8 @@ const Approutes = () => {
 
         {/* Combine Live Chat setting */}
         <Route path="combineLiveChatSettings" element={<CombineLiveChatSettings />}>
-          <Route index element={<Pointingup />} />
+          {/* <Route index element={<Pointingup />} /> */}
+          <Route index element={<Navigate to="wlcsetting" replace />} />
           <Route path=":channel" element={<Outlet />} />
         </Route>
 

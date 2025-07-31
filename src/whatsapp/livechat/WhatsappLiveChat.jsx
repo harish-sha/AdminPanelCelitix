@@ -490,8 +490,8 @@ export default function WhatsappLiveChat() {
     return `${day}/${month}/${year}`;
   };
   async function handleFetchSpecificConversation(olderChatFetch = false) {
-    if (!chatIndex) return;
-    console.log("chatIndex", chatIndex);
+    // if (!chatIndex) return;
+    // console.log("chatIndex", chatIndex);
     setChatLoading(true);
     const payload = {
       mobileNo: chatState?.active?.mobileNo,
@@ -577,6 +577,10 @@ export default function WhatsappLiveChat() {
       setChatLoading(false);
     }
   }
+
+  useEffect(() => {
+    handleFetchSpecificConversation(true);
+  }, [chatIndex]);
 
   // useEffect(() => {
   //   console.log(messageRef.current?.scrollTop);

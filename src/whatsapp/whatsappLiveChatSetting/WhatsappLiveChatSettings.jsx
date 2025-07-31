@@ -1310,10 +1310,9 @@ const WhatsappLiveChatSettings = () => {
       wabaSrno,
       tempJson,
       mediaPath: basicDetails.mediaPath || "",
-      messageEntity: "6",
+      messageEntity: "0",
       noDaysSelectedArray:
         noDaysSelected.join(",") + (noDaysSelected.length ? "," : ""),
-
       agent: basicDetails?.agent || "",
     };
 
@@ -1656,7 +1655,7 @@ const WhatsappLiveChatSettings = () => {
               onHide={() => setWorkingHoursDialog(false)}
               className="w-[40rem]"
               draggable={false}
-              onClick={handleWorkingSave}
+              // onClick={handleWorkingSave}
             >
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <div className="space-y-2">

@@ -16,6 +16,8 @@ import { getCountryList } from "../../../apis/common/common.js";
 import AnimatedDropdown from "../../components/AnimatedDropdown.jsx";
 import "../whatsappLaunch.css";
 import DropdownWithSearch from "../../components/DropdownWithSearch.jsx";
+import { CiSettings } from "react-icons/ci";
+
 
 function RadioButtonLaunchCampaign({
   onOptionChange,
@@ -36,6 +38,8 @@ function RadioButtonLaunchCampaign({
   workflowState,
   setWorkflowState,
   allWorkflows,
+  setWorkflowEditDialog,
+  workflowEditDialog,
   // setIsCountryCodeChecked
 }) {
   // const [selectedOption, setSelectedOption] = useState("option2");
@@ -469,60 +473,83 @@ function RadioButtonLaunchCampaign({
       )}
 
       {/* workflow */}
-      <div className="mt-2 p-4 border rounded-xl bg-gradient-to-b from-white to-gray-50 shadow hover:shadow-md transition-shadow duration-200">
-        {/* Toggle Section */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <LuWorkflow />
-            <label
-              htmlFor="toggleWorkflow"
-              className="text-sm font-semibold text-gray-700"
+      {selectedOption === "option2" && (
+
+        <div className="mt-2 p-4 border rounded-xl bg-gradient-to-b from-white to-gray-50 shadow hover:shadow-md transition-shadow duration-200">
+          {/* Toggle Section */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <LuWorkflow />
+              <label
+                htmlFor="toggleWorkflow"
+                className="text-sm font-semibold text-gray-700"
+              >
+                Add Workflow?
+              </label>
+            </div>
+
+            {/* Custom Toggle */}
+            <button
+              onClick={() => {
+                setWorkflowState({
+                  workflowFlag: workflowState.workflowFlag === "1" ? "0" : "1",
+                  workflowSrno: "",
+                  workflowValueObject: {},
+                });
+              }}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${workflowState.workflowFlag === "1" ? "bg-blue-500" : "bg-gray-300"
+                }`}
             >
-              Add Workflow?
-            </label>
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${workflowState.workflowFlag === "1"
+                  ? "translate-x-6"
+                  : "translate-x-1"
+                  }`}
+              />
+            </button>
           </div>
 
-          {/* Custom Toggle */}
-          <button
-            onClick={() => {
-              setWorkflowState({
-                workflowFlag: workflowState.workflowFlag === "1" ? "0" : "1",
-                workflowSrno: "",
-                workflowValueObject: {},
-              });
-            }}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${workflowState.workflowFlag === "1" ? "bg-blue-500" : "bg-gray-300"
-              }`}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${workflowState.workflowFlag === "1"
-                ? "translate-x-6"
-                : "translate-x-1"
-                }`}
-            />
-          </button>
-        </div>
+          <div className="flex flex-row-reverse gap-2 items-end justify-center">
+            {/* <button
+              className="bg-gray-200 p-2 rounded-full"
+              disabled={!Number(workflowState.workflowSrno)}
+              onClick={() => {
 
-        {/* Dropdown Section */}
-        <DropdownWithSearch
-          id="selectWorkflow"
-          name="selectWorkflow"
-          label="Select Workflow"
-          tooltipContent="Choose a predefined workflow to apply."
-          tooltipPlacement="right"
-          placeholder="Select a Workflow..."
-          disabled={!Number(workflowState.workflowFlag)}
-          options={allWorkflows}
-          value={workflowState.workflowSrno}
-          onChange={(value) => {
-            setWorkflowState({
-              ...workflowState,
-              workflowSrno: value,
-            });
-          }}
-          className="w-full"
-        />
-      </div>
+                const workFlowData = allWorkflows.find(
+                  (item) => item.sr_no == workflowState.workflowSrno
+                )?.node_json;
+
+                setWorkflowEditDialog({
+                  isOpen: true,
+                  data: JSON.parse(workFlowData || "{}") || {},
+                });
+              }}
+            >
+              <CiSettings className="size-6" />
+            </button> */}
+
+            {/* Dropdown Section */}
+            <DropdownWithSearch
+              id="selectWorkflow"
+              name="selectWorkflow"
+              label="Select Workflow"
+              tooltipContent="Choose a predefined workflow to apply."
+              tooltipPlacement="right"
+              placeholder="Select a Workflow..."
+              disabled={!Number(workflowState.workflowFlag)}
+              options={allWorkflows}
+              value={workflowState.workflowSrno}
+              onChange={(value) => {
+                setWorkflowState({
+                  ...workflowState,
+                  workflowSrno: value,
+                });
+              }}
+              className="w-full"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Country Code */}
       <div className="flex flex-wrap items-start justify-between gap-2 mt-3 ">
