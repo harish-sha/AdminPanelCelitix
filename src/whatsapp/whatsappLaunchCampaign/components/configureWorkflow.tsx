@@ -46,46 +46,6 @@ function NodeComponent({
 
   return (
     <div className="relative p-1.5 bg-white border border-gray-300 rounded-md shadow-md">
-      <button
-        className="absolute -top-2 -right-1 text-xs text-white bg-red-500 rounded-full hover:bg-red-700 h-4 w-4 text-center"
-        onClick={() => {
-          onDelete(id);
-          setIsVisible(false);
-          setNodesInputData((prev) => {
-            const newData = {};
-            const keys = Object.keys(prev).sort(
-              (a, b) => parseInt(a) - parseInt(b)
-            );
-
-            let shift = false;
-
-            keys.forEach((key) => {
-              const keyNum = parseInt(key);
-              if (key === id) {
-                shift = true;
-                return;
-              }
-
-              if (shift) {
-                const newKey = String(keyNum - 1);
-                newData[newKey] = prev[key];
-              } else {
-                newData[key] = prev[key];
-              }
-            });
-
-            return newData;
-          });
-        }}
-      >
-        <CloseOutlinedIcon
-          fontSize="small"
-          style={{
-            fontSize: "10px",
-          }}
-        />
-      </button>
-
       {id !== "1" && (
         <button
           className="absolute left-0 -top-2 p-0 text-xs"
