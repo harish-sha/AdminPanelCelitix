@@ -18,6 +18,7 @@ import "../whatsappLaunch.css";
 import DropdownWithSearch from "../../components/DropdownWithSearch.jsx";
 import { CiSettings } from "react-icons/ci";
 
+
 function RadioButtonLaunchCampaign({
   onOptionChange,
   onFileUpload,
@@ -249,7 +250,7 @@ function RadioButtonLaunchCampaign({
 
         onFileUpload(
           response.filepath,
-          fileHeaders,
+          response.headers || [],
           totalRecords,
           selectedCountryCode,
           selectedMobileColumn
@@ -472,7 +473,7 @@ function RadioButtonLaunchCampaign({
       )}
 
       {/* workflow */}
-      {selectedOption === "option2" && (
+      {selectedOption === "option2" && fileHeaders.length > 0 && (
         <div className="mt-2 p-4 border rounded-xl bg-gradient-to-b from-white to-gray-50 shadow hover:shadow-md transition-shadow duration-200">
           {/* Toggle Section */}
           <div className="flex items-center justify-between mb-4">
@@ -506,9 +507,9 @@ function RadioButtonLaunchCampaign({
               />
             </button>
           </div>
-          <div className="flex flex-row-reverse gap-2 items-end justify-center">
 
-            {/* <button
+          <div className="flex flex-row-reverse gap-2 items-end justify-center">
+            <button
               className="bg-gray-200 p-2 rounded-full"
               disabled={!Number(workflowState.workflowSrno)}
               onClick={() => {
@@ -519,12 +520,12 @@ function RadioButtonLaunchCampaign({
 
                 setWorkflowEditDialog({
                   isOpen: true,
-                  data: JSON.parse(workFlowData || "{}") || {},
+                  data: workFlowData || "{}",
                 });
               }}
             >
               <CiSettings className="size-6" />
-            </button> */}
+            </button>
 
             {/* Dropdown Section */}
             <DropdownWithSearch
@@ -535,7 +536,10 @@ function RadioButtonLaunchCampaign({
               tooltipPlacement="right"
               placeholder="Select a Workflow..."
               disabled={!Number(workflowState.workflowFlag)}
-              options={allWorkflows}
+              options={allWorkflows?.map((item) => ({
+                value: item.sr_no,
+                label: item.workflow_name,
+              }))}
               value={workflowState.workflowSrno}
               onChange={(value) => {
                 setWorkflowState({
@@ -550,7 +554,7 @@ function RadioButtonLaunchCampaign({
       )}
 
       {/* Country Code */}
-      <div div className="flex flex-wrap items-start justify-between gap-2 mt-3 ">
+      <div className="flex flex-wrap items-start justify-between gap-2 mt-3 ">
         {selectedOption === "option2" && isUploaded && (
           <div className="flex flex-col w-full mt-2 gap-2">
             <div className="flex items-center gap-2">
@@ -695,7 +699,7 @@ function RadioButtonLaunchCampaign({
         </div>
       )}
 
-    </div >
+    </div>
   );
 }
 

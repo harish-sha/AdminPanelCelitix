@@ -22,6 +22,8 @@ const InputField = ({
   // max = { maxLength },
   className = "",
   ref = null,
+  divClassName = "",
+  disabled = false
 }) => {
   // const handleChange = (e) => {
   //     let inputValue = e.target.value;
@@ -32,7 +34,7 @@ const InputField = ({
   // };
 
   return (
-    <div className="w-full">
+    <div className={`w-full ${divClassName}`}>
       {label && (
         <div className="flex items-center gap-2 mb-2">
           <label htmlFor={id} className="text-sm font-medium text-gray-700">
@@ -62,6 +64,7 @@ const InputField = ({
         readOnly={readOnly}
         style={style}
         maxLength={maxLength}
+        disabled={disabled}
         className={`block w-full  p-1.5 h-[2.275rem] border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${className} ${error ? "border-red-500" : "border-gray-300"
           }`}
         accept={accept}

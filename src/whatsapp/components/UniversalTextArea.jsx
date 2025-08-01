@@ -8,7 +8,7 @@ const UniversalTextArea = ({
   id,
   name,
   value,
-  storageKey,
+  storageKey = null,
   placeholder,
   error,
   onChange,
@@ -19,6 +19,7 @@ const UniversalTextArea = ({
   ref = null,
   tooltipContent = "",
   tooltipPlacement = "top",
+  disabled = false
 }) => {
   const [text, setText] = useState("");
 
@@ -70,6 +71,7 @@ const UniversalTextArea = ({
         cols={col}
         rows={row}
         readOnly={readOnly}
+        disabled={disabled}
         className={`w-full p-1.5 border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${className} ${error ? "border-red-500" : "border-gray-300"
           }`}
       ></textarea>

@@ -17,6 +17,8 @@ import Loader from "../../whatsapp/components/Loader";
 
 import { getCountryList } from "../../apis/common/common";
 import { ProgressSpinner } from "primereact/progressspinner";
+import { motion } from "framer-motion";
+import { FiAlertCircle } from "react-icons/fi";
 
 const CustomPagination = ({
   totalPages,
@@ -417,10 +419,20 @@ function AccountInfoModal({ show, handleClose }) {
                 />
               </Paper>
             ) : (
-              <h1 className="text-center text-xl text-gray-700 font-semibold" >
-                Your account is expired. Please contact Admin to activate your
-                account.
-              </h1>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="flex flex-col items-center justify-center text-center h-40"
+              >
+                <FiAlertCircle className="text-red-600 text-5xl mb-2" />
+                <p className="text-2xl font-semibold text-gray-800">
+                  Your account has expired
+                </p>
+                <p className="text-lg text-gray-600 mt-1">
+                  Please contact the admin to renew or reactivate your account.
+                </p>
+              </motion.div>
             )}
           </>
         )}

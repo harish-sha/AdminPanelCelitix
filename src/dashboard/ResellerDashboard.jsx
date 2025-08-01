@@ -64,6 +64,7 @@ import { fetchBalance } from "@/apis/settings/setting";
 import { useUser } from "@/context/auth";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import ClockCard from "./components/ClockCard";
+import AccountExpiryFormat from "./components/AccountExpiryFormat";
 
 const revenueData = [
     { name: "Mon", online: 14000, offline: 11000 },
@@ -529,6 +530,10 @@ const ResellerDashboard = () => {
                     );
                 })}
             </Grid>
+
+            {/* Account expiry format start */}
+            <AccountExpiryFormat />
+            {/* Account expiry format end */}
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 {/* Total Revenue */}
