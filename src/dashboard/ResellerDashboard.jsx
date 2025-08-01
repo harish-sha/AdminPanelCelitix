@@ -93,6 +93,7 @@ import LineGraphChart from "./components/account";
 import MetricsDashboard from "./components/bots";
 import ServiceUsageDashboard from "./components/ServiceUsageDashboard";
 import ParticleRing from "./components/ParticleRing";
+import AccountExpiryFormat from "./components/AccountExpiryFormat";
 
 const revenueData = [
   { name: "Mon", online: 14000, offline: 11000 },
@@ -191,54 +192,54 @@ const ResellerDashboard = () => {
   const [endsDate, setEndsDate] = useState(new Date());
   const [walletUsage, setWalletUsage] = useState(343.8);
   const [walletUsagesData, setWalletUsagesData] = useState([]);
-const [totalWalletUsage, setTotalWalletUsage] = useState(0);
+  const [totalWalletUsage, setTotalWalletUsage] = useState(0);
 
- const dailyAmountUsage = async () => {
-  const payload = {
-    userSrno: 0,
-    fromDate: moment(startsDate).format("YYYY-MM-DD"),
-    toDate: moment(endsDate).format("YYYY-MM-DD"),
-  };
+  const dailyAmountUsage = async () => {
+    const payload = {
+      userSrno: 0,
+      fromDate: moment(startsDate).format("YYYY-MM-DD"),
+      toDate: moment(endsDate).format("YYYY-MM-DD"),
+    };
 
-  console.log("date payload", payload);
-  setIsLoading(true);
+    console.log("date payload", payload);
+    setIsLoading(true);
 
-  try {
-    const response = await dailyWalletUsage(payload);
-    console.log("daily wallet usage", response.data);
+    try {
+      const response = await dailyWalletUsage(payload);
+      console.log("daily wallet usage", response.data);
 
-    const data = response.data || [];
+      const data = response.data || [];
 
-    if (data.length > 1) {
-      setWalletUsagesData(data);
+      if (data.length > 1) {
+        setWalletUsagesData(data);
 
-      // Calculate total difference between consecutive walletUsage values
-      let totalDifference = 0;
-      for (let i = 0; i < data.length - 1; i++) {
-        const current = Number(data[i].walletUsage || 0);
-        const next = Number(data[i + 1].walletUsage || 0);
-        totalDifference += Math.abs(current - next);
+        // Calculate total difference between consecutive walletUsage values
+        let totalDifference = 0;
+        for (let i = 0; i < data.length - 1; i++) {
+          const current = Number(data[i].walletUsage || 0);
+          const next = Number(data[i + 1].walletUsage || 0);
+          totalDifference += Math.abs(current - next);
+        }
+
+        setTotalWalletUsage(totalDifference);
+        console.log("Total Wallet Usage (difference):", totalDifference);
+      } else {
+        setWalletUsagesData([]);
+        setTotalWalletUsage(0);
       }
-
-      setTotalWalletUsage(totalDifference);
-      console.log("Total Wallet Usage (difference):", totalDifference);
-    } else {
-      setWalletUsagesData([]);
-      setTotalWalletUsage(0);
+    } catch (error) {
+      console.error("Error daily wallet usage:", error);
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error("Error daily wallet usage:", error);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
 
 
   useEffect(() => {
     dailyAmountUsage(); // Fetch data when the component mounts or when date range changes
   }, [startsDate, endsDate]);
-  
+
   //==================================daily amount usage end================================
 
 
@@ -286,7 +287,7 @@ const [totalWalletUsage, setTotalWalletUsage] = useState(0);
       setIsLoading(false);
     }
   };
-  
+
 
   const servicesDailyUsage = ["whatsapp", "voice", "rcs", "sms"];
 
@@ -745,6 +746,7 @@ const [totalWalletUsage, setTotalWalletUsage] = useState(0);
       </Dialog>
       {/* Add Integrations End */}
 
+
       {/* daily use */}
 
       {/* <div className="flex items-center justify-center">
@@ -809,6 +811,10 @@ const [totalWalletUsage, setTotalWalletUsage] = useState(0);
       {/* daily use */}
 
       {/* <ParticleRing /> */}
+      {/* Account expiry format start */}
+      <AccountExpiryFormat />
+      {/* Account expiry format end */}
+
 
       {/* Service Usage Overview start */}
       <motion.div

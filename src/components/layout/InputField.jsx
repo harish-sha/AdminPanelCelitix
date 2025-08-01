@@ -16,9 +16,15 @@ const InputField = ({
   // noSpaces = false,
   tooltipPlacement = "top",
   readOnly = false,
-  disabled = false,
-  maxLength,
-  onKeyDown = () => {},
+  style = {},
+  maxLength = "",
+  accept = "",
+  required = false,
+  // max = { maxLength },
+  className = "",
+  ref = null,
+  divClassName = "",
+  disabled = false
 }) => {
   // const handleChange = (e) => {
   //     let inputValue = e.target.value;
@@ -29,7 +35,7 @@ const InputField = ({
   // };
 
   return (
-    <div className="w-full">
+    <div className={`w-full ${divClassName}`}>
       {label && (
         <div className="flex items-center gap-2 mb-2">
           <label htmlFor={id} className="text-sm font-medium text-gray-700">
@@ -57,17 +63,18 @@ const InputField = ({
         onChange={onChange}
         placeholder={placeholder}
         readOnly={readOnly}
+        style={style}
         disabled={disabled}
         maxLength={maxLength}
-        className={`block w-full p-1.5 border  rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${
-          error ? "border-red-500" : "border-gray-300"
-        } ${disabled ? "bg-gray-200 cursor-not-allowed" : "bg-white"}`}
-        onKeyDown={onKeyDown}
+        className={`block w-full  p-1.5 h-[2.275rem] border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${className} ${error ? "border-red-500" : "border-gray-300"
+          }`}
+        accept={accept}
+        ref={ref}
+        inputMode={type === "number" ? "numeric" : "text"}
       />
 
       {error && <p className="mt-1 text-sm text-red-500">{errorText}</p>}
     </div>
   );
 };
-
 export default InputField;

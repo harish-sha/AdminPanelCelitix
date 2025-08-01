@@ -9,6 +9,9 @@ import UniversalAccountInfo from "../../profile/components/UniversalAccountInfo"
 import CustomTooltip from "../../components/common/CustomTooltip";
 import celitixLogo from "../../assets/images/celitix-cpaas-solution-logo.svg";
 import { useUser } from "@/context/auth";
+// import { FiAlertCircle } from "react-icons/fi";
+import { FiAlertCircle, FiMessageSquare, FiSmartphone, FiSend } from "react-icons/fi";
+import moment from "moment";
 
 import {
   AccountBalanceWalletOutlined as WalletIcon,
@@ -27,6 +30,8 @@ import {
 import { fetchBalance } from "../../apis/settings/setting";
 import { collapse } from "@material-tailwind/react";
 import { useDownload } from "@/context/DownloadProvider";
+import { getaccountInfo } from "@/apis/user/user";
+import { Dialog } from "primereact/dialog";
 
 const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   const { authLogout, user } = useUser();
@@ -117,21 +122,10 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     // console.log("isCollapsed", isCollapsed);
   }, [isCollapsed]);
 
+
   return (
     <nav className="flex items-center w-full px-4 bg-white h-14 lg:h-16 md:h-15">
       <div className="flex items-center gap-4">
-        {/* <button
-          onClick={toggleSidebar}
-          className="text-gray-700 focus:outline-none cursor-pointer"
-        > */}
-        {/* <FaBars /> */}
-        {/* <label className="hamburger">
-          <input type="checkbox" checked={!isCollapsed} onChange={(event) => { setIsCollapsed((prev) => !prev) }} />
-          <svg viewBox="0 0 32 32">
-            <path className="line line-top-bottom" d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"></path>
-            <path className="line" d="M7 16 27 16"></path>
-          </svg>
-        </label> */}
         <input
           className="toggle-checkbox"
           id="toggle"
@@ -151,6 +145,28 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
         {/* <span className="text-xl font-medium tracking-wider text-gray-800 lg:block">Celitix</span> */}
         <img src={celitixLogo} width={120} height={80} alt="Celitix Logo" />
       </div>
+
+      {/* {isAccountExpired && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="flex items-center justify-center text-center border px-4 py-1 rounded-2xl shadow-xl bg-red-50 border-red-400 ml-100"
+        >
+          <FiAlertCircle className="text-red-600 text-2xl mr-4" />
+          <div>
+            <p className="text-sm font-semibold text-gray-800">
+              Your account has expired on :&nbsp;
+              <span className="text-red-600" >
+                {expiryDate?.toLocaleDateString()}
+              </span>
+            </p>
+            <p className="text-xs text-gray-600">
+              Please contact the admin to renew or reactivate your account.
+            </p>
+          </div>
+        </motion.div>
+      )} */}
 
       {!isMobile ? (
         <div className="flex gap-3 ml-auto">
@@ -455,13 +471,15 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
         </div>
       )}
 
-      {showModal && (
-        <UniversalAccountInfo
-          show={showModal}
-          handleClose={() => setShowModal(false)}
-        />
-      )}
-    </nav>
+      {
+        showModal && (
+          <UniversalAccountInfo
+            show={showModal}
+            handleClose={() => setShowModal(false)}
+          />
+        )
+      }
+    </nav >
   );
 };
 

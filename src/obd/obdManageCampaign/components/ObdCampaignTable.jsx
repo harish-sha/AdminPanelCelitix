@@ -175,6 +175,7 @@ const ObdCampaignTable = ({
         { field: "voiceType", headerName: "Voice Type", flex: 1, minWidth: 120 },
         { field: "date", headerName: "Date", flex: 1, minWidth: 120 },
         { field: "processFlag", headerName: "Status", flex: 1, minWidth: 120 },
+        { field: "total", headerName: "Total Audience", flex: 1, minWidth: 120 },
         {
             field: "action",
             headerName: "Action",
@@ -262,6 +263,7 @@ const ObdCampaignTable = ({
                 sn: currentPageIndex * pageSize + (index + 1),
                 campaignName: item.campaignName || "N/A",
                 campaignType: item.campaignType || "N/A",
+                total: item.total || "N/A",
                 voiceType:
                     item.voiceType === 1
                         ? "Transactional"
