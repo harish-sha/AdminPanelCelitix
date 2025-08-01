@@ -245,12 +245,12 @@ export const Whatsapp = () => {
 
     const payload = {
       wabaSrno: selectedWabaData?.wabaSrno || "",
-      templateSrno: selectedTemplateData?.templateSrno || "",
+      templateId: selectedTemplateData?.templateSrno || "",
       mediaPath: imageFile || "",
       variableList: contentValues || "",
       urlVariable: "",
-      reminderSrno: "0",
-      whatsappReminderSrno: "0",
+      reminderSrno: "2",
+      srno: "0",
       templateType: selectedTemplateData?.type,
       templateName: selectedTemplateData?.templateName,
       templateLanguage: selectedLanguage,
@@ -260,7 +260,7 @@ export const Whatsapp = () => {
     };
 
     try {
-      const res = await saveNotification("whatsapp", data);
+      const res = await saveNotification("whatsapp", payload);
       if (!res?.success) {
         return toast.error(res?.message);
       }

@@ -189,7 +189,7 @@ export const RCS = () => {
 
     const payload = {
       agent: campaignDetails?.agent,
-      templateSrno: campaignDetails?.templateSrno,
+      templateId : campaignDetails?.templateSrno,
       variableList: allVar,
       variables: variables,
       reminderSrno: "23",

@@ -112,11 +112,11 @@ export const SMS = () => {
     const payload = {
       entityId: inputDetails?.entityId,
       senderid: inputDetails?.senderId,
-      templateSrno: inputDetails?.templateId,
+      templateId : inputDetails?.templateId,
       smsMessage: messages,
       isUnicode: inputDetails?.unicode,
       reminderSrno: "0",
-      smsReminderSrno: "0", //for save pass it as 0 or skip  // for update get value
+      srno: "0", 
       notificationStatus: "on",
     };
     try {
