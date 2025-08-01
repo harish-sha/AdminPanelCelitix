@@ -258,10 +258,9 @@ const AddService = () => {
     // console.log(destination);
   };
   const registereddeliveryoption = [
-    { label: "Default [null]", value: "Default" },
-    { label: "No SMSC Delivery Receipt Requested", value: "Default" },
-    { label: "Delivery Success or Failure", value: "Default" },
-    { label: "Delivery Failure", value: "Default" },
+    { label: "No SMSC Delivery Receipt Requested", value: 0 },
+    { label: "Delivery Success or Failure", value: 1 },
+    { label: "Delivery Failure", value: 2 },
   ];
 
   const handleAddRegisteredDelivery = (delivery) => {
