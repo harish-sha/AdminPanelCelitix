@@ -26,7 +26,6 @@ import { fetchAllUsers, fetchUserSrno } from "@/apis/admin/admin";
 import { exportToExcel } from "@/utils/utills";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 
-
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -71,7 +70,7 @@ const TransactionsUser = () => {
     useState("");
 
   const [allUsers, setAllUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState("");
+  const [selectedUser, setSelectedUser] = useState("-1");
 
   const [filterData, setFilterData] = useState({
     rechargeType: 0,
@@ -84,22 +83,23 @@ const TransactionsUser = () => {
     //fetchAllUsersDetails
     if (user.role === "ADMIN") {
       const fetchAllUsersDetails = async () => {
-        // const data = {
-        //   userId: "",
-        //   mobileNo: "",
-        //   companyName: "",
-        //   status: "-1",
-        // };
         const data = {
-          userSrno: "",
+          userSrno: "-1",
           date: "",
-          // companyName: "",
-          // status: "-1",
         };
         try {
           setIsFetching(true);
           const res = await fetchUserSrno(data);
-          setAllUsers(res);
+          const defaultOption = {
+            userName: "ALL",
+            srNo: "-1",
+          };
+
+          const sortedData = res
+            .slice()
+            .sort((a, b) => a.userName.localeCompare(b.userName));
+          const allUser = [defaultOption, ...sortedData];
+          setAllUsers(allUser);
         } catch (e) {
           // console.log(e);
           toast.error("Something went wrong! Please try again later.");
@@ -123,7 +123,6 @@ const TransactionsUser = () => {
         toDate: moment(filterData.toDate).format("YYYY-MM-DD"),
       };
 
-
       setIsFetching(true);
       const res = await fetchTransactions(payload);
       setTransactionalData(res);
@@ -133,6 +132,10 @@ const TransactionsUser = () => {
       setIsFetching(false);
     }
   };
+
+  useEffect(() => {
+    handleSearch();
+  }, [selectedUser]);
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, width: 70 },
@@ -184,10 +187,10 @@ const TransactionsUser = () => {
 
   const rows = Array.isArray(transactionalData)
     ? transactionalData.map((item, index) => ({
-      ...item,
-      sn: index + 1,
-      id: index + 1,
-    }))
+        ...item,
+        sn: index + 1,
+        id: index + 1,
+      }))
     : [];
 
   const multiHistory = [
@@ -348,14 +351,10 @@ const TransactionsUser = () => {
                   //   label: user.userName,
                   //   value: user.srNo,
                   // }))}
-                  options={allUsers
-                    .slice()
-                    .sort((a, b) => a.userName.localeCompare(b.userName))
-                    .map((user) => ({
-                      label: user.userName,
-                      value: user.srNo,
-                    }))
-                  }
+                  options={allUsers.map((user) => ({
+                    label: user.userName,
+                    value: user.srNo,
+                  }))}
                   value={selectedUser}
                   onChange={setSelectedUser}
                   placeholder="Select User"
