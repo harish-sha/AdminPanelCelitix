@@ -459,13 +459,13 @@ const ManageInstaProfile = () => {
         userAceessToken={userAceessToken}
         setUserAccessToken={setUserAccessToken}
       />
-      {/* <div className="bg-blue-50 w-full min-h-screen text-gray-800 dark:text-white p-10">
+       <div className="bg-blue-50 w-full min-h-screen text-gray-800 dark:text-white p-10">
         {selectedProfile
           ? renderSingleProfile(selectedProfile)
           : userProfileDetails?.length === 1
             ? renderSingleProfile(userProfileDetails[0])
             : renderMultipleProfiles()}
-      </div> */}
+      </div> 
     </>
   );
 };

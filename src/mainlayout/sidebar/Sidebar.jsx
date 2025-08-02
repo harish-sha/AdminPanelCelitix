@@ -27,6 +27,8 @@ import clicktwocall from "../../assets/icons/Click2Call02.svg";
 import { LuWandSparkles } from "react-icons/lu";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import Insight from "@/instagram/Insight/Insight";
+import QuickreplyOutlinedIcon from '@mui/icons-material/QuickreplyOutlined';
+
 
 
 import { useUser } from "@/context/auth";
@@ -216,6 +218,19 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     },
     {
       id: "",
+      name: "chatManagement",
+      icon: <QuickreplyOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
+      label: "Live Chat",
+      type: "dropdown",
+      links: [
+        { to: "/liveChatMain/", label: "Chats" },
+        { to: "/combineLiveChatSettings", label: "Chats Settings" },
+        { to: "/cannedmessagemanager", label: "Canned Message" },
+      ],
+      roles: ["ADMIN"],
+    },
+    {
+      id: "",
       name: "Number Lookup",
       icon: <img src={numberlookup} className="w-4 h-4" />,
       label: "Number Lookup",
@@ -327,13 +342,13 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
           label: "Manage Profile",
         },
         { to: "/instalivechats", label: "Live Chats" },
-        { to: "/manageinstatemplate", label: "Templates" },
-        { to: "/instaadsmanager", label: "Ads Manager" },
-        { to: "/instareport", label: "Reports" },
+        // { to: "/manageinstatemplate", label: "Templates" },
+        // { to: "/instaadsmanager", label: "Ads Manager" },
+        // { to: "/instareport", label: "Reports" },
         { to: "/commentmoderation", label: "Comment Moderation" },
         { to: "/instasettings", label: "Settings" },
-        {to: "/insight", label: "Insight"},
-        { to: "/createpost", label: "Create Post" }
+        { to: "/insight", label: "Insight" },
+        // { to: "/createpost", label: "Create Post" }
       ],
     },
     {

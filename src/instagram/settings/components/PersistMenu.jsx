@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import InputField from "@/whatsapp/components/InputField";
 import UniversalButton from "@/components/common/UniversalButton";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import UniversalInstaButton from "@/instagram/components/UniversalInstaButton";
 
 const PersistMenu = () => {
   const [menuName, setMenuName] = useState("");
@@ -99,7 +100,8 @@ const PersistMenu = () => {
               className="w-46 text-sm"
             />
             <div className="w-max-content flex flex-col items-center">
-              <UniversalButton onClick={handleAddMenuItem} label="Add" />
+              {/* <UniversalButton onClick={handleAddMenuItem} label="Add" /> */}
+              <UniversalInstaButton onClick={handleAddMenuItem} label="Add" />
               <div className="text-xs font-semibold mt-1">
                 Total PersistMenu: {persistMenuItems.length}/5
               </div>

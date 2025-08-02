@@ -11,6 +11,7 @@ import { FaVideo } from "react-icons/fa";
 import { Chip } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { FaRegFaceSmile } from "react-icons/fa6";
+import UniversalInstaButton from "@/instagram/components/UniversalInstaButton";
 
 export default function IceBreaker() {
   const [messageText, setMessageText] = useState("");
@@ -101,7 +102,8 @@ export default function IceBreaker() {
             />
           </div>
           <div className="w-max-content flex flex-col items-center">
-            <UniversalButton label="Add" onClick={handleAdd} />
+            {/* <UniversalButton label="Add" onClick={handleAdd} /> */}
+            <UniversalInstaButton onClick={handleAdd} label="Add" />
             <div className="text-xs font-semibold mt-1">
               Total IceBreaker: {qaList.length}/4
             </div>

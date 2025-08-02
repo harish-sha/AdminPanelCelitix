@@ -170,6 +170,23 @@ export const PermissionRoute = ({ children }) => {
       roles: ["ADMIN"],
     },
     {
+      name: "chatManagement",
+      links: [
+        "/liveChatMain/",
+        "/combineLiveChatSettings",
+        "/liveChatMain/wlivechat",
+        "/liveChatMain/rcslivechats",
+        "/liveChatMain/instagram",
+        "/liveChatMain/messengerchats",
+        "/liveChatMain/instalivechats",
+        "/combineLiveChatSettings/wlcsetting",
+        "/combineLiveChatSettings/rcslcsetting",
+        "/combineLiveChatSettings/instalcsetting",
+        "/combineLiveChatSettings/messengerlcsetting",
+      ],
+      roles: ["ADMIN"],
+    },
+    {
       name: "API Docs",
       links: "/docs",
       roles: ["ADMIN"],
@@ -249,11 +266,12 @@ export const PermissionRoute = ({ children }) => {
       if (item.name === "mainSettings") {
         allowedServices.push(item);
       }
-
+      if (item.name === "chatManagement") {
+        allowedServices.push(item);
+      }
       if (item.name === "instagram") {
         allowedServices.push(item);
       }
-
     });
 
     return allowedServices;

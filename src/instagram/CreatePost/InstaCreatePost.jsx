@@ -1,5 +1,10 @@
-import {useState,useRef} from 'react'
-
+import React, { useState, useRef } from 'react';
+import { Dialog } from 'primereact/dialog';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation,Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 const FILTERS = [
   { name: 'Normal', style: '' },
@@ -10,6 +15,7 @@ const FILTERS = [
   { name: 'Crema', style: 'contrast(0.9) brightness(1.1)' },
   { name: 'Aden', style: 'hue-rotate(20deg) brightness(1.1)' },
 ];
+
 
 const InstaCreatePost = () => {
   const [step, setStep] = useState(0);
@@ -25,12 +31,18 @@ const InstaCreatePost = () => {
   const [location, setLocation] = useState('');
   const [adjustmentTab, setAdjustmentTab] = useState('filters');
   const [aspectRatio, setAspectRatio] = useState('original');
-  const fileInputRef = useRef(null);
+  const [showDiscardDialog, setShowDiscardDialog] = useState(false);
 
+  const fileInputRef = useRef(null);
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     const urls = files.map((file) => URL.createObjectURL(file));
+    const totalImages = urls.length;
+    if (totalImages > 10) {
+      alert("You can upload a maximum of 10 images.");
+      return;
+    }
     setImages(urls);
     setStep(1);
   };
@@ -75,7 +87,23 @@ const InstaCreatePost = () => {
  <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="w-full max-w-4xl h-[500px] bg-white rounded-xl shadow-xl flex overflow-hidden transition-all duration-300">
         {step === 0 && (
-          <div className="flex-1 flex flex-col justify-center items-center">
+          <div
+            className="flex-1 flex flex-col justify-center items-center border-2 border-dashed border-gray-300 rounded-md p-10"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              const files = Array.from(e.dataTransfer.files);
+              if (files.length > 10) {
+                alert("You can upload a maximum of 10 images.");
+                return;
+              }
+              const urls = files.map((file) => URL.createObjectURL(file));
+              setImages(urls);
+              setStep(1);
+
+
+            }}
+          >
             <p className="text-xl font-semibold mb-4">Create new post</p>
             <input
               type="file"
@@ -91,39 +119,78 @@ const InstaCreatePost = () => {
             >
               Select from computer
             </button>
+            <p className="text-gray-400 text-sm mt-2">or drag & drop here</p>
           </div>
         )}
 
         {step > 0 && (
           <>
+
             <div className="flex-1 bg-black relative" style={getImageContainerStyle()}>
-              {images.length > 0 && (
-                <img
-                  src={images[activeIndex]}
-                  alt="Preview"
-                  className="object-contain"
-                  style={filteredStyle}
-                />
-              )}
+              <Swiper
+                spaceBetween={10}
+                slidesPerView={1}
+                onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+                className="h-full"
+                pagination={{
+                  clickable: true,
+                }}
+                modules={[Navigation, Pagination]}
+                navigation
+              >
+                {images.map((img, i) => (
+                  <SwiperSlide key={i}>
+                    <img
+                      src={img}
+                      alt={`Preview ${i}`}
+                      className="object-contain w-full h-full"
+                      style={filteredStyle}
+                    />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
             </div>
 
             <div className="w-[300px] bg-white overflow-y-auto border-l border-gray-200">
               {/* Top Bar */}
               {step === 3 ? (
-                <div className="flex justify-between items-center px-4 py-2 border-b text-sm font-medium">
+                <div className="flex justify-between items-center px-4 py-2 border-b text-sm font-medium cursor-pointer">
                   <button onClick={() => setStep(2)}>←</button>
                   <span>Create new post</span>
                   <button className="text-blue-600" onClick={() => alert("Post shared!")}>Share</button>
                 </div>
               ) : (
-                <div className="flex justify-between items-center border-b px-4 py-2">
-                  {step > 1 && <button onClick={() => setStep((prev) => prev - 1)}>←</button>}
-                  <p className="font-medium">
-                    {step === 1 ? 'Crop & Zoom' : step === 2 && adjustmentTab === 'filters' ? 'Filters' : 'Adjustments'}
-                  </p>
+
+
+                <div className="flex items-center justify-between border-b px-4 py-2">
+                  <div className="flex items-center gap-2">
+                    {/* <button
+                      onClick={() => setShowDiscardDialog(true)}
+                      className="text-xl text-gray-700"
+                    >
+                      ←
+                    </button> */}
+
+                    <button
+                      onClick={() => {
+                        if (step === 1) {
+                          setShowDiscardDialog(true);
+                        } else {
+                          setStep(step - 1);
+                        }
+                      }}
+                      className="text-xl text-gray-700 cursor-pointer"
+                    >
+                      ←
+                    </button>
+                    {/* <p className="font-medium">Crop & Zoom</p> */}
+                    <p className="font-medium">
+                      {step === 1 ? "Crop & Zoom" : step === 2 ? "Edit" : ""}
+                    </p>
+                  </div>
                   <button
                     onClick={() => setStep((prev) => prev + 1)}
-                    className="px-4 py-2 rounded-md transition border border-blue-500 text-blue-500 hover:bg-blue-100"
+                    className="px-4 py-2 rounded-md transition border border-blue-500 text-blue-500 cursor-pointer hover:bg-blue-100"
                   >
                     Next
                   </button>
@@ -132,7 +199,11 @@ const InstaCreatePost = () => {
 
               {/* Step 1: Zoom and Aspect Ratio */}
               {step === 1 && (
+
                 <div className="p-4 space-y-4">
+                  <button onClick={() => setShowDiscardDialog(true)} className="absolute top-16 right-6">Discard</button>
+                  {/* Add below button near left side of Crop & Zoom on top bar*/}
+                  {/* <button onClick={() => setShowDiscardDialog(true)}>←</button> */}
                   <div>
                     <p className="text-sm">Zoom</p>
                     <input
@@ -152,23 +223,92 @@ const InstaCreatePost = () => {
                         <button
                           key={option.value}
                           onClick={() => setAspectRatio(option.value)}
-                          className={`px-3 py-1 rounded-md text-sm transition ${
-                            aspectRatio === option.value
-                              ? 'bg-blue-500 text-white'
-                              : 'border border-gray-300 text-gray-700 hover:bg-gray-100'
-                          }`}
+                          className={`px-3 py-1 rounded-md text-sm transition ${aspectRatio === option.value
+                            ? 'bg-blue-500 text-white'
+                            : 'border border-gray-300 text-gray-700 hover:bg-gray-100'
+                            }`}
                         >
                           {option.label}
                         </button>
                       ))}
                     </div>
                   </div>
+
+                  {/* Upload multiple images */}
+                  <div className="mt-4">
+                  
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-sm font-medium">Add more images</label>
+                      {images.length >= 10 && (
+                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                          {images.length}/10 images uploaded
+                        </span>
+                      )}
+                    </div>
+
+                    {images.length < 10 && (
+                      <>
+                        <input
+                          type="file"
+                          id="add-more-images"
+                          multiple
+                          accept="image/*"
+                          onChange={(e) => {
+                            const files = Array.from(e.target.files);
+                            const total = images.length + files.length;
+
+                            if (total > 10) {
+                              alert("You can upload a maximum of 10 images.");
+                              return;
+                            }
+
+                            const urls = files.map((file) => URL.createObjectURL(file));
+                            setImages((prev) => [...prev, ...urls]);
+                          }}
+                          className="hidden"
+                        />
+                        <button
+                          onClick={() => document.getElementById('add-more-images').click()}
+                          className="px-4 py-2 rounded-md transition bg-green-500 text-white hover:bg-green-600 text-sm"
+                        >
+                        (+)  Add more images
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  {images.length > 0 && (
+                    <div className="mt-4">
+                      <p className="text-sm font-medium mb-2">All Uploaded Images</p>
+                      <div className="flex flex-wrap gap-3">
+                        {images.map((img, i) => (
+                          <div key={i} className="relative w-20 h-20 border rounded overflow-hidden">
+                            <img src={img} alt={`img-${i}`} className="object-cover w-full h-full" />
+                            <button
+                              onClick={() => {
+                                const newImages = images.filter((_, idx) => idx !== i);
+                                setImages(newImages);
+                                if (activeIndex >= newImages.length) {
+                                  setActiveIndex(newImages.length - 1);
+                                }
+                              }}
+                              className="absolute -top-0 -right-0 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center shadow"
+                              title="Remove"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* Step 2: Filters / Adjustments */}
               {step === 2 && (
                 <div className="p-4">
+                  <button onClick={() => setShowDiscardDialog(true)} className="absolute top-16 right-6">Discard</button>
                   {/* Toggle Tabs */}
                   <div className="flex space-x-4 mb-4">
                     <button
@@ -261,6 +401,7 @@ const InstaCreatePost = () => {
               {/* Step 3: Caption */}
               {step === 3 && (
                 <div className="p-4 space-y-4">
+                  <button onClick={() => setShowDiscardDialog(true)} className="absolute top-16 right-6">Discard</button>
                   <div>
                     <label className="block text-sm mb-1">Caption</label>
                     <textarea
@@ -283,6 +424,46 @@ const InstaCreatePost = () => {
             </div>
           </>
         )}
+
+
+        {showDiscardDialog && (
+
+          <Dialog
+            header="Discard Post?"
+            draggable={false}
+            visible={showDiscardDialog}
+            onHide={() => setShowDiscardDialog(false)}
+            style={{ width: '550px' }}
+         
+          >
+            <div className="p-1 ">
+              {/* <h2 className="text-xl font-semibold">Discard Post?</h2> */}
+              <p className="m-0">Are you sure you want to discard this post?</p>
+               
+               <div className="flex flex-col gap-2 mt-4">
+                 <button
+                  className="px-2 py-2 text-gray-800 border border-gray-300 cursor-pointer rounded"
+                  onClick={() => setShowDiscardDialog(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-2 py-2 text-red-500 border border-gray-300 cursor-pointer rounded"
+                  onClick={() => {
+                    setImages([]);
+                    setStep(0);
+                    setShowDiscardDialog(false);
+                  }}
+                >
+                  Discard
+                </button>
+               </div>
+              </div>
+            
+          </Dialog>
+
+        )}
+
       </div>
     </div>
   )

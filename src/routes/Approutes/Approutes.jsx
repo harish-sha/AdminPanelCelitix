@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 
 // mainlayout
 import Mainlayout from "@/mainlayout/Mainlayout";
@@ -164,6 +164,7 @@ import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
 // import { AddCallback } from "@/callback/page/addCallback";
 import ResellerDashboard from "../../ResellerDashboard";
+import LiveChatLayout from "@/CombineLiveChats/pages/LiveChatLayout";
 
 
 
@@ -320,8 +321,8 @@ const Approutes = () => {
         <Route path="/instaadsmanager" element={<InstaAdsManager />} />
         <Route path="/instasettings" element={<InstaSettings />} />
         <Route path="/commentmoderation" element={<CommentModeration />} />
-        <Route path= "/insight" element={<Insight/>} />
-        <Route path= "/createpost" element={<InstaCreatePost/>} />
+        <Route path="/insight" element={<Insight />} />
+        <Route path="/createpost" element={<InstaCreatePost />} />
 
         {/* Appauthenticator */}
         <Route path="/authreports" element={<AppauthenticatorReports />} />
@@ -336,6 +337,13 @@ const Approutes = () => {
           <Route path="emaillsettings" element={<EmailSetting />} />
         </Route>
         <Route path="/emailreports" element={<EmailReport />} />
+
+        {/* Combine Live Chat */}
+        <Route path="liveChatMain" element={<LiveChatLayout />}>
+          {/* <Route index element={<LiveChatDashboard />} /> */}
+          <Route index element={<Navigate to="wlivechat" replace />} />
+          <Route path=":channel" element={<Outlet />} />
+        </Route>
 
         {/* Lead Manager */}
         <Route path="leadmanagement" element={<LeadManager />}>

@@ -13,6 +13,7 @@ import AddIcon from "@mui/icons-material/Add";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import { FaRegFaceSmile } from "react-icons/fa6";
 import ClearIcon from "@mui/icons-material/Clear";
+import UniversalInstaButton from "@/instagram/components/UniversalInstaButton";
 
 const WelcomeMsgAd = () => {
   const [flowName, setFlowName] = useState("");
@@ -155,7 +156,8 @@ const WelcomeMsgAd = () => {
               </div>
 
               <div className="w-max-content">
-                <UniversalButton onClick={handleAddMenuItem} label="Add" />
+                {/* <UniversalButton onClick={handleAddMenuItem} label="Add" /> */}
+                <UniversalInstaButton onClick={handleAddMenuItem} label="Add" />
               </div>
             </div>
 

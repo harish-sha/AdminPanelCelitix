@@ -168,7 +168,7 @@ export default function EmbeddedInstagram({ setStep, userAceessToken, setUserAcc
         backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
       }}
       transition={{
-        duration: 40,
+        duration: 20,
         ease: "easeInOut",
         repeat: Infinity,
       }}

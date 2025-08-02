@@ -5,6 +5,7 @@ import InputField from "@/whatsapp/components/InputField";
 import UniversalTextArea from "@/whatsapp/components/UniversalTextArea";
 import { TfiReload } from "react-icons/tfi";
 import toast from "react-hot-toast";
+import UniversalInstaButton from "@/instagram/components/UniversalInstaButton";
 
 const IgMe = () => {
   const [username, setUsername] = useState("");
@@ -66,7 +67,8 @@ const IgMe = () => {
           value={referral}
           onChange={(e) => setReferral(e.target.value)}
         />
-        <UniversalButton label="Generate Link" onClick={handleGenerateQR} />
+        {/* <UniversalButton label="Generate Link" onClick={handleGenerateQR} /> */}
+        <UniversalInstaButton onClick={handleGenerateQR} label="Generate Link" />
       </div>
 
       {/* Instagram Short Link Card */}
