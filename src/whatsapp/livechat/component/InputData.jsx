@@ -8,12 +8,13 @@ import {
   Button,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FaChevronCircleRight } from "react-icons/fa";
 import { FaChevronUp } from "react-icons/fa";
 import { FaChevronCircleLeft } from "react-icons/fa";
 import { FaFilter } from "react-icons/fa";
 import { CiMenuKebab } from "react-icons/ci";
+import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 export const InputData = ({
   setSearch,
   search,
@@ -25,10 +26,29 @@ export const InputData = ({
   setChatState,
   setSelectedWaba,
   setIsSubscribed,
-  // setSelectedWaba
+
+  setSelectedAgent,
+  selectedAgent,
+  agentList,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+
+  const [showFilter, setShowFilter] = useState(false);
+  const panelRef = useRef(null);
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (panelRef.current && !panelRef.current.contains(e.target)) {
+        setShowFilter(false);
+      }
+    }
+    if (showFilter) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showFilter]);
 
   const handleChipClick = () => {
     setOpenDialog(true);
@@ -136,7 +156,7 @@ export const InputData = ({
               onClick={() => setIsOpen(false)}
               className="absolute -left-3 top-4 transform -translate-y-1/2 z-50 text-3xl text-gray-700 hover:text-blue-500 animate-pulse"
             >
-              <FaChevronCircleLeft className="text-2xl"/>
+              <FaChevronCircleLeft className="text-2xl" />
             </button>
           )}
           {/* Sliding Panel */}
@@ -208,8 +228,34 @@ export const InputData = ({
               </button>
             </div>
             <div className="flex items-center gap-2 mt-1">
-              <FaFilter  />
+              <button onClick={() => setShowFilter((v) => !v)}>
+                <FaFilter className="cursor-pointer hover:text-blue-600 transition" />
+              </button>
               <CiMenuKebab />
+
+              {showFilter && (
+                <div
+                  ref={panelRef}
+                  className="absolute right-0 top-10 mt-2 w-62 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+                >
+                  <div className="p-4">
+                    <DropdownWithSearch
+                      id="selectAgent"
+                      name="selectAgent"
+                      value={selectedAgent}
+                      label={"Select Agent"}
+                      onChange={(e) => {
+                        setSelectedAgent(e);
+                        setShowFilter((v) => !v);
+                      }}
+                      options={agentList?.data?.map((item) => ({
+                        value: item.sr_no,
+                        label: item.name,
+                      }))}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
