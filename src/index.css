@@ -1,8 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import 'lenis/dist/lenis.css'
-
-@custom-variant dark (&:is(.dark *));
+@import "lenis/dist/lenis.css" @custom-variant dark (&: is(.dark *));
 
 * {
   font-family: "Poppins", sans-serif;
@@ -546,10 +544,15 @@ a {
   -text-fill-color: transparent;
 }
 
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 
-
-
-
-
-
-
+.spin-slow {
+  animation: spin-slow 3s linear infinite;
+}

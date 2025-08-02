@@ -7,7 +7,6 @@ import Lottie from "lottie-react";
 import instagram_Icon from "@/assets/animation/Instagram_icon.json";
 import Instagram from "@/assets/animation/Instagram.json";
 
-
 export const ChatSidebar = ({ formatDate, chatState, setChatState }) => {
   const isLoading =
     chatState &&
@@ -37,13 +36,13 @@ export const ChatSidebar = ({ formatDate, chatState, setChatState }) => {
   });
 
   return (
-    <div className="h-[78vh] mt-2 max-h-full bg-[#fafafa] rounded-2xl border-r-3 border-b-3 border-[#F1D3CE]">
+    <div className="h-[78vh] mt-2 max-h-full bg-[#fafafa]">
       {!chatState?.allConversations?.length && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="flex flex-col items-center justify-center h-full text-center text-gray-500"
+          className="flex flex-col items-center justify-center h-full text-center text-gray-500 "
         >
           <motion.div
             initial={{ y: -10 }}
@@ -59,7 +58,7 @@ export const ChatSidebar = ({ formatDate, chatState, setChatState }) => {
               animationData={Instagram}
               loop
               autoplay
-              className="w-60 h-45"
+              className="w-auto h-38"
             />
           </motion.div>
           <motion.p
@@ -108,10 +107,11 @@ export const ChatSidebar = ({ formatDate, chatState, setChatState }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
-                className={`group p-4 rounded-xl cursor-pointer transition-all duration-200 mb-2 shadow-sm  ${chatState?.active === chat.original.name
-                  ? "bg-gradient-to-r from-[#F1D3CE] to-[#EECAD5] text-white"
-                  : "bg-gradient-to-br from-[#BCCCDC] to-[#9AA6B2] hover:from-pink-200 hover:to-[#F1D3CE] text-gray-800"
-                  }`}
+                className={`group p-4 rounded-xl cursor-pointer transition-all duration-200 mb-2 shadow-sm  ${
+                  chatState?.active === chat.original.name
+                    ? "bg-gradient-to-r from-[#F1D3CE] to-[#EECAD5] border-l-6 border-[#ab7a89] text-white"
+                    : "bg-gradient-to-br from-[#BCCCDC] to-[#9AA6B2] hover:from-pink-200 hover:to-[#F1D3CE] text-gray-800"
+                }`}
                 onClick={() => {
                   setChatState((prev) => ({
                     ...prev,
@@ -141,8 +141,10 @@ export const ChatSidebar = ({ formatDate, chatState, setChatState }) => {
                         <div className="text-base font-medium truncate text-black">
                           {chat.original.name}
                         </div>
-                        <span className="text-[10px] text-gray-500 whitespace-nowrap ml-2">
-                          {lastMessage?.date || ""}
+                        
+                        <span className="text-[10px] text-gray-500 whitespace-nowrap">
+                          {/* {lastMessage?.date || ""} */}
+                          {chat.insertTime ? formatDate(chat.insertTime) : ""}
                         </span>
                       </div>
                       <p className="text-sm truncate w-full text-black">

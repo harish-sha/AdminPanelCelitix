@@ -24,7 +24,7 @@ const InstaLiveChats = ({
   selectedImage,
   handleSend,
   insertEmoji,
-  setAddTemplate
+  setAddTemplate,
 }) => {
   const [text, setText] = useState("");
   const [messages, setMessages] = useState([]);
@@ -49,8 +49,6 @@ const InstaLiveChats = ({
     const year = String(date.getFullYear()).slice(-2);
     return `${day}/${month}/${year}`;
   };
-
-
 
   const handleDelete = (index) => {
     setMessages((prev) => prev.filter((_, i) => i !== index));
@@ -126,27 +124,29 @@ const InstaLiveChats = ({
       <div className="flex flex-col md:flex-row h-[100%] bg-gray-50 rounded-2xl border overflow-hidden">
         {/* SIDEBAR */}
         <div
-          className={`w-full md:w-[38%] xl:w-[24%] ${chatState?.active ? "hidden md:block" : "block"
+          className={`w-full md:w-95 border-r-3 border-[#F1D3CE] ${chatState?.active ? "hidden md:flex" : "flex"
             }`}
         >
           {/* Search */}
-          <InputData
-            setSearch={setSearch}
-            search={search}
-            handleSearch={handleSearch}
-            setChatState={setChatState}
-            chatState={chatState}
-          />
+          <div className="flex flex-col w-full">
+            <InputData
+              setSearch={setSearch}
+              search={search}
+              handleSearch={handleSearch}
+              setChatState={setChatState}
+              chatState={chatState}
+            />
 
-          <ChatSidebar
-            setChatState={setChatState}
-            chatState={chatState}
-            formatDate={formatDate}
-          />
+            <ChatSidebar
+              setChatState={setChatState}
+              chatState={chatState}
+              formatDate={formatDate}
+            />
+          </div>
         </div>
 
         {/* CHAT AREA */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative  h-full">
           {!chatState.active && (
             <AnimatePresence>
               <motion.div

@@ -19,7 +19,71 @@ const ManageInstaProfile = () => {
   const [openPostDetails, setOpenPostDetails] = useState(false);
   const [selectedPost, setSelectedPost] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [openShare, setOpenShare] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
+  const handleSendPost = (user) => {
+    setOpenShare(false);
+    setSelectedUser(user)
+    setOpenPostDetails(false)
+  };
+
+  const instaUsers = [
+    {
+      username: "wanderlust_queen",
+      fullName: "Aarushi Sharma",
+      bio: "✈️ Globetrotter | Coffee Addict ☕ | Capturing Moments 📸",
+      profilePic: "https://randomuser.me/api/portraits/women/12.jpg",
+      followers: 12400,
+      following: 382,
+      posts: 76,
+      isVerified: true,
+    },
+    {
+      username: "techie_aj",
+      fullName: "Ajay Kumar",
+      bio: "💻 Frontend Dev | Open Source 💡 | Tweets → IG 📱",
+      profilePic: "https://randomuser.me/api/portraits/men/23.jpg",
+      followers: 8400,
+      following: 512,
+      posts: 102,
+      isVerified: false,
+    },
+    {
+      username: "petverse",
+      fullName: "Simran & Max 🐶",
+      bio: "Dog mom 🐾 | Daily pawsitivity 🐕 | #GoldenRetrieverLife",
+      profilePic: "https://randomuser.me/api/portraits/women/44.jpg",
+      followers: 15600,
+      following: 390,
+      posts: 144,
+      isVerified: false,
+    },
+    {
+      username: "fitness_junkie_92",
+      fullName: "Rahul Dev",
+      bio: "🏋️‍♂️ Trainer | Meal Preps | Hustle & Muscle 💪",
+      profilePic: "https://randomuser.me/api/portraits/men/56.jpg",
+      followers: 9900,
+      following: 610,
+      posts: 88,
+      isVerified: true,
+    },
+    {
+      username: "artistic.anvi",
+      fullName: "Anvi Choudhary",
+      bio: "🎨 Digital Artist | Commissions open | DM me ✉️",
+      profilePic: "https://randomuser.me/api/portraits/women/30.jpg",
+      followers: 5200,
+      following: 290,
+      posts: 47,
+      isVerified: false,
+    },
+  ];
+
+  const handleShare = () => {
+    setOpenShare(true);
+  };
 
   console.log("loaded:", loaded);
   const [value, setValue] = useState(0);
@@ -270,7 +334,11 @@ const ManageInstaProfile = () => {
               }}
             >
               {!loaded && (
-                <Skeleton height="100%" width="100%" className="absolute inset-0 z-0" />
+                <Skeleton
+                  height="100%"
+                  width="100%"
+                  className="absolute inset-0 z-0"
+                />
               )}
 
               {/* Media */}
@@ -288,8 +356,9 @@ const ManageInstaProfile = () => {
                   autoPlay
                   loop
                   playsInline
-                  className={`w-full h-full object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"
-                    }`}
+                  className={`w-full h-full object-cover transition-opacity duration-300 ${
+                    loaded ? "opacity-100" : "opacity-0"
+                  }`}
                   onLoadedData={() => setLoaded(true)}
                 />
               )}
@@ -359,10 +428,24 @@ const ManageInstaProfile = () => {
 
             {/* Metadata */}
             <div className="flex justify-between text-gray-700 text-sm font-medium">
-              <div className="flex items-center gap-1">
-                <span className="text-red-500">❤️</span>
-                <span>{selectedPost.likes}</span>
+              {/* Likes & Share */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1">
+                  <span className="text-red-500">❤️</span>
+                  <span>{selectedPost.likes}</span>
+                </div>
+
+                {/* Share button */}
+                <button
+                  onClick={() => setOpenShare((prev) => !prev)}
+                  className="flex items-center gap-1 hover:text-black transition"
+                >
+                  <span className="text-green-500">🔗</span>
+                  <span className="text-xs">Share</span>
+                </button>
               </div>
+
+              {/* Comments Count */}
               <div className="flex items-center gap-1">
                 <span className="text-blue-500">💬</span>
                 <span>{selectedPost.comments}</span>
@@ -385,6 +468,40 @@ const ManageInstaProfile = () => {
                     </li>
                   ))}
                 </ul>
+              </div>
+            )}
+
+            {/* 👇 Share List */}
+            {openShare && (
+              <div className="mt-2 max-h-48 overflow-y-auto bg-gray-50 rounded-md p-2">
+                <h4 className="font-semibold text-gray-800 mb-2">Share with</h4>
+                {instaUsers.map((user) => (
+                  <div
+                    key={user.username}
+                    onClick={() =>handleSendPost(user.username)}
+                    className={`flex items-center gap-4 p-2 border-b last:border-none cursor-pointer transition-colors ${
+                      selectedUser === user.username
+                        ? "bg-blue-100"
+                        : "hover:bg-gray-100"
+                    }`}
+                  >
+                    <img
+                      src={user.profilePic}
+                      alt={user.username}
+                      className="w-10 h-10 rounded-full"
+                    />
+                    <div>
+                      <div className="font-bold text-sm flex items-center gap-1">
+                        {user.username}
+                        {user.isVerified && (
+                          <span className="text-blue-500">✔️</span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500">{user.fullName}</p>
+                      <p className="text-xs text-gray-400">{user.bio}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -459,13 +576,13 @@ const ManageInstaProfile = () => {
         userAceessToken={userAceessToken}
         setUserAccessToken={setUserAccessToken}
       />
-       <div className="bg-blue-50 w-full min-h-screen text-gray-800 dark:text-white p-10">
+      <div className="bg-blue-50 w-full min-h-screen text-gray-800 dark:text-white p-10">
         {selectedProfile
           ? renderSingleProfile(selectedProfile)
           : userProfileDetails?.length === 1
-            ? renderSingleProfile(userProfileDetails[0])
-            : renderMultipleProfiles()}
-      </div> 
+          ? renderSingleProfile(userProfileDetails[0])
+          : renderMultipleProfiles()}
+      </div>
     </>
   );
 };

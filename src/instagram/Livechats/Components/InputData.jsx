@@ -78,7 +78,7 @@ export const InputData = ({
 
   return (
     <motion.div
-      className="p-3 rounded-b-2xl shadow-md"
+      className="px-3 py-2 rounded-b-2xl shadow-md"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
@@ -88,21 +88,21 @@ export const InputData = ({
           {!isOpen ? (
             <button
               onClick={() => setIsOpen(true)}
-              className="absolute -left-3 top-4 transform -translate-y-1/2 z-99 text-3xl text-gray-700 hover:text-blue-500 animate-pulse "
+              className="absolute -left-2 top-6 transform -translate-y-1/2 z-99 text-3xl text-gray-700 hover:text-blue-500 animate-pulse "
             >
               <FaChevronCircleRight className="text-2xl" />
             </button>
           ) : (
             <button
               onClick={() => setIsOpen(false)}
-              className="absolute -left-3 top-4 transform -translate-y-1/2 z-50 text-3xl text-gray-700 hover:text-blue-500 animate-pulse"
+              className="absolute -left-2 top-6 transform -translate-y-1/2 z-50 text-3xl text-gray-700 hover:text-blue-500 animate-pulse"
             >
               <FaChevronCircleLeft className="text-2xl" />
             </button>
           )}
 
           <div
-            className={`absolute top-0 -left-8 w-full md:w-88 shadow-lg z-40 transform transition-transform duration-300 md:ml-4 ${isOpen ? "translate-x-0 left-0" : "-translate-x-full"
+            className={`absolute top-2 -left-8 w-full md:w-72 shadow-lg z-40 transform transition-transform duration-300 md:ml-4 ${isOpen ? "translate-x-0 left-1" : "-translate-x-full"
               }`}
           >
             <AnimatedDropdown
@@ -149,11 +149,11 @@ export const InputData = ({
               placeholder="Select Instagram Account"
             />
           </div>
-
-
+        </div>
+        <div className="flex items-center justify-center gap-2 ml-5">
           <div
             id="input"
-            className="flex items-center w-full max-w-md mx-auto ml-2 px-4 py-2 border border-gray-300 rounded-full bg-white"
+            className="flex items-center w-full max-w-md mx-auto px-4 py-1 border border-gray-300 rounded-full bg-white"
           >
             <SearchOutlined className="text-gray-500 hover:text-blue-600 transition mr-2" />
             <input
@@ -181,12 +181,13 @@ export const InputData = ({
             >
               {/* <SearchOutlined className="text-gray-500 hover:text-blue-600 transition" /> */}
             </button>
-            <div className="flex items-center gap-2 mt-1">
-              <FaFilter />
-              <CiMenuKebab />
-            </div>
+          </div>
+          <div className="flex items-center gap-2 mt-1">
+            <FaFilter />
+            <CiMenuKebab />
           </div>
         </div>
+
       </div>
     </motion.div>
   );
