@@ -149,11 +149,12 @@ const ObdCampaignTable = ({
     };
 
     const handleDetailLogs = (row) => {
+        console.log("rows", row)
         navigate("/obdCampaignDetailslog", {
             state: {
-                campaignSrNo: row,
+                campaignSrNo: row.id,
                 id: "Obddetaillogs",
-                name: "ObdDetailLogs",
+                name: row.campaignName,
             },
         });
     };
@@ -238,7 +239,7 @@ const ObdCampaignTable = ({
                         placement="top"
                         arrow={true}
                     >
-                        <IconButton onClick={() => handleDetailLogs(params.row.id)}>
+                        <IconButton onClick={() => handleDetailLogs(params.row)}>
                             <DescriptionOutlinedIcon
                                 sx={{
                                     fontSize: "1.2rem",

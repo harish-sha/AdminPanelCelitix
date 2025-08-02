@@ -30,7 +30,7 @@ export const GenerateAiContent = ({
 
         // const message = ai?.text;
 
-       const message = `
+        const message = `
 You are an expert marketing AI that writes engaging marketing and promotional message templates.
 
 Style: ${style}
@@ -189,7 +189,8 @@ Write the message as a short marketing template message with a clear CTA if appl
                                         }));
                                     }}
                                     onKeyDown={(e) => {
-                                        if (e.key === "Enter") {
+                                        if (e.key === "Enter" && !e.shiftKey) {
+                                            e.preventDefault();
                                             handleGenerate();
                                         }
                                     }}

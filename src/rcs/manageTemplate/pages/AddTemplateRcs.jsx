@@ -21,6 +21,8 @@ import { AiOutlineClose } from "react-icons/ai";
 import { GenerateAiContent } from "@/components/common/CustomContentGenerate";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { Pdf } from "../components/Pdf";
+import LoadingOverlay from "@/components/loader/LoadingOverlay";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -45,6 +47,8 @@ const AddTemplateRcs = () => {
     thumbnail: "",
   });
 
+
+  const navigate = useNavigate();
 
   const [cardOrientation, setCardOrientation] = useState("");
 
@@ -651,6 +655,7 @@ const AddTemplateRcs = () => {
       });
 
       setBtnInputData({});
+      navigate("/rcsmanagetemplate");
     } catch (e) {
       toast.error("Something went wrong");
     } finally {
@@ -810,6 +815,15 @@ const AddTemplateRcs = () => {
             </div>
           )}
       </div>
+
+
+      {/* Loader */}
+      <LoadingOverlay
+        isOpen={isFetching}
+        variant="spinner"
+        text="Creating Template..."
+        size={480}
+      />
 
       <div className="flex flex-col justify-between gap-6 bg-gray-100 sm:flex-row lg:flex-row">
         <div className="w-full p-3 bg-white rounded-lg shadow-md ">

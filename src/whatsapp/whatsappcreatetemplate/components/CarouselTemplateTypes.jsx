@@ -131,7 +131,7 @@ const CarouselTemplateTypes = ({
           <textarea
             id="templateFormatCarouselTextarea"
             name="templateFormatCarouselTextarea"
-            className="w-full p-2 pr-8 h-24 border bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm"
+            className="w-full p-2 pr-8 h-34 border bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm"
             value={templateFormat}
             onChange={(e) => setTemplateFormat(e.target.value)}
             maxLength={1024}
@@ -156,8 +156,8 @@ const CarouselTemplateTypes = ({
             setAi={setAi}
             setIsOpen={setIsOpen}
             isOpen={isOpen}
-            right={1}
-            bottom={1}
+            right={10}
+            bottom={15}
             setMessageContent={setTemplateFormat}
             messageContent={templateFormat}
             length={2500}
