@@ -30,7 +30,7 @@ export const GenerateAiContent = ({
 
     // const message = ai?.text;
 
-    const message = `
+        const message = `
 You are an expert marketing AI that writes engaging marketing and promotional message templates.
 
 Style: ${style}
@@ -175,41 +175,41 @@ Write the message as a short marketing template message with a clear CTA if appl
                 </IconButton>
               </div>
 
-              <div className="flex items-center justify-center relative">
-                <textarea
-                  type="text"
-                  className="w-full p-2 py-3 border border-gray-200 focus:outline-none resize-none rounded-md text-sm pr-11 h-15 shadow-md"
-                  placeholder="e.g. Generate a welcome message..."
-                  maxLength="1000"
-                  value={ai.text}
-                  onChange={(e) => {
-                    setAi((prev) => ({
-                      ...prev,
-                      text: e.target.value,
-                    }));
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      handleGenerate();
-                    }
-                  }}
-                />
-                <button
-                  onClick={handleGenerate}
-                  disabled={ai?.typing}
-                  className=" cursor-pointer absolute right-0 text-white px-4 py-2 rounded-md transition disabled:opacity-50"
-                >
-                  {ai?.isGenerating ? (
-                    <LoopIcon className="animate-spin text-indigo-800" />
-                  ) : (
-                    <AutoFixHighOutlinedIcon className=" text-indigo-800" />
-                  )}
-                </button>
-              </div>
-              <div className="text-[#2b40b0] text-[0.8rem]">
-                Chars: {ai.text.length}/1000
-              </div>
+                            <div className="flex items-center justify-center relative">
+                                <textarea
+                                    type="text"
+                                    className="w-full p-2 py-3 border border-gray-200 focus:outline-none resize-none rounded-md text-sm pr-11 h-15 shadow-md"
+                                    placeholder="e.g. Generate a welcome message..."
+                                    maxLength="1000"
+                                    value={ai.text}
+                                    onChange={(e) => {
+                                        setAi((prev) => ({
+                                            ...prev,
+                                            text: e.target.value,
+                                        }));
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleGenerate();
+                                        }
+                                    }}
+                                />
+                                <button
+                                    onClick={handleGenerate}
+                                    disabled={ai?.typing}
+                                    className=" cursor-pointer absolute right-0 text-white px-4 py-2 rounded-md transition disabled:opacity-50"
+                                >
+                                    {ai?.isGenerating ? (
+                                        <LoopIcon className="animate-spin text-indigo-800" />
+                                    ) : (
+                                        <AutoFixHighOutlinedIcon className=" text-indigo-800" />
+                                    )}
+                                </button>
+                            </div>
+                            <div className="text-[#2b40b0] text-[0.8rem]">
+                                Chars: {ai.text.length}/1000
+                            </div>
 
               <div className="flex flex-wrap gap-2 text-sm">
                 <p className="w-full font-medium text-[#2b40b0]">

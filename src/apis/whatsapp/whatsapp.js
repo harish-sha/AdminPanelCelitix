@@ -689,3 +689,18 @@ export const deleteCannedMessageBySrNo = async (srNo) => {
     method: "DELETE",
   });
 };
+
+// unsubscribe report
+export const unsubscribeReport = async (data) => {
+  return await fetchWithAuth(`/report/getWabaUnsbscribeReport`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// remove unsubscribe number 
+export const deleteUnsubscribeNumber = async (srNo) => {
+  return await fetchWithAuth(`/report/deleteUnsubscribeReport?srNo=${srNo}`, {
+    method: "DELETE",
+  });
+};

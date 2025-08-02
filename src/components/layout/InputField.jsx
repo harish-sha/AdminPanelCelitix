@@ -16,11 +16,16 @@ const InputField = ({
   // noSpaces = false,
   tooltipPlacement = "top",
   readOnly = false,
-  disabled = false,
-  maxLength,
-  onKeyDown = () => {},
+  style = {},
+  maxLength = "",
   accept = "",
-  ref=null
+  required = false,
+  // max = { maxLength },
+  className = "",
+  ref = null,
+  divClassName = "",
+  disabled = false,
+  onKeyDown = null,
 }) => {
   // const handleChange = (e) => {
   //     let inputValue = e.target.value;
@@ -31,7 +36,7 @@ const InputField = ({
   // };
 
   return (
-    <div className="w-full">
+    <div className={`w-full ${divClassName}`}>
       {label && (
         <div className="flex items-center gap-2 mb-2">
           <label htmlFor={id} className="text-sm font-medium text-gray-700">
@@ -59,6 +64,7 @@ const InputField = ({
         onChange={onChange}
         placeholder={placeholder}
         readOnly={readOnly}
+        style={style}
         disabled={disabled}
         maxLength={maxLength}
         className={`block w-full p-1.5 border  rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${
@@ -73,5 +79,4 @@ const InputField = ({
     </div>
   );
 };
-
 export default InputField;

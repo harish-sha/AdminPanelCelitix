@@ -21,7 +21,7 @@ createRoot(document.getElementById("root")).render(
       {/* Prime React */}
       <PrimeReactProvider>
         {/* Error Boundary*/}
-        <ErrorBoundary>
+        {/* <ErrorBoundary> */}
           <DownloadProvider>
             <DndProvider backend={HTML5Backend}>
               <Provider store={store}>
@@ -30,7 +30,7 @@ createRoot(document.getElementById("root")).render(
               </Provider>
             </DndProvider>
           </DownloadProvider>
-        </ErrorBoundary>
+        {/* </ErrorBoundary> */}
       </PrimeReactProvider>
     </UserProvider>
   </StrictMode>

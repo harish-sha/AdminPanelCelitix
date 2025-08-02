@@ -122,7 +122,6 @@ export default function WhatsappLiveChat() {
   const [cardIndex, setCardIndex] = useState(0);
 
   const [chatIndex, setChatIndex] = useState(1);
-
   const [chatLoading, setChatLoading] = useState(false);
 
   function handleNextCard() {
@@ -495,6 +494,7 @@ export default function WhatsappLiveChat() {
   };
   async function handleFetchSpecificConversation(olderChatFetch = false) {
     // if (!chatIndex) return;
+    // console.log("chatIndex", chatIndex);
     setChatLoading(true);
     const payload = {
       mobileNo: chatState?.active?.mobileNo,
@@ -576,14 +576,20 @@ export default function WhatsappLiveChat() {
     } catch (e) {
       console.error("Error in handleFetchSpecificConversation:", e);
       toast.error("Error fetching specific conversation");
-    } finally {
-      setChatLoading(false);
     }
   }
 
   useEffect(() => {
     handleFetchSpecificConversation(true);
   }, [chatIndex]);
+
+  // useEffect(() => {
+  //   console.log(messageRef.current?.scrollTop);
+  //   console.log(messageRef.current?.scrollHeight);
+  //   if (messageRef.current) {
+  //     messageRef.current.scrollTop = messageRef.current.scrollHeight;
+  //   }
+  // }, [chatState?.active, specificConversation]);
 
   useEffect(() => {
     handleFetchSpecificConversation();
@@ -874,7 +880,7 @@ export default function WhatsappLiveChat() {
       // });
       await handleFetchSpecificConversation();
     } catch (e) {
-      toast.error("Error loading new chat");
+      oast.error("Error loading new chat");
     }
   }
   useEffect(() => {
@@ -1116,7 +1122,7 @@ export default function WhatsappLiveChat() {
               chatIndex={chatIndex}
               handleFetchSpecificConversation={handleFetchSpecificConversation}
               chatLoading={chatLoading}
-              // specificConversation={specificConversation}
+            // specificConversation={specificConversation}
             />
           </motion.div>
         )}

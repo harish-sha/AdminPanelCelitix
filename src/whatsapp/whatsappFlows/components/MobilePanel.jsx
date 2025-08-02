@@ -663,7 +663,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
               const buttonLabel = item.footer?.footer_1?.label || "Click me";
 
               return (
-                <div className="w-full max-w-80 text-center py-2 bottom-0 left-2 absolute">
+                <div className="w-full max-w-65 text-center py-2 bottom-2 fixed">
                   <p className="text-xs"> {centerCaption}</p>
                   <button className="w-full bg-green-700 text-white py-1 rounded-full hover:bg-green-800 transition-all">
                     {buttonLabel}

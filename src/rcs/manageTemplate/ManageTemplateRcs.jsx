@@ -139,6 +139,16 @@ const ManageTemplateRcs = () => {
     const url = URL.createObjectURL(blob);
     return url;
   }
+
+  function base64ToUrl(base64) {
+    const base64PDF = base64;
+    const byteCharacters = atob(base64PDF);
+    const byteNumbers = Array.from(byteCharacters).map((c) => c.charCodeAt(0));
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    return url;
+  }
   return (
     <div className="w-full">
       <div className="flex flex-wrap items-end justify-end w-full gap-4 pb-1 align-middle">
@@ -178,10 +188,10 @@ const ManageTemplateRcs = () => {
               { label: "Text", value: "text" },
               { label: "Image", value: "image" },
               { label: "Video", value: "video" },
-              // {
-              //   label: "Rich Card Stand Alone",
-              //   value: "richcardstandalone",
-              // },
+              {
+                label: "Text with PDF",
+                value: "text_message_with_pdf",
+              },
               // {
               //   label: "Rich Card Carausel",
               //   value: "richcardcarousel",

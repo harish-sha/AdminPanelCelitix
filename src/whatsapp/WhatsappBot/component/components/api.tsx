@@ -9,7 +9,7 @@ export const Api = ({
   allVariables,
   addNode,
   lastPosition,
-  nodes
+  nodes,
 }: {
   id: number;
   nodesInputData: any;

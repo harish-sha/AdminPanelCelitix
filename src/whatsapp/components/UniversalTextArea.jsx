@@ -77,9 +77,8 @@ const UniversalTextArea = ({
         maxLength={maxLength}
         minLength={minLength}
         disabled={disabled}
-        className={`w-full p-1.5 border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm  ${textareaClassName} ${className} ${
-          error ? "border-red-500" : "border-gray-300"
-        }`}
+        className={`w-full p-1.5 border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm  ${textareaClassName} ${className} ${error ? "border-red-500" : "border-gray-300"
+          }`}
       ></textarea>
       {error && (
         <p className="text-red-500 text-xs mt-1">This field is required.</p>
@@ -103,7 +102,7 @@ UniversalTextArea.defaultProps = {
   placeholder: "Type something...",
   error: false,
   textareaClassName: "",
-  onChange: () => {},
+  onChange: () => { },
 };
 
 export default UniversalTextArea;

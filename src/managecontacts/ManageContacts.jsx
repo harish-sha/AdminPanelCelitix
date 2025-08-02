@@ -93,7 +93,6 @@ const ManageContacts = () => {
   const [updateGrpId, setUpdateGrpId] = useState("");
   const [importContactFormVisible, setImportContactFormVisible] =
     useState(false);
-
   const [filePath, setFilePath] = useState("");
   const [editGrpVisible, setEditGrpVisible] = useState(false);
   const [updateContactDetails, setUpdateContactDetails] = useState("");
@@ -269,10 +268,10 @@ const ManageContacts = () => {
   }
 
   const handleAllAddContact = async () => {
-    if (!selectedMultiGroupContact) {
-      toast.error("Please select a group.");
-      return;
-    }
+    // if (!selectedMultiGroupContact) {
+    //   toast.error("Please select a group.");
+    //   return;
+    // }
 
     const requiredFields = [
       "firstName",
@@ -309,18 +308,19 @@ const ManageContacts = () => {
       allowishes: addContactDetails.allowishes === "enable" ? 1 : 0,
       status: 1,
       birthDate: addContactDetails.birthDate
-        ? moment(addContactDetails.birthDate).format("DD-MM-YYYY")
-        : "",
+        ? moment(addContactDetails.birthDate).format("YYYY-MM-DD")
+        : "1800-01-01",
       anniversaryDate: addContactDetails.mariageDate
-        ? moment(addContactDetails.mariageDate).format("DD-MM-YYYY")
-        : "",
+        ? moment(addContactDetails.mariageDate).format("YYYY-MM-DD")
+        : "1800-01-01",
     };
 
     try {
       // Call the API
       const response = await addContact(payload);
+      console.log("add contact resposne", response)
 
-      if (response.flag) {
+      if (response.flag == true) {
         // Success
         toast.success("Contact added successfully.");
         // await getContactListByGrpId({
@@ -658,8 +658,8 @@ const ManageContacts = () => {
       // 
       activeStatus: updateContactDetails.status,
       // key should check
-      birthDate: moment(updateContactDetails.birthDate).format("DD-MM-YYYY") || "",
-      anniversaryDate: moment(updateContactDetails.mariageDate).format("DD-MM-YYYY") || "",
+      birthDate: moment(updateContactDetails.birthDate).format("YYYY-MM-DD") || "1800-01-01",
+      anniversaryDate: moment(updateContactDetails.mariageDate).format("YYYY-MM-DD") || "1800-01-01",
       // allowishes: updatedContactDetails.allowishes || "",
       allowishes: updateContactDetails.allowishes,
     };
@@ -1281,7 +1281,7 @@ const ManageContacts = () => {
             gender: "",
             uniqueId: "",
           });
-          setSelectedMultiGroupContact(null);
+          // setSelectedMultiGroupContact(null);
         }}
       >
         <div className="space-y-4">
@@ -1429,7 +1429,7 @@ const ManageContacts = () => {
                 className="mt-0 text-sm font-medium text-gray-800"
               />
 
-              <div className="flex flex-wrap gap-2 ">
+              <div className="flex flex-wrap gap-2">
                 {/* Enable Option */}
                 <div className="flex-1 px-1 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-5 flex-wrap lg:flex-nowrap">

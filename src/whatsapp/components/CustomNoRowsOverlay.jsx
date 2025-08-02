@@ -14,7 +14,7 @@ const CustomNoRowsOverlay = () => {
             }}
         >
             <Typography variant="body2" color="textSecondary" sx={{ fontSize: "1.6rem", color: "#51a2ff", fontWeight: "500" }}>
-              No Data Available
+                No Data Available
             </Typography>
         </Box>
     );

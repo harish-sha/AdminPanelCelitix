@@ -106,8 +106,11 @@ function generateBotPayload(
       entry["type"] = finalType;
 
       // console.log("nodeInput?.options",nodeInput?.options)
+      // console.log("nodeInput?.options",nodeInput?.options)
       if (Array.isArray(nodeInput?.options)) {
         entry["listItems"] = nodeInput.options.map((item: any) => [
+          item?.option?.toString().trim() || "",
+          item?.value?.toString().trim() || "",
           item?.option?.toString().trim() || "",
           item?.value?.toString().trim() || "",
         ]);

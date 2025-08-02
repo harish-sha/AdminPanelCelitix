@@ -233,6 +233,17 @@ export const TemplateNode = ({
               ],
             };
           }
+          if (component.type === "button") {
+            return {
+              ...component,
+              parameters: [
+                {
+                  text: `{{${btnVar[index]}}}`,
+                  type: "text",
+                },
+              ],
+            };
+          }
           if (template.type === "image") {
             return {
               type: "HEADER",
@@ -328,6 +339,8 @@ export const TemplateNode = ({
     return null;
   };
 
+  
+
   return (
     <div className="w-full flex flex-col h-[calc(80vh-100px)]">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
@@ -356,6 +369,13 @@ export const TemplateNode = ({
                   input: [],
                   btn: [],
                   btnInput: [],
+                });
+                setLocationData({
+                  url: "",
+                  latitude: "",
+                  longitude: "",
+                  address: "",
+                  name: "",
                 });
                 setLocationData({
                   url: "",
@@ -439,6 +459,7 @@ export const TemplateNode = ({
                   id="name"
                   name="name"
                   label={"Name"}
+                  label={"Name"}
                   onChange={(e) => {
                     setLocationData((prev) => ({
                       ...prev,
@@ -452,6 +473,7 @@ export const TemplateNode = ({
                   maxLength={100}
                   id="address"
                   name="address"
+                  label={"Address"}
                   label={"Address"}
                   onChange={(e) => {
                     setLocationData((prev) => ({
@@ -482,6 +504,7 @@ export const TemplateNode = ({
             specificTemplate={specificTemplate}
             variablesData={variablesData}
             basicDetails={basicDetails}
+            locationData={locationData}
             locationData={locationData}
           />
         </div>

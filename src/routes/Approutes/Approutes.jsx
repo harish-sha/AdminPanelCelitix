@@ -4,6 +4,7 @@ import {
   Routes,
   Route,
   Outlet,
+  Navigate,
 } from "react-router-dom";
 
 // mainlayout
@@ -171,6 +172,9 @@ import LiveChatDashboard from "@/CombineLiveChats/pages/LiveChatDashboard";
 import LiveChatLayout from "@/CombineLiveChats/pages/LiveChatLayout";
 import CombineLiveChatSettings from "@/CombineLiveChats/pages/CombineLiveChatSettings";
 import Pointingup from "@/CombineLiveChats/components/Settings/Pointingup";
+
+// Unsubscribe
+import Unsubscribe from "@/whatsapp/unsubscribe/Unsubscribe";
 
 // dummy
 import Dummy from "../../dummy/Dummy";
@@ -369,16 +373,20 @@ const Approutes = () => {
 
         {/* Combine Live Chat */}
         <Route path="liveChatMain" element={<LiveChatLayout />}>
-          <Route index element={<LiveChatDashboard />} />
+          {/* <Route index element={<LiveChatDashboard />} /> */}
+          <Route index element={<Navigate to="wlivechat" replace />} />
           <Route path=":channel" element={<Outlet />} />
         </Route>
 
         {/* Combine Live Chat setting */}
         <Route path="combineLiveChatSettings" element={<CombineLiveChatSettings />}>
-          <Route index element={<Pointingup />} />
+          {/* <Route index element={<Pointingup />} /> */}
+          <Route index element={<Navigate to="wlcsetting" replace />} />
           <Route path=":channel" element={<Outlet />} />
         </Route>
-        
+
+        {/* unsubscribe */}
+        <Route path="unsubscribe" element={<Unsubscribe />} />
       </Route>
 
       <Route path="dummy" element={<Dummy />} />

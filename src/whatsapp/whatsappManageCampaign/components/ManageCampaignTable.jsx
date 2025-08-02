@@ -493,6 +493,7 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
       flex: 1,
       minWidth: 120,
       renderCell: (params) => params.row.templateType?.toUpperCase(),
+      renderCell: (params) => params.row.templateType?.toUpperCase(),
     },
     {
       field: "status",

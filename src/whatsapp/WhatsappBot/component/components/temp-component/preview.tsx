@@ -75,6 +75,7 @@ export const Preview = ({
     }
   };
 
+
   const MediaRenderer = ({ format, fileUrl, fallbackUrl }) => {
     if (format === "image") {
       return (

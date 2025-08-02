@@ -4,6 +4,7 @@ import { MdExpandLess, MdExpandMore, MdOutlineEmail } from "react-icons/md";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import BlockOutlinedIcon from "@mui/icons-material/BlockOutlined";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
+import UnsubscribeOutlinedIcon from '@mui/icons-material/UnsubscribeOutlined';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaHome, FaSignOutAlt, FaWhatsapp } from "react-icons/fa";
 import { IoPersonOutline } from "react-icons/io5";
@@ -215,14 +216,14 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         // { to: "/wmanageoptin", label: "Manage Optin" },
         // { to: "/wchatwidget", label: "Chat Widget" },
         { to: "/wqrcode", label: "QR Code" },
-        { to: "/wlcsetting", label: "Live Chats Settings" },
+        // { to: "/wlcsetting", label: "Live Chats Settings" },
         { to: "/wmanagewaba", label: "Manage WABA" },
         { to: "/wwhatsappconversation", label: "WhatsApp Conversation" },
         { to: "/wwhatsappmanageagent", label: "Manage Agent" },
         { to: "/wwhatsappbot", label: "Manage Bot" },
         { to: "/wwhatsappflows", label: "Manage Flows" },
         // { to: "/wblockuser", label: "Block User" },
-        { to: "/cannedmessagemanager", label: "Canned Message" },
+        // { to: "/cannedmessagemanager", label: "Canned Message" },
         // { to: "/wmmlite", label: "MM Lite" },
         { to: "/createwhatsappbot", label: "Create Bot", isHide: true },
         { to: "/wcampaigndetailsreport", label: "Create Bot", isHide: true },
@@ -231,6 +232,19 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/wflowcreation", label: "Create Whatsapp Flow", isHide: true },
       ],
       roles: ["ADMIN", "DIRECTUSER"],
+    },
+    {
+      id: "",
+      name: "chatManagement",
+      icon: <QuickreplyOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
+      label: "Live Chat",
+      type: "dropdown",
+      links: [
+        { to: "/liveChatMain/", label: "Chats" },
+        { to: "/combineLiveChatSettings", label: "Chats Settings" },
+        { to: "/cannedmessagemanager", label: "Canned Message" },
+      ],
+      roles: ["ADMIN"],
     },
     {
       id: "",
@@ -346,19 +360,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     },
     {
       id: "",
-      name: "chatManagement",
-      icon: <QuickreplyOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
-
-      label: "Chats Management",
-      type: "dropdown",
-      links: [
-        { to: "/liveChatMain/", label: "Chats Section" },
-        { to: "/combineLiveChatSettings", label: "Chats Settings" },
-      ],
-      roles: ["ADMIN"],
-    },
-    {
-      id: "",
       name: "Managecontacts",
       icon: <GroupOutlinedIcon fontSize="20" />,
       label: "Manage Contacts",
@@ -366,6 +367,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       to: "/managecontacts",
       roles: ["ADMIN", "DIRECTUSER"],
     },
+    // {
+    //   id: "",
+    //   name: "Unsubscribe",
+    //   icon: <UnsubscribeOutlinedIcon fontSize="20" />,
+    //   label: "Unsubscribe",
+    //   type: "single",
+    //   to: "/unsubscribe",
+    //   roles: ["ADMIN", "DIRECTUSER"],
+    // },
     // {
     //   id: "",
     //   name: "Leadmanagement",

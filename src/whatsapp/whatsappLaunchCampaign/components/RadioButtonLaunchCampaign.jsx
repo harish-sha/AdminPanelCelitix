@@ -5,8 +5,8 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 import { RadioButton } from "primereact/radiobutton";
 import { Dropdown } from "primereact/dropdown";
 import toast from "react-hot-toast";
-import * as XLSX from "xlsx";
 import { LuWorkflow } from "react-icons/lu";
+import * as XLSX from "xlsx";
 
 import {
   campaignUploadFile,
@@ -17,6 +17,8 @@ import AnimatedDropdown from "../../components/AnimatedDropdown.jsx";
 import "../whatsappLaunch.css";
 import DropdownWithSearch from "../../components/DropdownWithSearch.jsx";
 import { CiSettings } from "react-icons/ci";
+
+
 
 function RadioButtonLaunchCampaign({
   onOptionChange,
@@ -249,6 +251,7 @@ function RadioButtonLaunchCampaign({
         onFileUpload(
           response.filepath,
           response.headers || [],
+          response.headers || [],
           totalRecords,
           selectedCountryCode,
           selectedMobileColumn
@@ -331,6 +334,7 @@ function RadioButtonLaunchCampaign({
                 htmlFor="radioOption1"
                 className="text-sm font-medium text-gray-700 cursor-pointer"
               >
+                Select Groups
                 Select Groups
               </label>
             </div>
@@ -700,6 +704,7 @@ function RadioButtonLaunchCampaign({
           </div>
         </div>
       )}
+
     </div>
   );
 }

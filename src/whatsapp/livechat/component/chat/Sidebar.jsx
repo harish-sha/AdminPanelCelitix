@@ -151,6 +151,7 @@ export const ChatSidebar = ({
                   agentName: agentName,
                 }));
                 setChatIndex(1);
+                setChatIndex(1);
                 setSelectedAgentList(chat?.agentSrno);
                 setSelectedGroupList(grpSrno);
               }}

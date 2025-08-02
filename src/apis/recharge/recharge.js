@@ -6,11 +6,10 @@ export const rechargeCreateOrderCashFree = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
 export const verifyRechargeStatus = async (data) => {
   return await fetchWithAuth("/cashfree/verify", {
     method: "POST",
     body: JSON.stringify(data),
   });
 };
-
-

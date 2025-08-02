@@ -156,7 +156,7 @@ export const PermissionRoute = () => {
           "/transactions",
           "/tagmanager",
           "/selfrecharge",
-          "/instagram/reel"
+          "/unsubscribe"
         ],
         roles: ["ADMIN"],
       },

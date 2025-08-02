@@ -263,15 +263,15 @@ const ObdCreateCampaign = () => {
       }
     }
 
-    if (!retry) {
-      toast.error("Please select a retry value.");
-      return;
-    }
+    // if (!retry) {
+    //   toast.error("Please select a retry value.");
+    //   return;
+    // }
 
-    if (!interval) {
-      toast.error("Please select an interval value.");
-      return;
-    }
+    // if (!interval) {
+    //   toast.error("Please select an interval value.");
+    //   return;
+    // }
 
     // 2. Validate group/import contact
     //  if (selectedOption === "") {
@@ -742,7 +742,7 @@ const ObdCreateCampaign = () => {
                             const value = e.target.value;
                             if (value.length <= 1000) setTTSArea(value);
                           }}
-                          className="w-full p-2 border h-40 border-gray-300 rounded-md"
+                          className="w-full p-2 pr-6 border h-40 border-gray-300 rounded-md"
                           placeholder="Enter text..."
                           label="Voice Text"
                           tooltipContent="enter voice text"
@@ -861,8 +861,8 @@ const ObdCreateCampaign = () => {
                         />
 
                         {slectedDynamicVoiceFile && (
-                          <div className="border-2 p-2 rounded-md border-dashed border-gray-500 relative">
-                            <div className="text-red-800 text-xs font-medium text-center">
+                          <div className="border-2 p-2 rounded-md border-dashed border-gray-500 relative bg-white shadow">
+                            <div className="text-red-800 text-xs font-medium text-center ">
                               Please fill all the variable fields! (remaining
                               sequence are the voice clips)
                             </div>
@@ -1095,7 +1095,7 @@ const ObdCreateCampaign = () => {
                 <p className="">{totalGroupNumbers || totalRecords}</p>
               </div>
 
-              <div>
+              {/* <div>
                 <InputField
                   id="testingmobilenumber"
                   name="testingmobilenumber"
@@ -1105,7 +1105,7 @@ const ObdCreateCampaign = () => {
                   placeholder="Testing Number"
                   tooltipContent="Enter Single mobile number for test"
                 />
-              </div>
+              </div> */}
               <div className="flex items-center gap-2">
                 <Checkbox
                   inputId="scheduleCheckbox"

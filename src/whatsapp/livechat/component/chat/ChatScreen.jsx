@@ -29,6 +29,7 @@ import {
   blockUser,
 } from "@/apis/whatsapp/whatsapp";
 import CircularProgress from "@mui/material/CircularProgress";
+import { LuHistory } from "react-icons/lu";
 
 import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
@@ -47,7 +48,7 @@ import { MdBlock } from "react-icons/md";
 import { CgUnblock } from "react-icons/cg";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import BotPreview from "../BotPreview";
-import { LuHistory } from "react-icons/lu";
+
 
 export const ChatScreen = ({
   setVisibleRight,

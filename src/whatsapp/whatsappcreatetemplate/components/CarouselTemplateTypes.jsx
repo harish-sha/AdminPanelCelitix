@@ -22,6 +22,7 @@ const CarouselTemplateTypes = ({
   uploadImageFile,
   setFileUploadUrl,
   setvariables,
+  ref,
 }) => {
   const [file, setFile] = useState(null);
   const [lastUploadedFileName, setLastUploadedFileName] = useState("");
@@ -130,11 +131,12 @@ const CarouselTemplateTypes = ({
           <textarea
             id="templateFormatCarouselTextarea"
             name="templateFormatCarouselTextarea"
-            className="w-full p-2 pr-8 h-24 border bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm"
+            className="w-full p-2 pr-8 h-34 border bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm"
             value={templateFormat}
             onChange={(e) => setTemplateFormat(e.target.value)}
             maxLength={1024}
             placeholder="Enter template format"
+            ref={ref}
           />
           <div className="absolute top-0 right-0 mt-2 mr-2 flex space-x-2 ">
             <CustomEmojiPicker
@@ -154,8 +156,8 @@ const CarouselTemplateTypes = ({
             setAi={setAi}
             setIsOpen={setIsOpen}
             isOpen={isOpen}
-            right={1}
-            bottom={1}
+            right={10}
+            bottom={15}
             setMessageContent={setTemplateFormat}
             messageContent={templateFormat}
             length={2500}
@@ -166,8 +168,8 @@ const CarouselTemplateTypes = ({
             templateFormat={templateFormat}
             setTemplateFormat={setTemplateFormat}
             onUpdateVariables={updateVariables}
+            ref={ref}
           />
-
         </div>
       </div>
 

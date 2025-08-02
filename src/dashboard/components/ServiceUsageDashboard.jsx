@@ -318,11 +318,11 @@ export default function ServiceUsageDashboard() {
                   "bg-yellow-50",
                 ],
               }[service.toLowerCase()] || [
-                "from-gray-100",
-                "to-gray-300",
-                "text-black-600",
-                "bg-gray-50",
-              ];
+                  "from-gray-100",
+                  "to-gray-300",
+                  "text-black-600",
+                  "bg-gray-50",
+                ];
 
               const [from, to, txt, bg] = palette;
 
@@ -338,11 +338,10 @@ export default function ServiceUsageDashboard() {
                   }
                   className={`
                     flex flex-col sm:flex-row items-center sm:gap-2 gap-0 w-full px-2 py-2 rounded-lg transition cursor-pointer
-                         ${
-                           selected
-                             ? `bg-gradient-to-r ${from} ${to} ${txt} shadow-md`
-                             : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                         }
+                         ${selected
+                      ? `bg-gradient-to-r ${from} ${to} ${txt} shadow-md`
+                      : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                    }
                     `}
                 >
                   <span
@@ -370,9 +369,8 @@ export default function ServiceUsageDashboard() {
               <button
                 key={type}
                 onClick={() => setChartType(type)}
-                className={`flex items-center justify-center gap-2 px-3 py-1 rounded-md ${
-                  chartType === type ? "bg-[#687efa] text-white" : "bg-gray-100"
-                }`}
+                className={`flex items-center justify-center gap-2 px-3 py-1 rounded-md ${chartType === type ? "bg-[#687efa] text-white" : "bg-gray-100"
+                  }`}
               >
                 {ICON_MAP[type] || <span className="w-5" />}
                 {/* label */}
@@ -395,11 +393,10 @@ export default function ServiceUsageDashboard() {
                 <div
                   key={item}
                   onClick={() => setFilter(item)}
-                  className={`relative px-4 py-1.5 rounded-full border cursor-pointer overflow-hidden transition-colors duration-300 ${
-                    filter === item
-                      ? "text-white scale-105"
-                      : "bg-white text-gray-700"
-                  }`}
+                  className={`relative px-4 py-1.5 rounded-full border cursor-pointer overflow-hidden transition-colors duration-300 ${filter === item
+                    ? "text-white scale-105"
+                    : "bg-white text-gray-700"
+                    }`}
                 >
                   <span className="relative z-10">{item?.toUpperCase()}</span>
                   <span

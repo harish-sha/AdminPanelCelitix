@@ -12,17 +12,18 @@ import {
   FaUserClock,
   FaBolt,
 } from "react-icons/fa";
+import { RiDashboardLine } from "react-icons/ri";
 import { FaAngleDoubleDown } from "react-icons/fa";
 import { FaAngleDoubleUp } from "react-icons/fa";
 import { useUser } from "@/context/auth";
 
 const channels = [
-  {
-    service_type_id: "1",
-    label: "Dashboard",
-    value: "",
-    icon: <FaThLarge className="text-gray-500 text-lg" />,
-  },
+  // {
+  //   service_type_id: "1",
+  //   label: "Dashboard",
+  //   value: "",
+  //   icon: <RiDashboardLine className="text-blue-400 text-xl" />,
+  // },
   {
     service_type_id: "2",
     label: "WhatsApp",

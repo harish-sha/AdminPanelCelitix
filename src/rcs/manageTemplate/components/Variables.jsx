@@ -127,9 +127,9 @@ export const Variables = ({
       localStorage.getItem("variables") || "[]"
     );
 
-    const updatedVariables = [...storedVariables, variableInput];
+    const updatedVariables = [...storedVariables, variableInput.trim()];
 
-    setUserVariables((prevVars) => [...prevVars, variableInput]);
+    setUserVariables((prevVars) => [...prevVars, (variableInput).trim()]);
     localStorage.setItem("variables", JSON.stringify(updatedVariables));
     setVariableInput("");
     setIsRefresh(true);

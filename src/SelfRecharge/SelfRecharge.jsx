@@ -3,10 +3,7 @@ import { load } from "@cashfreepayments/cashfree-js";
 import toast from "react-hot-toast";
 import Lottie from "lottie-react";
 import rechargeAnim from "../assets/animation/recharge.json";
-import {
-  rechargeCreateOrderCashFree,
-  verifyRechargeStatus,
-} from "@/apis/recharge/recharge";
+import { rechargeCreateOrderCashFree, verifyRechargeStatus } from "@/apis/recharge/recharge";
 
 export default function RechargeFullWidth() {
   const [cashfree, setCashfree] = useState(null);
@@ -68,11 +65,23 @@ export default function RechargeFullWidth() {
           order_meta: {
             // return_url: `${domain}/payment-status?order_id=${orderId}`,
             return_url: `${domain}/selfrecharge`,
-            notify_url:
-              "https://webhook.site/fe86c8d7-fa74-4ad7-819c-af7b9f612511",
+            // notify_url:
+            //   "https://webhook.site/fe86c8d7-fa74-4ad7-819c-af7b9f612511",
           },
-        };
-        const res = await rechargeCreateOrderCashFree(payload);
+        }
+        const res = await rechargeCreateOrderCashFree(payload)
+        // if (res?.status === true && res?.paymentSessionId) {
+        //   setPaymentSessionId(res.paymentSessionId);
+        //   const result = await cashfree.checkout({
+        //     paymentSessionId: res.paymentSessionId,
+        //     redirectTarget: "_modal",
+        //   });
+        //   console.log("final result", result)
+        // } else {
+        //   console.error("Missing paymentSessionId in response:", res);
+        //   toast.error("Failed to create payment session.");
+        //   return;
+        // }
 
         if (res?.cashfree_error?.code) {
           const message =
@@ -95,45 +104,10 @@ export default function RechargeFullWidth() {
           paymentSessionId,
           redirectTarget: "_modal",
         });
-
-        // if (res?.status === true && res?.paymentSessionId) {
-        //   setPaymentSessionId(res.paymentSessionId);
-        //   cashfree
-        //     .checkout({
-        //       paymentSessionId: res.paymentSessionId,
-        //       redirectTarget: "_modal",
-        //     })
-        //     .then((result) => {
-        //       if (result.error) {
-        //         // This will be true whenever user clicks on close icon inside the modal or any error happens during the payment
-        //         console.log(
-        //           "User has closed the popup or there is some payment error, Check for Payment Status"
-        //         );
-        //         console.log(result.error);
-        //       }
-        //       if (result.redirect) {
-        //         // This will be true when the payment redirection page couldnt be opened in the same window
-        //         // This is an exceptional case only when the page is opened inside an inAppBrowser
-        //         // In this case the customer will be redirected to return url once payment is completed
-        //         console.log("Payment will be redirected");
-        //       }
-        //       if (result.paymentDetails) {
-        //         // This will be called whenever the payment is completed irrespective of transaction status
-        //         console.log(
-        //           "Payment has been completed, Check for Payment Status"
-        //         );
-        //         console.log(result.paymentDetails.paymentMessage);
-        //       }
-        //     });
-        // } else {
-        //   console.error("Missing paymentSessionId in response:", res);
-        //   toast.error("Failed to create payment session.");
-        //   return;
-        // }
-
         const rechargeStatus = await verifyRechargeStatus({
           order_id: orderId,
         });
+
 
         if (rechargeStatus?.status !== "received") {
           return toast.error("Payment Failed!");
@@ -246,6 +220,7 @@ export default function RechargeFullWidth() {
                 type="tel"
                 placeholder="Enter your phone number"
                 value={phone}
+                // onChange={(e) => setPhone(e.target.value)}
                 onChange={(e) => {
                   const numberRegex = /^[0-9]*$/;
                   if (numberRegex.test(e.target.value)) {

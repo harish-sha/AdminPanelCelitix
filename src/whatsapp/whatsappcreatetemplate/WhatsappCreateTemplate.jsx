@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useOutletContext } from "react-router-dom";
@@ -25,6 +25,7 @@ import {
 // import { te } from "date-fns/locale";
 import CustomTooltip from "../components/CustomTooltip.jsx";
 import { AiOutlineInfoCircle } from "react-icons/ai";
+import LoadingOverlay from "@/components/loader/LoadingOverlay.jsx";
 // import ca from "date-fns/esm/locale/ca/index.js";
 
 const WhatsappCreateTemplate = () => {
@@ -69,6 +70,8 @@ const WhatsappCreateTemplate = () => {
       uploadUrl: "",
     },
   ]);
+
+  const textAreaRef = useRef(null)
   const [variables, setVariables] = useState([]);
   const [templatePreview, setTemplatePreview] = useState("");
   const [carouselMediaType, setCarouselMediaType] = useState("");
@@ -667,6 +670,7 @@ const WhatsappCreateTemplate = () => {
         // return
         setIsLoading(true);
         toast.success("Template submitted successfully!");
+        // return
         setSelectedWaba("");
         setSelectedCategory("");
         setSelectedLanguage("");
@@ -740,11 +744,11 @@ const WhatsappCreateTemplate = () => {
 
   return (
     <div className="w-full">
-      {isLoading ? (
+      {/* {isLoading ? (
         <>
           <Loader />
         </>
-      ) : (
+      ) : ( */}
         <>
           <div className="w-full">
             <div className="">
@@ -889,6 +893,13 @@ const WhatsappCreateTemplate = () => {
                 </div>
               </div>
             </div>
+            {/* Loader */}
+            <LoadingOverlay
+              isOpen={isFetching}
+              variant="spinner"
+              text="Creating Template..."
+              size={480}
+            />
 
             {selectedWaba && selectedCategory ? (
               selectedCategory === "AUTHENTICATION" ? (
@@ -977,6 +988,7 @@ const WhatsappCreateTemplate = () => {
                                 setFileUploadUrl={setFileUploadUrl}
                                 uploadImageFile={uploadImageFile}
                                 setvariables={setVariables}
+                                ref={textAreaRef}
                               />
                               <CarouselInteractiveActions
                                 cards={cards}
@@ -1157,7 +1169,7 @@ const WhatsappCreateTemplate = () => {
             )}
           </div>
         </>
-      )}
+      {/* // )} */}
     </div>
   );
 };
