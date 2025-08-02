@@ -11,8 +11,11 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { useNavigate } from "react-router-dom";
 
 export const Reports = () => {
+  const navigate = useNavigate();
+
   const [selectedDate, setSelectedDate] = useState(null);
   const [rows, setRows] = useState([]);
 
@@ -30,7 +33,6 @@ export const Reports = () => {
 
       setRows(formattedRow);
     } catch (e) {
-      console.log(e);
       toast.error("Something went wrong");
     }
   }
@@ -73,7 +75,12 @@ export const Reports = () => {
       renderCell: (params) => (
         <>
           <CustomTooltip title="View Flow Repies" placement="top" arrow>
-            <IconButton className="no-xs" onClick={() => {}}>
+            <IconButton
+              className="no-xs"
+              onClick={() => {
+                handleShowSpecificReplies(params.row);
+              }}
+            >
               <VisibilityIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -87,24 +94,15 @@ export const Reports = () => {
     },
   ];
 
+  async function handleShowSpecificReplies(row) {
+    const data = {
+      flowName: row.flow_name || "",
+      templateName: row.template_name || "",
+      campaignSrno: row.campaign_srno || "",
+    };
+    navigate(`/whatsapp/flow-replies`, { state: { data } });
+  }
   useEffect(() => {
-    // async function aa() {
-    //   const res = await getFlowReplyList("2025-07-31");
-
-    //   const payload = {
-    //     flowName: res[0]?.flow_name || "",
-    //     templateName: res[0]?.template_name || "",
-    //     campaignSrno: res[0]?.campaign_srno || "",
-    //   };
-
-    //   const resss = await getFlowSampleRequest(payload);
-
-    //   console.log(res);
-
-    //   console.log("resss", resss);
-    // }
-    // aa();
-
     getAllFlowReplyList();
   }, []);
 

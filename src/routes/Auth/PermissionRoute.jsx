@@ -67,6 +67,7 @@ export const PermissionRoute = () => {
           "/wmmlite",
           "/wflowedit",
           "/cannedmessagemanager",
+          "/whatsapp/flow-replies"
         ],
         roles: ["ADMIN"],
       },

@@ -181,6 +181,7 @@ import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
 import { ReelPost } from "@/Instagram/InstagramLiveChat/reels";
 import { WorkFlowIndex } from "@/whatsapp/whatsappFlows/Pages";
+import { FlowReplies } from "@/whatsapp/whatsappFlows/Pages/replies";
 
 const Approutes = () => {
   return (
@@ -270,6 +271,7 @@ const Approutes = () => {
         <Route path="wflowedit" element={<EditFlow />} />
         <Route path="wblockuser" element={<BlockUser />} />
         <Route path="wmmlite" element={<MmLite />} />
+        <Route path="/whatsapp/flow-replies" element={<FlowReplies />} />
 
         {/* RCS */}
         <Route path="sendrcs" element={<SendRcs />} />
