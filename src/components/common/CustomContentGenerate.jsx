@@ -189,7 +189,8 @@ Write the message as a short marketing template message with a clear CTA if appl
                                         }));
                                     }}
                                     onKeyDown={(e) => {
-                                        if (e.key === "Enter") {
+                                        if (e.key === "Enter" && !e.shiftKey) {
+                                            e.preventDefault();
                                             handleGenerate();
                                         }
                                     }}

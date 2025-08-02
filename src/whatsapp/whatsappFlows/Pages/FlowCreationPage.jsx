@@ -6,7 +6,7 @@ import MobilePanel from "../components/MobilePanel";
 import EditPanel from "../components/EditPanel";
 import UniversalButton from "../../components/UniversalButton";
 import { Box, Paper, Typography } from "@mui/material";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { TiFlowSwitch } from "react-icons/ti";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
@@ -24,6 +24,7 @@ import CustomTooltip from "@/components/common/CustomTooltip";
 import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOfflineOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import { addFlowItem, updateFlowItem } from "../redux/features/FlowSlice";
+import LoadingOverlay from "@/components/loader/LoadingOverlay";
 
 const FlowCreationPage = () => {
   const { state } = useLocation();
@@ -540,7 +541,7 @@ const FlowCreationPage = () => {
 
       if (res.flag === true && typeof res.msg === "string") {
         toast.success(res.msg);
-        // navigate("/wwhatsappflows"); // uncomment when navigation is needed
+        navigate("/wwhatsappflows"); // uncomment when navigation is needed
         return;
       }
 
@@ -745,6 +746,14 @@ const FlowCreationPage = () => {
         </div>
       </div>
 
+      {/* Loader */}
+      <LoadingOverlay
+        isOpen={isLoading}
+        variant="spinner"
+        text="Building Flow..."
+        size={480}
+      />
+
       {showErrors && (
         <Paper
           elevation={4}
@@ -845,9 +854,7 @@ const FlowCreationPage = () => {
         </motion.div>
       )}
 
-      {/* <div className="flex gap-2 items-start mt-3 "> */}
       <div className="flex flex-col gap-2 items-start mt-3 md:flex-row">
-
         {/* Siddebar */}
         <div className="flex-1 ">
           <Sidebar onAdd={handleAddItem} flexGrow={1} />

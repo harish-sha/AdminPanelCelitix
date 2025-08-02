@@ -122,6 +122,7 @@ const ResellerLogin = () => {
       const ipResponse = await getIpAddress();
       const domain = window.location.hostname;
       // const domain = "reseller.alertsnow.in";
+      // const domain = "sms.sandeshservices.com";
 
       setBasicDetails({
         systemInfo: uaResult.browser.name,

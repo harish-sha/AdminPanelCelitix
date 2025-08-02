@@ -265,11 +265,11 @@ const VariableManager = ({
   return (
     <div className="relative w-full ">
       {/* <p className="text-sm text-gray-500">{templateFormat.length}/1024</p> */}
-      <div className="flex items-center justify-end mb-4">
+      <div className="flex items-center justify-end mb-10">
         <button
           onClick={addVariable}
           disabled={btnDisabled}
-          className="bg-[#212529] text-white px-2 py-2 font-normal rounded-md text-sm hover:bg-[#434851] absolute"
+          className="bg-[#212529] text-white px-2 py-2 font-normal rounded-md text-sm hover:bg-[#434851] absolute top-0"
         >
           Add Variable
         </button>
@@ -291,7 +291,7 @@ const VariableManager = ({
               }
               placeholder={`Enter value for {{${variable.id}}}`}
               className="w-full p-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              // maxLength={10}
+            // maxLength={10}
             />
             <button
               onClick={() => {

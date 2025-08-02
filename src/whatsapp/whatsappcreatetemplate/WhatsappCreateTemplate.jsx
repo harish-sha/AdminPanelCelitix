@@ -25,6 +25,7 @@ import {
 // import { te } from "date-fns/locale";
 import CustomTooltip from "../components/CustomTooltip.jsx";
 import { AiOutlineInfoCircle } from "react-icons/ai";
+import LoadingOverlay from "@/components/loader/LoadingOverlay.jsx";
 // import ca from "date-fns/esm/locale/ca/index.js";
 
 const WhatsappCreateTemplate = () => {
@@ -69,6 +70,7 @@ const WhatsappCreateTemplate = () => {
       uploadUrl: "",
     },
   ]);
+
   const textAreaRef = useRef(null)
   const [variables, setVariables] = useState([]);
   const [templatePreview, setTemplatePreview] = useState("");
@@ -668,6 +670,7 @@ const WhatsappCreateTemplate = () => {
         // return
         setIsLoading(true);
         toast.success("Template submitted successfully!");
+        // return
         setSelectedWaba("");
         setSelectedCategory("");
         setSelectedLanguage("");
@@ -741,20 +744,20 @@ const WhatsappCreateTemplate = () => {
 
   return (
     <div className="w-full">
-      {isLoading ? (
+      {/* {isLoading ? (
         <>
           <Loader />
         </>
-      ) : (
-        <>
-          <div className="w-full">
-            <div className="">
-              <h1 className="mb-4 font-semibold text-center text-gray-800 text-md lg:text-start">
-                Create Template
-              </h1>
-              <div className="flex flex-wrap items-end justify-start gap-4 pb-5 align-middle">
-                <div className="w-full sm:w-48">
-                  {/* <AnimatedDropdown
+      ) : ( */}
+      <>
+        <div className="w-full">
+          <div className="">
+            <h1 className="mb-4 font-semibold text-center text-gray-800 text-md lg:text-start">
+              Create Template
+            </h1>
+            <div className="flex flex-wrap items-end justify-start gap-4 pb-5 align-middle">
+              <div className="w-full sm:w-48">
+                {/* <AnimatedDropdown
                     id="createSelectWaba"
                     name="createSelectWaba"
                     label="Select WABA"
@@ -772,394 +775,401 @@ const WhatsappCreateTemplate = () => {
                     }}
                     placeholder="Select WABA"
                   /> */}
-                  <AnimatedDropdown
-                    id="createSelectWaba"
-                    name="createSelectWaba"
-                    label="Select WABA"
-                    tooltipContent="Select your WhatsApp Business Account"
-                    tooltipPlacement="right"
-                    options={wabaList?.map((waba) => ({
-                      value: JSON.stringify({
-                        mbno: waba.mobileNo,
-                        sno: waba.wabaSrno,
-                      }),
-                      label: waba.name,
-                    }))}
-                    value={
-                      selectedWaba
-                        ? JSON.stringify({
-                          mbno: selectedWaba,
-                          sno: selectedWabaSno,
-                        })
-                        : ""
+                <AnimatedDropdown
+                  id="createSelectWaba"
+                  name="createSelectWaba"
+                  label="Select WABA"
+                  tooltipContent="Select your WhatsApp Business Account"
+                  tooltipPlacement="right"
+                  options={wabaList?.map((waba) => ({
+                    value: JSON.stringify({
+                      mbno: waba.mobileNo,
+                      sno: waba.wabaSrno,
+                    }),
+                    label: waba.name,
+                  }))}
+                  value={
+                    selectedWaba
+                      ? JSON.stringify({
+                        mbno: selectedWaba,
+                        sno: selectedWabaSno,
+                      })
+                      : ""
+                  }
+                  onChange={(selectedValue) => {
+                    if (selectedValue) {
+                      const parsedValue = JSON.parse(selectedValue);
+                      setSelectedWaba(parsedValue.mbno);
+                      setSelectedWabaSno(parsedValue.sno);
+                    } else {
+                      setSelectedWaba(null);
+                      setSelectedWabaSno(null);
                     }
-                    onChange={(selectedValue) => {
-                      if (selectedValue) {
-                        const parsedValue = JSON.parse(selectedValue);
-                        setSelectedWaba(parsedValue.mbno);
-                        setSelectedWabaSno(parsedValue.sno);
-                      } else {
-                        setSelectedWaba(null);
-                        setSelectedWabaSno(null);
-                      }
-                    }}
-                    placeholder="Select WABA"
-                  />
-                </div>
+                  }}
+                  placeholder="Select WABA"
+                />
+              </div>
 
+              <div className="w-full sm:w-48">
+                <AnimatedDropdown
+                  id="category"
+                  name="category"
+                  label="Category"
+                  tooltipContent="Select category"
+                  tooltipPlacement="right"
+                  options={[
+                    { value: "MARKETING", label: "Marketing" },
+                    { value: "UTILITY", label: "Utility" },
+                    { value: "AUTHENTICATION", label: "Authentication" },
+                  ]}
+                  value={selectedCategory}
+                  onChange={(value) => setSelectedCategory(value)}
+                  placeholder="Category"
+                />
+              </div>
+
+              {selectedCategory && selectedCategory !== "AUTHENTICATION" && (
                 <div className="w-full sm:w-48">
                   <AnimatedDropdown
-                    id="category"
-                    name="category"
-                    label="Category"
-                    tooltipContent="Select category"
+                    id="templateType"
+                    name="templateType"
+                    label="Template Type"
+                    tooltipContent="Select template type"
+                    tooltipPlacement="right"
+                    options={templateTypeOptions.filter(
+                      (option) =>
+                        selectedCategory === "MARKETING" ||
+                        option.value !== "carousel"
+                    )}
+                    value={selectedTemplateType}
+                    onChange={handleTemplateTypeChange}
+                    placeholder="Template Type"
+                  />
+                </div>
+              )}
+
+              {selectedTemplateType === "carousel" && (
+                <div className="w-full sm:w-48">
+                  <AnimatedDropdown
+                    id="carouselMediaType"
+                    name="carouselMediaType"
+                    label="Carousel Media"
+                    tooltipContent="Select Carousel Media"
                     tooltipPlacement="right"
                     options={[
-                      { value: "MARKETING", label: "Marketing" },
-                      { value: "UTILITY", label: "Utility" },
-                      { value: "AUTHENTICATION", label: "Authentication" },
+                      { value: "image", label: "Image" },
+                      { value: "video", label: "Video" },
                     ]}
-                    value={selectedCategory}
-                    onChange={(value) => setSelectedCategory(value)}
-                    placeholder="Category"
+                    value={carouselMediaType}
+                    onChange={handleCarouselMediaTypeChange}
+                    placeholder="Carousel Media "
                   />
                 </div>
+              )}
 
-                {selectedCategory && selectedCategory !== "AUTHENTICATION" && (
-                  <div className="w-full sm:w-48">
-                    <AnimatedDropdown
-                      id="templateType"
-                      name="templateType"
-                      label="Template Type"
-                      tooltipContent="Select template type"
-                      tooltipPlacement="right"
-                      options={templateTypeOptions.filter(
-                        (option) =>
-                          selectedCategory === "MARKETING" ||
-                          option.value !== "carousel"
-                      )}
-                      value={selectedTemplateType}
-                      onChange={handleTemplateTypeChange}
-                      placeholder="Template Type"
-                    />
-                  </div>
-                )}
+              <div className="w-full sm:w-48">
+                <LanguageSelect
+                  id="language"
+                  name="language"
+                  label="Language"
+                  tooltipContent="Select Template language"
+                  tooltipPlacement="right"
+                  value={selectedLanguage}
+                  onChange={(option) => setSelectedLanguage(option.value)}
+                />
+              </div>
 
-                {selectedTemplateType === "carousel" && (
-                  <div className="w-full sm:w-48">
-                    <AnimatedDropdown
-                      id="carouselMediaType"
-                      name="carouselMediaType"
-                      label="Carousel Media"
-                      tooltipContent="Select Carousel Media"
-                      tooltipPlacement="right"
-                      options={[
-                        { value: "image", label: "Image" },
-                        { value: "video", label: "Video" },
-                      ]}
-                      value={carouselMediaType}
-                      onChange={handleCarouselMediaTypeChange}
-                      placeholder="Carousel Media "
-                    />
-                  </div>
-                )}
-
-                <div className="w-full sm:w-48">
-                  <LanguageSelect
-                    id="language"
-                    name="language"
-                    label="Language"
-                    tooltipContent="Select Template language"
-                    tooltipPlacement="right"
-                    value={selectedLanguage}
-                    onChange={(option) => setSelectedLanguage(option.value)}
-                  />
-                </div>
-
-                <div className="w-full sm:w-48">
-                  <InputField
-                    id="templateName"
-                    name="templateName"
-                    label="Template Name"
-                    tooltipContent="Your templatename should not contain spaces."
-                    tooltipPlacement="right"
-                    onChange={(e) => handleInputChange(e.target.value)}
-                    value={templateName}
-                    placeholder="Template Name"
-                  />
-                </div>
+              <div className="w-full sm:w-48">
+                <InputField
+                  id="templateName"
+                  name="templateName"
+                  label="Template Name"
+                  tooltipContent="Your templatename should not contain spaces."
+                  tooltipPlacement="right"
+                  onChange={(e) => handleInputChange(e.target.value)}
+                  value={templateName}
+                  placeholder="Template Name"
+                />
               </div>
             </div>
+          </div>
+          {/* Loader */}
+          <LoadingOverlay
+            isOpen={isFetching}
+            variant="spinner"
+            text="Creating Template..."
+            size={480}
+          />
 
-            {selectedWaba && selectedCategory ? (
-              selectedCategory === "AUTHENTICATION" ? (
-                <div>
-                  <div className="grid lg:grid-cols-2 gap-5 mt-4">
-                    <div className="border-2 border-gray-300 p-4 rounded-lg">
-                      <div className="flex gap-2 items-center">
-                        <span
-                          htmlFor="expiryTime"
-                          className="text-md text-gray-700 font-semibold"
-                        >
-                          Set Expiry Time
+          {selectedWaba && selectedCategory ? (
+            selectedCategory === "AUTHENTICATION" ? (
+              <div>
+                <div className="grid lg:grid-cols-2 gap-5 mt-4">
+                  <div className="border-2 border-gray-300 p-4 rounded-lg">
+                    <div className="flex gap-2 items-center">
+                      <span
+                        htmlFor="expiryTime"
+                        className="text-md text-gray-700 font-semibold"
+                      >
+                        Set Expiry Time
+                      </span>
+                      <CustomTooltip
+                        title="Expiry Time should be in 1 min to 90 min"
+                        placement="top"
+                        arrow
+                      >
+                        <span>
+                          <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
                         </span>
-                        <CustomTooltip
-                          title="Expiry Time should be in 1 min to 90 min"
-                          placement="top"
-                          arrow
-                        >
-                          <span>
-                            <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
-                          </span>
-                        </CustomTooltip>
-                      </div>
-                      <div className="flex items-center gap-2 mt-2">
-                        <div className="w-10">
-                          <InputField
-                            id="expiryTime"
-                            name="expiryTime"
-                            type="number"
-                            value={expiryTime}
-                            tooltipContent="Expiry Time should be in 1 min to 90 min"
-                            onChange={(e) => {
-                              setExpiryTime(e.target.value);
-                            }}
-                            maxLength="2"
-                          />
-                        </div>
-                        <p>Minutes</p>
-                      </div>
+                      </CustomTooltip>
                     </div>
-                    <div className="mb-2">
-                      <AuthPreview />
+                    <div className="flex items-center gap-2 mt-2">
+                      <div className="w-10">
+                        <InputField
+                          id="expiryTime"
+                          name="expiryTime"
+                          type="number"
+                          value={expiryTime}
+                          tooltipContent="Expiry Time should be in 1 min to 90 min"
+                          onChange={(e) => {
+                            setExpiryTime(e.target.value);
+                          }}
+                          maxLength="2"
+                        />
+                      </div>
+                      <p>Minutes</p>
                     </div>
                   </div>
-
-                  <div className="flex items-center justify-center w-full mt-2">
-                    <button
-                      disabled={
-                        !selectedWaba || !selectedCategory || !templateName
-                      }
-                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba && selectedCategory && templateName
-                        ? "bg-[#212529] hover:bg-[#434851]"
-                        : "bg-gray-300 cursor-not-allowed"
-                        }`}
-                      onClick={handleSubmit}
-                      id="submitTemplate"
-                      name="submitTemplate"
-                    >
-                      Submit Template
-                    </button>
+                  <div className="mb-2">
+                    <AuthPreview />
                   </div>
                 </div>
-              ) : (
-                <>
-                  <div className="grid lg:grid-cols-2 gap-4">
-                    <div>
-                      <>
-                        {
-                          selectedTemplateType === "carousel" &&
-                          carouselMediaType && (
-                            <>
-                              <CarouselTemplateTypes
-                                templateFormat={templateFormat}
-                                setTemplateFormat={setTemplateFormat}
-                                templateFooter={templateFooter}
-                                setTemplateFooter={setTemplateFooter}
-                                handleAddVariable={handleAddVariable}
-                                handleEmojiSelect={handleEmojiSelect}
-                                selectedCardIndex={selectedCardIndex}
-                                setSelectedCardIndex={setSelectedCardIndex}
-                                cards={cards}
-                                setCards={setCards}
-                                file={file}
-                                setFile={setFile}
-                                onPreviewUpdate={handlePreviewUpdate}
-                                setFileUploadUrl={setFileUploadUrl}
-                                uploadImageFile={uploadImageFile}
-                                setvariables={setVariables}
-                                ref={textAreaRef}
-                              />
-                              <CarouselInteractiveActions
-                                cards={cards}
-                                selectedCardIndex={selectedCardIndex}
-                                setCards={setCards}
-                              />
-                            </>
-                          )
 
-                          // : (
-                          //   <div className="w-full">
-                          //     <div className="border-blue-500  rounded-2xl w-full">
-                          //       <div className="flex items-center justify-center w-full py-4 text-center rounded-lg shadow-lg bg-gradient-to-r h-96 from-blue-500 to-purple-500">
-                          //         <p className="flex items-center gap-2 text-2xl font-medium text-white font-m">
-                          //           <WhatsApp
-                          //             className="inline-block"
-                          //             sx={{ fontSize: "35px", color: "#22d614" }}
-                          //           />
-                          //           Please select your WABA, template category, and
-                          //           type to begin creating your template. Select the
-                          //           carousel media also for creating the carousel
-                          //           cards.
-                          //         </p>
-                          //       </div>
-                          //     </div>
-                          //   </div>
-                          // )
-                        }
-                        {selectedTemplateType != "carousel" && (
+                <div className="flex items-center justify-center w-full mt-2">
+                  <button
+                    disabled={
+                      !selectedWaba || !selectedCategory || !templateName
+                    }
+                    className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba && selectedCategory && templateName
+                      ? "bg-[#212529] hover:bg-[#434851]"
+                      : "bg-gray-300 cursor-not-allowed"
+                      }`}
+                    onClick={handleSubmit}
+                    id="submitTemplate"
+                    name="submitTemplate"
+                  >
+                    Submit Template
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="grid lg:grid-cols-2 gap-4">
+                  <div>
+                    <>
+                      {
+                        selectedTemplateType === "carousel" &&
+                        carouselMediaType && (
                           <>
-                            <TemplateTypes
-                              selectedTemplateType={selectedTemplateType}
-                              templateHeader={templateHeader}
-                              setTemplateHeader={setTemplateHeader}
+                            <CarouselTemplateTypes
                               templateFormat={templateFormat}
                               setTemplateFormat={setTemplateFormat}
                               templateFooter={templateFooter}
                               setTemplateFooter={setTemplateFooter}
                               handleAddVariable={handleAddVariable}
                               handleEmojiSelect={handleEmojiSelect}
-                              imageUrl={imageUrl}
-                              setImageUrl={setImageUrl}
-                              videoUrl={videoUrl}
-                              setVideoUrl={setVideoUrl}
-                              documentUrl={documentUrl}
-                              setDocumentUrl={setDocumentUrl}
-                              locationUrl={locationUrl}
-                              setLocationUrl={setLocationUrl}
+                              selectedCardIndex={selectedCardIndex}
+                              setSelectedCardIndex={setSelectedCardIndex}
+                              cards={cards}
+                              setCards={setCards}
                               file={file}
                               setFile={setFile}
                               onPreviewUpdate={handlePreviewUpdate}
-                              setvariables={setVariables}
-                              uploadImageFile={uploadImageFile}
                               setFileUploadUrl={setFileUploadUrl}
-                              setHeaderVariable={setHeaderVariable}
-                              headerVariable={headerVariable}
-                              headerVariableValue={headerVariableValue}
-                              setHeaderVariableValue={setHeaderVariableValue}
+                              uploadImageFile={uploadImageFile}
+                              setvariables={setVariables}
+                              ref={textAreaRef}
                             />
-
-                            <InteractiveActions
-                              interactiveAction={interactiveAction}
-                              setInteractiveAction={setInteractiveAction}
-                              phoneNumber={phoneNumber}
-                              setPhoneNumber={setPhoneNumber}
-                              phoneTitle={phoneTitle}
-                              setPhoneTitle={setPhoneTitle}
-                              url={url}
-                              setUrl={setUrl}
-                              urlTitle={urlTitle}
-                              setUrlTitle={setUrlTitle}
-                              quickReplies={quickReplies}
-                              setQuickReplies={setQuickReplies}
-                              urlValid={urlValid}
-                              validateUrl={validateUrl}
-                              handlePhoneNumberChange={handlePhoneNumberChange}
-                              handleQuickReplyChange={handleQuickReplyChange}
-                              addQuickReply={addQuickReply}
-                              removeQuickReply={removeQuickReply}
-                              setUrlVariables={setUrlVariables}
-                              setFlowTemplateState={setFlowTemplateState}
-                              flowTemplateState={flowTemplateState}
-                              allFlows={allFlows}
+                            <CarouselInteractiveActions
+                              cards={cards}
+                              selectedCardIndex={selectedCardIndex}
+                              setCards={setCards}
                             />
                           </>
-                        )}
-                      </>
-                    </div>
-                    <div className="flex items-start justify-center lg:mt-7 ">
-                      {selectedTemplateType === "carousel" &&
-                        carouselMediaType ? (
-                        <>
-                          <CarouselTemplatePreview
-                            // scrollContainerRef={scrollableContainerRef}
-                            format={templateFormat}
-                            cards={cards}
-                            footer={templateFooter}
-                            setCards={setCards}
-                            selectedCardIndex={selectedCardIndex}
-                            setSelectedCardIndex={setSelectedCardIndex}
-                            onAddCard={(newCard) =>
-                              setCards([...cards, newCard])
-                            }
-                            onDeleteCard={handleDeleteCard}
-                          />
-                        </>
-                      ) : null}
+                        )
 
+                        // : (
+                        //   <div className="w-full">
+                        //     <div className="border-blue-500  rounded-2xl w-full">
+                        //       <div className="flex items-center justify-center w-full py-4 text-center rounded-lg shadow-lg bg-gradient-to-r h-96 from-blue-500 to-purple-500">
+                        //         <p className="flex items-center gap-2 text-2xl font-medium text-white font-m">
+                        //           <WhatsApp
+                        //             className="inline-block"
+                        //             sx={{ fontSize: "35px", color: "#22d614" }}
+                        //           />
+                        //           Please select your WABA, template category, and
+                        //           type to begin creating your template. Select the
+                        //           carousel media also for creating the carousel
+                        //           cards.
+                        //         </p>
+                        //       </div>
+                        //     </div>
+                        //   </div>
+                        // )
+                      }
                       {selectedTemplateType != "carousel" && (
                         <>
-                          <TemplatePreview
-                            // scrollContainerRef={scrollableContainerRef}
-                            header={templateHeader}
-                            format={templateFormat}
-                            footer={templateFooter}
+                          <TemplateTypes
+                            selectedTemplateType={selectedTemplateType}
+                            templateHeader={templateHeader}
+                            setTemplateHeader={setTemplateHeader}
+                            templateFormat={templateFormat}
+                            setTemplateFormat={setTemplateFormat}
+                            templateFooter={templateFooter}
+                            setTemplateFooter={setTemplateFooter}
+                            handleAddVariable={handleAddVariable}
+                            handleEmojiSelect={handleEmojiSelect}
                             imageUrl={imageUrl}
+                            setImageUrl={setImageUrl}
                             videoUrl={videoUrl}
+                            setVideoUrl={setVideoUrl}
                             documentUrl={documentUrl}
+                            setDocumentUrl={setDocumentUrl}
                             locationUrl={locationUrl}
+                            setLocationUrl={setLocationUrl}
+                            file={file}
+                            setFile={setFile}
+                            onPreviewUpdate={handlePreviewUpdate}
+                            setvariables={setVariables}
+                            uploadImageFile={uploadImageFile}
+                            setFileUploadUrl={setFileUploadUrl}
+                            setHeaderVariable={setHeaderVariable}
+                            headerVariable={headerVariable}
+                            headerVariableValue={headerVariableValue}
+                            setHeaderVariableValue={setHeaderVariableValue}
+                          />
+
+                          <InteractiveActions
+                            interactiveAction={interactiveAction}
+                            setInteractiveAction={setInteractiveAction}
+                            phoneNumber={phoneNumber}
+                            setPhoneNumber={setPhoneNumber}
                             phoneTitle={phoneTitle}
+                            setPhoneTitle={setPhoneTitle}
+                            url={url}
+                            setUrl={setUrl}
                             urlTitle={urlTitle}
+                            setUrlTitle={setUrlTitle}
                             quickReplies={quickReplies}
+                            setQuickReplies={setQuickReplies}
+                            urlValid={urlValid}
+                            validateUrl={validateUrl}
+                            handlePhoneNumberChange={handlePhoneNumberChange}
+                            handleQuickReplyChange={handleQuickReplyChange}
+                            addQuickReply={addQuickReply}
+                            removeQuickReply={removeQuickReply}
+                            setUrlVariables={setUrlVariables}
                             setFlowTemplateState={setFlowTemplateState}
                             flowTemplateState={flowTemplateState}
+                            allFlows={allFlows}
                           />
                         </>
                       )}
-                    </div>
+                    </>
                   </div>
-                  <div className="flex items-center justify-center w-full mt-2">
-                    <button
-                      disabled={
-                        !selectedWaba ||
-                        !selectedCategory ||
-                        !selectedTemplateType ||
-                        !templateName ||
-                        isFetching
-                      }
-                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba &&
-                        selectedCategory &&
-                        selectedTemplateType &&
-                        templateName
-                        ? "bg-[#212529] hover:bg-[#434851]"
-                        : "bg-gray-300 cursor-not-allowed"
-                        }`}
-                      onClick={handleSubmit}
-                      id="submitTemplate"
-                      name="submitTemplate"
-                    >
-                      {isFetching ? "Submitting..." : "Submit Template"}
-                    </button>
-                  </div>
-                </>
-              )
-            ) : (
-              <>
-                <div className=" border-blue-500  rounded-2xl">
-                  <div className="flex items-center justify-center w-full py-4 text-center rounded-lg shadow-lg bg-gradient-to-r h-96 from-blue-500 to-purple-500">
-                    <p className="flex items-center gap-2 text-2xl font-medium text-white font-m">
-                      <WhatsApp
-                        className="inline-block"
-                        sx={{ fontSize: "35px", color: "#22d614" }}
-                      />
-                      Please select your WABA, template category, and type to
-                      begin creating your template.
-                      {selectedTemplateType === "carousel" &&
-                        !carouselMediaType && (
-                          <>
-                            <br />
-                            select the carousel media also for creating the
-                            carousel cards.
-                          </>
-                        )}
-                    </p>
+                  <div className="flex items-start justify-center lg:mt-7 ">
+                    {selectedTemplateType === "carousel" &&
+                      carouselMediaType ? (
+                      <>
+                        <CarouselTemplatePreview
+                          // scrollContainerRef={scrollableContainerRef}
+                          format={templateFormat}
+                          cards={cards}
+                          footer={templateFooter}
+                          setCards={setCards}
+                          selectedCardIndex={selectedCardIndex}
+                          setSelectedCardIndex={setSelectedCardIndex}
+                          onAddCard={(newCard) =>
+                            setCards([...cards, newCard])
+                          }
+                          onDeleteCard={handleDeleteCard}
+                        />
+                      </>
+                    ) : null}
+
+                    {selectedTemplateType != "carousel" && (
+                      <>
+                        <TemplatePreview
+                          // scrollContainerRef={scrollableContainerRef}
+                          header={templateHeader}
+                          format={templateFormat}
+                          footer={templateFooter}
+                          imageUrl={imageUrl}
+                          videoUrl={videoUrl}
+                          documentUrl={documentUrl}
+                          locationUrl={locationUrl}
+                          phoneTitle={phoneTitle}
+                          urlTitle={urlTitle}
+                          quickReplies={quickReplies}
+                          setFlowTemplateState={setFlowTemplateState}
+                          flowTemplateState={flowTemplateState}
+                        />
+                      </>
+                    )}
                   </div>
                 </div>
+                <div className="flex items-center justify-center w-full mt-2">
+                  <button
+                    disabled={
+                      !selectedWaba ||
+                      !selectedCategory ||
+                      !selectedTemplateType ||
+                      !templateName ||
+                      isFetching
+                    }
+                    className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba &&
+                      selectedCategory &&
+                      selectedTemplateType &&
+                      templateName
+                      ? "bg-[#212529] hover:bg-[#434851]"
+                      : "bg-gray-300 cursor-not-allowed"
+                      }`}
+                    onClick={handleSubmit}
+                    id="submitTemplate"
+                    name="submitTemplate"
+                  >
+                    {isFetching ? "Submitting..." : "Submit Template"}
+                  </button>
+                </div>
               </>
-            )}
-          </div>
-        </>
-      )}
+            )
+          ) : (
+            <>
+              <div className=" border-blue-500  rounded-2xl">
+                <div className="flex items-center justify-center w-full py-4 text-center rounded-lg shadow-lg bg-gradient-to-r h-96 from-blue-500 to-purple-500">
+                  <p className="flex items-center gap-2 text-2xl font-medium text-white font-m">
+                    <WhatsApp
+                      className="inline-block"
+                      sx={{ fontSize: "35px", color: "#22d614" }}
+                    />
+                    Please select your WABA, template category, and type to
+                    begin creating your template.
+                    {selectedTemplateType === "carousel" &&
+                      !carouselMediaType && (
+                        <>
+                          <br />
+                          select the carousel media also for creating the
+                          carousel cards.
+                        </>
+                      )}
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </>
+      {/* // )} */}
     </div>
   );
 };

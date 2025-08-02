@@ -114,7 +114,7 @@ export const Carousel = ({
 
   const addNewCard = useCallback(() => {
     if (caraousalData.length >= 6) {
-      toast.error("Maximum limit of 5 cards reached.");
+      toast.error("Maximum limit of 6 cards reached.");
       return;
     }
 
@@ -679,8 +679,8 @@ Images: Max 1MB | Videos: Max 5MB`}
           setAi={setAi}
           setIsOpen={setIsOpen}
           isOpen={isOpen}
-          right={0.5}
-          bottom={3.3}
+          right={5}
+          bottom={55}
           messageContent={currentCardMessage}
           setMessageContent={updateMessageContent}
           selectedCardIndex={selectedCardIndex}
