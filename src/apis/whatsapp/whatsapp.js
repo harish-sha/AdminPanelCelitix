@@ -704,3 +704,17 @@ export const deleteUnsubscribeNumber = async (srNo) => {
     method: "DELETE",
   });
 };
+
+export const getFlowReplyList = async (srNo) => {
+  return await fetchWithAuth(`/flowReplyDetails?fromQueDateTime=${srNo}`, {
+    method: "POST",
+  });
+};
+export const getFlowSampleRequest = async (data) => {
+  return await fetchWithAuth(
+    `/showSampleResponse?flowName=${data.flowName}&templateName=${data.templateName}&campaignSrno=${data.campaignSrno}`,
+    {
+      method: "POST",
+    }
+  );
+};

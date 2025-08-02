@@ -180,6 +180,7 @@ import Unsubscribe from "@/whatsapp/unsubscribe/Unsubscribe";
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
 import { ReelPost } from "@/Instagram/InstagramLiveChat/reels";
+import { WorkFlowIndex } from "@/whatsapp/whatsappFlows/Pages";
 
 const Approutes = () => {
   return (
@@ -264,7 +265,7 @@ const Approutes = () => {
         <Route path="wwhatsappbot" element={<WhatsappBot />} />
         <Route path="createwhatsappbot" element={<CreateWhatsAppBot />} />
         <Route path="apicampaigninfo" element={<ApiCampaignInfo />} />
-        <Route path="wwhatsappflows" element={<WhatsappFlows />} />
+        <Route path="wwhatsappflows" element={<WorkFlowIndex />} />
         <Route path="wflowcreation" element={<FlowCreationPage />} />
         <Route path="wflowedit" element={<EditFlow />} />
         <Route path="wblockuser" element={<BlockUser />} />
@@ -350,7 +351,6 @@ const Approutes = () => {
         <Route path="workflow/create" element={<WorkflowCreate />} />
         <Route path="workflow/edit" element={<UpdateWorkflow />} />
 
-
         <Route path="instagram/reel" element={<ReelPost />} />
 
         {/* Ai Configuration */}
@@ -379,7 +379,10 @@ const Approutes = () => {
         </Route>
 
         {/* Combine Live Chat setting */}
-        <Route path="combineLiveChatSettings" element={<CombineLiveChatSettings />}>
+        <Route
+          path="combineLiveChatSettings"
+          element={<CombineLiveChatSettings />}
+        >
           {/* <Route index element={<Pointingup />} /> */}
           <Route index element={<Navigate to="wlcsetting" replace />} />
           <Route path=":channel" element={<Outlet />} />
