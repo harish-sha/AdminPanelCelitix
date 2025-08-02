@@ -15,6 +15,7 @@ import { FaChevronCircleLeft } from "react-icons/fa";
 import { FaFilter } from "react-icons/fa";
 import { CiMenuKebab } from "react-icons/ci";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
+import { MdFilterAltOff } from "react-icons/md";
 export const InputData = ({
   setSearch,
   search,
@@ -228,9 +229,21 @@ export const InputData = ({
               </button>
             </div>
             <div className="flex items-center gap-2 mt-1">
+              {selectedAgent ? (
+                <button onClick={() => setShowFilter((v) => !v)}>
+                  <FaFilter className="cursor-pointer hover:text-blue-600 transition" />
+                </button>
+              ) : (
+                <button onClick={() => setShowFilter((v) => !v)}>
+                  <MdFilterAltOff className="size-5 cursor-pointer hover:text-blue-600 transition" />
+                </button>
+              )}
+              {/* <button onClick={() => setShowFilter((v) => !v)}>
+                <MdFilterAltOff  />
+              </button>
               <button onClick={() => setShowFilter((v) => !v)}>
                 <FaFilter className="cursor-pointer hover:text-blue-600 transition" />
-              </button>
+              </button> */}
               <CiMenuKebab />
 
               {showFilter && (
