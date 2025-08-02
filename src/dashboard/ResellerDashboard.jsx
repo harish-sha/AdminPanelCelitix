@@ -187,6 +187,7 @@ const ResellerDashboard = () => {
   }, []);
 
 
+
   //==================================daily amount usage start================================
   const [startsDate, setStartsDate] = useState(new Date()); // From Today
   const [endsDate, setEndsDate] = useState(new Date());
@@ -666,7 +667,9 @@ const ResellerDashboard = () => {
       </motion.div>
       {/* service cards end */}
 
+
       {/* Add Integrations Start */}
+
       <motion.div
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -746,7 +749,6 @@ const ResellerDashboard = () => {
       </Dialog>
       {/* Add Integrations End */}
 
-
       {/* daily use */}
 
       {/* <div className="flex items-center justify-center">
@@ -816,27 +818,31 @@ const ResellerDashboard = () => {
       {/* Account expiry format end */}
 
 
-      {/* Service Usage Overview start */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <ServiceUsageDashboard />
-      </motion.div>
-      {/* Service Usage Overview End */}
+      {/*Service Usage Overview start  */}
+      {user.role === "DIRECTUSER" && (
+        < motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <ServiceUsageDashboard />
+        </motion.div>
+      )}
+      {/* Service Usage Overview End  */}
 
       {/* bots & flows start */}
-      <motion.div
-        className="bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-2xl shadow-md p-3"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <MetricsDashboard />
-      </motion.div>
+      {user.role === "DIRECTUSER" && (
+        <motion.div
+          className="bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-2xl shadow-md p-3"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <MetricsDashboard />
+        </motion.div>
+      )}
       {/* bots & flows End */}
-    </div>
+    </div >
   );
 };
 
