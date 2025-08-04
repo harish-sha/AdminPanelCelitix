@@ -123,16 +123,18 @@ export const Request = ({
   useEffect(() => {
     const updatedParams = generateKeyValue(params, true);
     const updatedHeaders = generateKeyValue(header, true);
+
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
         ...prev[id],
-        params: updatedParams,
-        headers: updatedHeaders,
+        apiJson: updatedParams,
+        apiHeader: updatedHeaders,
+        params: params,
+        header: header,
       },
     }));
   }, [params, header]);
-
 
   useEffect(() => {
     const headers = nodesInputData[id]?.apiHeader || {};
@@ -194,7 +196,7 @@ export const Request = ({
             },
           }));
         }}
-        maxLength={1000}
+        maxLength={"1000"}
       />
       <AnimatedDropdown
         id="requestType"
@@ -293,7 +295,7 @@ export const Request = ({
                   onChange={(e) => {
                     handleInsertParams(e, index, "key");
                   }}
-                  maxLength={100}
+                  maxLength={"100"}
                 />
                 <InputField
                   label=""
@@ -304,7 +306,7 @@ export const Request = ({
                   onChange={(e) => {
                     handleInsertParams(e, index, "value");
                   }}
-                  maxLength={100}
+                  maxLength={"100"}
                 />
 
                 <button
@@ -360,7 +362,7 @@ export const Request = ({
                   onChange={(e) => {
                     handleInsertHeader(e, index, "key");
                   }}
-                  maxLength={100}
+                  maxLength={"100"}
                 />
                 <InputField
                   label=""
@@ -371,7 +373,7 @@ export const Request = ({
                   onChange={(e) => {
                     handleInsertHeader(e, index, "value");
                   }}
-                  maxLength={100}
+                  maxLength={"100"}
                 />
 
                 <button
