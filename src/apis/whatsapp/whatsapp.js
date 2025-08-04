@@ -320,7 +320,7 @@ export const deleteWabaTemplate = async (tempsrno, wabaNo, tempName) => {
 // fetch all conversations (live chat)
 export const fetchAllConversations = async (data) => {
   return await fetchWithAuth(
-    `/LiveChat/LiveChatDetails?mobile=${data.mobileNo}&srno=${data.srno}&selectedMobileNumber=&searchMobileNumber=${data.search}&userActive=${data.active}`,
+    `/LiveChat/LiveChatDetails?mobile=${data.mobileNo}&srno=${data.srno}&selectedMobileNumber=&searchMobileNumber=${data.search}&userActive=${data.active}&agentSrno=${data.agentSrno}&agentType=0`,
     {
       method: "POST",
     }

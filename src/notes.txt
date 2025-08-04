@@ -6,6 +6,10 @@ Directuser
 User: demouser
 Pass: 9c2x*cZM
 
+direct user agent
+harish@proactivesms.in
+4eD3yfJJ
+
 reseller Admin
 user: Devtest
 pass: 7%3uShWk

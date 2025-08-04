@@ -48,6 +48,7 @@ import { MdBlock } from "react-icons/md";
 import { CgUnblock } from "react-icons/cg";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import BotPreview from "../BotPreview";
+import { useUser } from "@/context/auth";
 
 
 export const ChatScreen = ({
@@ -247,7 +248,7 @@ export const ChatScreen = ({
   // };
 
   // ===========================================================================
-
+  const { user } = useUser();
   const [replyingMessageId, setReplyingMessageId] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
@@ -436,13 +437,14 @@ export const ChatScreen = ({
               </div>
             </motion.div>
           )}
-
-          <CustomTooltip title="Assign Agent" placement="top" arrow>
-            <SupportAgentOutlinedIcon
-              onClick={() => setDialogVisible(true)}
-              className="mr-2 cursor-pointer text-[#22577E]"
-            />
-          </CustomTooltip>
+          {user.role !== "AGENT" && (
+            <CustomTooltip title="Assign Agent" placement="top" arrow>
+              <SupportAgentOutlinedIcon
+                onClick={() => setDialogVisible(true)}
+                className="mr-2 cursor-pointer text-[#22577E]"
+              />
+            </CustomTooltip>
+          )}
         </div>
       </div>
 

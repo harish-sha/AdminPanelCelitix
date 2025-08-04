@@ -8,12 +8,16 @@ import {
   Button,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FaChevronCircleRight } from "react-icons/fa";
 import { FaChevronUp } from "react-icons/fa";
 import { FaChevronCircleLeft } from "react-icons/fa";
 import { FaFilter } from "react-icons/fa";
 import { CiMenuKebab } from "react-icons/ci";
+import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
+import { MdFilterAltOff } from "react-icons/md";
+import { useUser } from "@/context/auth";
+
 export const InputData = ({
   setSearch,
   search,
@@ -26,9 +30,29 @@ export const InputData = ({
   setSelectedWaba,
   setIsSubscribed,
   // setSelectedWaba
+  setSelectedAgent,
+  selectedAgent,
+  agentList,
 }) => {
+  const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+
+  const [showFilter, setShowFilter] = useState(false);
+  const panelRef = useRef(null);
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (panelRef.current && !panelRef.current.contains(e.target)) {
+        setShowFilter(false);
+      }
+    }
+    if (showFilter) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showFilter]);
 
   const handleChipClick = () => {
     setOpenDialog(true);
@@ -136,14 +160,13 @@ export const InputData = ({
               onClick={() => setIsOpen(false)}
               className="absolute -left-3 top-4 transform -translate-y-1/2 z-50 text-3xl text-gray-700 hover:text-blue-500 animate-pulse"
             >
-              <FaChevronCircleLeft className="text-2xl"/>
+              <FaChevronCircleLeft className="text-2xl" />
             </button>
           )}
           {/* Sliding Panel */}
           <div
-            className={`absolute top-0 -left-8 w-full md:w-88 shadow-lg z-40 transform transition-transform duration-300 md:ml-4 ${
-              isOpen ? "translate-x-0 left-0" : "-translate-x-full"
-            }`}
+            className={`absolute top-0 -left-8 w-full md:w-88 shadow-lg z-40 transform transition-transform duration-300 md:ml-4 ${isOpen ? "translate-x-0 left-0" : "-translate-x-full"
+              }`}
           >
             <AnimatedDropdown
               id="createSelectWaba"
@@ -207,10 +230,59 @@ export const InputData = ({
                 <SearchOutlined className=" text-gray-500 hover:text-blue-600 transition" />
               </button>
             </div>
-            <div className="flex items-center gap-2 mt-1">
-              <FaFilter  />
-              <CiMenuKebab />
-            </div>
+            {user.role !== "AGENT" && (
+              <div className="flex items-center gap-2 mt-1">
+                {/* <FaFilter /> */}
+                {/* <CiMenuKebab /> */}
+                {/* <button onClick={() => setShowFilter((v) => !v)}>
+                <FaFilter className="cursor-pointer hover:text-blue-600 transition" />
+              </button> */}
+                {selectedAgent ? (
+                  <button onClick={() => setShowFilter((v) => !v)}>
+                    <FaFilter className="cursor-pointer hover:text-blue-600 transition" />
+                  </button>
+                ) : (
+                  <button onClick={() => setShowFilter((v) => !v)}>
+                    <MdFilterAltOff className="size-5 cursor-pointer hover:text-blue-600 transition" />
+                  </button>
+                )}
+                <CiMenuKebab />
+
+                {showFilter && (
+                  <div
+                    ref={panelRef}
+                    className="absolute right-0 top-10 mt-2 w-62 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+                  >
+                    <div className="p-4">
+                      <DropdownWithSearch
+                        id="selectAgent"
+                        name="selectAgent"
+                        value={selectedAgent}
+                        label={"Select Agent"}
+                        onChange={(e) => {
+                          setSelectedAgent(e);
+                          setShowFilter((v) => !v);
+                        }}
+                        options={agentList?.data?.map((item) => ({
+                          value: item.sr_no,
+                          label: item.name,
+                        }))}
+                      />
+                    </div>
+
+                    <button
+                      className="px-4 py-2 text-sm  bg-gray-400 rounded-md text-white ml-auto mr-auto"
+                      onClick={() => {
+                        setSelectedAgent(null);
+                        setShowFilter(false);
+                      }}
+                    >
+                      Clear Filters
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -299,11 +371,10 @@ export const InputData = ({
                 setBtnOption("active");
                 setIsSubscribed(false);
               }}
-              className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${
-                btnOption === "active"
-                  ? "text-white font-semibold"
-                  : "text-gray-700"
-              }`}
+              className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "active"
+                ? "text-white font-semibold"
+                : "text-gray-700"
+                }`}
             >
               Active
             </button>
@@ -312,11 +383,10 @@ export const InputData = ({
                 setBtnOption("close");
                 setIsSubscribed(false);
               }}
-              className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${
-                btnOption === "close"
-                  ? "text-white font-semibold"
-                  : "text-gray-700"
-              }`}
+              className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "close"
+                ? "text-white font-semibold"
+                : "text-gray-700"
+                }`}
             >
               Close
             </button>
