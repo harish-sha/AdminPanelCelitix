@@ -459,7 +459,6 @@ export const TemplateNode = ({
                   id="name"
                   name="name"
                   label={"Name"}
-                  label={"Name"}
                   onChange={(e) => {
                     setLocationData((prev) => ({
                       ...prev,
@@ -473,7 +472,6 @@ export const TemplateNode = ({
                   maxLength={100}
                   id="address"
                   name="address"
-                  label={"Address"}
                   label={"Address"}
                   onChange={(e) => {
                     setLocationData((prev) => ({
@@ -504,7 +502,6 @@ export const TemplateNode = ({
             specificTemplate={specificTemplate}
             variablesData={variablesData}
             basicDetails={basicDetails}
-            locationData={locationData}
             locationData={locationData}
           />
         </div>

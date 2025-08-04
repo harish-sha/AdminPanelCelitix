@@ -267,6 +267,16 @@ export const InputData = ({
                       }))}
                     />
                   </div>
+
+                  <button
+                    className="px-4 py-2 text-sm  bg-gray-400 rounded-md text-white ml-auto mr-auto"
+                    onClick={() => {
+                      setSelectedAgent(null);
+                      setShowFilter(false);
+                    }}
+                  >
+                    Clear Filters
+                  </button>
                 </div>
               )}
             </div>
