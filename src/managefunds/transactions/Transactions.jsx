@@ -16,12 +16,16 @@ import CustomTooltip from "../../components/common/CustomTooltip";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { DataTable } from "../../components/layout/DataTable";
-import { dailyWalletUsage, fetchTransactions } from "../../apis/settings/setting";
+import {
+  dailyWalletUsage,
+  fetchTransactions,
+} from "../../apis/settings/setting";
 import moment from "moment";
 import { exportToExcel } from "@/utils/utills";
-import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
+import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 
 import toast from "react-hot-toast";
+import { useUser } from "@/context/auth";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -46,6 +50,7 @@ function a11yProps(index) {
   };
 }
 const Transactions = () => {
+  const { user } = useUser();
   const [value, setValue] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
@@ -66,7 +71,7 @@ const Transactions = () => {
         ...filterData,
         startDate: moment(filterData.startDate).format("YYYY-MM-DD"),
         toDate: moment(filterData.toDate).format("YYYY-MM-DD"),
-      }
+      };
       const res = await fetchTransactions(data);
       setTransactionalData(res);
     } catch (e) {
@@ -84,7 +89,6 @@ const Transactions = () => {
       headerName: "Recharge Date",
       flex: 1,
       minWidth: 120,
-      
     },
     {
       field: "before",
@@ -127,18 +131,17 @@ const Transactions = () => {
 
   const rows = Array.isArray(transactionalData)
     ? transactionalData
-    .sort(
-        (a, b) =>
-          moment(b.rechargeDate, "DD-MM-YYYY").toDate() -
-          moment(a.rechargeDate, "DD-MM-YYYY").toDate()
-      )
-      .map((item, index) => ({
-      ...item,
-      sn: index + 1,
-      id: index + 1,
-      balance: Number(item.balance).toFixed(2),
-    }))
-     
+        .sort(
+          (a, b) =>
+            moment(b.rechargeDate, "DD-MM-YYYY").toDate() -
+            moment(a.rechargeDate, "DD-MM-YYYY").toDate()
+        )
+        .map((item, index) => ({
+          ...item,
+          sn: index + 1,
+          id: index + 1,
+          balance: Number(item.balance).toFixed(2),
+        }))
     : [];
 
   const type = [
@@ -171,7 +174,9 @@ const Transactions = () => {
     if (!walletusagerows.length) return toast.error("No data to download");
     const col = walletusagecolumns.map((col) => col.field);
 
-    const row = walletusagerows.map((row) => col.map((field) => row[field] ?? ""));
+    const row = walletusagerows.map((row) =>
+      col.map((field) => row[field] ?? "")
+    );
 
     const name = "wallet_usage_data";
     exportToExcel(col, row, name);
@@ -184,7 +189,6 @@ const Transactions = () => {
     startDate: new Date(),
   });
 
-
   const [walletUsageData, setWalletUsageData] = useState([]);
   const walletusagecolumns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 100 },
@@ -193,10 +197,11 @@ const Transactions = () => {
   ];
 
   const dailyAmountUsage = async () => {
+    if (user.role === "AGENT") return;
     const payload = {
       fromDate: moment(filterDataWalletUsage.startDate).format("YYYY-MM-DD"),
       toDate: moment(filterDataWalletUsage.endDate).format("YYYY-MM-DD"),
-    }
+    };
 
     setIsLoading(true);
     try {
@@ -211,12 +216,12 @@ const Transactions = () => {
 
   const walletusagerows = Array.isArray(walletUsageData)
     ? walletUsageData.map((item, index) => ({
-      ...item,
-      sn: index + 1,
-      id: index + 1,
-      recordDate: item.recordDate,
-      walletUsage: item.walletUsage,
-    }))
+        ...item,
+        sn: index + 1,
+        id: index + 1,
+        recordDate: item.recordDate,
+        walletUsage: item.walletUsage,
+      }))
     : [];
 
   // useEffect(() => {
@@ -261,13 +266,13 @@ const Transactions = () => {
               }
               {...a11yProps(1)}
               sx={{
-                textTransform: 'none',
-                fontWeight: 'bold',
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'primary.main',
-                  backgroundColor: '#f0f4ff',
-                  borderRadius: '8px',
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
                 },
               }}
             />
@@ -353,7 +358,12 @@ const Transactions = () => {
                   id="manageCampaignExportBtn"
                   name="manageCampaignExportBtn"
                   label="Export"
-                  icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
+                  icon={
+                    <IosShareOutlinedIcon
+                      fontSize="small"
+                      sx={{ marginBottom: "3px" }}
+                    />
+                  }
                   variant="primary"
                   onClick={handleExport}
                 />
@@ -376,8 +386,8 @@ const Transactions = () => {
           </div>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          <div className='w-full' >
-            <div className='flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap' >
+          <div className="w-full">
+            <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
               <div className="w-full sm:w-56">
                 <UniversalDatePicker
                   id="walletUsage"
@@ -416,8 +426,8 @@ const Transactions = () => {
               </div>
               <div className="w-max-content">
                 <UniversalButton
-                  id='walletUsage'
-                  name='walletUsage'
+                  id="walletUsage"
+                  name="walletUsage"
                   label={isFetching ? "Searching..." : "Search"}
                   icon={<IoSearch />}
                   onClick={dailyAmountUsage}
@@ -430,7 +440,12 @@ const Transactions = () => {
                   id="manageCampaignExportBtn"
                   name="manageCampaignExportBtn"
                   label="Export"
-                  icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
+                  icon={
+                    <IosShareOutlinedIcon
+                      fontSize="small"
+                      sx={{ marginBottom: "3px" }}
+                    />
+                  }
                   variant="primary"
                   onClick={handleExportWalletUsage}
                 />

@@ -19,6 +19,7 @@ import { getCountryList } from "../../apis/common/common";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { motion } from "framer-motion";
 import { FiAlertCircle } from "react-icons/fi";
+import { useUser } from "@/context/auth";
 
 const CustomPagination = ({
   totalPages,
@@ -82,6 +83,7 @@ const CustomPagination = ({
 };
 
 function AccountInfoModal({ show, handleClose }) {
+    const { user } = useUser();
   const [showRcsPricing, setShowRcsPricing] = useState(false);
   const [showWhatsPricing, setShowWhatsPricing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -108,6 +110,7 @@ function AccountInfoModal({ show, handleClose }) {
     }
 
     async function getaccountInfoData() {
+       if (user.role === "AGENT") return;
       setIsFetching(true);
       const data = await getaccountInfo();
       setAccountInfo(Array(data));

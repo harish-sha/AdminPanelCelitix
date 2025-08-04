@@ -1,15 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Card, CardContent, Typography, Box, useTheme } from '@mui/material';
-import DownloadIcon from '@mui/icons-material/Download';
-import StorageIcon from '@mui/icons-material/Storage';
-import CallSplitIcon from '@mui/icons-material/CallSplit';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-import PauseCircleIcon from '@mui/icons-material/PauseCircle';
+import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  useTheme,
+} from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
+import StorageIcon from "@mui/icons-material/Storage";
+import CallSplitIcon from "@mui/icons-material/CallSplit";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import PauseCircleIcon from "@mui/icons-material/PauseCircle";
 import { getAllBot, getWhatsappFlow } from "@/apis/whatsapp/whatsapp";
+import { useUser } from "@/context/auth";
 
 function StatCard({ title, value, delta, description, color, icon }) {
+  const { user } = useUser();
   const theme = useTheme();
   return (
     <Card
@@ -84,15 +93,16 @@ function StatCard({ title, value, delta, description, color, icon }) {
   );
 }
 
-
 export default function MetricsDashboard() {
+    const { user } = useUser();
   const theme = useTheme();
   const [allBots, setAllBots] = useState([]);
   const [flowList, setFlowList] = useState([]);
 
-
   useEffect(() => {
+
     async function fetchBots() {
+       if (user.role === "AGENT") return;
       const res = await getAllBot();
       setAllBots(res || []);
     }
@@ -109,13 +119,16 @@ export default function MetricsDashboard() {
   // }, []);
 
   useEffect(() => {
-    getWhatsappFlow().then(res => setFlowList(res || []));
+    if (user.role === "AGENT") return;
+    getWhatsappFlow().then((res) => setFlowList(res || []));
   }, []);
 
   const totalBots = allBots.length;
   const totalFlows = flowList.length;
-  const draftFlows = flowList.filter(f => f.status === "DRAFT").length;
-  const publishedFlows = flowList.filter(f => f.status === "PUBLISHED").length;
+  const draftFlows = flowList.filter((f) => f.status === "DRAFT").length;
+  const publishedFlows = flowList.filter(
+    (f) => f.status === "PUBLISHED"
+  ).length;
   const totalProjects = 24;
   const endedProjects = 10;
   const runningProjects = 12;

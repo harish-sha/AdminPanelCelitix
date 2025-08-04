@@ -37,6 +37,7 @@ import DateInputWithCalendar from "./DateInputWithCalendar";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import PieChartIcon from "@mui/icons-material/PieChart";
+import { useUser } from "@/context/auth";
 // import CandlestickChartSharpIcon from '@mui/icons-material/CandlestickChartSharp';
 
 const ICON_MAP = {
@@ -61,6 +62,7 @@ const FILTERS = ["Day", "Month"];
 const CHART_TYPES = ["Bar", "Line", "Pie"];
 
 export default function ServiceUsageDashboard() {
+    const { user } = useUser();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [filter, setFilter] = useState("Day");
@@ -140,6 +142,7 @@ export default function ServiceUsageDashboard() {
   }, [startDate, endDate, filter]);
 
   const fetchServiceUsage = async () => {
+     if (user.role === "AGENT") return;
     const payload = {
       userSrno: 0,
       fromDate: moment(startDate).format("YYYY-MM-DD"),

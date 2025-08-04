@@ -539,6 +539,7 @@ import Animationwhatsapp2 from "../assets/animation/Animation-whatsapp2.json";
 import Lottie from "lottie-react";
 import { getUserDetails } from "@/apis/user/user";
 import toast from "react-hot-toast";
+import { useUser } from "@/context/auth";
 
 const services = [
   {
@@ -631,6 +632,7 @@ const bots = [
 ];
 
 const Dashboard = () => {
+  const { user } = useUser();
   const [userData, setUserData] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -639,6 +641,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (user.role === "AGENT") return;
     const fetchUserDetails = async () => {
       setLoading(true);
       const response = await getUserDetails();
@@ -659,7 +662,6 @@ const Dashboard = () => {
 
     fetchUserDetails();
   }, []);
-
 
   return (
     <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-[calc(100vh-6rem)]">

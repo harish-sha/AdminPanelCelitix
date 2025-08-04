@@ -61,6 +61,7 @@ const WhatsappBot = () => {
   const handleNavigate = () => navigate("/createwhatsappbot");
 
   async function handleFetchAllBot() {
+     if (user.role === "AGENT") return;
     try {
       const res = await getAllBot();
       setAllBots(res);

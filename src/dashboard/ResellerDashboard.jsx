@@ -155,6 +155,7 @@ const bots = [
 ];
 
 const ResellerDashboard = () => {
+  const { user } = useUser();
   const [userData, setUserData] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -165,9 +166,8 @@ const ResellerDashboard = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const { user } = useUser();
-
   const getBalance = async () => {
+    if (user.role === "AGENT") return;
     setIsLoading(true);
     try {
       const res = await fetchBalance();
@@ -186,7 +186,6 @@ const ResellerDashboard = () => {
     getBalance();
   }, []);
 
-
   //==================================daily amount usage start================================
   const [startsDate, setStartsDate] = useState(new Date()); // From Today
   const [endsDate, setEndsDate] = useState(new Date());
@@ -195,6 +194,7 @@ const ResellerDashboard = () => {
   const [totalWalletUsage, setTotalWalletUsage] = useState(0);
 
   const dailyAmountUsage = async () => {
+    if (user.role === "AGENT") return;
     const payload = {
       userSrno: 0,
       fromDate: moment(startsDate).format("YYYY-MM-DD"),
@@ -234,14 +234,11 @@ const ResellerDashboard = () => {
     }
   };
 
-
-
   useEffect(() => {
     dailyAmountUsage(); // Fetch data when the component mounts or when date range changes
   }, [startsDate, endsDate]);
 
   //==================================daily amount usage end================================
-
 
   // =======================================daily service usage end=================================================
 
@@ -262,9 +259,8 @@ const ResellerDashboard = () => {
   const [filter, setFilter] = useState("Day");
   const [usageData, setUsageData] = useState(null);
 
-
-
   const dailyServiceUsage = async () => {
+    if (user.role === "AGENT") return;
     const payload = {
       userSrno: 0,
       fromDate: moment(startDate).format("YYYY-MM-DD"),
@@ -288,7 +284,6 @@ const ResellerDashboard = () => {
     }
   };
 
-
   const servicesDailyUsage = ["whatsapp", "voice", "rcs", "sms"];
 
   const chartData = servicesDailyUsage.map((s) => {
@@ -303,7 +298,6 @@ const ResellerDashboard = () => {
   useEffect(() => {
     dailyAmountUsage();
   }, []);
-
 
   // useEffect(() => {
   //   dailyServiceUsage();
@@ -341,6 +335,7 @@ const ResellerDashboard = () => {
   // ======================================daily service usage end=================================================
 
   useEffect(() => {
+     if (user.role === "AGENT") return;
     const fetchUser = async () => {
       setIsLoading(true);
       try {
@@ -505,6 +500,7 @@ const ResellerDashboard = () => {
   const closeDialog = () => setVisible(false);
 
   useEffect(() => {
+    if (user.role === "AGENT") return;
     const handlegetOldApiKey = async () => {
       try {
         const res = await getOldApiKey();
@@ -601,131 +597,142 @@ const ResellerDashboard = () => {
       </motion.div>
 
       {/* service cards start */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        {/* Service Cards */}
-        <Grid container spacing={3}>
-          {services.map((service, index) => {
-            const IconComponent = service.icon;
-            const hasService = user.services?.some(
-              (s) => s.display_name.toLowerCase() === service.name.toLowerCase()
-            );
-            return (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                  className={`relative rounded-xl bg-gradient-to-br ${
-                    service.color
-                  } p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${
-                    hasService ? "ring-1 ring-green-300" : "ring-1 ring-red-300"
-                  } `}
-                >
-                  {hasService && (
-                    <>
-                      <div className="absolute top-2 right-2 bg-green-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm uppercase tracking-wider h-5 w-4 border-2 border-white"></div>
-                      <div className="absolute top-2 right-8 bg-green-600 text-white text-[11px] font-medium px-2 py-0.5 rounded-full shadow-sm">
-                        Active
-                      </div>
-                    </>
-                  )}
-                  {!hasService && (
-                    <>
-                      <div className="absolute top-2 right-2 bg-red-400 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm uppercase tracking-wider h-5 w-4 border-2 border-white"></div>
-                      <div className="absolute top-2 right-8 bg-red-400 text-white text-[11px] font-medium px-2 py-0.5 rounded-full shadow-sm">
-                        inActive
-                      </div>
-                    </>
-                  )}
-                  <div className="font-semibold text-lg text-gray-900">
-                    {service.displayName}
-                  </div>
-                  <motion.div className="flex items-center justify-end z-10">
-                    <div className="flex justify-end">
-                      {service.animation ? (
-                        <div className="w-full  h-auto text-left">
-                          <Lottie
-                            animationData={service.animation}
-                            loop
-                            autoplay
-                            className="w-22 h-auto "
-                          />
+
+      {user.role !== "AGENT" && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* Service Cards */}
+          <Grid container spacing={3}>
+            {services.map((service, index) => {
+              const IconComponent = service.icon;
+              const hasService = user.services?.some(
+                (s) =>
+                  s.display_name.toLowerCase() === service.name.toLowerCase()
+              );
+              return (
+                <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                    className={`relative rounded-xl bg-gradient-to-br ${
+                      service.color
+                    } p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${
+                      hasService
+                        ? "ring-1 ring-green-300"
+                        : "ring-1 ring-red-300"
+                    } `}
+                  >
+                    {hasService && (
+                      <>
+                        <div className="absolute top-2 right-2 bg-green-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm uppercase tracking-wider h-5 w-4 border-2 border-white"></div>
+                        <div className="absolute top-2 right-8 bg-green-600 text-white text-[11px] font-medium px-2 py-0.5 rounded-full shadow-sm">
+                          Active
                         </div>
-                      ) : (
-                        <IconComponent className="text-gray-700 group-hover:rotate-6 transition-transform duration-300" />
-                      )}
+                      </>
+                    )}
+                    {!hasService && (
+                      <>
+                        <div className="absolute top-2 right-2 bg-red-400 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm uppercase tracking-wider h-5 w-4 border-2 border-white"></div>
+                        <div className="absolute top-2 right-8 bg-red-400 text-white text-[11px] font-medium px-2 py-0.5 rounded-full shadow-sm">
+                          inActive
+                        </div>
+                      </>
+                    )}
+                    <div className="font-semibold text-lg text-gray-900">
+                      {service.displayName}
                     </div>
+                    <motion.div className="flex items-center justify-end z-10">
+                      <div className="flex justify-end">
+                        {service.animation ? (
+                          <div className="w-full  h-auto text-left">
+                            <Lottie
+                              animationData={service.animation}
+                              loop
+                              autoplay
+                              className="w-22 h-auto "
+                            />
+                          </div>
+                        ) : (
+                          <IconComponent className="text-gray-700 group-hover:rotate-6 transition-transform duration-300" />
+                        )}
+                      </div>
+                    </motion.div>
+                    <p className="text-sm opacity-70 mt-3">{service.desc}</p>
                   </motion.div>
-                  <p className="text-sm opacity-70 mt-3">{service.desc}</p>
-                </motion.div>
-              </Grid>
-            );
-          })}
-        </Grid>
-      </motion.div>
+                </Grid>
+              );
+            })}
+          </Grid>
+        </motion.div>
+      )}
+
       {/* service cards end */}
 
       {/* Add Integrations Start */}
-      <motion.div
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        onClick={openDialog}
-        className="cursor-pointer group relative p-6 rounded-2xl shadow-md bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 hover:shadow-xl transition-all overflow-hidden"
-      >
-        <div className="relative flex flex-col md:flex-row items-center justify-around space-y-2">
-          {/* <AiOutlineAppstoreAdd size={48} className="text-blue-600" /> */}
-          <div className="flex flex-col items-center">
-            <Lottie
-              animationData={integration}
-              loop
-              autoplay
-              className="w-35 h-auto"
-            />
-            <h2 className="text-4xl font-extrabold text-gray-800 playf bluetxt">
-              Add Integrations
-            </h2>
-            <p className="text-gray-500 text-center text-sm">
-              Connect Freshdesk, Zoho, Shopify, and more from a single
-              dashboard.
-            </p>
-          </div>
+      {user.role !== "AGENT" && (
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          onClick={openDialog}
+          className="cursor-pointer group relative p-6 rounded-2xl shadow-md bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 hover:shadow-xl transition-all overflow-hidden"
+        >
+          <div className="relative flex flex-col md:flex-row items-center justify-around space-y-2">
+            {/* <AiOutlineAppstoreAdd size={48} className="text-blue-600" /> */}
+            <div className="flex flex-col items-center">
+              <Lottie
+                animationData={integration}
+                loop
+                autoplay
+                className="w-35 h-auto"
+              />
+              <h2 className="text-4xl font-extrabold text-gray-800 playf bluetxt">
+                Add Integrations
+              </h2>
+              <p className="text-gray-500 text-center text-sm">
+                Connect Freshdesk, Zoho, Shopify, and more from a single
+                dashboard.
+              </p>
+            </div>
 
-          <motion.div
-            layout
-            className="flex justify-center items-center flex-wrap mt-4 transition-all duration-500 gap-12 group-hover:gap-13"
-          >
-            {[
-              { icon: <img src={zohoicon} alt="" className="w-22" /> },
-              { icon: <img src={zapier} alt="" className="w-12" /> },
-              { icon: <img src={wordpress} alt="" className="w-12" /> },
-              { icon: <img src={woocommerce} alt="" className="w-14" /> },
-              { icon: <img src={slack} alt="" className="w-12" /> },
-              { icon: <img src={telegram} alt="" className="w-12" /> },
-              { icon: <img src={shopify} alt="" className="w-12" /> },
-              { icon: <img src={instagram} alt="" className="w-12" /> },
-              { icon: <img src={freshdesk} alt="" className="w-25" /> },
-              { icon: <img src={facebookmessenger} alt="" className="w-10" /> },
-            ].map((item, idx) => (
-              <motion.div
-                key={idx}
-                className={`transition-all duration-300`}
-                whileHover={{ scale: 1.25 }}
-                animate={{ scale: 1 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {item.icon}
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-        <p className="relative text-xs text-gray-400 mt-5 text-center">
-          Click to configure integrations
-        </p>
-      </motion.div>
+            <motion.div
+              layout
+              className="flex justify-center items-center flex-wrap mt-4 transition-all duration-500 gap-12 group-hover:gap-13"
+            >
+              {[
+                { icon: <img src={zohoicon} alt="" className="w-22" /> },
+                { icon: <img src={zapier} alt="" className="w-12" /> },
+                { icon: <img src={wordpress} alt="" className="w-12" /> },
+                { icon: <img src={woocommerce} alt="" className="w-14" /> },
+                { icon: <img src={slack} alt="" className="w-12" /> },
+                { icon: <img src={telegram} alt="" className="w-12" /> },
+                { icon: <img src={shopify} alt="" className="w-12" /> },
+                { icon: <img src={instagram} alt="" className="w-12" /> },
+                { icon: <img src={freshdesk} alt="" className="w-25" /> },
+                {
+                  icon: <img src={facebookmessenger} alt="" className="w-10" />,
+                },
+              ].map((item, idx) => (
+                <motion.div
+                  key={idx}
+                  className={`transition-all duration-300`}
+                  whileHover={{ scale: 1.25 }}
+                  animate={{ scale: 1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {item.icon}
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+          <p className="relative text-xs text-gray-400 mt-5 text-center">
+            Click to configure integrations
+          </p>
+        </motion.div>
+      )}
 
       <Dialog
         header="CPaaS Integrations Panel"
@@ -747,7 +754,6 @@ const ResellerDashboard = () => {
         ></iframe>
       </Dialog>
       {/* Add Integrations End */}
-
 
       {/* daily use */}
 
@@ -817,26 +823,31 @@ const ResellerDashboard = () => {
       <AccountExpiryFormat />
       {/* Account expiry format end */}
 
-
       {/* Service Usage Overview start */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <ServiceUsageDashboard />
-      </motion.div>
+      {user.role !== "AGENT" && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <ServiceUsageDashboard />
+        </motion.div>
+      )}
+
       {/* Service Usage Overview End */}
 
       {/* bots & flows start */}
-      <motion.div
-        className="bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-2xl shadow-md p-3"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <MetricsDashboard />
-      </motion.div>
+      {user.role !== "AGENT" && (
+        <motion.div
+          className="bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-2xl shadow-md p-3"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <MetricsDashboard />
+        </motion.div>
+      )}
+
       {/* bots & flows End */}
     </div>
   );

@@ -454,7 +454,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
   const getFilteredMenuItems = (menuItems, userState) => {
     // let allowedServices = [];
 
-    if (userState.role === "ADMIN") {
+    if (`userState`.role === "ADMIN") {
       return menuItems;
     }
 

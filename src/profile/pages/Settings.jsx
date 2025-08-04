@@ -25,6 +25,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 import { Chip } from "primereact/chip";
+import { useUser } from "@/context/auth";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -68,6 +69,7 @@ const Settings = () => {
     apiInput: "",
   });
 
+    const { user } = useUser();
   // Handler for the button click to generate a new API key.
   const handleGenerateAPIKey = async () => {
     const apiKey = await getApiKey();
@@ -82,6 +84,7 @@ const Settings = () => {
   };
 
   async function handlegetOldApiKey() {
+     if (user.role === "AGENT") return;
     try {
       const res = await getOldApiKey();
       if (res.status === 200) {
