@@ -7,6 +7,7 @@ import Lottie from "lottie-react";
 import pointingAnimation from "@/assets/animation/pointing.json";
 import { getAllGroups } from "@/apis/common/common";
 import toast from "react-hot-toast";
+import { useUser } from "@/context/auth";
 
 export const ChatSidebar = ({
   formatDate,
@@ -18,6 +19,7 @@ export const ChatSidebar = ({
   isLoading,
   setChatIndex,
 }) => {
+  const { user } = useUser();
   // const isLoading =
   //   selectedWaba &&
   //   (!chatState?.allConversations || chatState.allConversations.length === 0);
@@ -44,6 +46,7 @@ export const ChatSidebar = ({
   }
 
   async function fetchGrpList(name) {
+    if (user.role === "AGENT") return;
     try {
       const allGrps = await getAllGroups();
       const grpSrno = allGrps?.find((grp) => grp.groupName === name)?.groupCode;
