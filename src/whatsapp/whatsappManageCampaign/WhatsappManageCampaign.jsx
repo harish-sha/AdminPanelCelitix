@@ -17,6 +17,15 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 // import Checkbox from "@mui/material/Checkbox";
 import { Dialog } from "primereact/dialog";
 import { RadioButton } from "primereact/radiobutton";
+import { format } from "date-fns"; // Make sure to install: `npm i date-fns`
+import {
+  MdBarChart,
+  MdOutlineDescription,
+  MdOutlineAnalytics,
+  MdOpenInNew,
+} from "react-icons/md";
+import { motion } from "framer-motion";
+import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
 
 import { Checkbox } from "primereact/checkbox";
 
@@ -37,6 +46,8 @@ import {
   getWhatsappCampaignScheduledReport,
   cancelCampaign,
   downloadCustomWhatsappReport,
+  flowReplyDetails,
+  flowMainResponse,
 } from "../../apis/whatsapp/whatsapp.js";
 import CampaignLogCard from "./components/CampaignLogCard.jsx";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
@@ -100,9 +111,11 @@ const WhatsappManageCampaign = () => {
   const [toDate, settoDate] = useState(new Date());
   const [summaryReport, setSummaryReport] = useState([]);
   const [selectedWaBaNumber, setSelectedWaBaNumber] = useState("");
-  const [selectedSearchType, setSelectedSearchType] = useState("")
+  const [selectedSearchType, setSelectedSearchType] = useState("");
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
+  const [selectedYear, setSelectedYear] = useState(
+    new Date().getFullYear().toString()
+  );
   const [hasSearched, setHasSearched] = useState(false);
   const [visible, setVisible] = useState(false);
   const [currentRow, setCurrentRow] = useState(null);
@@ -238,9 +251,9 @@ const WhatsappManageCampaign = () => {
     }));
   };
 
-  const handlecampaignDialogSubmithBtn = () => { };
+  const handlecampaignDialogSubmithBtn = () => {};
 
-  const handleCustomDialogSubmithBtn = () => { };
+  const handleCustomDialogSubmithBtn = () => {};
 
   //Export Download Reports end
 
@@ -361,7 +374,6 @@ const WhatsappManageCampaign = () => {
       }));
 
       setScheduleData(rows);
-
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch schedule campaign data.");
@@ -436,7 +448,7 @@ const WhatsappManageCampaign = () => {
     setIsFetching(true);
     const formattedFromDateLogs = selectedDateLogs
       ? // ? new Date(selectedDateLogs).toLocaleDateString("en-GB")
-      moment(selectedDateLogs).format("YYYY-MM-DD")
+        moment(selectedDateLogs).format("YYYY-MM-DD")
       : new Date().toLocaleDateString("en-GB");
 
     // currently log data mobile no is hardcoded later fetch accoding to the login as user or admin
@@ -458,7 +470,6 @@ const WhatsappManageCampaign = () => {
       setIsFetching(false);
     }
   };
-
 
   // useEffect(() => {
   //   const FinalFromDate = moment(selectedMonth).startOf("month").format("YYYY-MM-DD");
@@ -502,7 +513,6 @@ const WhatsappManageCampaign = () => {
   //     fetchMonthWiseReport();
   //   }
   // }, [isMonthWise, selectedWaBaNumber, selectedMonth]); // ✅ use selectedMonth instead
-
 
   const handleSummary = async () => {
     let result;
@@ -627,11 +637,12 @@ const WhatsappManageCampaign = () => {
         toDate: moment(selectedDateLogs).format("YYYY-MM-DD"),
         isCustomField: 1,
         // customColumns: "",
-        customColumns: "mobile_no,charged_multiplier,status,delivery_status,que_time,sent_time,delivery_time,read_status,reason,source",
+        customColumns:
+          "mobile_no,charged_multiplier,status,delivery_status,que_time,sent_time,delivery_time,read_status,reason,source",
         // status: state.log,
         status: "",
         // deliveryStatus: "",
-        source: "api"
+        source: "api",
       };
       const res = await downloadCustomWhatsappReport(payload);
       if (!res?.status) {
@@ -641,10 +652,50 @@ const WhatsappManageCampaign = () => {
       toast.success(res?.msg);
       triggerDownloadNotification();
     } catch (e) {
-      console.log(e)
+      console.log(e);
       toast.error("Error downloading attachment");
     }
   }
+
+  // flows report
+  const [flowReplyList, setFlowReplyList] = useState([]);
+  const [selectedDateFlow, setSelectedDateFlow] = useState(""); // format: yyyy-mm-dd
+  const [isFlowFetching, setIsFlowFetching] = useState(""); // format: yyyy-mm-dd
+
+  const fetchFlowReplyDetails = async () => {
+    if (!selectedDateFlow) return;
+
+    setIsFlowFetching(true);
+    try {
+      const formattedDate = moment(selectedDateFlow).format("YYYY-MM-DD");
+      const response = await flowReplyDetails(formattedDate);
+      setFlowReplyList(response || []);
+    } catch (error) {
+      console.error("Error fetching flow reply details:", error);
+    }
+    setIsFlowFetching(false);
+  };
+
+  const fetchFlowMainResponse = async (flowName) => {
+    setIsFlowFetching(true);
+    try {
+      const data = {
+        flowName: flowName,
+        templateName: "" || null, // optional
+        campaignSrno: "" || 0, // optional
+      };
+      const response = await flowMainResponse(data);
+    } catch (error) {
+      console.error("Error fetching flow main response:", error);
+    }
+    setIsFlowFetching(false);
+  };
+
+  useEffect(() => {
+    if (selectedDateFlow) {
+      fetchFlowReplyDetails();
+    }
+  }, [selectedDateFlow]);
 
   return (
     <div className="w-full ">
@@ -726,6 +777,24 @@ const WhatsappManageCampaign = () => {
                 </span>
               }
               {...a11yProps(3)}
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
+                },
+              }}
+            />
+            <Tab
+              label={
+                <span>
+                  <AccountTreeOutlinedIcon size={20} /> Flows Report
+                </span>
+              }
+              {...a11yProps(4)}
               sx={{
                 textTransform: "none",
                 fontWeight: "bold",
@@ -928,7 +997,7 @@ const WhatsappManageCampaign = () => {
                     tooltipPlacement="right"
                   />
                 </div>
-                <div className="flex items-end gap-3" >
+                <div className="flex items-end gap-3">
                   <div className="w-max-content ">
                     <UniversalButton
                       id="manageCampaignLogsShowhBtn"
@@ -939,7 +1008,7 @@ const WhatsappManageCampaign = () => {
                       variant="primary"
                     />
                   </div>
-                  <div className="w-max-content" >
+                  <div className="w-max-content">
                     <UniversalButton
                       id="export"
                       name="export"
@@ -1031,106 +1100,106 @@ const WhatsappManageCampaign = () => {
                     label="Search Type"
                     tooltipContent="Select Search Type"
                     tooltipPlacement="right"
-                     options={[
-                        { value: 0, label: "Custom" },
-                        { value: 1, label: "Monthly" },
-                      ]}
+                    options={[
+                      { value: 0, label: "Custom" },
+                      { value: 1, label: "Monthly" },
+                    ]}
                     value={isMonthWise}
                     onChange={(value) => setIsMonthWise(value)}
                     placeholder="Search Type"
                   />
                 </div>
 
-                {
-  isMonthWise === 1 ? (
-    <>
-      {/* Month Dropdown */}
-      <div className="w-full sm:w-56">
-        <AnimatedDropdown
-          id="monthSelect"
-          name="monthSelect"
-          label="Select Month"
-          tooltipContent="Select Month"
-          tooltipPlacement="right"
-          options={[
-            { value: 1, label: "January" },
-            { value: 2, label: "February" },
-            { value: 3, label: "March" },
-            { value: 4, label: "April" },
-            { value: 5, label: "May" },
-            { value: 6, label: "June" },
-            { value: 7, label: "July" },
-            { value: 8, label: "August" },
-            { value: 9, label: "September" },
-            { value: 10, label: "October" },
-            { value: 11, label: "November" },
-            { value: 12, label: "December" },
-          ]}
-          value={selectedMonth}
-          onChange={(value) => setSelectedMonth(value)}
-          placeholder="Select Month"
-        />
-      </div>
+                {isMonthWise === 1 ? (
+                  <>
+                    {/* Month Dropdown */}
+                    <div className="w-full sm:w-56">
+                      <AnimatedDropdown
+                        id="monthSelect"
+                        name="monthSelect"
+                        label="Select Month"
+                        tooltipContent="Select Month"
+                        tooltipPlacement="right"
+                        options={[
+                          { value: 1, label: "January" },
+                          { value: 2, label: "February" },
+                          { value: 3, label: "March" },
+                          { value: 4, label: "April" },
+                          { value: 5, label: "May" },
+                          { value: 6, label: "June" },
+                          { value: 7, label: "July" },
+                          { value: 8, label: "August" },
+                          { value: 9, label: "September" },
+                          { value: 10, label: "October" },
+                          { value: 11, label: "November" },
+                          { value: 12, label: "December" },
+                        ]}
+                        value={selectedMonth}
+                        onChange={(value) => setSelectedMonth(value)}
+                        placeholder="Select Month"
+                      />
+                    </div>
 
-      {/* Year Dropdown */}
-      <div className="w-full sm:w-56">
-        <AnimatedDropdown
-          id="yearSelect"
-          name="yearSelect"
-          label="Select Year"
-          tooltipContent="Select Year"
-          tooltipPlacement="right"
-          options={Array.from({ length: 2025 - 1990 + 1 }, (_, i) => {
-            const year = 1990 + i;
-            return { value: String(year), label: String(year) };
-          }).reverse()}
-          value={selectedYear}
-          onChange={(value) => setSelectedYear(value)}
-          placeholder="Select Year"
-        />
-      </div>
-    </>
-  ) : (
-    <>
-      {/* From Date */}
-      <div className="w-full sm:w-56">
-        <UniversalDatePicker
-          id="manageFromDate"
-          name="manageFromDate"
-          label="From Date"
-          value={fromDate}
-          onChange={(newValue) => setfromDate(newValue)}
-          placeholder="Pick a start date"
-          tooltipContent="Select the start date"
-          tooltipPlacement="right"
-          error={!fromDate}
-          minDate={new Date().setMonth(new Date().getMonth() - 3)}
-          maxDate={new Date()}
-          errorText="Please select a valid date"
-        />
-      </div>
+                    {/* Year Dropdown */}
+                    <div className="w-full sm:w-56">
+                      <AnimatedDropdown
+                        id="yearSelect"
+                        name="yearSelect"
+                        label="Select Year"
+                        tooltipContent="Select Year"
+                        tooltipPlacement="right"
+                        options={Array.from(
+                          { length: 2025 - 1990 + 1 },
+                          (_, i) => {
+                            const year = 1990 + i;
+                            return { value: String(year), label: String(year) };
+                          }
+                        ).reverse()}
+                        value={selectedYear}
+                        onChange={(value) => setSelectedYear(value)}
+                        placeholder="Select Year"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* From Date */}
+                    <div className="w-full sm:w-56">
+                      <UniversalDatePicker
+                        id="manageFromDate"
+                        name="manageFromDate"
+                        label="From Date"
+                        value={fromDate}
+                        onChange={(newValue) => setfromDate(newValue)}
+                        placeholder="Pick a start date"
+                        tooltipContent="Select the start date"
+                        tooltipPlacement="right"
+                        error={!fromDate}
+                        minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                        maxDate={new Date()}
+                        errorText="Please select a valid date"
+                      />
+                    </div>
 
-      {/* To Date */}
-      <div className="w-full sm:w-56">
-        <UniversalDatePicker
-          id="manageToDate"
-          name="manageToDate"
-          label="To Date"
-          value={toDate}
-          onChange={(newValue) => settoDate(newValue)}
-          placeholder="Pick an end date"
-          tooltipContent="Select the end date"
-          tooltipPlacement="right"
-          error={!toDate}
-          minDate={new Date().setMonth(new Date().getMonth() - 3)}
-          maxDate={new Date()}
-          errorText="Please select a valid date"
-        />
-      </div>
-    </>
-  )
-}
-
+                    {/* To Date */}
+                    <div className="w-full sm:w-56">
+                      <UniversalDatePicker
+                        id="manageToDate"
+                        name="manageToDate"
+                        label="To Date"
+                        value={toDate}
+                        onChange={(newValue) => settoDate(newValue)}
+                        placeholder="Pick an end date"
+                        tooltipContent="Select the end date"
+                        tooltipPlacement="right"
+                        error={!toDate}
+                        minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                        maxDate={new Date()}
+                        errorText="Please select a valid date"
+                      />
+                    </div>
+                  </>
+                )}
 
                 {/* {isMonthWise ? (
                   <>
@@ -1206,7 +1275,7 @@ const WhatsappManageCampaign = () => {
                     </div>
                   </>
                 )} */}
-                
+
                 {/* <div className="flex items-center gap-3 justify-center mb-2 w-full sm:w-35">
                   <FormGroup>
                     <FormControlLabel
@@ -1375,7 +1444,7 @@ const WhatsappManageCampaign = () => {
                     name="whatsappManageCampaignTable"
                     data={scheduleData}
                     onCancel={handleCancel}
-                  // fromDate={selectedDate}
+                    // fromDate={selectedDate}
                   />
                 </div>
               )}
@@ -1399,7 +1468,10 @@ const WhatsappManageCampaign = () => {
                 <div className="p-4 text-center">
                   <p className="text-[1.1rem] font-semibold text-gray-700">
                     Are you sure you want to cancel the campaign:
-                    <span className="text-green-500">"{currentRow?.campaignName}"</span>?
+                    <span className="text-green-500">
+                      "{currentRow?.campaignName}"
+                    </span>
+                    ?
                   </p>
                   <p className="mt-2 text-sm text-gray-500">
                     This action is irreversible.
@@ -1459,11 +1531,136 @@ const WhatsappManageCampaign = () => {
               )} */}
             </div>
           </CustomTabPanel>
+          <CustomTabPanel value={value} index={4}>
+            <div className="flex flex-col gap-6 bg-gradient-to-b from-blue-50 via-white to-white min-h-[80vh] p-4 md:p-6 rounded-xl">
+              {/* Header Section */}
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <MdBarChart className="text-blue-600 text-2xl" />
+                  <h2 className="text-xl font-bold text-gray-800">
+                    Flow Summary Report
+                  </h2>
+                </div>
+
+                <div className="flex flex-col items-start">
+                  <UniversalDatePicker
+                    label="Select Date"
+                    value={selectedDateFlow}
+                    onChange={(newValue) => setSelectedDateFlow(newValue)}
+                    defaultValue={new Date()}
+                  />
+                </div>
+              </div>
+
+              {/* Display Selected Date */}
+              {selectedDateFlow && (
+                <div className="text-sm text-gray-600 font-medium">
+                  Showing results for:{" "}
+                  <span className="text-gray-800 font-semibold">
+                    {format(new Date(selectedDateFlow), "dd MMMM yyyy")}
+                  </span>
+                </div>
+              )}
+
+              {/* Data State */}
+              {isFlowFetching ? (
+                <div className="text-center text-blue-500 font-medium py-6">
+                  Loading flow replies...
+                </div>
+              ) : flowReplyList.length === 0 ? (
+                <div className="text-center text-gray-500 py-6">
+                  No flow replies found for the selected date.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {flowReplyList.map((item, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: idx * 0.1 }}
+                      className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden group"
+                    >
+                      <div className="absolute top-0 right-0 h-2 w-full bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 rounded-t-2xl" />
+
+                      <div className="flex flex-col gap-3 pt-3">
+                        {/* Campaign / Flow Name */}
+                        <div className="grid grid-cols-2 items-start justify-between">
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1">
+                              <MdOutlineDescription className="text-gray-500" />
+                              Flow Name:
+                            </p>
+                            <h3 className="text-lg font-semibold text-gray-800">
+                              {item.flow_name || "—"}
+                            </h3>
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1">
+                              <MdOutlineDescription className="text-gray-500" />
+                              Campaign Name:
+                            </p>
+                            <h3 className="text-lg font-semibold text-gray-800">
+                              {item.campaign_name || "—"}
+                            </h3>
+                          </div>
+                          {/* <div className="flex flex-col text-gray-600 font-medium">
+                            <p className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1">
+                              <MdOutlineAnalytics className="text-gray-500" />
+                              Campaign Launched Date:
+                            </p>
+                            <span className="text-gray-800 font-semibold text-lg">
+                              {format(new Date(selectedDate), "dd MMMM yyyy")}
+                            </span>
+                          </div> */}
+                        </div>
+
+                        {/* Template Name */}
+                        <div className="grid grid-cols-2 items-start justify-between">
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-1">
+                              Template Used
+                            </p>
+                            <p className="text-gray-800 font-semibold text-lg">
+                              {item.template_name || "—"}
+                            </p>
+                          </div>
+
+                          {/* Reply Count */}
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-1">
+                              Total Responses Received
+                            </p>
+                            <span className="inline-block bg-blue-100 text-blue-700 font-semibold text-xl px-3 py-1 rounded-full">
+                              {item.reply_count}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      {/* View Detailed Report */}
+                      <div className="mt-4">
+                        <div
+                          onClick={() =>
+                            fetchFlowMainResponse(
+                              item.flow_name || item.template_name
+                            )
+                          }
+                          className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline mt-auto"
+                        >
+                          View Detailed Report
+                          <MdOpenInNew className="text-base" />
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </CustomTabPanel>
         </Box>
       )}
 
       {/* Campaign Export Dialog Start*/}
-
       {visibledialog && (
         <ExportDialog
           visibledialog={visibledialog}
@@ -1473,790 +1670,6 @@ const WhatsappManageCampaign = () => {
           dataToExport={dataToExport}
         />
       )}
-
-      {/* <Dialog
-        visible={visibledialog}
-        style={{ width: "45rem" }}
-        onHide={() => {
-          setVisibledialog(false);
-        }}
-        draggable={false}
-      >
-        <div className="flex gap-4">
-          <div className="cursor-pointer">
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="radioOption1"
-                name="radioGroup"
-                value="option1"
-                onChange={handleChangeOption}
-                checked={selectedOption === "option1"}
-              />
-              <label
-                htmlFor="radioOption1"
-                className="text-gray-700 font-medium text-sm cursor-pointer"
-              >
-                Campaign-wise
-              </label>
-            </div>
-          </div>
-          <div className="cursor-pointer">
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="radioOption2"
-                name="radioGroup"
-                value="option2"
-                onChange={handleChangeOption}
-                checked={selectedOption === "option2"}
-              />
-              <label
-                htmlFor="radioOption2"
-                className="text-gray-700 font-medium text-sm cursor-pointer"
-              >
-                Custom
-              </label>
-            </div>
-          </div>
-        </div>
-
-        {selectedOption === "option1" && (
-          <>
-            <div className="mt-5">
-              <AnimatedDropdown
-                id="campaign"
-                name="campaign"
-                label="Select Campaign"
-                options={campaignList?.map((item) => ({
-                  value: item.srNo,
-                  label: item.campaignName,
-                }))}
-                onChange={handleCampaignChange}
-                value={selectedCampaign ? selectedCampaign.srNo : ""}
-                placeholder="Search Campaign"
-              />
-            </div>
-            <div className="flex items-center lg:gap-x-20 gap-x-10 my-6">
-              <UniversalLabel text="Custom Columns" />
-              <div className="flex gap-4">
-                <div className="cursor-pointer">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="radioOptionenable"
-                      name="radioGroup"
-                      value="radioOptionenable"
-                      onChange={handleChangeOptionEnable}
-                      checked={customOptions === "radioOptionenable"}
-                    />
-                    <label
-                      htmlFor="radioOptionenable"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                <div className="cursor-pointer">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="radioOptiondisable"
-                      name="radioGroup"
-                      value="radioOptiondisable"
-                      onChange={handleChangeOptionEnable}
-                      checked={customOptions === "radioOptiondisable"}
-                    />
-                    <label
-                      htmlFor="radioOptiondisable"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {customOptions === "radioOptionenable" && (
-              <>
-                <div className="grid grid-cols-2 lg:grid-cols-3 ">
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="campaignName"
-                      name="campaignName"
-                      onChange={(e) => handleCheckboxChange(e, "campaignName")}
-                      checked={campaigncheckboxStates.campaignName}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="campaignName"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Campaign Name
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="mobileNo"
-                      name="mobileNo"
-                      onChange={(e) => handleCheckboxChange(e, "mobileNo")}
-                      checked={campaigncheckboxStates.mobileNo}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="mobileNo"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Mobile Number
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="callType"
-                      name="callType"
-                      onChange={(e) => handleCheckboxChange(e, "callType")}
-                      checked={campaigncheckboxStates.callType}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="callType"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Call Type
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="totalUnits"
-                      name="totalUnits"
-                      onChange={(e) => handleCheckboxChange(e, "totalUnits")}
-                      checked={campaigncheckboxStates.totalUnits}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="totalUnits"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Total Units
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="queueTime"
-                      name="queueTime"
-                      onChange={(e) => handleCheckboxChange(e, "queueTime")}
-                      checked={campaigncheckboxStates.queueTime}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="queueTime"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Queue Time
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="sentTime"
-                      name="sentTime"
-                      onChange={(e) => handleCheckboxChange(e, "sentTime")}
-                      checked={campaigncheckboxStates.sentTime}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="sentTime"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Sent Time
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="deliveryTime"
-                      name="deliveryTime"
-                      onChange={(e) => handleCheckboxChange(e, "deliveryTime")}
-                      checked={campaigncheckboxStates.deliveryTime}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="deliveryTime"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Delivery Time
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="callDuration"
-                      name="callDuration"
-                      onChange={(e) => handleCheckboxChange(e, "callDuration")}
-                      checked={campaigncheckboxStates.callDuration}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="callDuration"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Call Duration
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="retryCount"
-                      name="retryCount"
-                      onChange={(e) => handleCheckboxChange(e, "retryCount")}
-                      checked={campaigncheckboxStates.retryCount}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="retryCount"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Retry Count
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="callStatus"
-                      name="callStatus"
-                      onChange={(e) => handleCheckboxChange(e, "callStatus")}
-                      checked={campaigncheckboxStates.callStatus}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="callStatus"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Call Status
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="deliveryStatus"
-                      name="deliveryStatus"
-                      onChange={(e) =>
-                        handleCheckboxChange(e, "deliveryStatus")
-                      }
-                      checked={campaigncheckboxStates.deliveryStatus}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="deliveryStatus"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Delivery Status
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="keypress"
-                      name="keypress"
-                      onChange={(e) => handleCheckboxChange(e, "keypress")}
-                      checked={campaigncheckboxStates.keypress}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="keypress"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Key Press
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="action"
-                      name="action"
-                      onChange={(e) => handleCheckboxChange(e, "action")}
-                      checked={campaigncheckboxStates.action}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="action"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Action
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="source"
-                      name="source"
-                      onChange={(e) => handleCheckboxChange(e, "source")}
-                      checked={campaigncheckboxStates.source}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="source"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Source
-                    </label>
-                  </div>
-                </div>
-              </>
-            )}
-
-            <div className="flex item-center justify-center mt-6">
-              <UniversalButton
-                id="campaignDialogSubmithBtn"
-                name="campaignDialogSubmithBtn"
-                label="Submit"
-                onClick={handlecampaignDialogSubmithBtn}
-              />
-            </div>
-          </>
-        )}
-
-        {selectedOption === "option2" && (
-          <>
-            <div className="mt-4 ">
-              <div className="flex justify-between gap-x-4">
-                <UniversalDatePicker label="From Date:" />
-                <UniversalDatePicker label="To Date:" />
-              </div>
-
-              <div className="flex justify-between gap-5 my-4">
-                <div className="flex-1">
-                  <AnimatedDropdown
-                    label="Select Type"
-                    options={[
-                      { value: "Promotional", label: "Promotional" },
-                      { value: "Transactional", label: "Transactional" },
-                      { value: "Both", label: "Both" },
-                    ]}
-                    value={customdialogtype}
-                    onChange={setCustomdialogtype}
-                    placeholder="Select Type"
-                  />
-                </div>
-
-                <div className="flex-1">
-                  <AnimatedDropdown
-                    label="Select Request"
-                    options={[
-                      { value: "Sent", label: "Sent" },
-                      { value: "Failed", label: "Failed" },
-                      { value: "NDNC", label: "NDNC" },
-                    ]}
-                    value={customdialogstatus}
-                    onChange={setCustomdialogstatus}
-                    placeholder="Select Status"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col mt-5">
-                <UniversalLabel text="Delivery Status" />
-                <div className="flex gap-x-5 lg:gap-x-20">
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="answered"
-                      name="answered"
-                      onChange={(e) =>
-                        handleDeliveryCheckboxChange(e, "answered")
-                      }
-                      checked={deliverycheckbox.answered}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="answered"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Answered
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="unanswered"
-                      name="unanswered"
-                      onChange={(e) =>
-                        handleDeliveryCheckboxChange(e, "unanswered")
-                      }
-                      checked={deliverycheckbox.unanswered}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="unanswered"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Unanswered
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="dialed"
-                      name="dialed"
-                      onChange={(e) =>
-                        handleDeliveryCheckboxChange(e, "dialed")
-                      }
-                      checked={deliverycheckbox.dialed}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="dialed"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Dialed
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex my-4 gap-4">
-                <InputField
-                  label="Mobile Number"
-                  id="customdialognumber"
-                  name="customdialognumber"
-                  value={customdialognumber}
-                  onChange={handleCustomDialogNumber}
-                  placeholder="Enter mobile number..."
-                />
-                <AnimatedDropdown
-                  label="DTMF Count"
-                  id="dtmfResponse"
-                  name="dtmfResponse"
-                  options={[
-                    { value: "0", label: "0" },
-                    { value: "l", label: "1" },
-                    { value: "2", label: "2" },
-                    { value: "3", label: "3" },
-                    { value: "4", label: "4" },
-                    { value: "5", label: "5" },
-                    { value: "6", label: "6" },
-                    { value: "7", label: "7" },
-                    { value: "8", label: "8" },
-                    { value: "9", label: "9" },
-                  ]}
-                  onChange={setDtmfResponse}
-                  value={dtmfResponse}
-                  placeholder="DTMF Response"
-                />
-              </div>
-
-              <div className="flex items-center lg:gap-x-20 gap-x-10 my-6">
-                <UniversalLabel text="Custom Columns" />
-                <div className="flex gap-4">
-                  <div className="cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <RadioButton
-                        inputId="radioOptionenable"
-                        name="radioGroup"
-                        value="radioOptionenable"
-                        onChange={handleChangeOptionEnable}
-                        checked={customOptions === "radioOptionenable"}
-                      />
-                      <label
-                        htmlFor="radioOptionenable"
-                        className="text-gray-700 font-medium text-sm cursor-pointer"
-                      >
-                        Enable
-                      </label>
-                    </div>
-                  </div>
-                  <div className="cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <RadioButton
-                        inputId="radioOptiondisable"
-                        name="radioGroup"
-                        value="radioOptiondisable"
-                        onChange={handleChangeOptionEnable}
-                        checked={customOptions === "radioOptiondisable"}
-                      />
-                      <label
-                        htmlFor="radioOptiondisable"
-                        className="text-gray-700 font-medium text-sm cursor-pointer"
-                      >
-                        Disable
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {customOptions === "radioOptionenable" && (
-                <>
-                  <div className="grid grid-cols-2 lg:grid-cols-3 ">
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="campaignName"
-                        name="campaignName"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "campaignName")
-                        }
-                        checked={customcheckboxStates.campaignName}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="campaignName"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Campaign Name
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="mobileNo"
-                        name="mobileNo"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "mobileNo")
-                        }
-                        checked={customcheckboxStates.mobileNo}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="mobileNo"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Mobile Number
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="callType"
-                        name="callType"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "callType")
-                        }
-                        checked={customcheckboxStates.callType}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="callType"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Call Type
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="totalUnits"
-                        name="totalUnits"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "totalUnits")
-                        }
-                        checked={customcheckboxStates.totalUnits}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="totalUnits"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Total units
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="queueTime"
-                        name="queueTime"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "queueTime")
-                        }
-                        checked={customcheckboxStates.queueTime}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="queueTime"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Queue Time
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="sentTime"
-                        name="sentTime"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "sentTime")
-                        }
-                        checked={customcheckboxStates.sentTime}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="sentTime"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Sent Time
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="deliveryTime"
-                        name="deliveryTime"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "deliveryTime")
-                        }
-                        checked={customcheckboxStates.deliveryTime}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="deliveryTime"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Delivery Time
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="callDuration"
-                        name="callDuration"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "callDuration")
-                        }
-                        checked={customcheckboxStates.callDuration}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="callDuration"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Call Duration
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="retryCount"
-                        name="retryCount"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "retryCount")
-                        }
-                        checked={customcheckboxStates.retryCount}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="retryCount"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Retry Count
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="callStatus"
-                        name="callStatus"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "callStatus")
-                        }
-                        checked={customcheckboxStates.callStatus}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="callStatus"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Call Status
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="deliveryStatus"
-                        name="deliveryStatus"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "deliveryStatus")
-                        }
-                        checked={customcheckboxStates.deliveryStatus}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="deliveryStatus"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Delivery Status
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="keypress"
-                        name="keypress"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "keypress")
-                        }
-                        checked={customcheckboxStates.keypress}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="keypress"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Key Press
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="action"
-                        name="action"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "action")
-                        }
-                        checked={customcheckboxStates.action}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="action"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Action
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="source"
-                        name="source"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "source")
-                        }
-                        checked={customcheckboxStates.source}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="source"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Source
-                      </label>
-                    </div>
-                  </div>
-                </>
-              )}
-
-              <div className="flex item-center justify-center mt-6">
-                <UniversalButton
-                  id="customDialogSubmithBtn"
-                  name="customDialogSubmithBtn"
-                  label="Submit"
-                  onClick={handleCustomDialogSubmithBtn}
-                />
-              </div>
-            </div>
-          </>
-        )}
-      </Dialog> */}
-
       {/* Campaign Export Dialog End*/}
     </div>
   );

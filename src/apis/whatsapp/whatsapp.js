@@ -608,6 +608,27 @@ export const deleteFlow = async (data) => {
   });
 };
 
+// flow reply/response details - add flow params also
+export const flowReplyDetails = async (fromQueDateTime) => {
+  return await fetchWithAuth(
+    `/flowReplyDetails?fromQueDateTime=${fromQueDateTime}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+
+// flow reply/response details
+export const flowMainResponse = async (data) => {
+  return await fetchWithAuth(
+    `/showSampleResponse?flowName=${data.flowName}&templateName=${data.templateName}&campaignSrno=${data.campaignSrno}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
 export const getMainJson = async (srNo) => {
   return await fetchWithAuth(`/WhatsappFlow/getMainJson?srNo=${srNo}`, {
     method: "GET",
@@ -698,7 +719,7 @@ export const unsubscribeReport = async (data) => {
   });
 };
 
-// remove unsubscribe number 
+// remove unsubscribe number
 export const deleteUnsubscribeNumber = async (srNo) => {
   return await fetchWithAuth(`/report/deleteUnsubscribeReport?srNo=${srNo}`, {
     method: "DELETE",
