@@ -37,7 +37,7 @@ import SmsOutlinedIcon from "@mui/icons-material/SmsOutlined";
 import PhoneMissedOutlinedIcon from "@mui/icons-material/PhoneMissedOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { MdOutlineDeleteForever } from "react-icons/md";
-import SupportAgentOutlinedIcon from '@mui/icons-material/SupportAgentOutlined';
+import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 // import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
@@ -328,7 +328,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     state: "",
     city: "",
     pinCode: "",
-    agentLimit: ""
+    agentLimit: "",
   });
 
   const [petmDetails, setPetmDetails] = useState({
@@ -373,7 +373,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           city: userDetails.city || "",
           pinCode: userDetails.pinCode || "",
           srno: userDetails.srno || "",
-          agentLimit: userDetails.agentLimit || ""
+          agentLimit: userDetails.agentLimit || "",
         });
         setSelectedId(srNo);
         setEditDetailsDialogVisible(true);
@@ -529,7 +529,12 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   };
 
   const handleWhatsappAddCredit = async () => {
-    if (!whatsappCountry || !whatsappUtility || !whatsappMarketing || !whatsappAuthentication) {
+    if (
+      !whatsappCountry ||
+      !whatsappUtility ||
+      !whatsappMarketing ||
+      !whatsappAuthentication
+    ) {
       toast.error("Please fill all the fields.");
       return;
     }
@@ -1307,11 +1312,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
     const rcsRowss = Array.isArray(rcsRateRes)
       ? rcsRateRes.map((item, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        srno: item.sr_no,
-        ...item,
-      }))
+          id: index + 1,
+          sn: index + 1,
+          srno: item.sr_no,
+          ...item,
+        }))
       : [];
     rcsRateRes.length > 0 && setRcsrows(rcsRowss);
 
@@ -1368,8 +1373,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         return (
           <div className="flex items-center gap-2">
             <span
-              className={`w-3 h-3 rounded-full ${isActive ? "bg-green-500" : "bg-red-500"
-                }`}
+              className={`w-3 h-3 rounded-full ${
+                isActive ? "bg-green-500" : "bg-red-500"
+              }`}
             ></span>
             <span>{isActive ? "Active" : "Inactive"}</span>
           </div>
@@ -1664,10 +1670,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   const rows = Array.isArray(allUsers)
     ? allUsers.map((item, i) => ({
-      id: i + 1,
-      sn: i + 1,
-      ...item,
-    }))
+        id: i + 1,
+        sn: i + 1,
+        ...item,
+      }))
     : [];
 
   // const rcsrows = Array.from({ length: 20 }, (_, i) => ({
@@ -2161,7 +2167,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               placeholder="Enter agent Limit in number"
               value={updateDetails.agentLimit}
               onChange={(e) =>
-                setUpdateDetails({ ...updateDetails, agentLimit: e.target.value })
+                setUpdateDetails({
+                  ...updateDetails,
+                  agentLimit: e.target.value,
+                })
               }
             />
           </div>
@@ -2235,18 +2244,18 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           />
           {(petmDetails.petmChainType === 2 ||
             petmDetails.petmChainType === 3) && (
-              <InputField
-                label="TMA-1"
-                id="tma1"
-                name="tma1"
-                placeholder="Enter TMA-1"
-                type="number"
-                value={petmDetails.TMA1}
-                onChange={(e) => {
-                  setPetmDetails({ ...petmDetails, TMA1: e.target.value });
-                }}
-              />
-            )}
+            <InputField
+              label="TMA-1"
+              id="tma1"
+              name="tma1"
+              placeholder="Enter TMA-1"
+              type="number"
+              value={petmDetails.TMA1}
+              onChange={(e) => {
+                setPetmDetails({ ...petmDetails, TMA1: e.target.value });
+              }}
+            />
+          )}
           {petmDetails.petmChainType === 3 && (
             <InputField
               label="TMA-2"
@@ -2368,8 +2377,24 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               <div className="flex items-center gap-2 text-sm">
                 <CalendarTodayOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Expiry Date : </strong>
+                  <strong>Onboard Date : </strong>
+                  {selectedUserDetails.userCreateDate || "Not Available"}
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="flex items-center gap-2 text-sm">
+               <CalendarTodayOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong className="text-sm">Expiry Date : </strong>
                   {selectedUserDetails.expiryDate || "Not Available"}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <PersonOutlineOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>First Name : </strong>
+                  {selectedUserDetails.firstName || "Not Available"}
                 </p>
               </div>
             </div>
@@ -2379,21 +2404,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               <div className="flex items-center gap-2">
                 <PersonOutlineOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>First Name : </strong>
-                  {selectedUserDetails.firstName || "Not Available"}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <PersonOutlineOutlinedIcon className="text-gray-600" />
-                <p>
                   <strong>Last Name : </strong>{" "}
                   {selectedUserDetails.lastName || "Not Available"}
                 </p>
               </div>
-            </div>
 
-            {/* Row 3 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
               <div className="flex items-center gap-2">
                 <EmailOutlinedIcon className="text-gray-600" />
                 <p>
@@ -2401,6 +2416,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   {selectedUserDetails.emailId || "Not Available"}
                 </p>
               </div>
+            </div>
+
+            {/* Row 3 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+              
               <div className="flex items-center gap-2">
                 <PhoneOutlinedIcon className="text-gray-600" />
                 <p>
@@ -2408,10 +2428,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   {selectedUserDetails.mobileNo || "Not Available"}
                 </p>
               </div>
-            </div>
 
-            {/* Row 4 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
               <div className="flex items-center gap-2">
                 <BusinessOutlinedIcon className="text-gray-600" />
                 <p>
@@ -2419,6 +2436,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   {selectedUserDetails.companyName || "Not Available"}
                 </p>
               </div>
+            </div>
+
+            {/* Row 4 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+              
               <div className="flex items-center gap-2">
                 <LocationOnOutlinedIcon className="text-gray-600" />
                 <p>
@@ -2426,10 +2448,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   {selectedUserDetails.address || "Not Available"}
                 </p>
               </div>
-            </div>
-
-            {/* Row 5 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
               <div className="flex items-center gap-2">
                 <LocationCityOutlinedIcon className="text-gray-600" />
                 <p>
@@ -2437,6 +2455,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   {selectedUserDetails.city || "Not Available"}
                 </p>
               </div>
+            </div>
+
+            {/* Row 5 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+              
               <div className="flex items-center gap-2">
                 <MapOutlinedIcon className="text-gray-600" />
                 <p>
@@ -2444,10 +2467,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   {selectedUserDetails.state || "Not Available"}
                 </p>
               </div>
-            </div>
-
-            {/* Row 6 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
               <div className="flex items-center gap-2">
                 <PublicOutlinedIcon className="text-gray-600" />
                 <p>
@@ -2455,6 +2474,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   {selectedUserDetails.country || "Not Available"}
                 </p>
               </div>
+            </div>
+
+            {/* Row 6 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+              
               <div className="flex items-center gap-2">
                 <PinDropOutlinedIcon className="text-gray-600" />
                 <p>
@@ -2462,18 +2486,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   {selectedUserDetails.pinCode || "Not Available"}
                 </p>
               </div>
-            </div>
 
-            {/* Row 7 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <AccountTreeOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>User Type : </strong>{" "}
-                  {(selectedUserDetails.userType === 3 && "Reseller User") ||
-                    "Not Available"}
-                </p>
-              </div>
               <div className="flex items-center gap-2">
                 <CheckCircleOutlineOutlinedIcon className="text-gray-600" />
                 <p>
@@ -2481,11 +2494,14 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   {selectedUserDetails.status === 1
                     ? "Active"
                     : selectedUserDetails.status === 0
-                      ? "Inactive"
-                      : "Not Available"}
+                    ? "Inactive"
+                    : "Not Available"}
                 </p>
               </div>
             </div>
+
+            {/* Row 7 */}
+            
 
             {/* Row 8 */}
             {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
@@ -2791,8 +2807,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                       type="text"
                       readOnly={!whatsappCountry}
                     />
-
-
 
                     <UniversalButton
                       label="Add"
@@ -3593,7 +3607,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                           ?.enable || false
                       }
                       onChange={handleServiceChange}
-                    // checked={true}
+                      // checked={true}
                     />
                     <label
                       htmlFor={item.id}
