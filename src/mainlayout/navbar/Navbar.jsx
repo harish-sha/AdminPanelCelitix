@@ -10,7 +10,12 @@ import CustomTooltip from "../../components/common/CustomTooltip";
 import celitixLogo from "../../assets/images/celitix-cpaas-solution-logo.svg";
 import { useUser } from "@/context/auth";
 // import { FiAlertCircle } from "react-icons/fi";
-import { FiAlertCircle, FiMessageSquare, FiSmartphone, FiSend } from "react-icons/fi";
+import {
+  FiAlertCircle,
+  FiMessageSquare,
+  FiSmartphone,
+  FiSend,
+} from "react-icons/fi";
 import moment from "moment";
 
 import {
@@ -122,7 +127,6 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     // console.log("isCollapsed", isCollapsed);
   }, [isCollapsed]);
 
-
   return (
     <nav className="flex items-center w-full px-4 bg-white h-14 lg:h-16 md:h-15">
       <div className="flex items-center gap-4">
@@ -189,89 +193,92 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
             // },
             ...(user?.role !== "AGENT"
               ? [
-                {
-                  title: "Account Info",
-                  Icon: InfoIcon,
-                  action: () => setShowModal(true),
-                },
-                {
-                  title: `Balance: ₹${balance}`,
-                  Icon: isFetchingBalance ? LoopIcon : WalletIcon,
-                  action: handleBalance,
-                  showBalance: true,
-                },
-                {
-                  title: "Downloads",
-                  Icon: DownloadIcon,
-                  action: handleViewDownload,
-                  customElement: (
-                    <motion.div className="relative">
-                      <CustomTooltip
-                        title="Downloads"
-                        placement="bottom"
-                        arrow
-                      >
-                        <button
-                          className={` group p-2 w-10 h-10 rounded-full overflow-hidden transition-all duration-300 ${hasNewDownloads
-                            ? "bg-green-100 hover:bg-green-200"
-                            : "bg-[#e6f4ff] hover:bg-gray-200"
-                            }`}
-                          onClick={handleViewDownload}
+                  {
+                    title: "Account Info",
+                    Icon: InfoIcon,
+                    action: () => setShowModal(true),
+                  },
+                  {
+                    title: `Balance: ₹${balance}`,
+                    Icon: isFetchingBalance ? LoopIcon : WalletIcon,
+                    action: handleBalance,
+                    showBalance: true,
+                  },
+                  {
+                    title: "Downloads",
+                    Icon: DownloadIcon,
+                    action: handleViewDownload,
+                    customElement: (
+                      <motion.div className="relative">
+                        <CustomTooltip
+                          title="Downloads"
+                          placement="bottom"
+                          arrow
                         >
-                          {/* Icon container with fill animation */}
-                          {hasNewDownloads ? (
-                            <motion.div
-                              animate={{ y: [0, 5, 0] }}
-                              transition={{
-                                duration: 1.2,
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                              }}
-                            >
-                              <DownloadIcon
-                                className={`text-[18px] ${hasNewDownloads
-                                  ? "text-green-800"
-                                  : "text-blue-700"
+                          <button
+                            className={` group p-2 w-10 h-10 rounded-full overflow-hidden transition-all duration-300 ${
+                              hasNewDownloads
+                                ? "bg-green-100 hover:bg-green-200"
+                                : "bg-[#e6f4ff] hover:bg-gray-200"
+                            }`}
+                            onClick={handleViewDownload}
+                          >
+                            {/* Icon container with fill animation */}
+                            {hasNewDownloads ? (
+                              <motion.div
+                                animate={{ y: [0, 5, 0] }}
+                                transition={{
+                                  duration: 1.2,
+                                  repeat: Infinity,
+                                  ease: "easeInOut",
+                                }}
+                              >
+                                <DownloadIcon
+                                  className={`text-[18px] ${
+                                    hasNewDownloads
+                                      ? "text-green-800"
+                                      : "text-blue-700"
                                   }`}
-                              />
-                            </motion.div>
-                          ) : (
-                            <DownloadIcon
-                              className={`text-[18px] ${hasNewDownloads
-                                ? "text-green-800"
-                                : "text-blue-700"
+                                />
+                              </motion.div>
+                            ) : (
+                              <DownloadIcon
+                                className={`text-[18px] ${
+                                  hasNewDownloads
+                                    ? "text-green-800"
+                                    : "text-blue-700"
                                 }`}
-                            />
-                          )}
+                              />
+                            )}
 
-                          {/* Water fill effect */}
-                          {hasNewDownloads && (
-                            <motion.div
-                              initial={{ height: 0 }}
-                              animate={{ height: "100%" }}
-                              transition={{ duration: 1, ease: "easeOut" }}
-                              className="absolute bottom-0 left-0 w-full bg-green-300 z-0 opacity-40"
-                              style={{ borderRadius: "50%" }}
-                            ></motion.div>
-                          )}
+                            {/* Water fill effect */}
+                            {hasNewDownloads && (
+                              <motion.div
+                                initial={{ height: 0 }}
+                                animate={{ height: "100%" }}
+                                transition={{ duration: 1, ease: "easeOut" }}
+                                className="absolute bottom-0 left-0 w-full bg-green-300 z-0 opacity-40"
+                                style={{ borderRadius: "50%" }}
+                              ></motion.div>
+                            )}
 
-                          {/* Floating label */}
-                          {hasNewDownloads && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 5 }}
-                              animate={{ opacity: 1, y: -28 }}
-                              transition={{ delay: 0.5 }}
-                              className="absolute top-20 left-1/2 transform -translate-x-1/2 bg-white px-3 py-1 w-40 text-xs text-green-800 rounded-full shadow-md"
-                            >
-                              Download in progress...
-                            </motion.div>
-                          )}
-                        </button>
-                      </CustomTooltip>
-                    </motion.div>
-                  ),
-                },
-              ]
+                            {/* Floating label */}
+                            {hasNewDownloads && (
+                              <motion.div
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: -28 }}
+                                transition={{ delay: 0.5 }}
+                                className="absolute top-20 left-1/2 transform -translate-x-1/2 bg-white px-3 py-1 w-40 text-xs text-green-800 rounded-full shadow-md"
+                              >
+                                Download in progress...
+                              </motion.div>
+                            )}
+                          </button>
+                        </CustomTooltip>
+                      </motion.div>
+                    ),
+                  },
+                ]
               : []), // Exclude these items for "AGENT" role
           ].map(({ title, Icon, action, customElement }, idx) => (
             <div key={idx}>
@@ -349,23 +356,24 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
               // },
               ...(user?.role !== "AGENT"
                 ? [
-                  {
-                    text: "Login Details",
-                    icon: <IpAddress sx={{ fontSize: 26 }} />,
-                    action: handleLoginDetails,
-                  },
-                  {
-                    text: "Transaction History",
-                    icon: <HistoryIcon />,
-                    action: handleTransactionHistory,
-                  },
-                ]
+                    {
+                      text: "Login Details",
+                      icon: <IpAddress sx={{ fontSize: 26 }} />,
+                      action: handleLoginDetails,
+                    },
+                    {
+                      text: "Transaction History",
+                      icon: <HistoryIcon />,
+                      action: handleTransactionHistory,
+                    },
+                    {
+                      text: "Settings",
+                      icon: <SettingsIcon />,
+                      action: handleViewSetting,
+                    },
+                  ]
                 : []),
-              {
-                text: "Settings",
-                icon: <SettingsIcon />,
-                action: handleViewSetting,
-              },
+
               { text: "Logout", icon: <LogoutIcon />, action: handleLogout },
             ].map(({ text, icon, action }, idx) => (
               <MenuItem
@@ -471,15 +479,13 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
         </div>
       )}
 
-      {
-        showModal && (
-          <UniversalAccountInfo
-            show={showModal}
-            handleClose={() => setShowModal(false)}
-          />
-        )
-      }
-    </nav >
+      {showModal && (
+        <UniversalAccountInfo
+          show={showModal}
+          handleClose={() => setShowModal(false)}
+        />
+      )}
+    </nav>
   );
 };
 

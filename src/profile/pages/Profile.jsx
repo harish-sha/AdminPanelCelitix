@@ -26,7 +26,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user.role === "AGENT") return;
+    // if (user.role === "AGENT") return;
     const fetchUserDetails = async () => {
       setLoading(true);
       const response = await getUserDetails();
