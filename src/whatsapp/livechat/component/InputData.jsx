@@ -8,12 +8,16 @@ import {
   Button,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FaChevronCircleRight } from "react-icons/fa";
 import { FaChevronUp } from "react-icons/fa";
 import { FaChevronCircleLeft } from "react-icons/fa";
 import { FaFilter } from "react-icons/fa";
 import { CiMenuKebab } from "react-icons/ci";
+import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
+import { MdFilterAltOff } from "react-icons/md";
+import { useUser } from "@/context/auth";
+
 export const InputData = ({
   setSearch,
   search,
@@ -26,9 +30,29 @@ export const InputData = ({
   setSelectedWaba,
   setIsSubscribed,
   // setSelectedWaba
+  setSelectedAgent,
+  selectedAgent,
+  agentList,
 }) => {
+  const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+
+  const [showFilter, setShowFilter] = useState(false);
+  const panelRef = useRef(null);
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (panelRef.current && !panelRef.current.contains(e.target)) {
+        setShowFilter(false);
+      }
+    }
+    if (showFilter) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showFilter]);
 
   const handleChipClick = () => {
     setOpenDialog(true);
@@ -206,10 +230,59 @@ export const InputData = ({
                 <SearchOutlined className=" text-gray-500 hover:text-blue-600 transition" />
               </button>
             </div>
-            <div className="flex items-center gap-2 mt-1">
-              <FaFilter />
-              <CiMenuKebab />
-            </div>
+            {user.role !== "AGENT" && (
+              <div className="flex items-center gap-2 mt-1">
+                {/* <FaFilter /> */}
+                {/* <CiMenuKebab /> */}
+                {/* <button onClick={() => setShowFilter((v) => !v)}>
+                <FaFilter className="cursor-pointer hover:text-blue-600 transition" />
+              </button> */}
+                {selectedAgent ? (
+                  <button onClick={() => setShowFilter((v) => !v)}>
+                    <FaFilter className="cursor-pointer hover:text-blue-600 transition" />
+                  </button>
+                ) : (
+                  <button onClick={() => setShowFilter((v) => !v)}>
+                    <MdFilterAltOff className="size-5 cursor-pointer hover:text-blue-600 transition" />
+                  </button>
+                )}
+                <CiMenuKebab />
+
+                {showFilter && (
+                  <div
+                    ref={panelRef}
+                    className="absolute right-0 top-10 mt-2 w-62 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+                  >
+                    <div className="p-4">
+                      <DropdownWithSearch
+                        id="selectAgent"
+                        name="selectAgent"
+                        value={selectedAgent}
+                        label={"Select Agent"}
+                        onChange={(e) => {
+                          setSelectedAgent(e);
+                          setShowFilter((v) => !v);
+                        }}
+                        options={agentList?.data?.map((item) => ({
+                          value: item.sr_no,
+                          label: item.name,
+                        }))}
+                      />
+                    </div>
+
+                    <button
+                      className="px-4 py-2 text-sm  bg-gray-400 rounded-md text-white ml-auto mr-auto"
+                      onClick={() => {
+                        setSelectedAgent(null);
+                        setShowFilter(false);
+                      }}
+                    >
+                      Clear Filters
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

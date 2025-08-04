@@ -1106,7 +1106,7 @@ const CreateWhatsAppBot = () => {
               <HiOutlineTemplate className="size-6" />
               Template
             </Button>
-            {/* <Button
+            <Button
               draggable
               onDragStart={(event) => handleDragStart(event, "api")}
               onClick={() => addNode("api")}
@@ -1114,7 +1114,7 @@ const CreateWhatsAppBot = () => {
             >
               <AiOutlineApi className="size-6" />
               API
-            </Button> */}
+            </Button>
             <Button
               draggable
               onDragStart={(event) => handleDragStart(event, "answer")}

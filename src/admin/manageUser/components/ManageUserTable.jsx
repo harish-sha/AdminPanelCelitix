@@ -2368,14 +2368,23 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               <div className="flex items-center gap-2 text-sm">
                 <CalendarTodayOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Expiry Date : </strong>
-                  {selectedUserDetails.expiryDate || "Not Available"}
+                  <strong>Onboard  Date : </strong>
+                  {selectedUserDetails.userCreateDate  || "Not Available"}
                 </p>
               </div>
             </div>
 
             {/* Row 2 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="flex items-center gap-2 text-sm">
+               <CalendarTodayOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong className="text-sm">Expiry Date : </strong>
+                  {selectedUserDetails.expiryDate || "Not Available"}
+                </p>
+              </div>
+
               <div className="flex items-center gap-2">
                 <PersonOutlineOutlinedIcon className="text-gray-600" />
                 <p>
@@ -2390,6 +2399,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   {selectedUserDetails.lastName || "Not Available"}
                 </p>
               </div>
+            </div>
             </div>
 
             {/* Row 3 */}
@@ -2466,14 +2476,14 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
             {/* Row 7 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <AccountTreeOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>User Type : </strong>{" "}
-                  {(selectedUserDetails.userType === 3 && "Reseller User") ||
-                    "Not Available"}
-                </p>
-              </div>
+                {/* <div className="flex items-center gap-2">
+                  <AccountTreeOutlinedIcon className="text-gray-600" />
+                  <p>
+                    <strong>User Type : </strong>{" "}
+                    {(selectedUserDetails.userType === 3 && "Reseller User") ||
+                      "Not Available"}
+                  </p>
+                </div> */}
               <div className="flex items-center gap-2">
                 <CheckCircleOutlineOutlinedIcon className="text-gray-600" />
                 <p>

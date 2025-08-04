@@ -17,6 +17,15 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 // import Checkbox from "@mui/material/Checkbox";
 import { Dialog } from "primereact/dialog";
 import { RadioButton } from "primereact/radiobutton";
+import { format } from "date-fns"; // Make sure to install: `npm i date-fns`
+import {
+  MdBarChart,
+  MdOutlineDescription,
+  MdOutlineAnalytics,
+  MdOpenInNew,
+} from "react-icons/md";
+import { motion } from "framer-motion";
+import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
 
 import { Checkbox } from "primereact/checkbox";
 
@@ -35,20 +44,19 @@ import {
   getWabaList,
   getAllCampaignWhatsapp,
   getWhatsappCampaignScheduledReport,
-  downloadCustomWhatsappReport,
   cancelCampaign,
+  downloadCustomWhatsappReport,
+  flowReplyDetails,
+  flowMainResponse,
 } from "../../apis/whatsapp/whatsapp.js";
 import CampaignLogCard from "./components/CampaignLogCard.jsx";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
 import UniversalLabel from "../components/UniversalLabel";
 import { ExportDialog } from "./components/exportDialog";
-import { fetchAllUsers, fetchUserSrno } from "@/apis/admin/admin";
-import { useUser } from "@/context/auth";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import ManageScheduleCampaignTable from "./components/ManageScheduleCampaignTable";
 import moment from "moment";
 import { useDownload } from "@/context/DownloadProvider";
-import DropdownWithSearch from "../components/DropdownWithSearch";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -80,7 +88,6 @@ function a11yProps(index) {
 }
 
 const WhatsappManageCampaign = () => {
-  const { user } = useUser();
   const [isLoading, setIsLoading] = useState(true);
   const [value, setValue] = useState(0);
   const [campaignName, setCampaignName] = useState("");
@@ -88,6 +95,7 @@ const WhatsappManageCampaign = () => {
   const [inputValueMobileLogs, setInputValueMobileLogs] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [scheduleSelectedDate, setScheduleSelectedDate] = useState(new Date());
+  const [originalData, setOriginalData] = useState([]); // Store unfiltered data
   const [selectedDateLogs, setSelectedDateLogs] = useState(new Date());
   const [campaignCategory, setCampaignCategory] = useState("");
   const [campaignType, setCampaignType] = useState("");
@@ -103,20 +111,15 @@ const WhatsappManageCampaign = () => {
   const [toDate, settoDate] = useState(new Date());
   const [summaryReport, setSummaryReport] = useState([]);
   const [selectedWaBaNumber, setSelectedWaBaNumber] = useState("");
-  const [selectedSearchType, setSelectedSearchType] = useState("")
+  const [selectedSearchType, setSelectedSearchType] = useState("");
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
+  const [selectedYear, setSelectedYear] = useState(
+    new Date().getFullYear().toString()
+  );
   const [hasSearched, setHasSearched] = useState(false);
-  const { triggerDownloadNotification } = useDownload();
-
-
-  // const { user } = useUser();
-  const [allUsers, setAllUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState("");
-
   const [visible, setVisible] = useState(false);
   const [currentRow, setCurrentRow] = useState(null);
-
+  const { triggerDownloadNotification } = useDownload();
   //Export Download Reports start
 
   const [customOptions, setCustomOptions] = useState("radioOptiondisable");
@@ -148,7 +151,7 @@ const WhatsappManageCampaign = () => {
   });
 
   const [dataToExport, setDataToExport] = useState({
-    // campaignName: "",
+    campaignName: "",
     fromDate: "",
     toDate: "",
     srno: 0,
@@ -156,8 +159,8 @@ const WhatsappManageCampaign = () => {
     customColumns: "",
     campaignType: 0,
     status: "" || "",
-    deliveryStatus: "",
     source: "",
+    deliveryStatus: "",
     type: "campaign",
   });
 
@@ -185,37 +188,6 @@ const WhatsappManageCampaign = () => {
   });
 
   useEffect(() => {
-    //fetchAllUsersDetails
-    if (user.role === "RESELLER") {
-      const fetchAllUsersDetails = async () => {
-        // const data = {
-        //   userId: "",
-        //   mobileNo: "",
-        //   companyName: "",
-        //   status: "-1",
-        // };
-        const data = {
-          userSrno: "",
-          date: "",
-          // companyName: "",
-          // status: "-1",
-        };
-        try {
-          setIsFetching(true);
-          const res = await fetchUserSrno(data);
-          setAllUsers(res);
-        } catch (e) {
-          // console.log(e);
-          toast.error("Something went wrong! Please try again later.");
-        } finally {
-          setIsFetching(false);
-        }
-      };
-      fetchAllUsersDetails();
-    }
-  }, []);
-
-  useEffect(() => {
     const fetchCampaignListAll = async () => {
       setIsLoading(true);
       try {
@@ -227,7 +199,7 @@ const WhatsappManageCampaign = () => {
         //   setCampaignList([]);
         // }
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         toast.error("Error fetching Campaign List:", error);
       }
       setIsLoading(false);
@@ -304,12 +276,8 @@ const WhatsappManageCampaign = () => {
   };
 
   const handleSearch = async () => {
-    if (user.role === "RESELLER" && !selectedUser) {
-      toast.error("Please select a user first.");
-      return;
-    }
     const formattedFromDate = selectedDate
-      ? moment(selectedDate).format("YYYY-MM-DD")
+      ? new Date(selectedDate).toLocaleDateString("en-GB")
       : new Date().toLocaleDateString("en-GB");
 
     const formattedToDate = new Date().toLocaleDateString("en-GB");
@@ -319,7 +287,6 @@ const WhatsappManageCampaign = () => {
       toQueDateTime: moment(selectedDate).format("YYYY-MM-DD"),
       campaignName: campaignName.trim(),
       template_category: campaignCategory || "all",
-      selectedUserId: selectedUser || "0",
     };
 
     setIsFetching(true);
@@ -337,34 +304,63 @@ const WhatsappManageCampaign = () => {
     setIsFetching(false);
   };
 
+  // const fetchScheduleCampaignData = async () => {
+  //   setIsFetching(true);
+
+  //   try {
+  //     const data = await getWhatsappCampaignScheduledReport();
+
+  //     const mappedData = Array.isArray(data)
+  //       ? data.map((item, index) => ({
+  //         id: item.srno || `row-${index}`,
+  //         sn: index + 1,
+  //         campaignName: item.campaignName || "N/A",
+  //         campaignDate: item.campaignDate || "N/A",
+  //         sentTime: item.sentTime || "N/A",
+  //         count: item.count || "N/A",
+  //         processFlag: item.processFlag === 1 ? "Pending" : "Completed",
+  //         srno: item.srno,
+  //       }))
+  //       : [];
+
+  //     // Apply filters
+  //     const formattedSelectedDate =
+  //       scheduleSelectedDate && !isNaN(new Date(scheduleSelectedDate))
+  //         ? moment(scheduleSelectedDate).format("YYYY-MM-DD")
+  //         : null;
+
+  //     const filteredData = mappedData.filter((item) => {
+  //       const matchesName = scheduleCampaignName
+  //         ? item.campaignName
+  //           .toLowerCase()
+  //           .includes(scheduleCampaignName.toLowerCase())
+  //         : true;
+
+  //       const matchesDate = formattedSelectedDate
+  //         ? item.campaignDate === formattedSelectedDate
+  //         : true;
+
+  //       return matchesName && matchesDate;
+  //     });
+
+  //     setScheduleData(filteredData);
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //     toast.error("Failed to fetch schedule campaign data.");
+  //   } finally {
+  //     setIsFetching(false);
+  //   }
+  // };
+
   const fetchScheduleCampaignData = async () => {
-    if (user.role === "RESELLER" && !selectedUser) {
-      toast.error("Please select a user first.");
-      return;
-    }
     setIsFetching(true);
 
     try {
-      const data = await getWhatsappCampaignScheduledReport(
-        selectedUser || "0"
-      );
+      const data = await getWhatsappCampaignScheduledReport();
 
       const sortedData = Array.isArray(data)
         ? data.sort((a, b) => new Date(b.sentTime) - new Date(a.sentTime))
         : [];
-
-      // const mappedData = Array.isArray(data)
-      //   ? data.map((item, index) => ({
-      //     id: item.srno || `row-${index}`,
-      //     sn: index + 1,
-      //     campaignName: item.campaignName || "N/A",
-      //     campaignDate: item.campaignDate || "N/A",
-      //     sentTime: item.sentTime || "N/A",
-      //     count: item.count || "N/A",
-      //     processFlag: item.processFlag === 1 ? "Pending" : "Completed",
-      //     srno: item.srno,
-      //   }))
-      //   : [];
 
       const rows = sortedData.map((item, index) => ({
         id: item.srno || `row-${index}`,
@@ -376,27 +372,6 @@ const WhatsappManageCampaign = () => {
         count: item.count || "N/A",
         processFlag: item.processFlag === 1 ? "Scheduled" : "Completed",
       }));
-
-      // const formattedSelectedDate =
-      //   scheduleSelectedDate && !isNaN(new Date(scheduleSelectedDate))
-      //     ? moment(scheduleSelectedDate).format("YYYY-MM-DD")
-      //     : null;
-
-      // const filteredData = mappedData.filter((item) => {
-      //   const matchesName = scheduleCampaignName
-      //     ? item.campaignName
-      //       .toLowerCase()
-      //       .includes(scheduleCampaignName.toLowerCase())
-      //     : true;
-
-      //   const matchesDate = formattedSelectedDate
-      //     ? item.campaignDate === formattedSelectedDate
-      //     : true;
-
-      //   return matchesName && matchesDate;
-      // });
-
-      // setScheduleData(filteredData);
 
       setScheduleData(rows);
     } catch (error) {
@@ -426,7 +401,7 @@ const WhatsappManageCampaign = () => {
     try {
       setIsFetching(true);
 
-      const result = await cancelCampaign({ srno: srno, selectedUserId: selectedUser || "0", });
+      const result = await cancelCampaign({ srno: srno });
 
       if (result) {
         toast.success("Campaign Cancelled successfully");
@@ -443,38 +418,9 @@ const WhatsappManageCampaign = () => {
     }
   };
 
-  // const handleCancel = async (srno) => {
-  //   if (!srno) {
-  //     console.error("SRNO is undefined. Cannot cancel campaign.");
-  //     toast.error("Failed to cancel campaign. SRNO is missing.");
-  //     return;
-  //   }
-
-  //   try {
-  //     // console.log("Canceling campaign with SRNO:", srno);
-  //     const result = await cancelCampaign({
-  //       srno: srno,
-  //       selectedUserId: selectedUser || "0",
-  //     });
-  //     if (result) {
-  //       // console.log("Campaign cancelled successfully:", result);
-  //       toast.success("Campaign Cancelled successfully");
-
-  //       // Refresh the table by fetching the data again
-  //       fetchScheduleCampaignData();
-  //     } else {
-  //       console.warn("Cancel request failed or returned empty response.");
-  //       toast.error("Cancel request failed");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error cancelling campaign:", error);
-  //     toast.error("Error cancelling campaign");
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchScheduleCampaignData();
-  // }, []);
+  useEffect(() => {
+    fetchScheduleCampaignData();
+  }, []);
 
   useEffect(() => {
     const fetchWabaList = async () => {
@@ -499,22 +445,19 @@ const WhatsappManageCampaign = () => {
 
   // Fetch initial data - for to load data on page load
   const handleShowLogs = async () => {
-    if (user.role === "RESELLER" && !selectedUser) {
-      toast.error("Please select a user first.");
-      return;
-    }
     setIsFetching(true);
     const formattedFromDateLogs = selectedDateLogs
-      ? moment(selectedDateLogs).format("YYYY-MM-DD")
+      ? // ? new Date(selectedDateLogs).toLocaleDateString("en-GB")
+      moment(selectedDateLogs).format("YYYY-MM-DD")
       : new Date().toLocaleDateString("en-GB");
 
     // currently log data mobile no is hardcoded later fetch accoding to the login as user or admin
 
     const logdata = {
+      // fromDate: formattedFromDateLogs,
       fromDate: formattedFromDateLogs,
       mobileNo: null,
       source: "API",
-      selectedUserId: selectedUser || "0",
     };
 
     try {
@@ -528,11 +471,50 @@ const WhatsappManageCampaign = () => {
     }
   };
 
+  // useEffect(() => {
+  //   const FinalFromDate = moment(selectedMonth).startOf("month").format("YYYY-MM-DD");
+  //   const FinalToDate = moment(selectedMonth).endOf("month").format("YYYY-MM-DD");
+  //   // if (!selectedWaBaNumber) {
+  //   //   toast.error("Please select waba Account")
+  //   //   return;
+  //   // }
+  //   const fetchMonthWiseReport = async () => {
+  //     try {
+  //       const monthWiseData = await getSummaryReport({
+  //         wabaNumber: selectedWaBaNumber,
+  //         monthwise: 1,
+  //         year: moment(FinalFromDate).format("YYYY"),
+  //         month: moment(FinalFromDate).format("MM"),
+  //       });
+
+  //       if (Array.isArray(monthWiseData)) {
+  //         const formattedResult = monthWiseData.map((item) => ({
+  //           ...item,
+  //           marketing: item.marketing.toFixed(1),
+  //           utility: item.utility.toFixed(1),
+  //           categoryCreditUsage: item.categoryCreditUsage.toFixed(1),
+  //           userCharge: item.userCharge.toFixed(1),
+  //         }));
+
+  //         setSummaryReport(formattedResult);
+  //       } else {
+  //         // Handle non-array response
+  //         console.error("Unexpected API response:", result);
+  //         toast.error("Failed to fetch summary report. Please try again.");
+  //         setSummaryReport([]); // Reset summary report
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to fetch month-wise report", error);
+  //     }
+  //   };
+
+  //   if (isMonthWise) {
+
+  //     fetchMonthWiseReport();
+  //   }
+  // }, [isMonthWise, selectedWaBaNumber, selectedMonth]); // ✅ use selectedMonth instead
+
   const handleSummary = async () => {
-    if (user.role === "RESELLER" && !selectedUser) {
-      toast.error("Please select a user first.");
-      return;
-    }
     let result;
 
     if (!selectedWaBaNumber) {
@@ -542,73 +524,126 @@ const WhatsappManageCampaign = () => {
 
     setIsFetching(true);
 
-    let FinalFromDate = new Date(
-      new Date(selectedMonth).getFullYear(),
-      new Date(selectedMonth).getMonth(),
-      1
-    ).toLocaleDateString("en-GB");
+    // let FinalFromDate = new Date(
+    //   new Date(selectedMonth).getFullYear(),
+    //   new Date(selectedMonth).getMonth(),
+    //   1
+    // ).toLocaleDateString("en-GB");
 
-    let FinalToDate = new Date(
-      new Date(
-        new Date(selectedMonth).getFullYear(),
-        new Date(selectedMonth).getMonth() + 1,
-        0
-      )
-    );
+    // let FinalToDate = new Date(
+    //   new Date(
+    //     new Date(selectedMonth).getFullYear(),
+    //     new Date(selectedMonth).getMonth() + 1,
+    //     0
+    //   )
+    // );
 
-    if (isMonthWise) {
-      result = await getSummaryReport({
-        // fromDate: FinalFromDate,
-        // summaryType: "waba,date,type,country",
-        // toDate: FinalToDate.toLocaleDateString("en-GB"),
-        // whatsappTypes: null,
-        wabaNumber: selectedWaBaNumber,
-        monthwise: 1,
-        // year: moment(FinalFromDate).format("YYYY"),
-        // month: moment(FinalFromDate).format("MM"),
-        year: selectedYear,
-        month: selectedMonth,
-      });
-    } else {
-      result = await getSummaryReport({
-        fromDate: moment(fromDate).format("YYYY-MM-DD"),
-        summaryType: "waba,date,type,country",
-        toDate: moment(toDate).format("YYYY-MM-DD"),
-        whatsappTypes: null,
-        wabaNumber: selectedWaBaNumber,
-      });
+    // Format dates using moment
+    const FinalFromDate = moment(selectedMonth)
+      .startOf("month")
+      .format("YYYY-MM-DD");
+    const FinalToDate = moment(selectedMonth)
+      .endOf("month")
+      .format("YYYY-MM-DD");
+
+    // if (isMonthWise) {
+    //   result = await getSummaryReport({
+    //     fromDate: FinalFromDate,
+    //     summaryType: "waba,date,type,country",
+    //     toDate: FinalToDate.toLocaleDateString("en-GB"),
+    //     whatsappTypes: null,
+    //     wabaNumber: selectedWaBaNumber,
+    //   });
+    // } else {
+    //   result = await getSummaryReport({
+    //     fromDate: new Date(fromDate).toLocaleDateString("en-GB"),
+    //     summaryType: "waba,date,type,country",
+    //     toDate: new Date(toDate).toLocaleDateString("en-GB"),
+    //     whatsappTypes: null,
+    //     wabaNumber: selectedWaBaNumber,
+    //   });
+    // }
+
+    // const formattedResult = result.map((item) => ({
+    //   ...item,
+    //   marketing: item.marketing.toFixed(1),
+    //   utility: item.utility.toFixed(1),
+    //   categoryCreditUsage: item.categoryCreditUsage.toFixed(1),
+    //   userCharge: item.userCharge.toFixed(1),
+    // }));
+
+    // setSummaryReport(formattedResult);
+
+    // // setSummaryReport(result);
+    // setIsFetching(false);
+    try {
+      if (isMonthWise) {
+        result = await getSummaryReport({
+          // fromDate: FinalFromDate,
+          // summaryType: "waba,date,type,country",
+          // toDate: FinalToDate,
+          // whatsappTypes: null,
+          wabaNumber: selectedWaBaNumber,
+          monthwise: 1,
+          // year: moment(FinalFromDate).format("YYYY"),
+          year: selectedYear,
+          // month: moment(FinalFromDate).format("MM"),
+          month: selectedMonth,
+        });
+      } else {
+        const formattedFromDate = moment(fromDate).format("YYYY-MM-DD");
+        const formattedToDate = moment(toDate).format("YYYY-MM-DD");
+
+        result = await getSummaryReport({
+          fromDate: formattedFromDate,
+          summaryType: "waba,date,type,country",
+          toDate: formattedToDate,
+          whatsappTypes: null,
+          wabaNumber: selectedWaBaNumber,
+        });
+      }
+
+      // Validate if result is an array
+      if (Array.isArray(result)) {
+        const formattedResult = result.map((item) => ({
+          ...item,
+          marketing: item.marketing.toFixed(1),
+          utility: item.utility.toFixed(1),
+          categoryCreditUsage: item.categoryCreditUsage.toFixed(1),
+          userCharge: item.userCharge.toFixed(1),
+        }));
+
+        setSummaryReport(formattedResult);
+      } else {
+        // Handle non-array response
+        console.error("Unexpected API response:", result);
+        toast.error("Failed to fetch summary report. Please try again.");
+        setSummaryReport([]); // Reset summary report
+      }
+    } catch (error) {
+      console.error("Error fetching summary report:", error);
+      toast.error("An error occurred while fetching the summary report.");
+    } finally {
+      setIsFetching(false);
     }
-
-    const formattedResult = result.map((item) => ({
-      ...item,
-      marketing: item.marketing.toFixed(1),
-      utility: item.utility.toFixed(1),
-      categoryCreditUsage: item.categoryCreditUsage.toFixed(1),
-      userCharge: item.userCharge.toFixed(1),
-    }));
-
-    setSummaryReport(formattedResult);
-
-    // setSummaryReport(result);
-    setIsFetching(false);
   };
 
   async function handleExport() {
     try {
       const payload = {
         type: 2,
-        selectedUserId: selectedUser || "",
+        selectedUserId: "",
         fromDate: moment(selectedDateLogs).format("YYYY-MM-DD"),
         toDate: moment(selectedDateLogs).format("YYYY-MM-DD"),
         isCustomField: 1,
         // customColumns: "",
-        customColumns: "mobile_no,charged_multiplier,status,delivery_status,que_time,sent_time,delivery_time,read_status,reason,source",
+        customColumns:
+          "mobile_no,charged_multiplier,status,delivery_status,que_time,sent_time,delivery_time,read_status,reason,source",
         // status: state.log,
         status: "",
         // deliveryStatus: "",
-        source: "api"
+        source: "api",
       };
-
       const res = await downloadCustomWhatsappReport(payload);
       if (!res?.status) {
         return toast.error(res?.msg);
@@ -617,10 +652,50 @@ const WhatsappManageCampaign = () => {
       toast.success(res?.msg);
       triggerDownloadNotification();
     } catch (e) {
-      console.log(e)
+      console.log(e);
       toast.error("Error downloading attachment");
     }
   }
+
+  // flows report
+  const [flowReplyList, setFlowReplyList] = useState([]);
+  const [selectedDateFlow, setSelectedDateFlow] = useState(""); // format: yyyy-mm-dd
+  const [isFlowFetching, setIsFlowFetching] = useState(""); // format: yyyy-mm-dd
+
+  const fetchFlowReplyDetails = async () => {
+    if (!selectedDateFlow) return;
+
+    setIsFlowFetching(true);
+    try {
+      const formattedDate = moment(selectedDateFlow).format("YYYY-MM-DD");
+      const response = await flowReplyDetails(formattedDate);
+      setFlowReplyList(response || []);
+    } catch (error) {
+      console.error("Error fetching flow reply details:", error);
+    }
+    setIsFlowFetching(false);
+  };
+
+  const fetchFlowMainResponse = async (flowName) => {
+    setIsFlowFetching(true);
+    try {
+      const data = {
+        flowName: flowName,
+        templateName: "" || null, // optional
+        campaignSrno: "" || 0, // optional
+      };
+      const response = await flowMainResponse(data);
+    } catch (error) {
+      console.error("Error fetching flow main response:", error);
+    }
+    setIsFlowFetching(false);
+  };
+
+  useEffect(() => {
+    if (selectedDateFlow) {
+      fetchFlowReplyDetails();
+    }
+  }, [selectedDateFlow]);
 
   return (
     <div className="w-full ">
@@ -630,118 +705,108 @@ const WhatsappManageCampaign = () => {
         </>
       ) : (
         <Box sx={{ width: "100%" }}>
-          <div className="flex items-center justify-between w-full">
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              aria-label="Manage Campaigns Tabs"
-              textColor="primary"
-              indicatorColor="primary"
-              scrollButtons="auto"
-              allowScrollButtonsMobile
-              className="w-full"
-              variant="scrollable"
-            >
-              <Tab
-                label={
-                  <span>
-                    <CampaignOutlinedIcon size={20} /> Campaign
-                  </span>
-                }
-                {...a11yProps(0)}
-                sx={{
-                  textTransform: "none",
-                  fontWeight: "bold",
-                  color: "text.secondary",
-                  "&:hover": {
-                    color: "primary.main",
-                    backgroundColor: "#f0f4ff",
-                    borderRadius: "8px",
-                  },
-                }}
-              />
-              <Tab
-                label={
-                  <span className="flex items-center gap-2">
-                    <BsJournalArrowDown size={18} /> API Logs
-                  </span>
-                }
-                {...a11yProps(1)}
-                sx={{
-                  textTransform: "none",
-                  fontWeight: "bold",
-                  color: "text.secondary",
-                  "&:hover": {
-                    color: "primary.main",
-                    backgroundColor: "#f0f4ff",
-                    borderRadius: "8px",
-                  },
-                }}
-              />
-              <Tab
-                label={
-                  <span>
-                    <SummarizeOutlinedIcon size={20} /> Summary
-                  </span>
-                }
-                {...a11yProps(2)}
-                sx={{
-                  textTransform: "none",
-                  fontWeight: "bold",
-                  color: "text.secondary",
-                  "&:hover": {
-                    color: "primary.main",
-                    backgroundColor: "#f0f4ff",
-                    borderRadius: "8px",
-                  },
-                }}
-              />
-              <Tab
-                label={
-                  <span>
-                    <DateRangeIcon size={20} /> Scheduled
-                  </span>
-                }
-                {...a11yProps(3)}
-                sx={{
-                  textTransform: "none",
-                  fontWeight: "bold",
-                  color: "text.secondary",
-                  "&:hover": {
-                    color: "primary.main",
-                    backgroundColor: "#f0f4ff",
-                    borderRadius: "8px",
-                  },
-                }}
-              />
-            </Tabs>
-            {user.role === "RESELLER" && (
-              <div className="w-full sm:w-54">
-                <DropdownWithSearch
-                  id="manageuser"
-                  name="manageuser"
-                  label="Select User"
-                  tooltipContent="Select user you want to see reports"
-                  tooltipPlacement="right"
-                  // options={allUsers.map((user) => ({
-                  //   label: user.userName,
-                  //   value: user.srNo,
-                  // }))}
-                  options={allUsers
-                    .slice()
-                    .sort((a, b) => a.userName.localeCompare(b.userName))
-                    .map((user) => ({
-                      label: user.userName,
-                      value: user.srNo,
-                    }))
-                  }
-                  value={selectedUser}
-                  onChange={setSelectedUser}
-                  placeholder="Select User"
-                />
-              </div>
-            )}
-          </div>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="Manage Campaigns Tabs"
+            textColor="primary"
+            indicatorColor="primary"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
+            className="w-full"
+            variant="scrollable"
+          >
+            <Tab
+              label={
+                <span>
+                  <CampaignOutlinedIcon size={20} /> Campaign
+                </span>
+              }
+              {...a11yProps(0)}
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
+                },
+              }}
+            />
+            <Tab
+              label={
+                <span className="flex items-center gap-2">
+                  <BsJournalArrowDown size={18} /> API Logs
+                </span>
+              }
+              {...a11yProps(1)}
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
+                },
+              }}
+            />
+            <Tab
+              label={
+                <span>
+                  <SummarizeOutlinedIcon size={20} /> Summary
+                </span>
+              }
+              {...a11yProps(2)}
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
+                },
+              }}
+            />
+            <Tab
+              label={
+                <span>
+                  <DateRangeIcon size={20} /> Scheduled
+                </span>
+              }
+              {...a11yProps(3)}
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
+                },
+              }}
+            />
+            <Tab
+              label={
+                <span>
+                  <AccountTreeOutlinedIcon size={20} /> Flows Report
+                </span>
+              }
+              {...a11yProps(4)}
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
+                },
+              }}
+            />
+          </Tabs>
           <CustomTabPanel value={value} index={0} className="">
             <div>
               <div className="flex flex-wrap items-end w-full gap-2 mb-5">
@@ -932,9 +997,7 @@ const WhatsappManageCampaign = () => {
                     tooltipPlacement="right"
                   />
                 </div>
-                <div className="flex items-end gap-3" >
-
-
+                <div className="flex items-end gap-3">
                   <div className="w-max-content ">
                     <UniversalButton
                       id="manageCampaignLogsShowhBtn"
@@ -945,7 +1008,7 @@ const WhatsappManageCampaign = () => {
                       variant="primary"
                     />
                   </div>
-                  <div className="w-max-content" >
+                  <div className="w-max-content">
                     <UniversalButton
                       id="export"
                       name="export"
@@ -1002,7 +1065,6 @@ const WhatsappManageCampaign = () => {
                           key={index}
                           log={log}
                           selectedDate={selectedDateLogs}
-                          selectedUser={selectedUser}
                         />
                       ))
                     )}
@@ -1086,10 +1148,13 @@ const WhatsappManageCampaign = () => {
                         label="Select Year"
                         tooltipContent="Select Year"
                         tooltipPlacement="right"
-                        options={Array.from({ length: 2025 - 1990 + 1 }, (_, i) => {
-                          const year = 1990 + i;
-                          return { value: String(year), label: String(year) };
-                        }).reverse()}
+                        options={Array.from(
+                          { length: 2025 - 1990 + 1 },
+                          (_, i) => {
+                            const year = 1990 + i;
+                            return { value: String(year), label: String(year) };
+                          }
+                        ).reverse()}
                         value={selectedYear}
                         onChange={(value) => setSelectedYear(value)}
                         placeholder="Select Year"
@@ -1135,15 +1200,16 @@ const WhatsappManageCampaign = () => {
                     </div>
                   </>
                 )}
+
                 {/* {isMonthWise ? (
                   <>
                     <div className="w-full sm:w-56">
                       <UniversalDatePicker
                         id="manageFromDate"
                         name="manageFromDate"
-                        label="Month and Year"
+                        label="Month"
                         value={selectedMonth}
-                        views={["month", "year"]}
+                        views={["month"]}
                         onChange={(newValue) => setSelectedMonth(newValue)}
                         placeholder="Pick a month"
                         tooltipContent="Select the month"
@@ -1152,6 +1218,24 @@ const WhatsappManageCampaign = () => {
                         minDate={new Date().setMonth(new Date().getMonth() - 3)}
                         maxDate={new Date()}
                         errorText="Please select a valid month"
+                      />
+                    </div>
+
+                    <div className="w-full sm:w-56">
+                      <UniversalDatePicker
+                        id="manageFromDate"
+                        name="manageFromDate"
+                        label="Year"
+                        value={selectedMonth}
+                        views={["year"]}
+                        onChange={(newValue) => setSelectedMonth(newValue)}
+                        placeholder="Pick a year"
+                        tooltipContent="Select the year"
+                        tooltipPlacement="right"
+                        error={!selectedMonth}
+                        minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                        maxDate={new Date()}
+                        errorText="Please select a valid year"
                       />
                     </div>
                   </>
@@ -1193,6 +1277,14 @@ const WhatsappManageCampaign = () => {
                 )} */}
 
                 {/* <div className="flex items-center gap-3 justify-center mb-2 w-full sm:w-35">
+                  <FormGroup>
+                    <FormControlLabel
+                      control={<Checkbox />}
+                      label="Month Wise"
+                      value={isMonthWise}
+                      onClick={(e) => setIsMonthWise(e.target.checked)}
+                    />
+                  </FormGroup>
                   <Checkbox
                     checked={isMonthWise}
                     onChange={(e) => setIsMonthWise(e.target.checked)}
@@ -1353,7 +1445,6 @@ const WhatsappManageCampaign = () => {
                     data={scheduleData}
                     onCancel={handleCancel}
                   // fromDate={selectedDate}
-                  // fetchInitialData={fetchScheduleCampaignData}
                   />
                 </div>
               )}
@@ -1377,7 +1468,10 @@ const WhatsappManageCampaign = () => {
                 <div className="p-4 text-center">
                   <p className="text-[1.1rem] font-semibold text-gray-700">
                     Are you sure you want to cancel the campaign:
-                    <span className="text-green-500">"{currentRow?.campaignName}"</span>?
+                    <span className="text-green-500">
+                      "{currentRow?.campaignName}"
+                    </span>
+                    ?
                   </p>
                   <p className="mt-2 text-sm text-gray-500">
                     This action is irreversible.
@@ -1437,11 +1531,136 @@ const WhatsappManageCampaign = () => {
               )} */}
             </div>
           </CustomTabPanel>
+          <CustomTabPanel value={value} index={4}>
+            <div className="flex flex-col gap-6 bg-gradient-to-b from-blue-50 via-white to-white min-h-[80vh] p-4 md:p-6 rounded-xl">
+              {/* Header Section */}
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <MdBarChart className="text-blue-600 text-2xl" />
+                  <h2 className="text-xl font-bold text-gray-800">
+                    Flow Summary Report
+                  </h2>
+                </div>
+
+                <div className="flex flex-col items-start">
+                  <UniversalDatePicker
+                    label="Select Date"
+                    value={selectedDateFlow}
+                    onChange={(newValue) => setSelectedDateFlow(newValue)}
+                    defaultValue={new Date()}
+                  />
+                </div>
+              </div>
+
+              {/* Display Selected Date */}
+              {selectedDateFlow && (
+                <div className="text-sm text-gray-600 font-medium">
+                  Showing results for:{" "}
+                  <span className="text-gray-800 font-semibold">
+                    {format(new Date(selectedDateFlow), "dd MMMM yyyy")}
+                  </span>
+                </div>
+              )}
+
+              {/* Data State */}
+              {isFlowFetching ? (
+                <div className="text-center text-blue-500 font-medium py-6">
+                  Loading flow replies...
+                </div>
+              ) : flowReplyList.length === 0 ? (
+                <div className="text-center text-gray-500 py-6">
+                  No flow replies found for the selected date.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {flowReplyList.map((item, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: idx * 0.1 }}
+                      className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden group"
+                    >
+                      <div className="absolute top-0 right-0 h-2 w-full bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 rounded-t-2xl" />
+
+                      <div className="flex flex-col gap-3 pt-3">
+                        {/* Campaign / Flow Name */}
+                        <div className="grid grid-cols-2 items-start justify-between">
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1">
+                              <MdOutlineDescription className="text-gray-500" />
+                              Flow Name:
+                            </p>
+                            <h3 className="text-lg font-semibold text-gray-800">
+                              {item.flow_name || "—"}
+                            </h3>
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1">
+                              <MdOutlineDescription className="text-gray-500" />
+                              Campaign Name:
+                            </p>
+                            <h3 className="text-lg font-semibold text-gray-800">
+                              {item.campaign_name || "—"}
+                            </h3>
+                          </div>
+                          {/* <div className="flex flex-col text-gray-600 font-medium">
+                            <p className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1">
+                              <MdOutlineAnalytics className="text-gray-500" />
+                              Campaign Launched Date:
+                            </p>
+                            <span className="text-gray-800 font-semibold text-lg">
+                              {format(new Date(selectedDate), "dd MMMM yyyy")}
+                            </span>
+                          </div> */}
+                        </div>
+
+                        {/* Template Name */}
+                        <div className="grid grid-cols-2 items-start justify-between">
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-1">
+                              Template Used
+                            </p>
+                            <p className="text-gray-800 font-semibold text-lg">
+                              {item.template_name || "—"}
+                            </p>
+                          </div>
+
+                          {/* Reply Count */}
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-1">
+                              Total Responses Received
+                            </p>
+                            <span className="inline-block bg-blue-100 text-blue-700 font-semibold text-xl px-3 py-1 rounded-full">
+                              {item.reply_count}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      {/* View Detailed Report */}
+                      <div className="mt-4">
+                        <div
+                          onClick={() =>
+                            fetchFlowMainResponse(
+                              item.flow_name || item.template_name
+                            )
+                          }
+                          className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline mt-auto"
+                        >
+                          View Detailed Report
+                          <MdOpenInNew className="text-base" />
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </CustomTabPanel>
         </Box>
       )}
 
       {/* Campaign Export Dialog Start*/}
-
       {visibledialog && (
         <ExportDialog
           visibledialog={visibledialog}
@@ -1449,10 +1668,8 @@ const WhatsappManageCampaign = () => {
           allCampaigns={campaignList}
           setDataToExport={setDataToExport}
           dataToExport={dataToExport}
-          selectedUser={selectedUser}
         />
       )}
-
       {/* Campaign Export Dialog End*/}
     </div>
   );

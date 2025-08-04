@@ -89,6 +89,7 @@ export default function WhatsappLiveChat() {
   const [btnOption, setBtnOption] = useState("active");
   const [search, setSearch] = useState("");
 
+  const [selectedAgent, setSelectedAgent] = useState(null);
   const [allConvo, setAllConvo] = useState([]);
   const [specificConversation, setSpecificConversation] = useState([]);
 
@@ -342,11 +343,17 @@ export default function WhatsappLiveChat() {
         srno: 0,
         active: userActive,
         search: search || "",
+        agentSrno: selectedAgent || "",
       };
       setIsFetching(true);
       const res = await fetchAllConversations(data);
 
       if (!res.conversationEntityList[0]) {
+        setChatState((prev) => ({
+          ...prev,
+
+          allConversations: [],
+        }));
         return;
       }
 
@@ -431,7 +438,8 @@ export default function WhatsappLiveChat() {
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [wabaState.selectedWaba, btnOption, isSubscribe]);
+    // setIsSubscribe(true);
+  }, [wabaState.selectedWaba, btnOption, isSubscribe, selectedAgent]);
 
   useEffect(() => {
     setChatState((prev) => ({ ...prev, active: null, allConversations: [] }));
@@ -994,6 +1002,9 @@ export default function WhatsappLiveChat() {
           setWabaState={setWabaState}
           setChatState={setChatState}
           setSelectedWaba={setSelectedWaba}
+          setSelectedAgent={setSelectedAgent}
+          selectedAgent={selectedAgent}
+          agentList={agentList}
         />
 
         <ChatSidebar

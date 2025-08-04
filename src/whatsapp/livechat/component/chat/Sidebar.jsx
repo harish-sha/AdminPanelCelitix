@@ -275,7 +275,7 @@ export const ChatSidebar = ({
               </div>
             </motion.div>
           ))}
-      {/* {!isLoading && chatState?.allConversations.length === 0 && (
+      {/* {selectedWaba && !isLoading && !chatState?.allConversations.length && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

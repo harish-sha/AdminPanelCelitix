@@ -323,7 +323,7 @@ export const deleteWabaTemplate = async (tempsrno, wabaNo, tempName) => {
 // fetch all conversations (live chat)
 export const fetchAllConversations = async (data) => {
   return await fetchWithAuth(
-    `/LiveChat/LiveChatDetails?mobile=${data.mobileNo}&srno=${data.srno}&selectedMobileNumber=&searchMobileNumber=${data.search}&userActive=${data.active}`,
+    `/LiveChat/LiveChatDetails?mobile=${data.mobileNo}&srno=${data.srno}&selectedMobileNumber=&searchMobileNumber=${data.search}&userActive=${data.active}&agentSrno=${data.agentSrno}&agentType=0`,
     {
       method: "POST",
     }
@@ -605,6 +605,26 @@ export const deleteFlow = async (data) => {
   return await fetchWithAuth(`/WhatsappFlow/deleteWorkflow?flowId=${data}`, {
     method: "DELETE",
   });
+};
+
+// flow reply/response details - add flow params also
+export const flowReplyDetails = async (fromQueDateTime) => {
+  return await fetchWithAuth(
+    `/flowReplyDetails?fromQueDateTime=${fromQueDateTime}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+// flow reply/response details
+export const flowMainResponse = async (data) => {
+  return await fetchWithAuth(
+    `/showSampleResponse?flowName=${data.flowName}&templateName=${data.templateName}&campaignSrno=${data.campaignSrno}`,
+    {
+      method: "POST",
+    }
+  );
 };
 
 export const getMainJson = async (srNo) => {
