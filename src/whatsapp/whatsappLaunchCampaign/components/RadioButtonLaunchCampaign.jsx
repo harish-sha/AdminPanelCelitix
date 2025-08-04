@@ -335,7 +335,6 @@ function RadioButtonLaunchCampaign({
                 className="text-sm font-medium text-gray-700 cursor-pointer"
               >
                 Select Groups
-                Select Groups
               </label>
             </div>
           </label>

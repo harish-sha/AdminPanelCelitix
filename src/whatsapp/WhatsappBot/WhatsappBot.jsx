@@ -61,7 +61,6 @@ const WhatsappBot = () => {
   const handleNavigate = () => navigate("/createwhatsappbot");
 
   async function handleFetchAllBot() {
-     if (user.role === "AGENT") return;
     try {
       const res = await getAllBot();
       setAllBots(res);
@@ -215,7 +214,7 @@ const WhatsappBot = () => {
   async function handleBtnClick(item, id) {
     if (item === "Edit") {
       navigate("/createwhatsappbot", {
-        state: id
+        state: id,
       });
     }
   }
@@ -243,10 +242,11 @@ const WhatsappBot = () => {
                   <input
                     type="text"
                     className={`rounded-lg pr-3 pl-2 py-2 text-sm transition-all duration-300
-            ${searchActive
-                        ? "border border-gray-400 outline-none w-full opacity-100"
-                        : "w-0 opacity-0"
-                      }
+            ${
+              searchActive
+                ? "border border-gray-400 outline-none w-full opacity-100"
+                : "w-0 opacity-0"
+            }
             focus:outline-none`}
                     placeholder="Search Bots&Templates..."
                     onBlur={() => setSearchActive(false)}
@@ -402,7 +402,10 @@ const WhatsappBot = () => {
                         {bot.integrations}
                       </div> */}
                       <div className="text-sm text-gray-500 flex-1 flex lg:flex-col md:flex-row items-center md:justify-start gap-1">
-                        Created On: <strong>{moment(bot.saveTime).format("DD-MM-YYYY")}</strong>
+                        Created On:{" "}
+                        <strong>
+                          {moment(bot.saveTime).format("DD-MM-YYYY")}
+                        </strong>
                       </div>
                       <div className="flex items-center gap-2 relative bot-settings">
                         <CustomTooltip title="Settings" arrow>

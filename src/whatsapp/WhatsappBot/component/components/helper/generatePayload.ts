@@ -164,11 +164,11 @@ function generateApiPayload(entry, nodeInput) {
   }
   (entry["apiUrl"] = nodeInput?.apiUrl),
     (entry["apiMethod"] = nodeInput?.apiMethod),
-    (entry["apiDatatype"] = nodeInput?.apiDatatype || ""),
-    (entry["apiHeader"] = nodeInput?.headers || [])
+    (entry["apiDatatype"] = nodeInput?.apiDatatype || "none"),
+    (entry["apiHeader"] = nodeInput?.apiHeader || [])
 
   if (nodeInput?.apiDatatype === "parameter") {
-    (entry["apiJson"] = nodeInput?.params)
+    (entry["apiJson"] = nodeInput?.apiJson)
   }
   if (nodeInput?.apiDatatype === "json") {
     (entry["apiJson"] = JSON.parse(nodeInput?.apiRequestJson))
