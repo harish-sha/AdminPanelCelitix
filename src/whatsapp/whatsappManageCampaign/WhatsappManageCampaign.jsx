@@ -788,7 +788,7 @@ const WhatsappManageCampaign = () => {
                 },
               }}
             />
-            <Tab
+            {/* <Tab
               label={
                 <span>
                   <AccountTreeOutlinedIcon size={20} /> Flows Report
@@ -805,7 +805,7 @@ const WhatsappManageCampaign = () => {
                   borderRadius: "8px",
                 },
               }}
-            />
+            /> */}
           </Tabs>
           <CustomTabPanel value={value} index={0} className="">
             <div>
