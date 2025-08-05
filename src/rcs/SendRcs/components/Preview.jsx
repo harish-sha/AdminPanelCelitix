@@ -59,7 +59,10 @@ export const Preview = ({
     );
     let url = "";
 
-    if (templateDetails[0]?.templateType === "text_message_with_pdf" && templateDetails[0]["pdfBase64 "]) {
+    if (
+      templateDetails[0]?.templateType === "text_message_with_pdf" &&
+      templateDetails[0]["pdfBase64 "]
+    ) {
       const base64PDF = templateDetails[0]["pdfBase64 "] || "";
       const byteCharacters = atob(base64PDF);
       const byteNumbers = Array.from(byteCharacters).map((c) =>
@@ -67,21 +70,8 @@ export const Preview = ({
       );
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], { type: "application/pdf" });
-      const url = URL.createObjectURL(blob);
+      url = URL.createObjectURL(blob);
     }
-
-
-    if (templateDetails[0]?.templateType === "text_message_with_pdf" && templateDetails[0]["pdfBase64 "]) {
-      const base64PDF = templateDetails[0]["pdfBase64 "] || "";
-      const byteCharacters = atob(base64PDF);
-      const byteNumbers = Array.from(byteCharacters).map((c) =>
-        c.charCodeAt(0)
-      );
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: "application/pdf" });
-      const url = URL.createObjectURL(blob);
-    }
-
     setData({
       type,
       isCarousal,
