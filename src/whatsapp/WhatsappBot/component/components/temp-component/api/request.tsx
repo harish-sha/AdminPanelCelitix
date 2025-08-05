@@ -90,7 +90,7 @@ export const Request = ({
     const url = nodesInputData[id]?.apiUrl || "";
     if (!url) return;
     if (!e) return;
-    const removeVariableTag = removeVariable(url); // Remove variable tags to ensure only one variable is inserted
+    const removeVariableTag = removeVariable(url);
     const variableTage = `{{${e}}}`;
     const newUrl = removeVariableTag + "/" + variableTage;
     setNodesInputData((prev) => ({
@@ -103,32 +103,38 @@ export const Request = ({
     }));
   }
 
-  function generateKeyValue(item, isJson = false) {
-    if (!isJson) {
-      return item?.map((i: { key: string; value: string }) => {
-        if (!i.key || !i.value) return {};
-        return {
-          [i.key]: i.value,
-        };
-      });
-    } else {
-      const obj = {};
-      item?.map((i: { key: string; value: string }) => {
+  function generateKeyValue(item) {
+    const obj = {};
+    //   headerValue = headers
+    // ?.filter((p) => p.key && p.value)
+    // .reduce((acc, { key, value }) => {
+    //   acc[key] = value;
+    //   return acc;
+    // }, {});
+
+    item
+      ?.filter((p) => p.key && p.value)
+      .map((i: { key: string; value: string }) => {
         obj[i.key] = i.value;
       });
-      return obj;
-    }
+    // item?.map((i: { key: string; value: string }) => {
+    //   obj[i.key] = i.value;
+    // });
+    return obj;
   }
 
   useEffect(() => {
-    const updatedParams = generateKeyValue(params, true);
-    const updatedHeaders = generateKeyValue(header, true);
+    const updatedParams = generateKeyValue(params);
+    const updatedHeaders = generateKeyValue(header);
+
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
         ...prev[id],
-        params: updatedParams,
-        headers: updatedHeaders,
+        apiJson: updatedParams,
+        apiHeader: updatedHeaders,
+        params: params,
+        header: header,
       },
     }));
   }, [params, header]);
@@ -193,7 +199,7 @@ export const Request = ({
             },
           }));
         }}
-        maxLength={1000}
+        maxLength={"1000"}
       />
       <AnimatedDropdown
         id="requestType"
@@ -292,7 +298,7 @@ export const Request = ({
                   onChange={(e) => {
                     handleInsertParams(e, index, "key");
                   }}
-                  maxLength={100}
+                  maxLength={"100"}
                 />
                 <InputField
                   label=""
@@ -303,7 +309,7 @@ export const Request = ({
                   onChange={(e) => {
                     handleInsertParams(e, index, "value");
                   }}
-                  maxLength={100}
+                  maxLength={"100"}
                 />
 
                 <button
@@ -359,7 +365,7 @@ export const Request = ({
                   onChange={(e) => {
                     handleInsertHeader(e, index, "key");
                   }}
-                  maxLength={100}
+                  maxLength={"100"}
                 />
                 <InputField
                   label=""
@@ -370,7 +376,7 @@ export const Request = ({
                   onChange={(e) => {
                     handleInsertHeader(e, index, "value");
                   }}
-                  maxLength={100}
+                  maxLength={"100"}
                 />
 
                 <button

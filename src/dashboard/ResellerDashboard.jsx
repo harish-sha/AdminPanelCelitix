@@ -669,64 +669,64 @@ const ResellerDashboard = () => {
 
 
       {/* Add Integrations Start */}
+      {user.role === "DIRECTUSER" && (
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          onClick={openDialog}
+          className="cursor-pointer group relative p-6 rounded-2xl shadow-md bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 hover:shadow-xl transition-all overflow-hidden"
+        >
+          <div className="relative flex flex-col md:flex-row items-center justify-around space-y-2">
+            <div className="flex flex-col items-center">
+              <Lottie
+                animationData={integration}
+                loop
+                autoplay
+                className="w-35 h-auto"
+              />
+              <h2 className="text-4xl font-extrabold text-gray-800 playf bluetxt">
+                Add Integrations
+              </h2>
+              <p className="text-gray-500 text-center text-sm">
+                Connect Freshdesk, Zoho, Shopify, and more from a single
+                dashboard.
+              </p>
+            </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        onClick={openDialog}
-        className="cursor-pointer group relative p-6 rounded-2xl shadow-md bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 hover:shadow-xl transition-all overflow-hidden"
-      >
-        <div className="relative flex flex-col md:flex-row items-center justify-around space-y-2">
-          {/* <AiOutlineAppstoreAdd size={48} className="text-blue-600" /> */}
-          <div className="flex flex-col items-center">
-            <Lottie
-              animationData={integration}
-              loop
-              autoplay
-              className="w-35 h-auto"
-            />
-            <h2 className="text-4xl font-extrabold text-gray-800 playf bluetxt">
-              Add Integrations
-            </h2>
-            <p className="text-gray-500 text-center text-sm">
-              Connect Freshdesk, Zoho, Shopify, and more from a single
-              dashboard.
-            </p>
+            <motion.div
+              layout
+              className="flex justify-center items-center flex-wrap mt-4 transition-all duration-500 gap-12 group-hover:gap-13"
+            >
+              {[
+                { icon: <img src={zohoicon} alt="" className="w-22" /> },
+                { icon: <img src={zapier} alt="" className="w-12" /> },
+                { icon: <img src={wordpress} alt="" className="w-12" /> },
+                { icon: <img src={woocommerce} alt="" className="w-14" /> },
+                { icon: <img src={slack} alt="" className="w-12" /> },
+                { icon: <img src={telegram} alt="" className="w-12" /> },
+                { icon: <img src={shopify} alt="" className="w-12" /> },
+                { icon: <img src={instagram} alt="" className="w-12" /> },
+                { icon: <img src={freshdesk} alt="" className="w-25" /> },
+                { icon: <img src={facebookmessenger} alt="" className="w-10" /> },
+              ].map((item, idx) => (
+                <motion.div
+                  key={idx}
+                  className={`transition-all duration-300`}
+                  whileHover={{ scale: 1.25 }}
+                  animate={{ scale: 1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {item.icon}
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
-
-          <motion.div
-            layout
-            className="flex justify-center items-center flex-wrap mt-4 transition-all duration-500 gap-12 group-hover:gap-13"
-          >
-            {[
-              { icon: <img src={zohoicon} alt="" className="w-22" /> },
-              { icon: <img src={zapier} alt="" className="w-12" /> },
-              { icon: <img src={wordpress} alt="" className="w-12" /> },
-              { icon: <img src={woocommerce} alt="" className="w-14" /> },
-              { icon: <img src={slack} alt="" className="w-12" /> },
-              { icon: <img src={telegram} alt="" className="w-12" /> },
-              { icon: <img src={shopify} alt="" className="w-12" /> },
-              { icon: <img src={instagram} alt="" className="w-12" /> },
-              { icon: <img src={freshdesk} alt="" className="w-25" /> },
-              { icon: <img src={facebookmessenger} alt="" className="w-10" /> },
-            ].map((item, idx) => (
-              <motion.div
-                key={idx}
-                className={`transition-all duration-300`}
-                whileHover={{ scale: 1.25 }}
-                animate={{ scale: 1 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {item.icon}
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-        <p className="relative text-xs text-gray-400 mt-5 text-center">
-          Click to configure integrations
-        </p>
-      </motion.div>
+          <p className="relative text-xs text-gray-400 mt-5 text-center">
+            Click to configure integrations
+          </p>
+        </motion.div>
+      )}
 
       <Dialog
         header="CPaaS Integrations Panel"
@@ -747,6 +747,7 @@ const ResellerDashboard = () => {
           className="rounded-md"
         ></iframe>
       </Dialog>
+
       {/* Add Integrations End */}
 
       {/* daily use */}

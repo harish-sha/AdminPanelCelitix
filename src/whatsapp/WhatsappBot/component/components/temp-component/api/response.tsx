@@ -228,7 +228,7 @@ export const Response = ({
                 }));
               }}
               placeholder="Enter Variable Name"
-              maxLength={100}
+              maxLength={"100"}
             />
             <div className="flex justify-end">
               <button
@@ -261,7 +261,7 @@ export const Response = ({
                     handleJsonVarChange(index, "paramName", e.target.value);
                   }}
                   placeholder="Enter Variable Key"
-                  maxLength={100}
+                  maxLength={"100"}
                 />
                 <InputField
                   id="varValue"
@@ -272,7 +272,7 @@ export const Response = ({
                     handleJsonVarChange(index, "varName", e.target.value);
                   }}
                   placeholder="Enter Variable Value"
-                  maxLength={100}
+                  maxLength={"100"}
                 />
                 <div className="flex justify-end mb-2">
                   <button
@@ -322,7 +322,7 @@ export const Response = ({
             }}
             label="Row Title"
             placeholder="Enter Row Title"
-            maxLength={100}
+            maxLength={"100"}
           />
           <InputField
             id="rowValue"
@@ -342,7 +342,7 @@ export const Response = ({
             }}
             label="Row Value"
             placeholder="Enter Row Value"
-            maxLength={100}
+            maxLength={"100"}
           />
         </div>
       )}
