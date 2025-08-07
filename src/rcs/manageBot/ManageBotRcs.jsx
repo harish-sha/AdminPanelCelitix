@@ -250,7 +250,7 @@ const ManageBotRcs = () => {
                 tooltipContent="Select user to filter bots"
                 options={allUsers.map((user) => ({
                   label: user.firstName,
-                  value: user.srno,
+                  value: user.firstName,
                 }))}
                 value={selectedUser}
                 onChange={(e) => {
