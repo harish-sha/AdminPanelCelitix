@@ -374,11 +374,11 @@ const SmsReports = () => {
 
           insert_flag:
             item.insert_flag === 1
-              ? "Pending"
+              ? "PENDING"
               : item.insert_flag === 2
-                ? "Processing"
+                ? "PROCESSING"
                 : item.insert_flag === 3
-                  ? "Sent"
+                  ? "COMPLETED"
                   : "Unknown",
         }))
         : [];

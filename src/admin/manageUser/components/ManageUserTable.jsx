@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   IconButton,
   Paper,
@@ -425,12 +425,12 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [whatsappMarketing, setWhatsappMarketing] = useState("");
   const [whatsappAuthentication, setWhatsappAuthentication] = useState("");
   const [whatsappDeleteVisible, setWhatsappDeleteVisible] = useState(false);
-  const [rcsDeleteVisible, setRcsDeleteVisible] = useState(false);
   const [selectedWhatsappRow, setSelectedWhatsappRow] = useState(null);
   const [editDialogVisible, setEditDialogVisible] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
 
   const [charges, setCharges] = useState(0);
+
 
   const [editWhatsappVisible, setEditWhatsappVisible] = useState(false);
   const [editWhatsappForm, setEditWhatsappForm] = useState({
@@ -625,12 +625,32 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [rcsStatus, setRcsStatus] = useState("enable");
   const [rcsCountry, setRcsCountry] = useState(null);
   const [rcsrate, setRcsrate] = useState("");
+  const [editRcsVisible, setEditRcsVisible] = useState(false)
+  const [editRcsData, setEditRcsData] = useState()
+  const [rcsUpdateRate, setRcsUpdateRate] = useState()
+  // const [rcsEditData, setRcsEditData] = useState(null);
+  // console.log("rcsEditData", rcsEditData)
+  const [rcsDeleteVisible, setRcsDeleteVisible] = useState(false);
+  const [rcsIsFetching, setRcsIsFetching] = useState(false);
+  const [deletingRcsRow, setDeletingRcsRow] = useState(null);
+
+
+
+  const rcsRateRef = useRef(null)
+  const rcscountryselectRef = useRef(null)
 
   // const rcscountryOptions = [
   //   { value: "USA", label: "USA" },
   //   { value: "UK", label: "UK" },
   //   { value: "India", label: "India" },
   // ];
+
+  useEffect(() => {
+    if (editRcsData?.rate !== undefined) {
+      setRcsUpdateRate(editRcsData.rate.toString());
+    }
+  }, [editRcsData]);
+
 
   const handleRcsAddCredit = async () => {
     try {
@@ -651,11 +671,88 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       toast.error("Error in adding rcs credit");
     }
     // console.log("handleRcsCredit");
+    setRcsrate('')
+    setRcsCountry('')
   };
 
   const handleChangercs = (event) => {
     setRcsStatus(event.target.value);
   };
+
+  async function handleRcsEdit(data) {
+    const res = await getRCSRateBySrno(data.sr_no, currentUserSrno);
+    console.log("res", res)
+    setEditRcsData(res)
+    setEditRcsVisible(true);
+  }
+
+  async function handleRcsDelete(srno) {
+    setRcsIsFetching(true)
+    try {
+      const res = await deleteRCSRateBySrno(deletingRcsRow.sr_no, currentUserSrno);
+      if (!res?.message?.includes("successfully")) {
+        return toast.error(res.message);
+      }
+      setRcsDeleteVisible(false)
+      toast.success(res.message);
+      await fetchRcsRateData(currentUserSrno);
+    } catch (e) {
+      toast.error("Error in deleting rcs credit");
+    } finally {
+      setRcsIsFetching(false)
+    }
+  }
+
+  const handleRcsUpdate = async (srno) => {
+    try {
+      const payload = {
+        srno: editRcsData.srNo,
+        userSrno: String(currentUserSrno),
+        rate: String(rcsUpdateRate),
+        country: String(editRcsData.countrySrNo),
+      };
+      const res = await saveEditRcsRate(payload);
+
+      toast.success(res?.message);
+      await fetchRcsRateData(currentUserSrno);
+      setEditRcsVisible(false)
+    } catch (e) {
+      console.log("e", e)
+      toast.error("Error in adding rcs credit");
+    }
+  }
+
+  const rcscolumns = [
+    { field: "sn", headerName: "S.No", flex: 0.5 },
+    { field: "country_name", headerName: "Country", flex: 1 },
+    { field: "rate", headerName: "Rate", flex: 1 },
+    { field: "update_time", headerName: "Updated On", flex: 1 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 1,
+      renderCell: (params) => (
+        <>
+          <CustomTooltip arrow title="Edit Rate" placement="top">
+            <IconButton onClick={() => handleRcsEdit(params.row)}>
+              <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
+            </IconButton>
+          </CustomTooltip>
+          <CustomTooltip arrow title="Delete Rate" placement="top">
+            <IconButton onClick={() => {
+              setDeletingRcsRow({
+                sr_no: params.row.sr_no,
+                countryName: params.row.country_name,
+              });
+              setRcsDeleteVisible(true);
+            }}>
+              <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
+            </IconButton>
+          </CustomTooltip>
+        </>
+      ),
+    },
+  ];
 
   // RCS End
 
@@ -1238,6 +1335,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         return saveServicesByUser(payload);
       })
     );
+    toast.success("Services assigned successfully");
     setAssignService(false);
   };
 
@@ -1362,6 +1460,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     { field: "firstName", headerName: "First Name", flex: 1, minWidth: 120 },
     { field: "lastName", headerName: "Last Name", flex: 1, minWidth: 120 },
     { field: "companyName", headerName: "Company", flex: 1, minWidth: 120 },
+    { field: "userCreateDate", headerName: "Onboard Date", flex: 1, minWidth: 120 },
     // { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
     {
       field: "status",
@@ -1524,100 +1623,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     },
   ];
 
-  // const rcscolumns = [
-  //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-  //   { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
-  //   { field: "rate", headerName: "Rate (INR/Credit)", flex: 1, minWidth: 120 },
-  //   {
-  //     field: "action",
-  //     headerName: "Action",
-  //     flex: 1,
-  //     minWidth: 100,
-  //     renderCell: (params) => (
-  //       <>
-  //         <CustomTooltip arrow title="Edit" placement="top">
-  //           <IconButton onClick={() => handleRcsEdit(params.row)}>
-  //             <EditNoteIcon
-  //               sx={{
-  //                 fontSize: "1.2rem",
-  //                 color: "gray",
-  //               }}
-  //             />
-  //           </IconButton>
-  //         </CustomTooltip>
-  //         <CustomTooltip arrow title="Delete" placement="top">
-  //           <IconButton onClick={() => handleRcsDelete(params.row)}>
-  //             <DeleteIcon
-  //               sx={{
-  //                 fontSize: "1.2rem",
-  //                 color: "gray",
-  //               }}
-  //             />
-  //           </IconButton>
-  //         </CustomTooltip>
-  //       </>
-  //     ),
-  //   },
-  // ];
-
-  async function handleRcsEdit(srno) {
-    const res = await getRCSRateBySrno(srno, currentUserSrno);
-    // console.log("res", res);
-
-    // const d = Array.isArray(res) ? res[0] : res?.data?.[0];
-
-    // if (d) {
-    //   setEditWhatsappForm({
-    //     srno: d.srno ?? srno,
-    //     userSrno: String(d.user_srno),
-    //     utility: String(d.transactional),
-    //     marketing: String(d.promotional),
-    //     countryCode: String(d.country_srno),
-    //   });
-
-    //   setEditWhatsappVisible(true);
-    // } else {
-    //   console.warn("No data found for srno:", srno);
-    // }
-  }
-  async function handleRcsDelete(srno) {
-    try {
-      const res = await deleteRCSRateBySrno(srno, currentUserSrno);
-      if (!res?.message?.includes("successfully")) {
-        return toast.error(res.message);
-      }
-      toast.success(res.message);
-      await fetchRcsRateData(currentUserSrno);
-    } catch (e) {
-      toast.error("Error in deleting rcs credit");
-    }
-  }
-  const rcscolumns = [
-    { field: "sn", headerName: "S.No", flex: 0.5 },
-    { field: "country_name", headerName: "Country", flex: 1 },
-    { field: "rate", headerName: "Rate", flex: 1 },
-    { field: "update_time", headerName: "Updated On", flex: 1 },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 1,
-      renderCell: (params) => (
-        <>
-          <CustomTooltip arrow title="Edit Rate" placement="top">
-            <IconButton onClick={() => handleRcsEdit(params.row.sr_no)}>
-              <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip arrow title="Delete Rate" placement="top">
-            <IconButton onClick={() => handleRcsDelete(params.row.sr_no)}>
-              <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
-            </IconButton>
-          </CustomTooltip>
-        </>
-      ),
-    },
-  ];
-
   const voiceCols = [
     { field: "sn", headerName: "S.No", flex: 0.5 },
     {
@@ -1646,25 +1651,25 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       },
     },
     { field: "updateTime", headerName: "Updated On", flex: 1 },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 1,
-      renderCell: (params) => (
-        <>
-          <CustomTooltip arrow title="Edit Rate" placement="top">
-            <IconButton onClick={() => handleRcsEdit(params.row.sr_no)}>
-              <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip arrow title="Delete Rate" placement="top">
-            <IconButton onClick={() => handleRcsDelete(params.row.sr_no)}>
-              <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
-            </IconButton>
-          </CustomTooltip>
-        </>
-      ),
-    },
+    // {
+    //   field: "actions",
+    //   headerName: "Actions",
+    //   flex: 1,
+    //   renderCell: (params) => (
+    //     <>
+    //       <CustomTooltip arrow title="Edit Rate" placement="top">
+    //         <IconButton onClick={() => handleRcsEdit(params.row.sr_no)}>
+    //           <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
+    //         </IconButton>
+    //       </CustomTooltip>
+    //       <CustomTooltip arrow title="Delete Rate" placement="top">
+    //         <IconButton onClick={() => handleRcsDelete(params.row.sr_no)}>
+    //           <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
+    //         </IconButton>
+    //       </CustomTooltip>
+    //     </>
+    //   ),
+    // },
   ];
 
   const rows = Array.isArray(allUsers)
@@ -1715,10 +1720,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         sx={{
           display: "flex",
           flexWrap: "wrap",
-          justifyContent: { xs: "center", lg: "space-between" },
+          // justifyContent: { xs: "center", lg: "space-between" },
           alignItems: "center",
           padding: 1,
-          gap: 2,
+          // gap: 2,
           overflowX: "auto",
         }}
       >
@@ -1727,19 +1732,20 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
             display: "flex",
             alignItems: "center",
             flexWrap: "wrap",
-            gap: 1.5,
+            // gap: 1.5,
           }}
         >
           {selectedRows.length > 0 && (
             <Typography
-              variant="body2"
-              sx={{ borderRight: "1px solid #ccc", paddingRight: "10px" }}
+            // variant="body2"
+            // sx={{ borderRight: "1px solid #ccc", paddingRight: "10px" }}
             >
               {selectedRows.length} Rows Selected
             </Typography>
           )}
 
-          <Typography variant="body2">
+
+          <Typography >
             Total Records: <span className="font-semibold">{rows.length}</span>
           </Typography>
         </Box>
@@ -1747,14 +1753,15 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "center",
-            width: { xs: "100%", sm: "auto" },
+            // justifyContent: "center",
+            // width: { xs: "100%", sm: "auto" },
           }}
         >
           <CustomPagination
             totalPages={totalPages}
             paginationModel={paginationModel}
             setPaginationModel={setPaginationModel}
+
           />
         </Box>
       </GridFooterContainer>
@@ -1779,7 +1786,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
             display: "flex",
             alignItems: "center",
             flexWrap: "wrap",
-            gap: 1.5,
+            // gap: 1.5,
           }}
         >
           {selectedRows.length > 0 && (
@@ -1791,7 +1798,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
             </Typography>
           )}
 
-          <Typography variant="body2">
+          <Typography sx={{ fontSize: "14px" }} >
             Total Records:
             <span className="font-semibold">{rcsrows.length}</span>
           </Typography>
@@ -1800,15 +1807,16 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "center",
-            width: { xs: "100%", sm: "auto" },
+            // justifyContent: "center",
+            // width: { xs: "100%", sm: "auto" },
           }}
         >
-          <CustomPagination
+          {/* <CustomPagination
             totalPages={totalPages}
             paginationModel={paginationModel}
             setPaginationModel={setPaginationModel}
-          />
+          
+          /> */}
         </Box>
       </GridFooterContainer>
     );
@@ -2843,7 +2851,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 draggable={false}
               >
                 <div className="space-y-4">
-                  <DropdownWithSearch
+                  {/* <DropdownWithSearch
                     id="editCountry"
                     name="editCountry"
                     label="Country"
@@ -2855,7 +2863,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                         countryCode: val,
                       }))
                     }
-                  />
+                  /> */}
                   <div className="flex items-center gap-5">
                     <InputField
                       label="Utility"
@@ -2951,6 +2959,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                     id="rcscountryselect"
                     name="rcscountryselect"
                     label="Select Country"
+
                     options={countryOptions}
                     value={rcsCountry}
                     onChange={(value) => setRcsCountry(value)}
@@ -2972,6 +2981,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                     id="rcsaddcredit"
                     name="rcsaddcredit"
                     onClick={handleRcsAddCredit}
+                    disabled={!rcsrate || !rcsCountry}
                   />
                 </div>
 
@@ -2993,7 +3003,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                     }}
                     onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
                     disableRowSelectionOnClick
-                    disableColumnResize
+                    // disableColumnResize
                     disableColumnMenu
                     sx={{
                       border: 0,
@@ -3011,19 +3021,72 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   />
                 </Paper>
 
-                {/* <DataTable
-                      height={280}
-                      id="rcs-rate-table"
-                      name="rcsRateTable"
-                      rows={rcsrows}
-                      columns={rcscolumns}
-                      selectedRows={selectedRows}
-                      setSelectedRows={setSelectedRows}
-                    /> */}
               </div>
-              {/* <div className="flex justify-center mt-3">
-                    <UniversalButton label="Save" id="rcssave" name="rcssave" />
-                  </div> */}
+
+              {/* Edit Rcs Rate Dialog */}
+              <Dialog
+                header="Edit Rcs Rate"
+                visible={editRcsVisible}
+                onHide={() => setEditRcsVisible(false)}
+                style={{ width: "30rem" }}
+                draggable={false}
+              >
+                <div className="space-y-4">
+
+                  <div className="flex items-center gap-5">
+                    <InputField
+                      label="Update Rate"
+                      placeholder="Update Rcs Rate"
+                      value={rcsUpdateRate}
+                      onChange={(e) => validateInput(e.target.value, setRcsUpdateRate)}
+                    />
+                  </div>
+                  <div className="flex justify-center">
+                    <UniversalButton
+                      label="Update"
+                      onClick={handleRcsUpdate}
+                    />
+                  </div>
+                </div>
+              </Dialog>
+
+              {/* Delete Rcs Rate  dialog*/}
+              <Dialog
+                header="Delete Rcs Rate"
+                visible={rcsDeleteVisible}
+                style={{ width: "27rem" }}
+                onHide={() => setRcsDeleteVisible(false)}
+                draggable={false}
+              >
+                <div className="flex items-center justify-center">
+                  <CancelOutlinedIcon sx={{ fontSize: 64, color: "#ff3f3f" }} />
+                </div>
+                <div className="p-4 text-center">
+                  <p className="text-[1.1rem] font-semibold text-gray-700">
+                    Delete rate for{" "}
+                    <span className="text-green-600">
+                      {deletingRcsRow?.countryName}
+                    </span>
+                    ?
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    This action cannot be undone.
+                  </p>
+                </div>
+                <div className="flex justify-center gap-4 mt-4">
+                  {!rcsIsFetching && (
+                    <UniversalButton
+                      label="Cancel"
+                      onClick={() => setRcsDeleteVisible(false)}
+                    />
+                  )}
+                  <UniversalButton
+                    label={rcsIsFetching ? "Deleting..." : "Delete"}
+                    onClick={handleRcsDelete}
+                    disabled={rcsIsFetching}
+                  />
+                </div>
+              </Dialog>
             </>
           </CustomTabPanel>
 
@@ -3216,13 +3279,13 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   initialState={{ pagination: { paginationModel } }}
                   pageSizeOptions={[10, 20, 50]}
                   pagination
-                  paginationModel={paginationModel}
-                  onPaginationModelChange={setPaginationModel}
+                  // paginationModel={paginationModel}
+                  // onPaginationModelChange={setPaginationModel}
                   rowHeight={45}
-                  slots={{
-                    footer: RcsCustomFooter,
-                    noRowsOverlay: CustomNoRowsOverlay,
-                  }}
+                  // slots={{
+                  //   footer: RcsCustomFooter,
+                  //   noRowsOverlay: CustomNoRowsOverlay,
+                  // }}
                   onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
                   disableRowSelectionOnClick
                   disableColumnResize
