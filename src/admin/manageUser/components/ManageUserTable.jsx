@@ -1605,6 +1605,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     const desiredData = {
       obdrate: res?.voicePlan === 2 ? res?.voiceRate2 : res?.voiceRate,
       obdrateStatus: res?.voicePlan === 2 ? "disable" : "enable",
+      srno,
     };
 
     setEditOBDVoiceForm(desiredData);
@@ -1638,20 +1639,31 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
   }
 
-  async function handleObdUpdate(srno) {
+  async function handleObdUpdate() {
+    if (!editOBDVoiceForm?.srno) return;
+    try {
+      const payload = {
+        srNo: editOBDVoiceForm?.srno,
+        userSrNo: currentUserSrno,
+        voicePlan: editOBDVoiceForm.obdrateStatus === "enable" ? 1 : 2,
+        voiceRate: 0,
+        voiceRate2: 0,
+      };
+      editOBDVoiceForm.obdrateStatus === "enable"
+        ? (payload.voiceRate = Number(editOBDVoiceForm.obdrate))
+        : (payload.voiceRate2 = Number(editOBDVoiceForm.obdrate));
+      const res = await saveVoiceRate(payload);
+
+      if (!res?.message.includes("successfully")) {
+        return toast.error(res.message);
+      }
+      toast.success(res.message);
+      await fetchObdRateData(currentUserSrno);
+    } catch (e) {
+      toast.error("Error in saving obd pricing");
+    }
     toast.success("Rate updated successfully");
     setEditOBDVoiceVisible(false);
-    // try {
-    //   const res = await deleteVoiceRateBySrno(srno, currentUserSrno);
-    //   if (!res?.message?.includes("Successfully")) {
-    //     return toast.error(res.message);
-    //   }
-    //   toast.success(res.message);
-    //   await fetchObdRateData(currentUserSrno);
-    // } catch (e) {
-    //   console.log(e);
-    //   toast.error("Error in deleting obd credit");
-    // }
   }
   const rcscolumns = [
     { field: "sn", headerName: "S.No", flex: 0.5 },
@@ -3224,7 +3236,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 draggable={false}
                 resizable={false}
               >
-                <h1>ARIHANT</h1>
                 <div className=" lg:w-100 md:w-100">
                   <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
                     {/* Option 1 */}
@@ -3236,7 +3247,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                         onChange={() => {
                           setEditOBDVoiceForm((prev) => ({
                             ...prev,
-                            obdrateStatus: enable,
+                            obdrateStatus: "enable",
                           }));
                         }}
                         checked={editOBDVoiceForm.obdrateStatus === "enable"}
@@ -3257,7 +3268,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                         onChange={() => {
                           setEditOBDVoiceForm((prev) => ({
                             ...prev,
-                            obdrateStatus: disable,
+                            obdrateStatus: "disable",
                           }));
                         }}
                         checked={editOBDVoiceForm.obdrateStatus === "disable"}
