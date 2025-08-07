@@ -1233,6 +1233,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         return saveServicesByUser(payload);
       })
     );
+
+    toast.success("Services assigned successfully");
     setAssignService(false);
   };
 
