@@ -7,7 +7,12 @@ import toast from "react-hot-toast";
 import Loader from "@/whatsapp/components/Loader";
 import { Dialog } from "primereact/dialog";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
-import { fetchAllBotsList, fetchAllUsers, saveAgentRcs, getBotDetailsBySrNo } from "@/apis/admin/admin";
+import {
+  fetchAllBotsList,
+  fetchAllUsers,
+  saveAgentRcs,
+  getBotDetailsBySrNo,
+} from "@/apis/admin/admin";
 import InputField from "@/components/layout/InputField";
 
 const ManageBotRcs = () => {
@@ -117,23 +122,34 @@ const ManageBotRcs = () => {
       setIsLoading(false);
     }
   };
+  const fetchAllUserData = async () => {
+    try {
+      setIsFetching(true);
+      setIsLoading(true);
+      const res = await fetchAllUsers(data);
+      setAllUsers(res.userMstPojoList);
+    } catch (e) {
+      toast.error("Something went wrong while fetching bots.");
+      // console.log(e);
+    } finally {
+      setIsFetching(false);
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchAllBotsData();
   }, []);
 
   const handleBotSearch = () => {
-    if (selectedBotId === "no-selection") {
-      setDisplayedBots(allBots);
-      return;
-    }
+    // bot.agent_id === selectedBotId
+    const filterBot = allBots.filter((bot) => {
+      const matchAgent = !selectedBotId || bot.agent_id == selectedBotId;
+      const matchUser = !selectedUser || bot.user_id == selectedUser;
+      return matchAgent && matchUser;
+    });
 
-    const selectedBot = allBots.find((bot) => bot.agent_id === selectedBotId);
-    if (selectedBot) {
-      setDisplayedBots([selectedBot]);
-    } else {
-      toast.error("Selected bot not found.");
-    }
+    setDisplayedBots(filterBot);
   };
 
   useEffect(() => {
@@ -202,7 +218,9 @@ const ManageBotRcs = () => {
   return (
     <>
       <div className="w-full">
-        <h1 className="text-2xl text-gray-700 font-medium text-center my-2">Manage RCS Bot</h1>
+        <h1 className="text-2xl text-gray-700 font-medium text-center my-2">
+          Manage RCS Bot
+        </h1>
         <div className="flex flex-wrap items-end justify-between w-full gap-2 mb-4">
           <div className="flex items-end gap-3">
             <div className="w-full sm:w-56">
@@ -218,16 +236,35 @@ const ManageBotRcs = () => {
                 value={selectedBotId}
                 onChange={(e) => {
                   setselectedBotId(e);
-                  handleBotSearch();
+                  // handleBotSearch();
                 }}
-                placeholder="select bot name"
+                placeholder="Select Bot"
+                filter
+              />
+            </div>
+            <div className="w-full sm:w-56">
+              <DropdownWithSearch
+                label="Assign To"
+                id="assignTo"
+                name="assignTo"
+                tooltipContent="Select user to filter bots"
+                options={allUsers.map((user) => ({
+                  label: user.firstName,
+                  value: user.srno,
+                }))}
+                value={selectedUser}
+                onChange={(e) => {
+                  setSelectedUser(e);
+                  // handleBotSearch();
+                }}
+                placeholder="Select User"
                 filter
               />
             </div>
 
             <div className="w-max-content">
               <UniversalButton
-                label="Show"
+                label="Search"
                 disabled={isFetching}
                 onClick={handleBotSearch}
               />
@@ -311,7 +348,6 @@ const ManageBotRcs = () => {
             <UniversalButton label="Save Bot" onClick={handleAddBot} />
           </div>
         </div>
-
       </Dialog>
       {/* Add Bot end */}
 
@@ -343,7 +379,10 @@ const ManageBotRcs = () => {
             placeholder="Enter Agent Name"
             value={editBotDetails?.agentName || ""}
             onChange={(e) =>
-              setEditBotDetails((prev) => ({ ...prev, agentName: e.target.value }))
+              setEditBotDetails((prev) => ({
+                ...prev,
+                agentName: e.target.value,
+              }))
             }
           />
 
@@ -354,7 +393,10 @@ const ManageBotRcs = () => {
             placeholder="Enter Agent ID"
             value={editBotDetails?.agentId || ""}
             onChange={(e) =>
-              setEditBotDetails((prev) => ({ ...prev, agentId: e.target.value }))
+              setEditBotDetails((prev) => ({
+                ...prev,
+                agentId: e.target.value,
+              }))
             }
           />
 
@@ -365,7 +407,10 @@ const ManageBotRcs = () => {
             placeholder="Enter Client ID"
             value={editBotDetails?.clientId || ""}
             onChange={(e) =>
-              setEditBotDetails((prev) => ({ ...prev, clientId: e.target.value }))
+              setEditBotDetails((prev) => ({
+                ...prev,
+                clientId: e.target.value,
+              }))
             }
           />
 
@@ -376,7 +421,10 @@ const ManageBotRcs = () => {
             placeholder="Enter Client Key"
             value={editBotDetails?.clientKey || ""}
             onChange={(e) =>
-              setEditBotDetails((prev) => ({ ...prev, clientKey: e.target.value }))
+              setEditBotDetails((prev) => ({
+                ...prev,
+                clientKey: e.target.value,
+              }))
             }
           />
 

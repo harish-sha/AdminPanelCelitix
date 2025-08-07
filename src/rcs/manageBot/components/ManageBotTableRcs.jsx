@@ -85,6 +85,7 @@ const ManageBotTableRcs = ({ id, name, data = [], onEdit }) => {
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     { field: "agent_name", headerName: "Bot Name", flex: 1, minWidth: 120 },
     { field: "agent_id", headerName: "Bot Id", flex: 1, minWidth: 120 },
+    { field: "user_id", headerName: "Assign To", flex: 1, minWidth: 120 },
     {
       field: "insert_time",
       headerName: "Created on",
