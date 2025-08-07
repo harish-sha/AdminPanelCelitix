@@ -84,7 +84,7 @@ const Transactions = () => {
       headerName: "Recharge Date",
       flex: 1,
       minWidth: 120,
-      
+
     },
     {
       field: "before",
@@ -127,18 +127,18 @@ const Transactions = () => {
 
   const rows = Array.isArray(transactionalData)
     ? transactionalData
-    .sort(
+      .sort(
         (a, b) =>
           moment(b.rechargeDate, "DD-MM-YYYY").toDate() -
           moment(a.rechargeDate, "DD-MM-YYYY").toDate()
       )
       .map((item, index) => ({
-      ...item,
-      sn: index + 1,
-      id: index + 1,
-      balance: Number(item.balance).toFixed(2),
-    }))
-     
+        ...item,
+        sn: index + 1,
+        id: index + 1,
+        balance: Number(item.balance).toFixed(2),
+      }))
+
     : [];
 
   const type = [

@@ -359,13 +359,13 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                     icon: <HistoryIcon />,
                     action: handleTransactionHistory,
                   },
+                  {
+                    text: "Settings",
+                    icon: <SettingsIcon />,
+                    action: handleViewSetting,
+                  },
                 ]
                 : []),
-              {
-                text: "Settings",
-                icon: <SettingsIcon />,
-                action: handleViewSetting,
-              },
               { text: "Logout", icon: <LogoutIcon />, action: handleLogout },
             ].map(({ text, icon, action }, idx) => (
               <MenuItem

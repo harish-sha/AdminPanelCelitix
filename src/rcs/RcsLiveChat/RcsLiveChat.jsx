@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChatScreen } from "./components/chatScreen";
 import moment from "moment";
 import { TemplateDialog } from "./components/templateDialog";
+import { useWabaAgentContext } from "@/context/WabaAndAgent.jsx"
 
 const RcsLiveChat = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -70,6 +71,8 @@ const RcsLiveChat = () => {
 
   const [finalVarList, setFinalVarList] = useState([]);
 
+  const { agentData, setAgentData } = useWabaAgentContext();
+
   async function handleFetchAgents() {
     try {
       const res = await fetchAllBotsList();
@@ -81,6 +84,10 @@ const RcsLiveChat = () => {
       toast.error("Error fetching conversations");
     }
   }
+
+  useEffect(()=> {
+    setAgentData(agentState)
+  }, [agentState])
 
   async function handleFetchAllConvo() {
     if (!agentState?.id) return;

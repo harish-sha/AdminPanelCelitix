@@ -702,10 +702,10 @@ const Login = () => {
                       />
                     </Link>
                   </motion.div>
-                  <p className="text-center text-md">
+                  <h1 className="text-center text-md">
                     Welcome to the Future of Customer Communication - Your
                     Engagement Journey Begins Here.
-                  </p>
+                  </h1>
                 </motion.div>
               </motion.div>
             </div>

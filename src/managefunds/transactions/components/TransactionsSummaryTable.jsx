@@ -88,12 +88,12 @@ const TransactionsSummaryTable = ({ id, name, handleView, handleDuplicate, handl
     const rows = Array.from({ length: 500 }, (_, i) => ({
         id: i + 1,
         sn: i + 1,
-        userName: 'Ram', 
+        userName: 'Ram',
         date: '10-12-2025',
         service: 'OBD',
         fundsBeforeUsage: '53.0',
         fundsUsed: '2000',
-        fundsAfterUsage: '100', 
+        fundsAfterUsage: '100',
     }));
 
     const totalPages = Math.ceil(rows.length / paginationModel.pageSize);

@@ -18,6 +18,7 @@ import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import { MdFilterAltOff } from "react-icons/md";
 import { useUser } from "@/context/auth";
 
+
 export const InputData = ({
   setSearch,
   search,
@@ -40,6 +41,7 @@ export const InputData = ({
 
   const [showFilter, setShowFilter] = useState(false);
   const panelRef = useRef(null);
+  
   useEffect(() => {
     function handleClickOutside(e) {
       if (panelRef.current && !panelRef.current.contains(e.target)) {

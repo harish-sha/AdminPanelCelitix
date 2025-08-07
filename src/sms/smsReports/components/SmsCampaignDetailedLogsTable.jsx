@@ -9,6 +9,8 @@ import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
 import { useNavigate } from "react-router-dom";
 import { ImInfo } from "react-icons/im";
 import InfoPopover from "@/components/common/InfoPopover.jsx";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 const CustomPagination = ({
   totalPages,
@@ -71,37 +73,30 @@ const CustomPagination = ({
   );
 };
 
-const infoFieldsToShow = [
-  "pending",
-  "failed",
-  "blocked",
-  "sent",
-  "delivered",
-  "not_delivered",
-];
-
 const SmsCampaignDetailedLogsTable = ({
   id,
   name,
   data = [],
   handlePreviosDayDetailDisplay,
 }) => {
-  console.log("data", data);
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
   });
 
+  console.log("data", data)
   const dropdownButtonRefs = useRef({});
+
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
+
   const [clicked, setClicked] = useState({});
   const additionalInfoLabels = {
     // Example mapping: 'queuedate': 'Queue Date'
   };
 
   const handleInfo = (row) => {
-    setClicked(row);
+    // setClicked(row);
     setDropdownOpenId(row.id);
   };
 
@@ -110,15 +105,24 @@ const SmsCampaignDetailedLogsTable = ({
   };
 
   const rows = data?.map((item, index) => ({
-    id: index + 1,
+    id: index,
     sn: index + 1,
     mobile_no: item.mobile_no || "-",
     que_time: item.sent_time ?? 0,
     message: item.message ?? 0,
     status: item.status ?? 0,
     actual_status: item.actual_status || "-",
+    account_usage_type_id: item.account_usage_type_id || "-",
     smsunit: item.smsunit ?? 0,
     senderid: item.senderid ?? 0,
+    // que_time: item.que_time,
+    del_time: item.del_time,
+    unique_id: item.unique_id,
+    circle_srno: item.circle_srno,
+    source: item.source,
+    PE_ID: item.PE_ID,
+    actual_sms_length: item.actual_sms_length,
+    // actual_status: item.actual_status,
   }));
 
   const columns = [
@@ -126,18 +130,18 @@ const SmsCampaignDetailedLogsTable = ({
       field: "sn",
       headerName: "S.No",
       flex: 0,
-      minWidth: 50,
-      renderCell: (params) => (
-        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
-          {params.value}
-        </div>
-      ),
+      width: 80,
+      // renderCell: (params) => (
+      //   <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+      //     {params.value}
+      //   </div>
+      // ),
     },
     {
       field: "mobile_no",
       headerName: "Mobile No.",
-      flex: 1,
-      minWidth: 120,
+      flex: 0,
+      minWidth: 160,
       renderCell: (params) => (
         <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
           {params.value}
@@ -147,8 +151,8 @@ const SmsCampaignDetailedLogsTable = ({
     {
       field: "que_time",
       headerName: "Sent Time",
-      flex: 1,
-      minWidth: 120,
+      flex: 0,
+      width: 200,
       renderCell: (params) => (
         <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
           {params.value}
@@ -159,7 +163,7 @@ const SmsCampaignDetailedLogsTable = ({
       field: "message",
       headerName: "Message",
       flex: 1,
-      minWidth: 120,
+      minWidth: 220,
       renderCell: (params) => (
         <div
           style={{
@@ -175,8 +179,8 @@ const SmsCampaignDetailedLogsTable = ({
     {
       field: "status",
       headerName: "Status",
-      flex: 1,
-      minWidth: 90,
+      flex: 0,
+      width: 140,
       renderCell: (params) => (
         <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
           {params.value}
@@ -184,21 +188,30 @@ const SmsCampaignDetailedLogsTable = ({
       ),
     },
     {
-      field: "actual_status",
-      headerName: "Actual Status",
-      flex: 1,
-      minWidth: 70,
-      renderCell: (params) => (
-        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
-          {params.value}
-        </div>
-      ),
+      field: "account_usage_type_id",
+      headerName: "Account Usage Type",
+      flex: 0,
+      minWidth: 240,
+      renderCell: (params) => {
+        const usageTypes = {
+          1: "Transactional",
+          2: "Promotional",
+          3: "International",
+        };
+        return (
+          <div
+            style={{ display: "flex", alignItems: "center", height: "100%" }}
+          >
+            {usageTypes[params.value] || "Unknown"}
+          </div>
+        );
+      },
     },
     {
       field: "smsunit",
-      headerName: "Sms Unit",
-      flex: 1,
-      minWidth: 60,
+      headerName: "SMS Unit",
+      flex: 0,
+      width: 100,
       renderCell: (params) => (
         <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
           {params.value}
@@ -207,13 +220,76 @@ const SmsCampaignDetailedLogsTable = ({
     },
     {
       field: "senderid",
-      headerName: "Sender Id",        
-      flex: 1,
-      minWidth: 90,
+      headerName: "Sender Id",
+      flex: 0,
+      width: 150,
       renderCell: (params) => (
         <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
           {params.value}
         </div>
+      ),
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 0,
+      width: 100,                    
+      renderCell: (params) => (
+        <>
+          <CustomTooltip title="View Campaign" placement="top" arrow>
+            <IconButton
+              className="text-xs"
+              ref={(el) => {
+                if (el) dropdownButtonRefs.current[params.row.id] = el;
+              }}
+              onClick={() => handleInfo(params.row)}
+            >
+              <InfoOutlinedIcon
+                sx={{ fontSize: "1.2rem", color: "green" }}
+                className="mt-1"
+              />
+            </IconButton>
+          </CustomTooltip>
+          <InfoPopover
+            anchorEl={dropdownButtonRefs.current[params.row.id]}
+            open={dropdownOpenId == params.row.id}
+            onClose={closeDropdown}
+          >
+            {data[params.row.id] ? (
+              <div className="w-[290px] max-w-full px-2">
+                <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
+                  {[
+                    { label: "Queue Time", key: "que_time" },
+                    { label: "Delivery Time", key: "del_time" },
+                    { label: "Unique ID", key: "unique_id" },
+                    { label: "Circle Srno", key: "circle_srno" },
+                    { label: "source", key: "source" },
+                    { label: "PE ID", key: "PE_ID" },
+                    { label: "Unicode", key: "isunicode" },
+                    { label: "Character Length", key: "actual_sms_length" },
+                    { label: "Actual Status", key: "actual_status" },
+                  ].map(({ label, key }) => (
+                    <React.Fragment key={key}>
+                      <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2 text-nowrap">
+                        {label}
+                      </div>
+                      <div className="text-right font-semibold text-gray-800 border-b border-gray-200 pb-2 text-nowrap">
+
+                        {key === "isunicode"
+                          ? data[params.row.id][key] === "0"
+                            ? "English"
+                            : "Unicode"
+                          : data[params.row.id][key] ?? "N/A"}
+                      </div>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="text-sm text-gray-500">No Data Available</div>
+            )}
+          </InfoPopover>
+        </>
       ),
     },
   ];

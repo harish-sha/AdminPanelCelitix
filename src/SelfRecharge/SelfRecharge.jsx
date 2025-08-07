@@ -300,7 +300,7 @@ export default function RechargeFullWidth() {
     // load({ mode: "sandbox" }).then((cf) => setCashfree(cf));
     var initializeSDK = async function () {
       const cashfreeInit = await load({
-        mode: "sandbox",
+        mode: "production",
       });
       setCashfree(cashfreeInit);
     };

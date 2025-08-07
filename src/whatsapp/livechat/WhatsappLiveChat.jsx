@@ -68,6 +68,7 @@ import { select } from "@material-tailwind/react";
 import DropdownWithSearch from "../components/DropdownWithSearch";
 import { useUser } from "@/context/auth";
 import moment from "moment";
+import { useWabaAgentContext } from "@/context/WabaAndAgent.jsx"
 
 export default function WhatsappLiveChat() {
   const { user } = useUser();
@@ -86,6 +87,7 @@ export default function WhatsappLiveChat() {
   const [input, setInput] = useState("");
   const [waba, setWaba] = useState([]);
   const [selectedWaba, setSelectedWaba] = useState("");
+  console.log("selectedWaba", selectedWaba)
   const [btnOption, setBtnOption] = useState("active");
   const [search, setSearch] = useState("");
 
@@ -124,6 +126,14 @@ export default function WhatsappLiveChat() {
 
   const [chatIndex, setChatIndex] = useState(1);
   const [chatLoading, setChatLoading] = useState(false);
+  const {
+    wabaData,
+    setWabaData,
+    chatData,
+    setChatData,
+    selectedContextWaba,
+    setSelectedContextWaba,
+  } = useWabaAgentContext();
 
   function handleNextCard() {
     setCardIndex(cardIndex + 1);
@@ -156,6 +166,10 @@ export default function WhatsappLiveChat() {
 
   const [isSubscribe, setIsSubscribe] = useState(false);
 
+  useEffect(()=> {
+    setSelectedWaba(selectedContextWaba)
+  },[selectedContextWaba])
+
   async function fetchWaba() {
     const res = await getWabaList();
     // console.log(res);
@@ -167,6 +181,11 @@ export default function WhatsappLiveChat() {
   useEffect(() => {
     fetchWaba();
   }, []);
+
+  useEffect(()=>{
+    setWabaData(wabaState)
+  }, [wabaState])
+
   const insertEmoji = (emoji) => {
     if (inputRef.current) {
       const inputref = inputRef.current;

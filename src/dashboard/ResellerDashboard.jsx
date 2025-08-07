@@ -94,6 +94,7 @@ import MetricsDashboard from "./components/bots";
 import ServiceUsageDashboard from "./components/ServiceUsageDashboard";
 import ParticleRing from "./components/ParticleRing";
 import AccountExpiryFormat from "./components/AccountExpiryFormat";
+import WalletUsage from "./components/walletUsage";
 
 const revenueData = [
   { name: "Mon", online: 14000, offline: 11000 },
@@ -186,64 +187,6 @@ const ResellerDashboard = () => {
     getBalance();
   }, []);
 
-
-
-  //==================================daily amount usage start================================
-  const [startsDate, setStartsDate] = useState(new Date()); // From Today
-  const [endsDate, setEndsDate] = useState(new Date());
-  const [walletUsage, setWalletUsage] = useState(343.8);
-  const [walletUsagesData, setWalletUsagesData] = useState([]);
-  const [totalWalletUsage, setTotalWalletUsage] = useState(0);
-
-  const dailyAmountUsage = async () => {
-    const payload = {
-      userSrno: 0,
-      fromDate: moment(startsDate).format("YYYY-MM-DD"),
-      toDate: moment(endsDate).format("YYYY-MM-DD"),
-    };
-
-    console.log("date payload", payload);
-    setIsLoading(true);
-
-    try {
-      const response = await dailyWalletUsage(payload);
-      console.log("daily wallet usage", response.data);
-
-      const data = response.data || [];
-
-      if (data.length > 1) {
-        setWalletUsagesData(data);
-
-        // Calculate total difference between consecutive walletUsage values
-        let totalDifference = 0;
-        for (let i = 0; i < data.length - 1; i++) {
-          const current = Number(data[i].walletUsage || 0);
-          const next = Number(data[i + 1].walletUsage || 0);
-          totalDifference += Math.abs(current - next);
-        }
-
-        setTotalWalletUsage(totalDifference);
-        console.log("Total Wallet Usage (difference):", totalDifference);
-      } else {
-        setWalletUsagesData([]);
-        setTotalWalletUsage(0);
-      }
-    } catch (error) {
-      console.error("Error daily wallet usage:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-
-
-  useEffect(() => {
-    dailyAmountUsage(); // Fetch data when the component mounts or when date range changes
-  }, [startsDate, endsDate]);
-
-  //==================================daily amount usage end================================
-
-
   // =======================================daily service usage end=================================================
 
   const [startDate, setStartDate] = useState(new Date());
@@ -262,8 +205,6 @@ const ResellerDashboard = () => {
 
   const [filter, setFilter] = useState("Day");
   const [usageData, setUsageData] = useState(null);
-
-
 
   const dailyServiceUsage = async () => {
     const payload = {
@@ -289,7 +230,6 @@ const ResellerDashboard = () => {
     }
   };
 
-
   const servicesDailyUsage = ["whatsapp", "voice", "rcs", "sms"];
 
   const chartData = servicesDailyUsage.map((s) => {
@@ -300,10 +240,6 @@ const ResellerDashboard = () => {
       totalCharge: item.totalCharge || 0,
     };
   });
-
-  useEffect(() => {
-    dailyAmountUsage();
-  }, []);
 
 
   // useEffect(() => {
@@ -665,69 +601,79 @@ const ResellerDashboard = () => {
           })}
         </Grid>
       </motion.div>
+
       {/* service cards end */}
-
-
-      {/* Add Integrations Start */}
-      {user.role === "DIRECTUSER" && (
-        <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          onClick={openDialog}
-          className="cursor-pointer group relative p-6 rounded-2xl shadow-md bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 hover:shadow-xl transition-all overflow-hidden"
-        >
-          <div className="relative flex flex-col md:flex-row items-center justify-around space-y-2">
-            <div className="flex flex-col items-center">
-              <Lottie
-                animationData={integration}
-                loop
-                autoplay
-                className="w-35 h-auto"
-              />
-              <h2 className="text-4xl font-extrabold text-gray-800 playf bluetxt">
-                Add Integrations
-              </h2>
-              <p className="text-gray-500 text-center text-sm">
-                Connect Freshdesk, Zoho, Shopify, and more from a single
-                dashboard.
-              </p>
-            </div>
-
+      <div className="grid grid-cols-1 md:grid-cols-2  gap-5">
+        <div className="w-full">
+          {/* Add Integrations Start */}
+          {user.role === "DIRECTUSER" && (
             <motion.div
-              layout
-              className="flex justify-center items-center flex-wrap mt-4 transition-all duration-500 gap-12 group-hover:gap-13"
+              initial={{ opacity: 0, y: -30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              onClick={openDialog}
+              className="cursor-pointer group relative p-6 rounded-2xl shadow-md bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 hover:shadow-xl transition-all overflow-hidden h-full"
             >
-              {[
-                { icon: <img src={zohoicon} alt="" className="w-22" /> },
-                { icon: <img src={zapier} alt="" className="w-12" /> },
-                { icon: <img src={wordpress} alt="" className="w-12" /> },
-                { icon: <img src={woocommerce} alt="" className="w-14" /> },
-                { icon: <img src={slack} alt="" className="w-12" /> },
-                { icon: <img src={telegram} alt="" className="w-12" /> },
-                { icon: <img src={shopify} alt="" className="w-12" /> },
-                { icon: <img src={instagram} alt="" className="w-12" /> },
-                { icon: <img src={freshdesk} alt="" className="w-25" /> },
-                { icon: <img src={facebookmessenger} alt="" className="w-10" /> },
-              ].map((item, idx) => (
-                <motion.div
-                  key={idx}
-                  className={`transition-all duration-300`}
-                  whileHover={{ scale: 1.25 }}
-                  animate={{ scale: 1 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {item.icon}
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-          <p className="relative text-xs text-gray-400 mt-5 text-center">
-            Click to configure integrations
-          </p>
-        </motion.div>
-      )}
+              <div className="relative  flex-col md:flex-row items-center justify-around space-y-2">
+                <div className="flex flex-col items-center">
+                  <Lottie
+                    animationData={integration}
+                    loop
+                    autoplay
+                    className="w-35 h-auto"
+                  />
+                  <h2 className="text-4xl font-extrabold text-gray-800 playf bluetxt">
+                    Add Integrations
+                  </h2>
+                  <p className="text-gray-500 text-center text-sm">
+                    Connect Freshdesk, Zoho, Shopify, and more from a single
+                    dashboard.
+                  </p>
+                </div>
 
+                <motion.div
+                  layout
+                  className="flex justify-center items-center flex-wrap mt-4 transition-all duration-500 gap-12 group-hover:gap-13"
+                >
+                  {[
+                    { icon: <img src={zohoicon} alt="" className="w-22" /> },
+                    { icon: <img src={zapier} alt="" className="w-12" /> },
+                    { icon: <img src={wordpress} alt="" className="w-12" /> },
+                    { icon: <img src={woocommerce} alt="" className="w-14" /> },
+                    { icon: <img src={slack} alt="" className="w-12" /> },
+                    { icon: <img src={telegram} alt="" className="w-12" /> },
+                    { icon: <img src={shopify} alt="" className="w-12" /> },
+                    { icon: <img src={instagram} alt="" className="w-12" /> },
+                    { icon: <img src={freshdesk} alt="" className="w-25" /> },
+                    {
+                      icon: (
+                        <img src={facebookmessenger} alt="" className="w-10" />
+                      ),
+                    },
+                  ].map((item, idx) => (
+                    <motion.div
+                      key={idx}
+                      className={`transition-all duration-300`}
+                      whileHover={{ scale: 1.25 }}
+                      animate={{ scale: 1 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {item.icon}
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </div>
+              <p className="relative text-xs text-gray-400 mt-5 text-center">
+                Click to configure integrations
+              </p>
+            </motion.div>
+          )}
+        </div>
+
+        <div className="w-full">
+          <WalletUsage />
+        </div>
+      </div>
       <Dialog
         header="CPaaS Integrations Panel"
         visible={visible}
@@ -747,81 +693,16 @@ const ResellerDashboard = () => {
           className="rounded-md"
         ></iframe>
       </Dialog>
-
       {/* Add Integrations End */}
-
-      {/* daily use */}
-
-      {/* <div className="flex items-center justify-center">
-        <div className="w-full bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-10 border border-white/20">
-          
-          <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] rounded-3xl p-8 text-white shadow-[0_0_25px_rgba(0,255,200,0.3)] transition-all duration-500 hover:scale-[1.04] hover:shadow-[0_0_40px_rgba(0,255,200,0.5)] overflow-hidden">
-     
-            <div className="absolute inset-0 bg-gradient-to-tr from-green-400/20 to-green-600/10 blur-3xl opacity-50"></div>
-
-        
-            <div className="relative z-10 flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-green-300 drop-shadow-md">
-                Wallet Overview
-              </h2>
-              <div className="px-4 py-1 bg-green-500/30 rounded-full text-sm font-semibold tracking-wide border border-green-400/40">
-                Active
-              </div>
-            </div>
-
-       
-            <div className="relative z-10 mb-6">
-              <span className="text-sm text-gray-300">Current Balance</span>
-              <p className="text-4xl font-extrabold bg-gradient-to-r from-green-300 via-white to-green-200 bg-clip-text text-transparent animate-[pulse_2.5s_infinite]">
-                ₹ {walletUsage}
-              </p>
-            </div>
-
-            
-            <div className="relative z-10 mb-6">
-              <span className="text-sm text-gray-300">Used Balance</span>
-              <p className="text-2xl font-bold text-green-200">₹ {totalWalletUsage.toFixed(2)}</p>
-            </div>
-
-          
-            <div className="relative z-10 flex flex-col sm:flex-row justify-between text-sm text-gray-300 border-t border-green-400/30 pt-4 gap-4">
-            
-              <div className="flex flex-col">
-                <label className="font-medium text-white mb-2">From:</label>
-                <input
-                  type="date"
-                  value={startsDate}
-                  onChange={(e) => setStartsDate(e.target.value)}
-                  className="bg-white/10 text-white font-semibold px-4 py-2 rounded-lg border border-green-400/30 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all hover:scale-105 shadow-md"
-                />
-              </div>
-
-            
-              <div className="flex flex-col">
-                <label className="font-medium text-white mb-2">To:</label>
-                <input
-                  type="date"
-                  value={endsDate}
-                  onChange={(e) => setEndsDate(e.target.value)}
-                  className="bg-white/10 text-white font-semibold px-4 py-2 rounded-lg border border-green-400/30 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all hover:scale-105 shadow-md"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> */}
-
-      {/* daily use */}
 
       {/* <ParticleRing /> */}
       {/* Account expiry format start */}
       <AccountExpiryFormat />
       {/* Account expiry format end */}
 
-
       {/*Service Usage Overview start  */}
       {user.role === "DIRECTUSER" && (
-        < motion.div
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -843,7 +724,7 @@ const ResellerDashboard = () => {
         </motion.div>
       )}
       {/* bots & flows End */}
-    </div >
+    </div>
   );
 };
 
