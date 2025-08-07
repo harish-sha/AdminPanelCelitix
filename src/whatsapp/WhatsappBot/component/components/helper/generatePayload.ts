@@ -20,10 +20,11 @@ function generateBotPayload(
 
     const incomingEdge = edges.find((edge) => edge.target === node.id);
     const prevNode = incomingEdge
-      ? `${nodes.find((n) => n.id === incomingEdge.source)?.type === "starting"
-        ? "START"
-        : nodes.find((n) => n.id === incomingEdge.source)?.type
-      }_${incomingEdge.source}`
+      ? `${
+          nodes.find((n) => n.id === incomingEdge.source)?.type === "starting"
+            ? "START"
+            : nodes.find((n) => n.id === incomingEdge.source)?.type
+        }_${incomingEdge.source}`
       : "";
 
     const outgoingEdges = edges.filter((edge) => edge.source === node.id);
@@ -115,7 +116,6 @@ function generateBotPayload(
           item?.value?.toString().trim() || "",
         ]);
       }
-
     }
     if (finalType === "answer") {
       (entry["answerOption"] = nodeInput?.type),
@@ -139,7 +139,6 @@ function generateBotPayload(
     }
     if (finalType === "api") {
       generateApiPayload(entry, nodeInput);
-
     }
 
     if (prevNode) entry["prevNode"] = prevNode;
@@ -159,47 +158,52 @@ function generateBotPayload(
 }
 
 function generateApiPayload(entry, nodeInput) {
+  // console.log("nodeInput?.jsonVar", Object.keys(nodeInput?.jsonVar).length > 0);
   if (!entry.apiResponse) {
     entry.apiResponse = {};
   }
   (entry["apiUrl"] = nodeInput?.apiUrl),
     (entry["apiMethod"] = nodeInput?.apiMethod),
     (entry["apiDatatype"] = nodeInput?.apiDatatype || "none"),
-    (entry["apiHeader"] = nodeInput?.apiHeader || [])
+    (entry["apiHeader"] = nodeInput?.apiHeader || []);
 
   if (nodeInput?.apiDatatype === "parameter") {
-    (entry["apiJson"] = nodeInput?.apiJson)
+    entry["apiJson"] = nodeInput?.apiJson;
   }
   if (nodeInput?.apiDatatype === "json") {
-    (entry["apiJson"] = JSON.parse(nodeInput?.apiRequestJson))
+    entry["apiJson"] = JSON.parse(nodeInput?.apiRequestJson);
   }
 
+  (entry["apiResponse"]["responseType"] =
+    nodeInput?.apiResponse?.responseType || "none"),
+    (entry["apiResponse"]["actionType"] =
+      nodeInput?.apiResponse?.actionType || "-1"),
+    (entry["apiResponse"]["storeInVariable"] =
+      nodeInput?.apiResponse?.storeInVariable),
+    (entry["responseType"] = nodeInput?.responseType);
 
-  (entry["apiResponse"]["responseType"] = nodeInput?.apiResponse?.responseType || "none"),
-    (entry["apiResponse"]["actionType"] = nodeInput?.apiResponse?.actionType || "-1"),
-    (entry["apiResponse"]["storeInVariable"] = nodeInput?.apiResponse?.storeInVariable),
-    (entry["responseType"] = nodeInput?.responseType)
-
-  if (nodeInput?.apiResponse?.responseType === "text" && nodeInput?.apiResponse?.actionType !== "createNewNode") {
-    (entry["apiResponse"]["storedData"] = [
+  if (
+    nodeInput?.apiResponse?.responseType === "text" &&
+    nodeInput?.apiResponse?.actionType !== "createNewNode"
+  ) {
+    entry["apiResponse"]["storedData"] = [
       {
-        varName: nodeInput?.apiResponse?.varName
-      }
-    ])
-  }
-  else if (nodeInput?.apiResponse?.responseType === "json" && nodeInput?.apiResponse?.actionType !== "createNewNode") {
-    (entry["apiResponse"]["storedData"] = [
-      ...nodeInput?.jsonVar
-    ])
+        varName: nodeInput?.apiResponse?.varName,
+      },
+    ];
+  } else if (
+    nodeInput?.apiResponse?.responseType === "json" &&
+    nodeInput?.apiResponse?.actionType !== "createNewNode" &&
+    nodeInput?.jsonVar
+  ) {
+    entry["apiResponse"]["storedData"] = [...(nodeInput?.jsonVar)];
   }
 
   if (nodeInput?.apiResponse?.actionType === "createNewNode") {
     (entry["apiResponse"]["conditionName"] = nodeInput?.apiResponse?.rowTitle),
       // (entry["apiResponse"]["conditionValue"] = nodeInput?.apiResponse?.rowValue),
-      (entry["apiResponse"]["storeInVariable"] = undefined)
+      (entry["apiResponse"]["storeInVariable"] = undefined);
   }
-
 }
-
 
 export default generateBotPayload;
