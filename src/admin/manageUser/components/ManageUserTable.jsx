@@ -37,7 +37,7 @@ import SmsOutlinedIcon from "@mui/icons-material/SmsOutlined";
 import PhoneMissedOutlinedIcon from "@mui/icons-material/PhoneMissedOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { MdOutlineDeleteForever } from "react-icons/md";
-import SupportAgentOutlinedIcon from '@mui/icons-material/SupportAgentOutlined';
+import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 // import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
@@ -79,6 +79,7 @@ import {
 import {
   addSmsPricing,
   deleteRCSRateBySrno,
+  deleteVoiceRateBySrno,
   deleteWhatsappRateBySrno,
   getRCSRateBySrno,
   getRCSRateData,
@@ -328,7 +329,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     state: "",
     city: "",
     pinCode: "",
-    agentLimit: ""
+    agentLimit: "",
   });
 
   const [petmDetails, setPetmDetails] = useState({
@@ -373,7 +374,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           city: userDetails.city || "",
           pinCode: userDetails.pinCode || "",
           srno: userDetails.srno || "",
-          agentLimit: userDetails.agentLimit || ""
+          agentLimit: userDetails.agentLimit || "",
         });
         setSelectedId(srNo);
         setEditDetailsDialogVisible(true);
@@ -496,8 +497,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
   };
   const fetchObdRateData = async (userSrno) => {
-    const res = await getVoiceRateBySrno(userSrno);
-    if (res?.message?.includes("Record not found")) {
+    const res = await getVoiceRateByUser(userSrno);
+
+    if (res?.response?.data?.message?.includes("Record not found with userSrno")) {
+      setVoicerows([]);
       return;
     }
 
@@ -529,7 +532,12 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   };
 
   const handleWhatsappAddCredit = async () => {
-    if (!whatsappCountry || !whatsappUtility || !whatsappMarketing || !whatsappAuthentication) {
+    if (
+      !whatsappCountry ||
+      !whatsappUtility ||
+      !whatsappMarketing ||
+      !whatsappAuthentication
+    ) {
       toast.error("Please fill all the fields.");
       return;
     }
@@ -1309,20 +1317,27 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
     const rcsRowss = Array.isArray(rcsRateRes)
       ? rcsRateRes.map((item, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        srno: item.sr_no,
-        ...item,
-      }))
+          id: index + 1,
+          sn: index + 1,
+          srno: item.sr_no,
+          ...item,
+        }))
       : [];
     rcsRateRes.length > 0 && setRcsrows(rcsRowss);
+
+    const voiceRows = Array.isArray(obdRateRes)
+      ? obdRateRes.map((item, index) => ({
+          id: index + 1,
+          sn: index + 1,
+          ...item,
+        }))
+      : [];
 
     obdRateRes &&
       setVoicerows([
         {
           id: 1,
           sn: 1,
-          srno: obdRateRes?.srNo,
           ...obdRateRes,
         },
       ]);
@@ -1370,8 +1385,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         return (
           <div className="flex items-center gap-2">
             <span
-              className={`w-3 h-3 rounded-full ${isActive ? "bg-green-500" : "bg-red-500"
-                }`}
+              className={`w-3 h-3 rounded-full ${
+                isActive ? "bg-green-500" : "bg-red-500"
+              }`}
             ></span>
             <span>{isActive ? "Active" : "Inactive"}</span>
           </div>
@@ -1589,6 +1605,20 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       toast.error("Error in deleting rcs credit");
     }
   }
+
+  async function handleObdDelete(srno) {
+    try {
+      const res = await deleteVoiceRateBySrno(srno, currentUserSrno);
+      if (!res?.message?.includes("Successfully")) {
+        return toast.error(res.message);
+      }
+      toast.success(res.message);
+      await fetchObdRateData(currentUserSrno);
+    } catch (e) {
+      console.log(e);
+      toast.error("Error in deleting obd credit");
+    }
+  }
   const rcscolumns = [
     { field: "sn", headerName: "S.No", flex: 0.5 },
     { field: "country_name", headerName: "Country", flex: 1 },
@@ -1655,7 +1685,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="Delete Rate" placement="top">
-            <IconButton onClick={() => handleRcsDelete(params.row.sr_no)}>
+            <IconButton onClick={() => handleObdDelete(params.row?.srNo)}>
               <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
             </IconButton>
           </CustomTooltip>
@@ -1666,10 +1696,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   const rows = Array.isArray(allUsers)
     ? allUsers.map((item, i) => ({
-      id: i + 1,
-      sn: i + 1,
-      ...item,
-    }))
+        id: i + 1,
+        sn: i + 1,
+        ...item,
+      }))
     : [];
 
   // const rcsrows = Array.from({ length: 20 }, (_, i) => ({
@@ -1684,13 +1714,13 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       const payload = {
         srNo: "",
         userSrNo: currentUserSrno,
-        voicePlan: obdrateStatus === "enable" ? "1" : "2",
+        voicePlan: obdrateStatus === "enable" ? 1 : 2,
         voiceRate: 0,
         voiceRate2: 0,
       };
       obdrateStatus === "enable"
-        ? (payload.voiceRate = obdrate)
-        : (payload.voiceRate2 = obdrate);
+        ? (payload.voiceRate = Number(obdrate))
+        : (payload.voiceRate2 = Number(obdrate));
       const res = await saveVoiceRate(payload);
 
       if (!res?.message.includes("successfully")) {
@@ -2163,7 +2193,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               placeholder="Enter agent Limit in number"
               value={updateDetails.agentLimit}
               onChange={(e) =>
-                setUpdateDetails({ ...updateDetails, agentLimit: e.target.value })
+                setUpdateDetails({
+                  ...updateDetails,
+                  agentLimit: e.target.value,
+                })
               }
             />
           </div>
@@ -2237,18 +2270,18 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           />
           {(petmDetails.petmChainType === 2 ||
             petmDetails.petmChainType === 3) && (
-              <InputField
-                label="TMA-1"
-                id="tma1"
-                name="tma1"
-                placeholder="Enter TMA-1"
-                type="number"
-                value={petmDetails.TMA1}
-                onChange={(e) => {
-                  setPetmDetails({ ...petmDetails, TMA1: e.target.value });
-                }}
-              />
-            )}
+            <InputField
+              label="TMA-1"
+              id="tma1"
+              name="tma1"
+              placeholder="Enter TMA-1"
+              type="number"
+              value={petmDetails.TMA1}
+              onChange={(e) => {
+                setPetmDetails({ ...petmDetails, TMA1: e.target.value });
+              }}
+            />
+          )}
           {petmDetails.petmChainType === 3 && (
             <InputField
               label="TMA-2"
@@ -2483,8 +2516,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   {selectedUserDetails.status === 1
                     ? "Active"
                     : selectedUserDetails.status === 0
-                      ? "Inactive"
-                      : "Not Available"}
+                    ? "Inactive"
+                    : "Not Available"}
                 </p>
               </div>
             </div>
@@ -2793,8 +2826,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                       type="text"
                       readOnly={!whatsappCountry}
                     />
-
-
 
                     <UniversalButton
                       label="Add"
@@ -3595,7 +3626,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                           ?.enable || false
                       }
                       onChange={handleServiceChange}
-                    // checked={true}
+                      // checked={true}
                     />
                     <label
                       htmlFor={item.id}

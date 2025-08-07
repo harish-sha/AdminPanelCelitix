@@ -56,6 +56,6 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
       console.log(error);
       return error;
     }
-    console.error("Network Error:", error);
+    return error
   }
 };
