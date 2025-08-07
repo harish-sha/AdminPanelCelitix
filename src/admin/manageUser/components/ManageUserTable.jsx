@@ -442,6 +442,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     countryCode: "",
   });
 
+  const [editOBDVoiceVisible, setEditOBDVoiceVisible] = useState(false);
+  const [editOBDVoiceForm, setEditOBDVoiceForm] = useState({});
+
   const handleChangewhatsapp = (event) => {
     setWhatsappStatus(event.target.value);
     // setRcsStatus(value);
@@ -499,7 +502,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const fetchObdRateData = async (userSrno) => {
     const res = await getVoiceRateByUser(userSrno);
 
-    if (res?.response?.data?.message?.includes("Record not found with userSrno")) {
+    if (
+      res?.response?.data?.message?.includes("Record not found with userSrno")
+    ) {
       setVoicerows([]);
       return;
     }
@@ -850,6 +855,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
 
     setter(value);
+    return value;
   };
   // assignRate
 
@@ -1593,6 +1599,18 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     //   console.warn("No data found for srno:", srno);
     // }
   }
+  async function handleOBDEdit(srno) {
+    const res = await getVoiceRateBySrno(srno, currentUserSrno);
+
+    const desiredData = {
+      obdrate: res?.voicePlan === 2 ? res?.voiceRate2 : res?.voiceRate,
+      obdrateStatus: res?.voicePlan === 2 ? "disable" : "enable",
+    };
+
+    setEditOBDVoiceForm(desiredData);
+    setEditOBDVoiceVisible(true);
+  }
+
   async function handleRcsDelete(srno) {
     try {
       const res = await deleteRCSRateBySrno(srno, currentUserSrno);
@@ -1618,6 +1636,22 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       console.log(e);
       toast.error("Error in deleting obd credit");
     }
+  }
+
+  async function handleObdUpdate(srno) {
+    toast.success("Rate updated successfully");
+    setEditOBDVoiceVisible(false);
+    // try {
+    //   const res = await deleteVoiceRateBySrno(srno, currentUserSrno);
+    //   if (!res?.message?.includes("Successfully")) {
+    //     return toast.error(res.message);
+    //   }
+    //   toast.success(res.message);
+    //   await fetchObdRateData(currentUserSrno);
+    // } catch (e) {
+    //   console.log(e);
+    //   toast.error("Error in deleting obd credit");
+    // }
   }
   const rcscolumns = [
     { field: "sn", headerName: "S.No", flex: 0.5 },
@@ -1680,7 +1714,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       renderCell: (params) => (
         <>
           <CustomTooltip arrow title="Edit Rate" placement="top">
-            <IconButton onClick={() => handleRcsEdit(params.row.sr_no)}>
+            <IconButton onClick={() => handleOBDEdit(params.row.srNo)}>
               <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
             </IconButton>
           </CustomTooltip>
@@ -3050,50 +3084,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           {/* SMS */}
           <CustomTabPanel value={value} index={2}>
             <>
-              {/* <div className="space-y-2">
-                <p>Transaction Service</p>
-                <div className="flex mb-2 lg:w-100 md:w-100">
-                  <Checkbox
-                    id="smsstatus"
-                    name="smsstatus"
-                    onChange={(e) => setTranscheck(e.checked)}
-                    checked={transcheck}
-                    className="m-2"
-                  />
-
-                  <AnimatedDropdown
-                    id="transdropdown"
-                    name="transdropdown"
-                    options={transOptions}
-                    value={trans} // <- should be the selected serviceId
-                    onChange={(selected) => setTrans(selected)} // selected.value if needed
-                    disabled={!transcheck}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <p>Promotion Service</p>
-                <div className="flex lg:w-100 md:w-100">
-                  <Checkbox
-                    id="smspromo"
-                    name="smspromo"
-                    onChange={(e) => setPromocheck(e.checked)}
-                    checked={promocheck}
-                    className="m-2"
-                  />
-
-                  <AnimatedDropdown
-                    id="promodropdown"
-                    name="promodropdown"
-                    options={promoOption}
-                    value={promo}
-                    onChange={(selected) => setPromo(selected)}
-                    disabled={!promocheck}
-                  />
-                </div>
-              </div> */}
-
               <div className="flex gap-5 items-center justify-start mt-3">
                 <div className=" lg:w-100 md:w-100">
                   <InputField
@@ -3133,43 +3123,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           {/* OBD */}
           <CustomTabPanel value={value} index={3}>
             <>
-              {/* <div className="flex mb-2 lg:w-100 md:w-100">
-                <Checkbox
-                  id="obdstatusobd"
-                  name="obdstatusobd"
-                  onChange={(e) => setTranscheckobd(e.checked)}
-                  checked={transcheckobd}
-                  className="m-2"
-                />
-
-                <AnimatedDropdown
-                  id="transdropdownobd"
-                  name="transdropdownobd"
-                  options={transOptionsobd}
-                  value={transobd}
-                  onChange={(value) => setTransobd(value)}
-                  disabled={!transcheckobd}
-                />
-              </div>
-              <div className="flex lg:w-100 md:w-100">
-                <Checkbox
-                  id="obdstatuspromo"
-                  name="obdstatuspromo"
-                  onChange={(e) => setPromocheckobd(e.checked)}
-                  checked={promocheckobd}
-                  className="m-2"
-                />
-
-                <AnimatedDropdown
-                  id="transdropdownobd"
-                  name="transdropdownobd"
-                  options={promoOptionobd}
-                  value={promoobd}
-                  onChange={(value) => setPromoobd(value)}
-                  disabled={!promocheckobd}
-                />
-              </div> */}
-
               <div className=" lg:w-100 md:w-100">
                 <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
                   {/* Option 1 */}
@@ -3262,6 +3215,89 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   }}
                 />
               </Paper>
+
+              <Dialog
+                header="Edit OBD Rate"
+                visible={editOBDVoiceVisible}
+                onHide={() => setEditOBDVoiceVisible(false)}
+                style={{ width: "30rem" }}
+                draggable={false}
+                resizable={false}
+              >
+                <h1>ARIHANT</h1>
+                <div className=" lg:w-100 md:w-100">
+                  <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
+                    {/* Option 1 */}
+                    <div className="flex items-center gap-2">
+                      <RadioButton
+                        inputId="obdrateOption1"
+                        name="obdrateredio"
+                        value="enable"
+                        onChange={() => {
+                          setEditOBDVoiceForm((prev) => ({
+                            ...prev,
+                            obdrateStatus: enable,
+                          }));
+                        }}
+                        checked={editOBDVoiceForm.obdrateStatus === "enable"}
+                      />
+                      <label
+                        htmlFor="obdrateOption1"
+                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                      >
+                        @ 15 sec
+                      </label>
+                    </div>
+                    {/* Option 2 */}
+                    <div className="flex items-center gap-2">
+                      <RadioButton
+                        inputId="obdrateOption2"
+                        name="obdrateredio"
+                        value="disable"
+                        onChange={() => {
+                          setEditOBDVoiceForm((prev) => ({
+                            ...prev,
+                            obdrateStatus: disable,
+                          }));
+                        }}
+                        checked={editOBDVoiceForm.obdrateStatus === "disable"}
+                      />
+                      <label
+                        htmlFor="obdrateOption2"
+                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                      >
+                        @ 30 sec
+                      </label>
+                    </div>
+                  </div>
+                  <div className="flex  gap-5 items-center justify-center mt-3">
+                    <InputField
+                      id="transratesobd"
+                      name="transratesobd"
+                      label="Rate"
+                      placeholder="(INR / Credit)"
+                      value={editOBDVoiceForm.obdrate}
+                      onChange={(e) =>
+                        validateInput(e.target.value, (e) => {
+                          setEditOBDVoiceForm((prev) => ({
+                            ...prev,
+                            obdrate: e,
+                          }));
+                        })
+                      }
+                      type="number"
+                    />
+                    <div className="mt-[1.5rem]">
+                      <UniversalButton
+                        label="Update"
+                        id="updateOBDData"
+                        name="updateOBDData"
+                        onClick={handleObdUpdate}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </Dialog>
             </>
           </CustomTabPanel>
 
