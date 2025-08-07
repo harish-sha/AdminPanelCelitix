@@ -35,9 +35,10 @@ const ManagePrefix = () => {
   });
   const [data, setData] = useState([]);
 
-  async function handleFetchOperatorList() {
+  async function handleFetchOperatorList(srno) {
+    // if (!searchData.country) return;
     try {
-      const res = await getOperatorList();
+      const res = await getOperatorList(srno);
       const mappedData = res?.map((item) => ({
         label: item.operatorName,
         value: item.srNo,
@@ -98,10 +99,13 @@ const ManagePrefix = () => {
   }
 
   useEffect(() => {
-    handleFetchOperatorList();
     handleFetchCountryList();
     handleSearch();
   }, []);
+
+  // useEffect(() => {
+  //   handleFetchOperatorList();
+  // }, [searchData.country]);
 
   const handleAddOperator = () => {
     navigate("/addoperator");
@@ -176,6 +180,7 @@ const ManagePrefix = () => {
               options={dropdownData.country}
               onChange={(e) => {
                 setSearchData({ ...searchData, country: e });
+                handleFetchOperatorList(e);
               }}
               value={searchData.country}
             />
