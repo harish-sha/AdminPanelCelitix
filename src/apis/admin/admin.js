@@ -32,6 +32,17 @@ export const updateUserbySrno = async (data) => {
   });
 };
 
+// update user status by srno
+export const updateUserStatusbySrno = async (data) => {
+  return await fetchWithAuth(
+    `/user/updateStatusBySrno?userSrno=${data.userSrno}&status=${data.status}`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
+};
+
 // Save RCS Bot
 export const saveAgentRcs = async (data) => {
   return await fetchWithAuth("/rcs/bot/saveAgent", {
@@ -127,7 +138,7 @@ export const getPETMChain = async (data) => {
   });
 };
 
-// get whatsapp monthly charges 
+// get whatsapp monthly charges
 export const getCharges = async (userSrno) => {
   return await fetchWithAuth(
     `/WhatsappUserMonthlyRent/getWhatsappMontlyRate?userSrno=${userSrno}`,

@@ -7,7 +7,7 @@ export const getUserDetails = async () => {
   });
 };
 
-// get RCS Rate
+// // get RCS Rate
 export const getRcsRate = async () => {
   return await fetchWithAuth(
     "/accountInfo/getAllRCSRateData?countryCode=&countryName=",

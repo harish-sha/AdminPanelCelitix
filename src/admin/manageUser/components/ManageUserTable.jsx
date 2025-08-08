@@ -10,6 +10,7 @@ import {
   Popover,
 } from "@mui/material";
 import { AccountBalanceWalletOutlined as WalletIcon } from "@mui/icons-material";
+import { HiLink } from "react-icons/hi2";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import usePagination from "@mui/material/usePagination";
@@ -53,6 +54,12 @@ import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
 import PinDropOutlinedIcon from "@mui/icons-material/PinDropOutlined";
 import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import moment from "moment";
+
+
+// COMPONENTS
 import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
 import RadioGroupField from "../../../whatsapp/components/RadioGroupField";
 import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
@@ -62,6 +69,10 @@ import UniversalDatePicker from "../../../whatsapp/components/UniversalDatePicke
 import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
 import GeneratePasswordSettings from "../../../profile/components/GeneratePasswordSettings";
 import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
+import { DataTable } from "@/components/layout/DataTable";
+import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
+
+// APIS
 import {
   addMobileNumbers,
   fetchUserbySrno,
@@ -75,6 +86,7 @@ import {
   savePETMChain,
   saveServicesByUser,
   updateUserbySrno,
+  updateUserStatusbySrno
 } from "@/apis/admin/admin";
 import {
   addSmsPricing,
@@ -90,14 +102,9 @@ import {
   saveEditRcsRate,
   saveEditWhatsappRate,
   saveVoiceRate,
+  deleteVoiceRateBySrno
 } from "@/apis/admin/userRate";
 import { getCountryList } from "@/apis/common/common";
-import { DataTable } from "@/components/layout/DataTable";
-import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { getRcsRate } from "@/apis/user/user";
-import moment from "moment";
 import {
   fetchBalance,
   getApiKey,
@@ -105,7 +112,7 @@ import {
   updateApiKey,
   updatePassword,
 } from "@/apis/settings/setting";
-import { HiLink } from "react-icons/hi2";
+import UniversalSkeleton from "@/whatsapp/components/UniversalSkeleton";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -197,94 +204,6 @@ const CustomPagination = ({
   );
 };
 
-const ContentCell = ({ value }) => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [open, setOpen] = useState(false);
-
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-    setOpen(true);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-    setOpen(false);
-  };
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(value);
-  };
-
-  return (
-    <div
-      style={{
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        maxWidth: "200px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-      onMouseEnter={handlePopoverOpen}
-      onMouseLeave={handlePopoverClose}
-    >
-      <span style={{ flexGrow: 1, fontSize: "14px", fontWeight: "500" }}>
-        {value}
-      </span>
-
-      {/* <IconButton
-                size="small"
-                onClick={copyToClipboard}
-                sx={{ color: "#007BFF", "&:hover": { color: "#0056b3" } }}
-            >
-                <ContentCopyIcon fontSize="small" />
-            </IconButton> */}
-      <Popover
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handlePopoverClose}
-        onMouseLeave={handlePopoverClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-        transformOrigin={{ vertical: "top", horizontal: "left" }}
-        disableRestoreFocus
-        PaperProps={{
-          sx: {
-            p: 1,
-            maxWidth: 300,
-            borderRadius: 2,
-            boxShadow: 3,
-          },
-          onMouseEnter: () => setOpen(true),
-          onMouseLeave: handlePopoverClose,
-        }}
-      >
-        {/* <Paper sx={{ p: 1, maxWidth: 300, borderRadius: 2, boxShadow: 3 }}> */}
-        <Typography sx={{ fontSize: "14px", color: "#333", mb: 1 }}>
-          {value}
-        </Typography>
-
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={copyToClipboard}
-          startIcon={<ContentCopyIcon />}
-          sx={{
-            width: "100%",
-            textTransform: "none",
-            fontSize: "13px",
-            color: "#007BFF",
-            borderColor: "#007BFF",
-            "&:hover": { backgroundColor: "#007BFF", color: "#fff" },
-          }}
-        >
-          Copy
-        </Button>
-        {/* </Paper> */}
-      </Popover>
-    </div>
-  );
-};
 
 const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [selectedRows, setSelectedRows] = useState([]);
@@ -292,25 +211,68 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     page: 0,
     pageSize: 10,
   });
-  const [logins, setLogins] = useState(false);
-  const [petmDialogVisible, setPETMDialogVisible] = useState(false);
-  const [otpService, setOtpService] = useState(false);
-  const [viewService, setViewService] = useState(false);
-  const [editService, setEditDetailsDialogVisible] = useState(false);
-  const [assignRate, setassignRate] = useState(false);
-  const [manageApiKeys, setManageApiKeys] = useState(false);
-  const [oldKey, setOldKey] = useState("");
-  const [reset, setreset] = useState(false);
-  const [userReports, setuserReports] = useState("");
   const [value, setValue] = useState(0);
-  const [selectedUserDetails, setSelectedUserDetails] = useState(null);
+  const [countryOptions, setCountryOptions] = useState([]);
+
+  // Function to validate input
+  const validateInput = (value, setter) => {
+    value = value.replace(/[^0-9.]/g, "");
+    const parts = value.split(".");
+
+    if (parts.length > 2) {
+      value = parts[0] + "." + parts.slice(1).join("");
+    }
+
+    if (parts[0].length > 1 && !value.includes(".")) {
+      value = parts[0][0] + "." + parts[0].slice(1);
+    }
+
+    if (parts[1] && parts[1].length > 2) {
+      value = parts[0] + "." + parts[1].substring(0, 2);
+    }
+
+    let floatVal = parseFloat(value);
+    if (floatVal > 9.99) {
+      value = "9.99";
+    }
+
+    if (value && floatVal < 0.01) {
+      value = "";
+    }
+
+    setter(value);
+    return value;
+  };
+
+  // =======================================UPDATE USER STATUS START=======================================
+  async function handleUpdateUserStatus(row) {
+    if (!row?.srno) return;
+
+    try {
+      const payload = {
+        userSrno: row?.srno,
+        status: Number(!row?.status),
+      };
+      const res = await updateUserStatusbySrno(payload);
+
+      if (!res?.status) {
+        return toast.error(res?.msg);
+      }
+      toast.success("Status updated successfully");
+
+      await fetchAllUsersDetails();
+      return;
+    } catch (e) {
+      console.log(e);
+      toast.error("Failed to fetch user details. Please try again.");
+    }
+  }
+
+  // =======================================UPDATE USER STATUS END=======================================
+  // =======================================EDIT USER DETAILS START=======================================
+  const [editEditDetailsDialogVisible, setEditDetailsDialogVisible] = useState(false);
   const [currentUserSrno, setCurrentUserSrno] = useState(null);
-  const [userBalance, setUserBalance] = useState([]);
-
-  //userId
   const [selectedId, setSelectedId] = useState("");
-
-  //updateDetails
   const [updateDetails, setUpdateDetails] = useState({
     domain: "",
     userId: "",
@@ -330,23 +292,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     pinCode: "",
     agentLimit: "",
   });
-
-  const [petmDetails, setPetmDetails] = useState({
-    selectedUserId: "",
-    petmChainType: 1,
-    tmd: "",
-    TMA1: "",
-    TMA2: "",
-  });
-
-  const [selectedIds, setSelectedIds] = useState([]);
-
-  // const handleDetailsUpdate = async () => {
-  //   const data = {
-  //     srno: selectedId,
-  //     ...updateDetails,
-  //   };
-  // };
 
   const handleEdit = async (srNo) => {
     try {
@@ -411,14 +356,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       toast.error("Failed to update user details. Please try again.");
     }
   };
-  // assignRate
+  // =======================================EDIT USER DETAILS END=======================================
 
-  const [countryOptions, setCountryOptions] = useState([]);
 
-  // whatsapp Start
+  // =======================================WHATSAPP RATE START=======================================
   const [whatsapprows, setWhatsapprows] = useState([]);
-  const [rcsrows, setRcsrows] = useState([]);
-  const [voicerowa, setVoicerows] = useState([]);
   const [whatsappStatus, setWhatsappStatus] = useState("disable");
   const [whatsappCountry, setWhatsappCountry] = useState(null);
   const [whatsappUtility, setWhatsappUtility] = useState("");
@@ -426,11 +368,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [whatsappAuthentication, setWhatsappAuthentication] = useState("");
   const [whatsappDeleteVisible, setWhatsappDeleteVisible] = useState(false);
   const [selectedWhatsappRow, setSelectedWhatsappRow] = useState(null);
-  const [editDialogVisible, setEditDialogVisible] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
-
   const [charges, setCharges] = useState(0);
-
 
   const [editWhatsappVisible, setEditWhatsappVisible] = useState(false);
   const [editWhatsappForm, setEditWhatsappForm] = useState({
@@ -439,12 +378,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     utility: "",
     marketing: "",
     countryCode: "",
+    authentication: "",
   });
 
   const handleChangewhatsapp = (event) => {
     setWhatsappStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
   };
 
   const fetchWhatsappRateData = async (userSrno) => {
@@ -473,59 +411,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     } else {
       toast.error("No valid data returned from API");
     }
-  };
-
-  const fetchRcsRateData = async (userSrno) => {
-    const res = await getRCSRateData(userSrno);
-
-    const list = Array.isArray(res) ? res : res?.data;
-
-    if (Array.isArray(list)) {
-      const formatted = list.map((item, i) => {
-        return {
-          id: i + 1,
-          sn: i + 1,
-          srno: item.sr_no,
-          ...item,
-        };
-      });
-
-      setRcsrows(formatted);
-    } else {
-      toast.error("No valid data returned from API");
-    }
-  };
-  const fetchObdRateData = async (userSrno) => {
-    const res = await getVoiceRateBySrno(userSrno);
-    if (res?.message?.includes("Record not found")) {
-      return;
-    }
-
-    const formatted = [
-      {
-        id: 1,
-        sn: 1,
-        srno: res.srNo,
-        ...res,
-      },
-    ];
-    setVoicerows(formatted);
-
-    // const list = Array.isArray(res) ? res : res?.data;
-
-    // if (Array.isArray(list)) {
-    //   const formatted = list.map((item, i) => {
-    //     return {
-    //       id: i + 1,
-    //       sn: i + 1,
-    //       srno: item.sr_no,
-    //       ...item,
-    //     };
-    //   });
-
-    // } else {
-    //   console.warn("No valid data returned from API");
-    // }
   };
 
   const handleWhatsappAddCredit = async () => {
@@ -573,6 +458,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         utility: String(d.transactional),
         marketing: String(d.promotional),
         countryCode: String(d.country_srno),
+        authentication: String(d.authentication),
       });
 
       setEditWhatsappVisible(true);
@@ -619,31 +505,63 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     setWhatsappAuthentication("");
   };
 
-  // whatsapp End
+  async function handleChargesSave() {
+    try {
+      const data = {
+        userSrno: currentUserSrno,
+        monthlyRate: charges,
+      };
+      const res = await saveCharges(data);
+      if (!res?.msg?.includes("successfully")) {
+        toast.error("Something went wrong");
+        return;
+      }
+      toast.success("Charges updated successfully");
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
-  // RCS Start
-  const [rcsStatus, setRcsStatus] = useState("enable");
+  const whatsaappcolumns = [
+    { field: "sn", headerName: "S.No", flex: 0.5 },
+    { field: "countryName", headerName: "Country", flex: 1 },
+    { field: "utility", headerName: "Utility", flex: 1 },
+    { field: "authentication", headerName: "Authentication", flex: 1 },
+    { field: "marketing", headerName: "Marketing", flex: 1 },
+    { field: "updateTime", headerName: "Updated On", flex: 1 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 1,
+      renderCell: (params) => (
+        <>
+          <CustomTooltip arrow title="Edit Rate" placement="top">
+            <IconButton onClick={() => handleWhatsappEdit(params.row.srno)}>
+              <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
+            </IconButton>
+          </CustomTooltip>
+          <CustomTooltip arrow title="Delete Rate" placement="top">
+            <IconButton onClick={() => handleWhatsappDelete(params.row.srno)}>
+              <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
+            </IconButton>
+          </CustomTooltip>
+        </>
+      ),
+    },
+  ];
+
+  // =======================================WHATSAPP RATE END=======================================
+
+  // =======================================RCS RATE START=======================================
   const [rcsCountry, setRcsCountry] = useState(null);
   const [rcsrate, setRcsrate] = useState("");
   const [editRcsVisible, setEditRcsVisible] = useState(false)
   const [editRcsData, setEditRcsData] = useState()
   const [rcsUpdateRate, setRcsUpdateRate] = useState()
-  // const [rcsEditData, setRcsEditData] = useState(null);
-  // console.log("rcsEditData", rcsEditData)
   const [rcsDeleteVisible, setRcsDeleteVisible] = useState(false);
   const [rcsIsFetching, setRcsIsFetching] = useState(false);
   const [deletingRcsRow, setDeletingRcsRow] = useState(null);
-
-
-
-  const rcsRateRef = useRef(null)
-  const rcscountryselectRef = useRef(null)
-
-  // const rcscountryOptions = [
-  //   { value: "USA", label: "USA" },
-  //   { value: "UK", label: "UK" },
-  //   { value: "India", label: "India" },
-  // ];
+  const [rcsrows, setRcsrows] = useState([]);
 
   useEffect(() => {
     if (editRcsData?.rate !== undefined) {
@@ -651,6 +569,26 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
   }, [editRcsData]);
 
+  const fetchRcsRateData = async (userSrno) => {
+    const res = await getRCSRateData(userSrno);
+
+    const list = Array.isArray(res) ? res : res?.data;
+
+    if (Array.isArray(list)) {
+      const formatted = list.map((item, i) => {
+        return {
+          id: i + 1,
+          sn: i + 1,
+          srno: item.sr_no,
+          ...item,
+        };
+      });
+
+      setRcsrows(formatted);
+    } else {
+      toast.error("No valid data returned from API");
+    }
+  };
 
   const handleRcsAddCredit = async () => {
     try {
@@ -670,18 +608,12 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     } catch (e) {
       toast.error("Error in adding rcs credit");
     }
-    // console.log("handleRcsCredit");
     setRcsrate('')
     setRcsCountry('')
   };
 
-  const handleChangercs = (event) => {
-    setRcsStatus(event.target.value);
-  };
-
   async function handleRcsEdit(data) {
     const res = await getRCSRateBySrno(data.sr_no, currentUserSrno);
-    console.log("res", res)
     setEditRcsData(res)
     setEditRcsVisible(true);
   }
@@ -717,7 +649,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       await fetchRcsRateData(currentUserSrno);
       setEditRcsVisible(false)
     } catch (e) {
-      console.log("e", e)
+      console.log(e)
       toast.error("Error in adding rcs credit");
     }
   }
@@ -754,10 +686,63 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     },
   ];
 
-  // RCS End
+  const RcsCustomFooter = () => {
+    return (
+      <GridFooterContainer
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: { xs: "center", lg: "space-between" },
+          alignItems: "center",
+          padding: 1,
+          gap: 2,
+          overflowX: "auto",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "wrap",
+            // gap: 1.5,
+          }}
+        >
+          {selectedRows.length > 0 && (
+            <Typography
+              variant="body2"
+              sx={{ borderRight: "1px solid #ccc", paddingRight: "10px" }}
+            >
+              {selectedRows.length} Rows Selected
+            </Typography>
+          )}
 
-  // SMS Start
-  const [smsStatus, setSmsStatus] = useState("disable");
+          <Typography sx={{ fontSize: "14px" }} >
+            Total Records:
+            <span className="font-semibold">{rcsrows.length}</span>
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            // justifyContent: "center",
+            // width: { xs: "100%", sm: "auto" },
+          }}
+        >
+          {/* <CustomPagination
+            totalPages={totalPages}
+            paginationModel={paginationModel}
+            setPaginationModel={setPaginationModel}
+          
+          /> */}
+        </Box>
+      </GridFooterContainer>
+    );
+  };
+
+  // =======================================RCS RATE END=======================================
+
+  // =======================================SMS RATE START=======================================
   const [transcheck, setTranscheck] = useState(false);
   const [promocheck, setPromocheck] = useState(false);
   const [trans, setTrans] = useState(null);
@@ -776,9 +761,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     setDltRate("");
   };
 
-  const handleChangesms = (event) => {
-    setSmsStatus(event.target.value);
-  };
   const handleSaveSmsPricing = async () => {
     const payload = {
       srno: "",
@@ -798,43 +780,176 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       toast.error(res.message || "Failed to save SMS Pricing.");
     }
   };
-  // SMS End
+  // =======================================SMS RATE END=======================================
 
-  // OBD
-  const [obdStatus, setObdStatus] = useState("disable");
+  // =======================================OBD RATE START=======================================
   const [transcheckobd, setTranscheckobd] = useState(false);
   const [promocheckobd, setPromocheckobd] = useState(false);
   const [transobd, setTransobd] = useState(null);
   const [promoobd, setPromoobd] = useState(null);
   const [obdrate, setObdRate] = useState("");
   const [obdrateStatus, setObdRateStatus] = useState("disable");
+  const [voicerows, setVoicerows] = useState([]);
+  const [editOBDVoiceVisible, setEditOBDVoiceVisible] = useState(false);
+  const [editOBDVoiceForm, setEditOBDVoiceForm] = useState({});
 
   const [assignService, setAssignService] = useState(false);
 
-  const transOptionsobd = [
-    { value: "USA", label: "USA" },
-    { value: "UK", label: "UK" },
-    { value: "India", label: "India" },
-  ];
-  const promoOptionobd = [
-    { value: "USA", label: "USA" },
-    { value: "UK", label: "UK" },
-    { value: "India", label: "India" },
-  ];
 
-  const handleChangeobd = (event) => {
-    setObdStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
-  };
   const handleChangeobdRate = (event) => {
     setObdRateStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
   };
-  // OBD
 
-  // two-way
+  const fetchObdRateData = async (userSrno) => {
+    // const res = await getVoiceRateBySrno(userSrno);
+    // if (res?.message?.includes("Record not found")) {
+    //   return;
+    // }
+    const res = await getVoiceRateByUser(userSrno);
+
+    if (res?.response?.data?.message?.includes("Record not found with userSrno ")) {
+      setVoicerows([]);
+      return;
+    }
+
+    const formatted = [
+      {
+        id: 1,
+        sn: 1,
+        srno: res.srNo,
+        ...res,
+      },
+    ];
+    setVoicerows(formatted);
+  };
+
+  async function handleSaveOBDPricing() {
+    try {
+      const payload = {
+        srNo: "",
+        userSrNo: currentUserSrno,
+        voicePlan: obdrateStatus === "enable" ? 1 : 2,
+        voiceRate: 0,
+        voiceRate2: 0,
+      };
+      obdrateStatus === "enable"
+        ? (payload.voiceRate = Number(obdrate))
+        : (payload.voiceRate2 = Number(obdrate));
+      const res = await saveVoiceRate(payload);
+
+      if (!res?.message.includes("successfully")) {
+        return toast.error(res.message);
+      }
+      toast.success(res.message);
+      await fetchObdRateData(currentUserSrno);
+    } catch (e) {
+      toast.error("Error in saving obd pricing");
+    }
+  }
+
+  async function handleOBDEdit(srno) {
+    const res = await getVoiceRateBySrno(srno, currentUserSrno);
+
+    const desiredData = {
+      obdrate: res?.voicePlan === 2 ? res?.voiceRate2 : res?.voiceRate,
+      obdrateStatus: res?.voicePlan === 2 ? "disable" : "enable", srno,
+    };
+
+    setEditOBDVoiceForm(desiredData);
+    setEditOBDVoiceVisible(true);
+  }
+
+  async function handleObdUpdate(srno) {
+    if (!editOBDVoiceForm?.srno) return;
+    try {
+      const payload = {
+        srNo: editOBDVoiceForm?.srno,
+        userSrNo: currentUserSrno,
+        voicePlan: editOBDVoiceForm.obdrateStatus === "enable" ? 1 : 2,
+        voiceRate: 0,
+        voiceRate2: 0,
+      };
+      editOBDVoiceForm.obdrateStatus === "enable"
+        ? (payload.voiceRate = Number(editOBDVoiceForm.obdrate))
+        : (payload.voiceRate2 = Number(editOBDVoiceForm.obdrate));
+      const res = await saveVoiceRate(payload);
+
+      if (!res?.message.includes("successfully")) {
+        return toast.error(res.message);
+      }
+      toast.success(res.message);
+      await fetchObdRateData(currentUserSrno);
+      setEditOBDVoiceVisible(false);
+    } catch (e) {
+      toast.error("Error in saving obd pricing");
+    }
+  }
+
+  async function handleObdDelete(srno) {
+    try {
+      const res = await deleteVoiceRateBySrno(srno, currentUserSrno);
+      if (!res?.message?.includes("Successfully")) {
+        return toast.error(res.message);
+      }
+      toast.success(res.message);
+      await fetchObdRateData(currentUserSrno);
+    } catch (e) {
+      console.log(e);
+      toast.error("Error in deleting obd credit");
+    }
+  }
+
+  const voiceCols = [
+    { field: "sn", headerName: "S.No", flex: 0.5 },
+    {
+      field: "type",
+      headerName: "Type",
+      flex: 1,
+      renderCell: (params) => {
+        if (params.row.voicePlan === 1) {
+          return "15sec";
+        } else {
+          return "30sec";
+        }
+      },
+    },
+
+    {
+      field: "rate",
+      headerName: "Rate",
+      flex: 1,
+      renderCell: (params) => {
+        if (params.row.voicePlan === 2) {
+          return params.row.voiceRate2;
+        } else {
+          return params.row.voiceRate;
+        }
+      },
+    },
+    { field: "updateTime", headerName: "Updated On", flex: 1 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 1,
+      renderCell: (params) => (
+        <>
+          <CustomTooltip arrow title="Edit Rate" placement="top">
+            <IconButton onClick={() => handleOBDEdit(params.row.srNo)}>
+              <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
+            </IconButton>
+          </CustomTooltip>
+          <CustomTooltip arrow title="Delete Rate" placement="top">
+            <IconButton onClick={() => handleObdDelete(params.row?.srNo)}>
+              <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
+            </IconButton>
+          </CustomTooltip>
+        </>
+      ),
+    },
+  ];
+  // =======================================OBD RATE END=======================================
+
+  // =======================================TWO-WAY-SMS RATE START=======================================
   const [twowayStatus, setTwoWayStatus] = useState("disable");
   const [twowayAssign, setTwowayAssign] = useState(null);
   const twowayOptions = [
@@ -845,12 +960,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   const handleChangetwoway = (event) => {
     setTwoWayStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
   };
-  // two-way
+  // =======================================TWO-WAY-SMS RATE END=======================================
 
-  // misscall
+  // =======================================MISSED-CALL RATE START=======================================
   const [misscallStatus, setMisscallStatus] = useState("disable");
   const [misscallAssign, setMisscallAssign] = useState(null);
   const misscallOptions = [
@@ -861,23 +974,18 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   const handleChangeMisscall = (event) => {
     setMisscallStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
   };
-  // misscall
+  // =======================================MISSED-CALL RATE END=======================================
 
-  // C2C
+  // =======================================CLICK-TO-CALL RATE START=======================================
   const [clickStatus, setClickStatus] = useState("disable");
   const handleChangeClick = (event) => {
     setClickStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
   };
-  // C2C
+  // =======================================CLICK-TO-CALL RATE END=======================================
 
-  // Email
+  // =======================================EMAIL RATE START=======================================
   const [emailStatus, setEmailStatus] = useState("disable");
-
   const [emailAssign, setEmailAssign] = useState(null);
 
   const emailOptions = [
@@ -888,12 +996,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   const handleChangeEmail = (event) => {
     setEmailStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
   };
-  // Email
+  // =======================================EMAIL RATE END=======================================
 
-  // IBD
+  // =======================================IBD RATE START=======================================
   const [ibdStatus, setIbdStatus] = useState("disable");
   const [ibdpulseStatus, setibdPulseStatus] = useState("disable");
   const [ibdAssign, setIbdAssign] = useState(null);
@@ -906,65 +1012,15 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   const handleChangeIbd = (event) => {
     setIbdStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
   };
 
   const handleChangeibdPulse = (event) => {
     setibdPulseStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
   };
+  // =======================================IBD RATE END=======================================
 
-  // IBD
-  // Function to validate input
-  const validateInput = (value, setter) => {
-    value = value.replace(/[^0-9.]/g, "");
-    const parts = value.split(".");
 
-    if (parts.length > 2) {
-      value = parts[0] + "." + parts.slice(1).join("");
-    }
-
-    if (parts[0].length > 1 && !value.includes(".")) {
-      value = parts[0][0] + "." + parts[0].slice(1);
-    }
-
-    if (parts[1] && parts[1].length > 2) {
-      value = parts[0] + "." + parts[1].substring(0, 2);
-    }
-
-    let floatVal = parseFloat(value);
-    if (floatVal > 9.99) {
-      value = "9.99"; // Max limit
-    }
-
-    if (value && floatVal < 0.01) {
-      value = ""; // Prevent values less than 0.01
-    }
-
-    setter(value);
-  };
-  // assignRate
-
-  // Edit
-  const [userid, setUserId] = useState("");
-  const [userName, setUserName] = useState("");
-  const [userLastName, setUserLastName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
-  const [userPhoneNumber, setUserPhoneNumber] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [userAddress, setUserAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [country, setCountry] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
-  const [editstatusStatus, setEditStatusStatus] = useState("disable");
-  const [userType, setUserType] = useState("");
-  const [isReadOnly, setIsReadOnly] = useState(true);
-  const [accountUrl, setAccountUrl] = useState("");
-  const [enablepostpaid, setEnablePostpaid] = useState("disable");
+  //=======================================ADD-UPDATE SERVICES START=======================================
 
   const [enableServices, setEnableServices] = useState([
     {
@@ -1066,43 +1122,30 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     handleGetAllowedServices();
   }, [assignService]);
 
-  async function handleChargesSave() {
-    try {
-      const data = {
-        userSrno: currentUserSrno,
-        monthlyRate: charges,
-      };
-      const res = await saveCharges(data);
-      if (!res?.msg?.includes("successfully")) {
-        toast.error("Something went wrong");
-        return;
-      }
-      toast.success("Charges updated successfully");
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  // Dropdown options
-  const useroption = [
-    { value: 1, label: "User" },
-    { value: 2, label: "Reseller" },
-  ];
+  //=======================================ADD-UPDATE SERVICES END=======================================
+  const [accountUrl, setAccountUrl] = useState("");
+  const [isReadOnly, setIsReadOnly] = useState(true);
+  const [userType, setUserType] = useState("");
 
   useEffect(() => {
     setIsReadOnly(userType !== "Reseller");
     setAccountUrl("");
   }, [userType]);
 
+  const [enablepostpaid, setEnablePostpaid] = useState("disable");
   const handleChangeEnablePostpaid = (event) => {
     setEnablePostpaid(event.target.value);
   };
 
+  const [editstatusStatus, setEditStatusStatus] = useState("disable");
   const handleChangeEditStatus = (event) => {
     setEditStatusStatus(event.target.value);
   };
 
+  //=======================================GENERATE API KEY START=======================================
   const [newAPIKey, setNewAPIKey] = useState("");
+  const [manageApiKeys, setManageApiKeys] = useState(false);
+  const [oldKey, setOldKey] = useState("");
 
   // Function to generate an API key with only lowercase letters and numbers.
   const generateAPIKey = (length = 10) => {
@@ -1133,7 +1176,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       newKey: newAPIKey,
       userSrno: selectedId,
     };
-    // console.log(data);
     try {
       const res = await updateApiKey(data.newKey, data.userSrno);
       if (!res?.message.includes("succesfully")) {
@@ -1148,8 +1190,24 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
   }
 
-  const [newPassword, setNewPassword] = useState("");
+  const handleApikey = async (id, name) => {
+    try {
+      const params = `?userSrno=${id}`;
+      const res = await getOldApiKey(params);
+      setOldKey(res?.oldkey);
+      setManageApiKeys(true);
+      setSelectedId(id);
+    } catch (e) {
+      toast.error("Failed to fetch user details. Please try again.");
+    }
+  };
+
+  //=======================================GENERATE API KEY END=======================================
+
+  //=======================================ADD 2FA MOBILE NUMBER START=======================================
   const [mobileNumbers, setMobileNumbers] = useState([""]);
+  const [otpService, setOtpService] = useState(false);
+
 
   // Add new input field (Max 5)
   const addMobileNumber = () => {
@@ -1184,42 +1242,15 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
   }
 
-  // Remove input field
   const removeMobileNumber = (index) => {
     const updatedNumbers = mobileNumbers.filter((_, i) => i !== index);
     setMobileNumbers(updatedNumbers);
   };
 
-  // Handle input change
   const handleInputChange = (index, value) => {
     const updatedNumbers = [...mobileNumbers];
     updatedNumbers[index] = value;
     setMobileNumbers(updatedNumbers);
-  };
-
-  const [userreportStatus, setUserReportStatus] = useState("disable");
-  const handleChangeuserreport = (event) => {
-    setUserReportStatus(event.target.value);
-  };
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  const handleLonins = (id) => {
-    setLogins(true);
-  };
-
-  const handlePetmChain = (id) => {
-    setPETMDialogVisible(true);
-    setPetmDetails({
-      selectedUserId: id,
-      petmChainType: 1,
-      tmd: "",
-      TMA1: "",
-      TMA2: "",
-    });
-    setSelectedId(id);
   };
 
   const handleOtp = (id) => {
@@ -1228,8 +1259,36 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   };
 
   useEffect(() => {
-    console.log(userBalance);
-  }, [userBalance]);
+    if (!selectedId) return;
+    async function fetchMobileNo() {
+      try {
+        const res = await getMobileNumbers(selectedId);
+        const mobile = res?.regMoblienos?.split(",");
+        setMobileNumbers(mobile || [""]);
+        // setotp
+      } catch (e) {
+        return toast.error(e.message);
+      }
+    }
+    fetchMobileNo();
+  }, [otpService]);
+
+  //=======================================ADD 2FA MOBILE NUMBER END=======================================
+
+  //=======================================USER LOGIN START=======================================
+  const [logins, setLogins] = useState(false);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  const handleLonins = (id) => {
+    setLogins(true);
+  };
+  //=======================================USER LOGIN END=======================================
+
+  //=======================================FETCH USER BALANCE START=======================================
+  const [userBalance, setUserBalance] = useState([]);
 
   const handleFetchBalance = async (id) => {
     try {
@@ -1251,54 +1310,16 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       toast.error("Error in fetching balance");
     }
   };
+  //=======================================FETCH USER BALANCE END=======================================
 
-  const allServices = [
-    {
-      id: 1,
-      name: "SMS",
-      enable: 0,
-    },
-    {
-      id: 2,
-      name: "WHATSAPP",
-      enable: 0,
-    },
-    {
-      id: 3,
-      name: "RCS",
-      enable: 0,
-    },
-    {
-      id: 7,
-      name: "OBD",
-      enable: 0,
-    },
-    {
-      id: "",
-      name: "Two Way",
-      enable: 0,
-    },
-    {
-      id: "",
-      name: "Missed Call",
-      enable: 0,
-    },
-    {
-      id: "",
-      name: "C2C",
-      enable: 0,
-    },
-    {
-      id: "",
-      name: "Email",
-      enable: 0,
-    },
-    {
-      id: "",
-      name: "IBD",
-      enable: 0,
-    },
-  ];
+  //=======================================VIEW USER DETAILS START=======================================
+
+
+
+
+  //=======================================VIEW USER DETAILS END=======================================
+  const [selectedUserDetails, setSelectedUserDetails] = useState(null);
+  const [viewService, setViewService] = useState(false);
 
   // view user details
   const handleView = async (srNo) => {
@@ -1315,15 +1336,80 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
   };
 
+  //=======================================ASSIGN SERVICE START=======================================
+  const allServices = [
+    {
+      id: 1,
+      name: "SMS",
+      enable: 0,
+      disabled: false,
+    },
+    {
+      id: 2,
+      name: "WHATSAPP",
+      enable: 0,
+      disabled: false,
+    },
+    {
+      id: 3,
+      name: "RCS",
+      enable: 0,
+      disabled: false,
+    },
+    {
+      id: 7,
+      name: "OBD",
+      enable: 0,
+      disabled: false,
+    },
+    {
+      id: "",
+      name: "Two Way",
+      enable: 0,
+      disabled: true,
+    },
+    {
+      id: "",
+      name: "Missed Call",
+      enable: 0,
+      disabled: true,
+    },
+    {
+      id: "",
+      name: "C2C",
+      enable: 0,
+      disabled: true,
+    },
+    {
+      id: "",
+      name: "Email",
+      enable: 0,
+      disabled: true,
+    },
+    {
+      id: "",
+      name: "IBD",
+      enable: 0,
+      disabled: true,
+    },
+  ];
+
+
   const handleService = async (srno) => {
     setAssignService(true);
     setCurrentUserSrno(srno);
   };
+
+  function handleServiceChange(e) {
+    const { id, checked } = e.target;
+
+    const updatedService = enableServices.map((item) =>
+      item.id == id ? { ...item, enable: checked } : item
+    );
+
+    setEnableServices(updatedService);
+  }
   const handleAssignService = async () => {
-    // console.log(currentUserSrno);
-
-    // const enabled = enableServices.filter((item) => item.enable === true);
-
     await Promise.all(
       enableServices.map((item) => {
         if (!item.id) return;
@@ -1338,6 +1424,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     toast.success("Services assigned successfully");
     setAssignService(false);
   };
+  //=======================================ASSIGN SERVICE END=======================================
+
+  //=======================================ASSIGN RATE DIALOG START=======================================
+  const [assignRate, setassignRate] = useState(false);
 
   const handleAssign = async (srNo) => {
     setassignRate(true);
@@ -1418,7 +1508,14 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       : [];
     rcsRateRes.length > 0 && setRcsrows(rcsRowss);
 
-    obdRateRes &&
+    // const voiceRows = Array.isArray(obdRateRes)
+    //   ? obdRateRes.map((item, index) => ({
+    //     id: index + 1,
+    //     sn: index + 1,
+    //     ...item,
+    //   }))
+    //   : [];
+    obdRateRes.status !== 404 &&
       setVoicerows([
         {
           id: 1,
@@ -1429,31 +1526,24 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       ]);
 
     // obdRateRes && setVoicerows(voiceRows);
-    // console.log(chargesRes);
     setCharges(chargesRes?.MonthlyRate || "0");
   };
 
-  const handleApikey = async (id, name) => {
-    try {
-      const params = `?userSrno=${id}`;
-      const res = await getOldApiKey(params);
-      setOldKey(res?.oldkey);
-      setManageApiKeys(true);
-      setSelectedId(id);
-    } catch (e) {
-      toast.error("Failed to fetch user details. Please try again.");
-    }
-  };
+  //=======================================ASSIGN RATE DIALOG END=======================================
 
-  const handleReset = (id, name) => {
-    setreset(true);
-    setSelectedIds(id);
+  //=======================================ENABLE USER REPORT START=======================================
+  const [userReports, setuserReports] = useState("");
+  const [userreportStatus, setUserReportStatus] = useState("disable");
+  const handleChangeuserreport = (event) => {
+    setUserReportStatus(event.target.value);
   };
 
   const handleReport = (id, name) => {
     setuserReports(true);
   };
+  //=======================================ENABLE USER REPORT END=======================================
 
+  //=======================================MANAGE USERS START=======================================
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     { field: "userId", headerName: "User ID", flex: 1, minWidth: 120 },
@@ -1470,13 +1560,24 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       renderCell: (params) => {
         const isActive = params.value === 1;
         return (
-          <div className="flex items-center gap-2">
-            <span
-              className={`w-3 h-3 rounded-full ${isActive ? "bg-green-500" : "bg-red-500"
-                }`}
-            ></span>
-            <span>{isActive ? "Active" : "Inactive"}</span>
-          </div>
+          <CustomTooltip
+            placement="top"
+            title="Click to update status"
+            arrow
+          >
+            <button
+              className="flex items-center justify-center gap-2 px-3 rounded-full cursor-pointer"
+              onClick={() => {
+                handleUpdateUserStatus(params.row);
+              }}
+            >
+              <span
+                className={`w-2.5 h-2.5 rounded-full ${isActive ? "bg-green-500" : "bg-red-500"
+                  }`}
+              ></span>
+              <span>{isActive ? "Active" : "Inactive"}</span>
+            </button>
+          </CustomTooltip>
         );
       },
     },
@@ -1595,83 +1696,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     },
   ];
 
-  const whatsaappcolumns = [
-    { field: "sn", headerName: "S.No", flex: 0.5 },
-    { field: "countryName", headerName: "Country", flex: 1 },
-    { field: "utility", headerName: "Utility", flex: 1 },
-    { field: "authentication", headerName: "Authentication", flex: 1 },
-    { field: "marketing", headerName: "Marketing", flex: 1 },
-    { field: "updateTime", headerName: "Updated On", flex: 1 },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 1,
-      renderCell: (params) => (
-        <>
-          <CustomTooltip arrow title="Edit Rate" placement="top">
-            <IconButton onClick={() => handleWhatsappEdit(params.row.srno)}>
-              <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip arrow title="Delete Rate" placement="top">
-            <IconButton onClick={() => handleWhatsappDelete(params.row.srno)}>
-              <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
-            </IconButton>
-          </CustomTooltip>
-        </>
-      ),
-    },
-  ];
-
-  const voiceCols = [
-    { field: "sn", headerName: "S.No", flex: 0.5 },
-    {
-      field: "type",
-      headerName: "Type",
-      flex: 1,
-      renderCell: (params) => {
-        if (params.row.voicePlan === 1) {
-          return "15sec";
-        } else {
-          return "30sec";
-        }
-      },
-    },
-
-    {
-      field: "rate",
-      headerName: "Rate",
-      flex: 1,
-      renderCell: (params) => {
-        if (params.row.voicePlan === 2) {
-          return params.row.voiceRate2;
-        } else {
-          return params.row.voiceRate;
-        }
-      },
-    },
-    { field: "updateTime", headerName: "Updated On", flex: 1 },
-    // {
-    //   field: "actions",
-    //   headerName: "Actions",
-    //   flex: 1,
-    //   renderCell: (params) => (
-    //     <>
-    //       <CustomTooltip arrow title="Edit Rate" placement="top">
-    //         <IconButton onClick={() => handleRcsEdit(params.row.sr_no)}>
-    //           <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
-    //         </IconButton>
-    //       </CustomTooltip>
-    //       <CustomTooltip arrow title="Delete Rate" placement="top">
-    //         <IconButton onClick={() => handleRcsDelete(params.row.sr_no)}>
-    //           <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
-    //         </IconButton>
-    //       </CustomTooltip>
-    //     </>
-    //   ),
-    // },
-  ];
-
   const rows = Array.isArray(allUsers)
     ? allUsers.map((item, i) => ({
       id: i + 1,
@@ -1679,38 +1703,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       ...item,
     }))
     : [];
-
-  // const rcsrows = Array.from({ length: 20 }, (_, i) => ({
-  //   id: i + 1,
-  //   sn: i + 1,
-  //   country: "India",
-  //   rate: "0.30",
-  // }));
-
-  async function handleSaveOBDPricing() {
-    try {
-      const payload = {
-        srNo: "",
-        userSrNo: currentUserSrno,
-        voicePlan: obdrateStatus === "enable" ? "1" : "2",
-        voiceRate: 0,
-        voiceRate2: 0,
-      };
-      obdrateStatus === "enable"
-        ? (payload.voiceRate = obdrate)
-        : (payload.voiceRate2 = obdrate);
-      const res = await saveVoiceRate(payload);
-
-      if (!res?.message.includes("successfully")) {
-        return toast.error(res.message);
-      }
-      toast.success(res.message);
-      // await fetchRcsRateData(currentUserSrno);
-      await fetchObdRateData(currentUserSrno);
-    } catch (e) {
-      toast.error("Error in saving obd pricing");
-    }
-  }
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
@@ -1745,7 +1737,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           )}
 
 
-          <Typography >
+          <Typography sx={{ fontSize: "15px" }} >
             Total Records: <span className="font-semibold">{rows.length}</span>
           </Typography>
         </Box>
@@ -1767,70 +1759,17 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       </GridFooterContainer>
     );
   };
+  //=======================================MANAGE USERS END=======================================
 
-  const RcsCustomFooter = () => {
-    return (
-      <GridFooterContainer
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: { xs: "center", lg: "space-between" },
-          alignItems: "center",
-          padding: 1,
-          gap: 2,
-          overflowX: "auto",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            flexWrap: "wrap",
-            // gap: 1.5,
-          }}
-        >
-          {selectedRows.length > 0 && (
-            <Typography
-              variant="body2"
-              sx={{ borderRight: "1px solid #ccc", paddingRight: "10px" }}
-            >
-              {selectedRows.length} Rows Selected
-            </Typography>
-          )}
+  //=======================================USER PASSWORD RESET START=======================================
+  const [newPassword, setNewPassword] = useState("");
+  const [reset, setreset] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
 
-          <Typography sx={{ fontSize: "14px" }} >
-            Total Records:
-            <span className="font-semibold">{rcsrows.length}</span>
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-            // justifyContent: "center",
-            // width: { xs: "100%", sm: "auto" },
-          }}
-        >
-          {/* <CustomPagination
-            totalPages={totalPages}
-            paginationModel={paginationModel}
-            setPaginationModel={setPaginationModel}
-          
-          /> */}
-        </Box>
-      </GridFooterContainer>
-    );
+  const handleReset = (id, name) => {
+    setreset(true);
+    setSelectedIds(id);
   };
-
-  function handleServiceChange(e) {
-    const { id, checked } = e.target;
-
-    const updatedService = enableServices.map((item) =>
-      item.id == id ? { ...item, enable: checked } : item
-    );
-
-    setEnableServices(updatedService);
-  }
 
   async function handleResetPassword() {
     if (!newPassword) return toast.error("Please enter new password");
@@ -1853,21 +1792,30 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       return toast.error("Error in resetting password");
     }
   }
+  //=======================================USER PASSWORD RESET END=======================================
 
-  useEffect(() => {
-    if (!selectedId) return;
-    async function fetchMobileNo() {
-      try {
-        const res = await getMobileNumbers(selectedId);
-        const mobile = res?.regMoblienos?.split(",");
-        setMobileNumbers(mobile || [""]);
-        // setotp
-      } catch (e) {
-        return toast.error(e.message);
-      }
-    }
-    fetchMobileNo();
-  }, [otpService]);
+
+  //=======================================PETM CHAIN START=======================================
+  const [petmDialogVisible, setPETMDialogVisible] = useState(false);
+  const [petmDetails, setPetmDetails] = useState({
+    selectedUserId: "",
+    petmChainType: 1,
+    tmd: "",
+    TMA1: "",
+    TMA2: "",
+  });
+
+  const handlePetmChain = (id) => {
+    setPETMDialogVisible(true);
+    setPetmDetails({
+      selectedUserId: id,
+      petmChainType: 1,
+      tmd: "",
+      TMA1: "",
+      TMA2: "",
+    });
+    setSelectedId(id);
+  };
 
   useEffect(() => {
     if (!selectedId) return;
@@ -1890,7 +1838,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   }, [petmDialogVisible]);
 
   async function handlePETMSave() {
-    // petmDetails.petmChainType === 3
     if (!petmDetails.petmChainType) {
       return toast.error("Please select a chain type");
     }
@@ -1927,9 +1874,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       return toast.error("Error in saving petm details");
     }
   }
+  //=======================================PETM CHAIN END=======================================
 
   return (
     <>
+      {/* User Table Start */}
       <Paper sx={{ height: 558 }} id={id} name={name}>
         <DataGrid
           id={id}
@@ -1965,13 +1914,14 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           }}
         />
       </Paper>
+      {/* User Table End */}
 
       {/* Dialog Section Start */}
 
-      {/* Edit details */}
+      {/* Edit User details Start*/}
       <Dialog
         header="Edit details"
-        visible={editService}
+        visible={editEditDetailsDialogVisible}
         onHide={() => setEditDetailsDialogVisible(false)}
         className="lg:w-[50rem] md:w-[40rem] w-[20rem]"
         draggable={false}
@@ -2001,7 +1951,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
             />
           </div>
 
-          <div className="lg:w-100 md:w-100 flex flex-wrap gap-4 mt-5">
+          {/* <div className="lg:w-100 md:w-100 flex flex-wrap gap-4 mt-5">
             <div className="flex justify-center items-center">
               <UniversalLabel
                 text="Status"
@@ -2010,7 +1960,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 className="text-sm font-medium text-gray-700"
               />
             </div>
-            {/* Option 1 */}
             <div className="flex items-center gap-2">
               <RadioButton
                 inputId="employeeidviewOption1"
@@ -2031,7 +1980,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 Active
               </label>
             </div>
-            {/* Option 2 */}
             <div className="flex items-center gap-2">
               <RadioButton
                 inputId="employeeidviewOption2"
@@ -2052,7 +2000,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 Inactive
               </label>
             </div>
-          </div>
+          </div> */}
 
           <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
             <InputField
@@ -2191,9 +2139,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           </div>
         </div>
       </Dialog>
-      {/* Edit Details */}
+      {/* Edit User details End*/}
 
-      {/* Login details */}
+      {/* Login details Start*/}
       <Dialog
         header="Login details"
         visible={logins}
@@ -2203,9 +2151,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       >
         Login details
       </Dialog>
-      {/* Login details */}
+      {/* Login details End*/}
 
-      {/* PETM Chain */}
+      {/* PETM Chain Start*/}
       <Dialog
         header="Configure PE-TM Chain"
         visible={petmDialogVisible}
@@ -2285,9 +2233,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           />
         </div>
       </Dialog>
-      {/* PETM Chain */}
+      {/* PETM Chain End*/}
 
-      {/* OTP details */}
+      {/*2FA OTP Enable Start*/}
       <Dialog
         header="OTP details"
         visible={otpService}
@@ -2312,9 +2260,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   size="small"
                 />
                 {index > 0 && (
-                  // <IconButton onClick={() => removeMobileNumber(index)} sx={{ color: "red", position:"absolute", right:"3rem" }}>
-                  //   <DeleteIcon />
-                  // </IconButton>
                   <MdOutlineDeleteForever
                     onClick={() => removeMobileNumber(index)}
                     className="absolute text-red-500 cursor-pointer hover:text-red-600 right-2"
@@ -2360,9 +2305,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           </div>
         </div>
       </Dialog>
-      {/* OTP details */}
+      {/*2FA OTP Enable End*/}
 
-      {/* View details */}
+      {/* View User details Start */}
       <Dialog
         header="View details"
         visible={viewService}
@@ -2372,7 +2317,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       >
         {selectedUserDetails ? (
           <div className="space-y-6 p-3 border rounded-xl shadow-md">
-            {/* Row 1 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="flex items-center gap-2 text-sm">
                 <RemoveRedEyeOutlinedIcon className="text-gray-600" />
@@ -2406,7 +2350,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               </div>
             </div>
 
-            {/* Row 2 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
               <div className="flex items-center gap-2">
                 <PersonOutlineOutlinedIcon className="text-gray-600" />
@@ -2425,7 +2368,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               </div>
             </div>
 
-            {/* Row 3 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
 
               <div className="flex items-center gap-2">
@@ -2445,7 +2387,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               </div>
             </div>
 
-            {/* Row 4 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
 
               <div className="flex items-center gap-2">
@@ -2464,7 +2405,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               </div>
             </div>
 
-            {/* Row 5 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
 
               <div className="flex items-center gap-2">
@@ -2483,7 +2423,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               </div>
             </div>
 
-            {/* Row 6 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
 
               <div className="flex items-center gap-2">
@@ -2507,28 +2446,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               </div>
             </div>
 
-            {/* Row 7 */}
-
-
-            {/* Row 8 */}
-            {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <CampaignOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>Promo Service : </strong>
-                  {selectedUserDetails.promoService || "Not Available"}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <SmsOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>Trans Service : </strong>
-                  {selectedUserDetails.transService || "Not Available"}
-                </p>
-              </div>
-            </div> */}
-
-            {/* Row 9 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
               <div className="flex items-center gap-2">
                 <KeyOutlinedIcon className="text-gray-600" />
@@ -2550,9 +2467,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           <p className="text-center text-gray-500">Loading user details...</p>
         )}
       </Dialog>
-      {/* View details */}
+      {/* View User details End */}
 
-      {/* assignRate */}
+      {/* assignRate Start */}
       <Dialog
         header="Assign Rate"
         visible={assignRate}
@@ -2663,6 +2580,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   borderRadius: "8px",
                 },
               }}
+              disabled
             />
             <Tab
               label={
@@ -2682,6 +2600,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   borderRadius: "8px",
                 },
               }}
+              disabled
             />
             <Tab
               label={
@@ -2701,6 +2620,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   borderRadius: "8px",
                 },
               }}
+              disabled
             />
             <Tab
               label={
@@ -2720,6 +2640,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   borderRadius: "8px",
                 },
               }}
+              disabled
             />
             <Tab
               label={
@@ -2739,6 +2660,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   borderRadius: "8px",
                 },
               }}
+              disabled
             />
           </Tabs>
 
@@ -2833,13 +2755,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                     setSelectedRows={setSelectedRows}
                   />
                 </div>
-                <div className="flex justify-center mt-3">
-                  {/* <UniversalButton
-                      label="Save"
-                      id="whatsappsave"
-                      name="whatsappsave"
-                    /> */}
-                </div>
               </>
 
               {/* Edit whatsapp Rate */}
@@ -2847,7 +2762,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 header="Edit WhatsApp Rate"
                 visible={editWhatsappVisible}
                 onHide={() => setEditWhatsappVisible(false)}
-                style={{ width: "30rem" }}
+                style={{ width: "50rem" }}
                 draggable={false}
               >
                 <div className="space-y-4">
@@ -2878,6 +2793,18 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                       }
                     />
 
+                    <InputField
+                      label="Authentication"
+                      value={editWhatsappForm.authentication}
+                      onChange={(e) =>
+                        validateInput(e.target.value, (val) =>
+                          setEditWhatsappForm((prev) => ({
+                            ...prev,
+                            authentication: val,
+                          }))
+                        )
+                      }
+                    />
                     <InputField
                       label="Marketing"
                       value={editWhatsappForm.marketing}
@@ -3020,7 +2947,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                     }}
                   />
                 </Paper>
-
               </div>
 
               {/* Edit Rcs Rate Dialog */}
@@ -3176,43 +3102,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           {/* OBD */}
           <CustomTabPanel value={value} index={3}>
             <>
-              {/* <div className="flex mb-2 lg:w-100 md:w-100">
-                <Checkbox
-                  id="obdstatusobd"
-                  name="obdstatusobd"
-                  onChange={(e) => setTranscheckobd(e.checked)}
-                  checked={transcheckobd}
-                  className="m-2"
-                />
-
-                <AnimatedDropdown
-                  id="transdropdownobd"
-                  name="transdropdownobd"
-                  options={transOptionsobd}
-                  value={transobd}
-                  onChange={(value) => setTransobd(value)}
-                  disabled={!transcheckobd}
-                />
-              </div>
-              <div className="flex lg:w-100 md:w-100">
-                <Checkbox
-                  id="obdstatuspromo"
-                  name="obdstatuspromo"
-                  onChange={(e) => setPromocheckobd(e.checked)}
-                  checked={promocheckobd}
-                  className="m-2"
-                />
-
-                <AnimatedDropdown
-                  id="transdropdownobd"
-                  name="transdropdownobd"
-                  options={promoOptionobd}
-                  value={promoobd}
-                  onChange={(value) => setPromoobd(value)}
-                  disabled={!promocheckobd}
-                />
-              </div> */}
-
               <div className=" lg:w-100 md:w-100">
                 <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
                   {/* Option 1 */}
@@ -3274,7 +3163,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 <DataGrid
                   id={id}
                   name={name}
-                  rows={voicerowa}
+                  rows={voicerows}
                   columns={voiceCols}
                   initialState={{ pagination: { paginationModel } }}
                   pageSizeOptions={[10, 20, 50]}
@@ -3305,6 +3194,90 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   }}
                 />
               </Paper>
+
+              {/* Edit OBD Rate start */}
+              <Dialog
+                header="Edit OBD Rate"
+                visible={editOBDVoiceVisible}
+                onHide={() => setEditOBDVoiceVisible(false)}
+                style={{ width: "30rem" }}
+                draggable={false}
+                resizable={false}
+              >
+                <div className=" lg:w-100 md:w-100">
+                  <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
+                    {/* Option 1 */}
+                    <div className="flex items-center gap-2">
+                      <RadioButton
+                        inputId="obdrateOption1"
+                        name="obdrateredio"
+                        value="enable"
+                        onChange={() => {
+                          setEditOBDVoiceForm((prev) => ({
+                            ...prev,
+                            obdrateStatus: "enable",
+                          }));
+                        }}
+                        checked={editOBDVoiceForm.obdrateStatus === "enable"}
+                      />
+                      <label
+                        htmlFor="obdrateOption1"
+                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                      >
+                        @ 15 sec
+                      </label>
+                    </div>
+                    {/* Option 2 */}
+                    <div className="flex items-center gap-2">
+                      <RadioButton
+                        inputId="obdrateOption2"
+                        name="obdrateredio"
+                        value="disable"
+                        onChange={() => {
+                          setEditOBDVoiceForm((prev) => ({
+                            ...prev,
+                            obdrateStatus: "disable",
+                          }));
+                        }}
+                        checked={editOBDVoiceForm.obdrateStatus === "disable"}
+                      />
+                      <label
+                        htmlFor="obdrateOption2"
+                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                      >
+                        @ 30 sec
+                      </label>
+                    </div>
+                  </div>
+                  <div className="flex  gap-5 items-center justify-center mt-3">
+                    <InputField
+                      id="transratesobd"
+                      name="transratesobd"
+                      label="Rate"
+                      placeholder="(INR / Credit)"
+                      value={editOBDVoiceForm.obdrate}
+                      onChange={(e) =>
+                        validateInput(e.target.value, (e) => {
+                          setEditOBDVoiceForm((prev) => ({
+                            ...prev,
+                            obdrate: e,
+                          }));
+                        })
+                      }
+                      type="number"
+                    />
+                    <div className="mt-[1.5rem]">
+                      <UniversalButton
+                        label="Update"
+                        id="updateOBDData"
+                        name="updateOBDData"
+                        onClick={handleObdUpdate}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </Dialog>
+              {/* Edit OBD Rate End */}
             </>
           </CustomTabPanel>
 
@@ -3485,9 +3458,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           </CustomTabPanel>
         </Box>
       </Dialog>
-      {/* assignRate */}
+      {/* assignRate End*/}
 
-      {/* Manage Api Key */}
+      {/* Manage Api Key Start*/}
       <Dialog
         header="Manage Api Key "
         visible={manageApiKeys}
@@ -3538,9 +3511,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           />
         </div>
       </Dialog>
-      {/* Manage Api Key */}
+      {/* Manage Api Key End*/}
 
-      {/* reset service */}
+      {/* Generate and reset user password start */}
       <Dialog
         header="Update Password"
         visible={reset}
@@ -3549,14 +3522,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         draggable={false}
       >
         <div className="space-y-4">
-          {/* <div className="relative">
-            <InputField
-              id="username"
-              name="username"
-              label="User Name"
-              placeholder="demo"
-            />
-          </div> */}
           <GeneratePasswordSettings
             id="newPassword"
             name="newPassword"
@@ -3580,9 +3545,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           />
         </div>
       </Dialog>
-      {/* reset service */}
+      {/* Generate and reset user password end */}
 
-      {/* User Report */}
+      {/* User Report start*/}
       <Dialog
         header="User Report"
         visible={userReports}
@@ -3637,9 +3602,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           />
         </div>
       </Dialog>
-      {/* User Report */}
+      {/* User Report End*/}
 
-      {/* Assign Service */}
+      {/* Assign Service Start*/}
       <Dialog
         header="Assign Service"
         visible={assignService}
@@ -3662,6 +3627,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   <div className="flex items-center gap-2">
                     <Checkbox
                       type="checkbox"
+                      disabled={item.disabled}
                       id={item.id}
                       name="assignService"
                       checked={
@@ -3692,7 +3658,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           </div>
         </>
       </Dialog>
-      {/* Assign Service */}
+      {/* Assign Service End*/}
     </>
   );
 };

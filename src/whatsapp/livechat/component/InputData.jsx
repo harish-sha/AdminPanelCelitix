@@ -18,6 +18,7 @@ import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import { MdFilterAltOff } from "react-icons/md";
 import { useUser } from "@/context/auth";
 
+
 export const InputData = ({
   setSearch,
   search,
@@ -40,6 +41,7 @@ export const InputData = ({
 
   const [showFilter, setShowFilter] = useState(false);
   const panelRef = useRef(null);
+
   useEffect(() => {
     function handleClickOutside(e) {
       if (panelRef.current && !panelRef.current.contains(e.target)) {
@@ -174,7 +176,7 @@ export const InputData = ({
               // label="Select WABA"
               tooltipContent="Select your whatsapp business account"
               tooltipPlacement="right"
-              options={wabaState.waba?.map((waba) => ({
+              options={wabaState?.waba?.map((waba) => ({
                 value: waba.mobileNo,
                 label: waba.name,
               }))}
@@ -286,7 +288,7 @@ export const InputData = ({
           </div>
         </div>
       </div>
-      {wabaState.selectedWaba && (
+      {wabaState?.selectedWaba && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

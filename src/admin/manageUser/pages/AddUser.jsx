@@ -36,6 +36,7 @@ const AddUser = () => {
   const [enablepostpaid, setEnablePostpaid] = useState("disable");
   const [pincodeOptions, setPincodeOptions] = useState([]);
   const [postpaidAmount, setPostpaidAmount] = useState(0);
+  const [agentLimit, setAgentLimit] = useState("");
 
   // Dropdown options
   const useroption = [
@@ -127,6 +128,11 @@ const AddUser = () => {
       return;
     }
 
+    if (!expiryDate) {
+      toast.error("Please select expiry date");
+      return;
+    }
+
     // if (!userPassword.length > 6 || !userPassword.length < 10) {
     //   toast.error("Password shoule be of 6 to 10 characters");
     //   return;
@@ -152,6 +158,7 @@ const AddUser = () => {
       virtualBalance: 0,
       applicationType: 2,
       expiryDate: moment(expiryDate).format("DD/MM/YYYY"),
+      agentLimit: agentLimit
     };
 
     try {
@@ -279,13 +286,14 @@ const AddUser = () => {
           value={country}
           onChange={(e) => setCountry(e.target.value)}
         />
-        {/* <InputField label="Pincode"
-          id='Pincode'
-          name="Pincode"
-          placeholder="Enter your Pincode"
-          value={zipCode}
-          onChange={(e) => setZipCode(e.target.value)}
-        /> */}
+        <InputField
+          label="Agent Limit"
+          id='agentLimit'
+          name="agentLimit"
+          placeholder="Enter Agent Limit (no of agent)"
+          value={agentLimit}
+          onChange={(e) => setAgentLimit(e.target.value)}
+        />
         <DropdownWithSearch
           label="Pincode"
           id="pincode"

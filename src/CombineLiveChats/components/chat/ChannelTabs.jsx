@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -12,16 +12,19 @@ import {
   FaUserClock,
   FaBolt,
 } from "react-icons/fa";
+import { RiDashboardLine } from "react-icons/ri";
 import { FaAngleDoubleDown } from "react-icons/fa";
 import { FaAngleDoubleUp } from "react-icons/fa";
 import { useUser } from "@/context/auth";
+import { useWabaAgentContext } from "@/context/WabaAndAgent.jsx";
+import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 
 const channels = [
   // {
   //   service_type_id: "1",
   //   label: "Dashboard",
   //   value: "",
-  //   icon: <FaThLarge className="text-gray-500 text-lg" />,
+  //   icon: <RiDashboardLine className="text-blue-400 text-xl" />,
   // },
   {
     service_type_id: "2",
@@ -49,30 +52,94 @@ const channels = [
   },
 ];
 
-const quickActions = [
-  {
-    label: "Assign Agent",
-    icon: <FaUserTie className="text-indigo-500 text-sm" />,
-  },
-  {
-    label: "Mark Active",
-    icon: <FaUserCheck className="text-green-500 text-sm" />,
-  },
-  {
-    label: "Put on Hold",
-    icon: <FaUserClock className="text-yellow-500 text-sm" />,
-  },
-  {
-    label: "Trigger Workflow",
-    icon: <FaBolt className="text-pink-500 text-sm" />,
-  },
-];
-
 const ChannelTabs = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const activeTab = pathname.split("/")[2];
   const [showActions, setShowActions] = useState(true);
+  const {
+    wabaData,
+    setWabaData,
+    chatData,
+    setChatData,
+    agentData,
+    setAgentData,
+    selectedContextWaba,
+    setSelectedContextWaba,
+    agentSelected,
+    setAgentSelected,
+  } = useWabaAgentContext();
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [isAgentOpen, setIsAgentOpen] = useState(false);
+  const [displayWabaName, setDisplayWabaName] = useState("");
+  const selectedChannel = channels.find((ch) => ch.value === activeTab);
+  console.log("displayWabaName", displayWabaName);
+  const dropdownRef = useRef(null);
+  const rcsdropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+
+      if (
+        rcsdropdownRef.current &&
+        !rcsdropdownRef.current.contains(event.target)
+      ) {
+        setIsAgentOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (wabaData?.selectedWaba) {
+      const matchedWaba = wabaData?.waba?.find(
+        (waba) => waba.mobileNo === wabaData.selectedWaba
+      );
+      if (matchedWaba) {
+        setDisplayWabaName(matchedWaba.name);
+      }
+    }
+  }, [wabaData?.selectedWaba]);
+
+  const handleSelectWaba = () => {
+    setIsOpen(true);
+  };
+
+  const handleSelectAgent = () => {
+    setIsAgentOpen(true);
+  };
+
+  const quickActions = [
+    {
+      label: "Select WABA",
+      onClick: handleSelectWaba,
+    },
+    {
+      label: "Assign Agent",
+      icon: <FaUserTie className="text-indigo-500 text-sm" />,
+      onClick: handleSelectAgent,
+    },
+    {
+      label: "Mark Active",
+      icon: <FaUserCheck className="text-green-500 text-sm" />,
+    },
+    {
+      label: "Put on Hold",
+      icon: <FaUserClock className="text-yellow-500 text-sm" />,
+    },
+    {
+      label: "Trigger Workflow",
+      icon: <FaBolt className="text-pink-500 text-sm" />,
+    },
+  ];
 
   // const { user } = useUser();
   // const allowedServiceIds =
@@ -137,20 +204,204 @@ const ChannelTabs = () => {
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="overflow-hidden absolute top-12 md:relative md:top-0 z-50"
           >
-            <div className="px-4 py-2 md:flex  w-full gap-3 bg-white shadow rounded-md border border-gray-100 overflow-auto ">
-              {quickActions.map((action, i) => (
-                <button
-                  key={i}
-                  className="flex flex-nowrap whitespace-nowrap items-center justify-center gap-2 text-xs text-gray-700 bg-gray-100 px-3 py-1 rounded-full hover:bg-blue-100 hover:text-blue-600 transition mb-1 md:mb-0"
-                >
-                  {action.icon}
-                  {action.label}
-                </button>
-              ))}
+            <div className="px-4 py-2 md:flex w-full gap-3 bg-white shadow rounded-md border border-gray-100 overflow-auto ">
+              {quickActions
+                .filter((action) => {
+                  // Hide "Assign Agent" when WhatsApp is selected
+                  if (
+                    selectedChannel?.service_type_id === "2" &&
+                    action.label === "Assign Agent"
+                  ) {
+                    return false;
+                  } else if (
+                    selectedChannel?.service_type_id === "3" &&
+                    action.label === "Select WABA"
+                  ) {
+                    return false;
+                  }
+                  return true;
+                })
+                .map((action, i) => {
+                  const isWabaAction = action.label === "Select WABA";
+                  return (
+                    <button
+                      key={i}
+                      onClick={action?.onClick}
+                      className={`flex flex-nowrap whitespace-nowrap items-center justify-center gap-2 text-xs px-3 py-1 rounded-full transition mb-1 md:mb-0
+                        ${isWabaAction && displayWabaName
+                          ? "bg-blue-100 text-blue-600"
+                          : "bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-600"
+                        }
+                      `}
+                    >
+                      {action.icon}
+                      {isWabaAction && displayWabaName
+                        ? displayWabaName
+                        : action.label}
+                    </button>
+                  );
+                })}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+      {/* <div
+        ref={dropdownRef}
+        className={`absolute top-0 -left-8 w-full md:w-40 shadow-lg z-40 transform transition-transform duration-300 md:ml-4 ${
+          isOpen ? "translate-x-0 left-0" : "-translate-x-full"
+        }`}
+        >
+        <AnimatedDropdown
+          id="createSelectWaba"
+          name="createSelectWaba"
+          // label="Select WABA"
+          tooltipContent="Select your whatsapp business account"
+          tooltipPlacement="right"
+          options={wabaData?.waba?.map((waba) => ({
+            value: waba.mobileNo,
+            label: waba.name,
+          }))}
+          value={wabaData?.selectedWaba}
+          onChange={(value) => {
+            const wabaSrno = wabaData?.waba?.find(
+              (waba) => waba.mobileNo === value
+            )?.wabaSrno;
+
+            setWabaData({ ...wabaData, selectedWaba: value, wabaSrno });
+
+            setChatData({
+              active: null,
+              input: "",
+              allConversations: [],
+              specificConversation: [],
+              latestMessage: {
+                srno: "",
+                replayTime: "",
+              },
+              replyData: "",
+              isReply: false,
+            });
+            setSelectedContextWaba(value);
+            setIsOpen(false);
+          }}
+          placeholder="Select WABA"
+        />
+      </div> */}
+
+      <div
+        ref={dropdownRef}
+        className={`absolute top-20 left-4 md:left-2 w-[90%] md:w-30 shadow-xl rounded-xl bg-white border border-gray-200 z-[999] transform transition-transform duration-300 ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+      >
+        {/* <AnimatedDropdown
+          id="createSelectWaba"
+          name="createSelectWaba"
+          tooltipContent="Select your WhatsApp Business Account"
+          tooltipPlacement="right"
+          
+          options={wabaData?.waba?.map((waba) => ({
+            value: waba.mobileNo,
+            label: waba.name,
+          }))}
+          value={wabaData?.selectedWaba}
+          onChange={(value) => {
+            const wabaSrno = wabaData?.waba?.find(
+              (waba) => waba.mobileNo === value
+            )?.wabaSrno;
+
+            setWabaData({ ...wabaData, selectedWaba: value, wabaSrno });
+
+            setChatData({
+              active: null,
+              input: "",
+              allConversations: [],
+              specificConversation: [],
+              latestMessage: {
+                srno: "",
+                replayTime: "",
+              },
+              replyData: "",
+              isReply: false,
+            });
+
+            setSelectedContextWaba(value);
+            setIsOpen(false);
+          }}
+          placeholder="Choose a WABA"
+        /> */}
+
+        <select
+          value={wabaData?.selectedWaba}
+          onChange={(e) => {
+            const selectedValue = e.target.value;
+            const wabaSrno = wabaData?.waba?.find(
+              (w) => w.mobileNo === selectedValue
+            )?.wabaSrno;
+
+            setWabaData({ ...wabaData, selectedWaba: selectedValue, wabaSrno });
+
+            setChatData({
+              active: null,
+              input: "",
+              allConversations: [],
+              specificConversation: [],
+              latestMessage: {
+                srno: "",
+                replayTime: "",
+              },
+              replyData: "",
+              isReply: false,
+            });
+
+            setSelectedContextWaba(selectedValue);
+            setIsOpen(false);
+          }}
+          className="w-40 px-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-500 bg-white"
+        >
+          <option value="" disabled>
+            Choose a WABA
+          </option>
+          <option value="">-- No Selection --</option>
+          {wabaData?.waba?.map((waba) => (
+            <option key={waba.mobileNo} value={waba.mobileNo}>
+              {waba.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div
+        ref={rcsdropdownRef}
+        className={`absolute top-20 left-4 md:left-2 w-[90%] md:w-30 shadow-xl rounded-xl bg-white border border-gray-200 z-[999] transform transition-transform duration-300 ${isAgentOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+      >
+        <AnimatedDropdown
+          // label="Select Agent"
+          id="agentList"
+          name="agentList"
+          options={agentData?.all?.map((item) => ({
+            label: item?.agent_name,
+            value: item?.agent_id,
+          }))}
+          onChange={(e) => {
+            setAgentData((prev) => ({ ...prev, id: e }));
+            setChatData({
+              active: null,
+              input: "",
+              allConversations: [],
+              specificConversation: [],
+              latestMessage: {
+                srno: "",
+                replayTime: "",
+              },
+            });
+            setIsAgentOpen(false);
+            setAgentSelected(true);
+          }}
+          placeholder="Select Agent"
+          value={agentData?.id}
+        />
+      </div>
     </div>
   );
 };

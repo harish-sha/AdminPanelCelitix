@@ -154,7 +154,7 @@ const ManageUser = () => {
         {/* {isFetching ? (
           <UniversalSkeleton height="35rem" width="100%" />
         ) : (
-          <ManageUserTable allUsers={allUsers} />
+          <ManageUserTable allUsers={allUsers} fetchAllUsersDetails={fetchAllUsersDetails} />
         )} */}
         <ManageUserTable allUsers={allUsers} fetchAllUsersDetails={fetchAllUsersDetails} />
       </div>
