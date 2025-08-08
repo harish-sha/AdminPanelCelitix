@@ -1169,46 +1169,55 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       id: 1,
       name: "SMS",
       enable: 0,
+      disabled: false,
     },
     {
       id: 2,
       name: "WHATSAPP",
       enable: 0,
+      disabled: false,
     },
     {
       id: 3,
       name: "RCS",
       enable: 0,
+      disabled: false,
     },
     {
       id: 7,
       name: "OBD",
       enable: 0,
+      disabled: false,
     },
     {
       id: "",
       name: "Two Way",
       enable: 0,
+      disabled: true,
     },
     {
       id: "",
       name: "Missed Call",
       enable: 0,
+      disabled: true,
     },
     {
       id: "",
       name: "C2C",
       enable: 0,
+      disabled: true,
     },
     {
       id: "",
       name: "Email",
       enable: 0,
+      disabled: true,
     },
     {
       id: "",
       name: "IBD",
       enable: 0,
+      disabled: true,
     },
   ];
 
@@ -2704,6 +2713,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               }}
             />
             <Tab
+              disabled={true}
               label={
                 <span>
                   <CampaignOutlinedIcon size={20} />
@@ -2723,6 +2733,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               }}
             />
             <Tab
+              disabled={true}
               label={
                 <span>
                   <PhoneMissedOutlinedIcon size={20} />
@@ -2742,6 +2753,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               }}
             />
             <Tab
+              disabled={true}
               label={
                 <span>
                   <CampaignOutlinedIcon size={20} />
@@ -2761,6 +2773,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               }}
             />
             <Tab
+              disabled={true}
               label={
                 <span>
                   <EmailOutlinedIcon size={20} />
@@ -2780,6 +2793,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               }}
             />
             <Tab
+              disabled={true}
               label={
                 <span>
                   <CampaignOutlinedIcon size={20} />
@@ -3666,6 +3680,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   <div className="flex items-center gap-2">
                     <Checkbox
                       type="checkbox"
+                      disabled={item.disabled}
                       id={item.id}
                       name="assignService"
                       checked={
