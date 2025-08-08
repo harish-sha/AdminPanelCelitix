@@ -47,7 +47,7 @@ export const TextNodeContent = ({
       ...prev,
       [id]: {
         ...prev[id],
-        message: prev[id]?.message + newTag,
+        message: prev[id]?.message || "" + newTag,
       },
     }));
   };
