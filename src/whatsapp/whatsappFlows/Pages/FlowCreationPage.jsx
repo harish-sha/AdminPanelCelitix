@@ -640,7 +640,7 @@ const FlowCreationPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="flex flex-col w-full sm:w-auto"
-            >
+              >
               <input
                 id="flowname"
                 name="flowname"

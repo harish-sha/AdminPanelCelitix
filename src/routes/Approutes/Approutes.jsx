@@ -17,6 +17,9 @@ import ResellerDashboard from "@/dashboard/ResellerDashboard";
 // canned message
 import CannedMessage from "@/cannedmessage/CannedMessage";
 
+// PRICING
+import Pricing from "@/pricing/Pricing";
+
 // Whatsapp
 import ManageTemplate from "@/whatsapp/managetemplate/Managetemplate";
 import WhatsappLaunchCampaign from "@/whatsapp/whatsappLaunchCampaign/WhatsappLaunchCampaign";
@@ -296,6 +299,9 @@ const Approutes = () => {
 
         {/* manage contacts */}
         <Route path="managecontacts" element={<ManageContacts />} />
+
+        {/* PRICING */}
+        <Route path="pricing" element={<Pricing/>}/>
 
         {/* Click To Call */}
         <Route path="clicktosettings" element={<ClickToSetting />} />

@@ -73,7 +73,7 @@ export const TextNodeContent = ({
               },
             }));
           }}
-          className="resize-none"
+          className="resize-none h-50"
         />
       </div>
       <AnimatedDropdown

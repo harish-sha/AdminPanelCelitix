@@ -9,6 +9,11 @@ import { extractVariable } from "./helper/extractVariable";
 import { IconButton, Slider } from "@mui/material";
 import PauseRounded from "@mui/icons-material/PauseRounded";
 import PlayArrowRounded from "@mui/icons-material/PlayArrowRounded";
+import Lottie from "lottie-react";
+import files from "../../../../assets/animation/Files.json";
+import MusicPlayerSlider from "@/obd/managevoiceclips/components/ObdAudioplayer";
+import AudioPlayer from "./AudioPlayer";
+
 
 export const FileNodeContent = ({
   accept,
@@ -41,11 +46,20 @@ export const FileNodeContent = ({
     //   return;
     // }
 
+    let isExcel = false
+
+    if (file?.name?.split(".")?.pop()?.split(/\#|\?/)[0] === "csv" || file?.name?.split(".")?.pop()?.split(/\#|\?/)[0] === "xlsx") {
+      isExcel = true
+    }
+
+
+
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
         ...prev[id],
         fileUrl: file,
+        isExcel
       },
     }));
   };
@@ -133,71 +147,71 @@ export const FileNodeContent = ({
     setPosition(Math.floor(audioRef.current.currentTime));
   };
 
-  function RenderAudio() {
-    return (
-      <div className="flex gap-2 items-center">
-        <audio
-          ref={audioRef}
-          src={
-            /^(http|https):/.test(nodesInputData[id].fileUrl)
-              ? nodesInputData[id].fileUrl
-              : nodesInputData[id]?.selectedOption === "upload" &&
-                URL.createObjectURL(nodesInputData[id].fileUrl)
-          }
-          onTimeUpdate={handleTimeUpdate}
-          onLoadedMetadata={handleLoadedMetadata}
-        />
-        <IconButton
-          aria-label={paused ? "play" : "pause"}
-          onClick={togglePlayPause}
-        >
-          {paused ? (
-            <PlayArrowRounded sx={{ fontSize: "3rem" }} />
-          ) : (
-            <PauseRounded sx={{ fontSize: "3rem" }} />
-          )}
-        </IconButton>
+  // function RenderAudio() {
+  //   return (
+  //     <div className="flex gap-2 items-center">
+  //       <audio
+  //         ref={audioRef}
+  //         src={
+  //           /^(http|https):/.test(nodesInputData[id].fileUrl)
+  //             ? nodesInputData[id].fileUrl
+  //             : nodesInputData[id]?.selectedOption === "upload" &&
+  //             URL.createObjectURL(nodesInputData[id].fileUrl)
+  //         }
+  //         onTimeUpdate={handleTimeUpdate}
+  //         onLoadedMetadata={handleLoadedMetadata}
+  //       />
+  //       <IconButton
+  //         aria-label={paused ? "play" : "pause"}
+  //         onClick={togglePlayPause}
+  //       >
+  //         {paused ? (
+  //           <PlayArrowRounded sx={{ fontSize: "3rem" }} />
+  //         ) : (
+  //           <PauseRounded sx={{ fontSize: "3rem" }} />
+  //         )}
+  //       </IconButton>
 
-        <Slider
-          aria-label="time-indicator"
-          size="small"
-          value={position}
-          min={0}
-          step={1}
-          max={duration}
-          onChange={(_, value) => setPosition(value)}
-          sx={(t) => ({
-            color: "rgba(0,0,0,0.87)",
-            height: 4,
-            "& .MuiSlider-thumb": {
-              width: 8,
-              height: 8,
-              transition: "0.3s cubic-bezier(.47,1.64,.41,.8)",
-              "&::before": {
-                boxShadow: "0 2px 12px 0 rgba(0,0,0,0.4)",
-              },
-              "&:hover, &.Mui-focusVisible": {
-                boxShadow: `0px 0px 0px 8px ${"rgb(0 0 0 / 16%)"}`,
-                ...t.applyStyles("dark", {
-                  boxShadow: `0px 0px 0px 8px ${"rgb(255 255 255 / 16%)"}`,
-                }),
-              },
-              "&.Mui-active": {
-                width: 20,
-                height: 20,
-              },
-            },
-            "& .MuiSlider-rail": {
-              opacity: 0.28,
-            },
-            ...t.applyStyles("dark", {
-              color: "#fff",
-            }),
-          })}
-        />
-      </div>
-    );
-  }
+  //       <Slider
+  //         aria-label="time-indicator"
+  //         size="small"
+  //         value={position}
+  //         min={0}
+  //         step={1}
+  //         max={duration}
+  //         onChange={(_, value) => setPosition(value)}
+  //         sx={(t) => ({
+  //           color: "rgba(0,0,0,0.87)",
+  //           height: 4,
+  //           "& .MuiSlider-thumb": {
+  //             width: 8,
+  //             height: 8,
+  //             transition: "0.3s cubic-bezier(.47,1.64,.41,.8)",
+  //             "&::before": {
+  //               boxShadow: "0 2px 12px 0 rgba(0,0,0,0.4)",
+  //             },
+  //             "&:hover, &.Mui-focusVisible": {
+  //               boxShadow: `0px 0px 0px 8px ${"rgb(0 0 0 / 16%)"}`,
+  //               ...t.applyStyles("dark", {
+  //                 boxShadow: `0px 0px 0px 8px ${"rgb(255 255 255 / 16%)"}`,
+  //               }),
+  //             },
+  //             "&.Mui-active": {
+  //               width: 20,
+  //               height: 20,
+  //             },
+  //           },
+  //           "& .MuiSlider-rail": {
+  //             opacity: 0.28,
+  //           },
+  //           ...t.applyStyles("dark", {
+  //             color: "#fff",
+  //           }),
+  //         })}
+  //       />
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="flex flex-col gap-2">
@@ -216,6 +230,9 @@ export const FileNodeContent = ({
             [id]: {
               ...nodesInputData[id],
               selectedOption: e,
+              fileUrl: "",
+              fileType: "",
+              isExcel: false,
             },
           }));
         }}
@@ -240,94 +257,159 @@ export const FileNodeContent = ({
           id="url"
           name="url"
           label="Enter Url"
-          value={nodesInputData[id]?.fileUrl}
           placeholder="Enter File Url"
+          value={nodesInputData[id]?.fileUrl}
           onChange={(e) => {
-            setNodesInputData(() => ({
-              ...nodesInputData,
+            const value = e.target.value;
+            const extension = value.split(".").pop()?.split(/\#|\?/)[0]?.toLowerCase();
+
+            const isImage = ["jpg", "jpeg", "png", "gif", "webp"].includes(extension);
+            const isVideo = ["mp4", "mov", "webm", "3gp"].includes(extension);
+            const isDocument = ["pdf", "doc", "docx"].includes(extension);
+            const isExcel = ["csv", "xlsx"].includes(extension);
+            const isAudio = ["mp3", "wav", "ogg", "m4a"].includes(extension);
+
+            setNodesInputData((prev) => ({
+              ...prev,
               [id]: {
-                ...nodesInputData[id],
-                fileUrl: e.target.value,
+                ...prev[id],
+                fileUrl: value,
+                isExcel,
+                fileType: isImage
+                  ? "image"
+                  : isVideo
+                    ? "video"
+                    : isDocument
+                      ? "document"
+                      : isAudio
+                        ? "audio"
+                        : "unknown",
               },
             }));
           }}
         />
+
       )}
-
-      {/* preview */}
-
-      {nodesInputData[id]?.fileUrl &&
-        (accept === "image" ? (
-          <img
-            src={
-              /^(http|https):/.test(nodesInputData[id].fileUrl)
-                ? nodesInputData[id].fileUrl
-                : nodesInputData[id]?.selectedOption === "upload" &&
-                  URL.createObjectURL(nodesInputData[id].fileUrl)
-            }
-            alt={"Image"}
-            height={200}
-            width={200}
+      <div className="grid grid-cols-2 gap-2">
+        <div className="flex flex-col gap-2">
+          <InputField
+            label="Caption text"
+            id="captionText"
+            name="captionText"
+            placeholder="Enter Caption Text"
+            value={nodesInputData[id]?.fileCaption}
+            onChange={(e: { target: { value: any } }) => {
+              setNodesInputData((prev) => ({
+                ...prev,
+                [id]: {
+                  ...prev[id],
+                  fileCaption: e.target.value,
+                },
+              }));
+            }}
           />
-        ) : accept === "video" ? (
-          <video
-            src={
-              /^(http|https):/.test(nodesInputData[id].fileUrl)
-                ? nodesInputData[id].fileUrl
-                : nodesInputData[id]?.selectedOption === "upload" &&
-                  URL.createObjectURL(nodesInputData[id].fileUrl)
-            }
-            controls={true}
-            height={200}
-          ></video>
-        ) : // : accept === "document" ? (
-        //   // https://view.officeapps.live.com/op/embed.aspx?src=${previewDialog.url} add for excel
-        //   <iframe
-        //     src={
-        //       /^(http|https):/.test(nodesInputData[id].fileUrl)
-        //         ? `https://view.officeapps.live.com/op/embed.aspx?src=${nodesInputData[id].fileUrl}`
-        //         : nodesInputData[id]?.selectedOption === "upload" &&
-        //           // URL.createObjectURL(nodesInputData[id].fileUrl)
-        //           `https://view.officeapps.live.com/op/embed.aspx?src=${URL.createObjectURL(
-        //             nodesInputData[id].fileUrl
-        //           )}`
-        //     }
-        //     height={200}
-        //   ></iframe>
-        // )
-        accept === "audio" ? (
-          <RenderAudio />
-        ) : null)}
+          <AnimatedDropdown
+            id="selectVaribleDropdown"
+            name="selectVaribleDropdown"
+            label="Select Variable"
+            options={allVariables.map((v) => ({
+              label: v,
+              value: v,
+            }))}
+            value={nodesInputData[id]?.variable}
+            onChange={(e: any) => {
+              handleAddVariable(e);
+            }}
+          />
+        </div>
+        <div className="flex items-center justify-center rounded-lg border w-full h-56 mt-2">
 
-      <InputField
-        label="Caption text"
-        id="captionText"
-        name="captionText"
-        placeholder="Enter Caption Text"
-        value={nodesInputData[id]?.fileCaption}
-        onChange={(e: { target: { value: any } }) => {
-          setNodesInputData((prev) => ({
-            ...prev,
-            [id]: {
-              ...prev[id],
-              fileCaption: e.target.value,
-            },
-          }));
-        }}
-      />
-      <AnimatedDropdown
-        id="selectVaribleDropdown"
-        name="selectVaribleDropdown"
-        label="Select Variable"
-        options={allVariables.map((v) => ({
-          label: v,
-          value: v,
-        }))}
-        value={nodesInputData[id]?.variable}
-        onChange={(e: any) => {
-          handleAddVariable(e);
-        }}
-      />
+          {/* preview */}
+
+          {nodesInputData[id]?.fileUrl &&
+            (accept === "image" ? (
+              <img
+                src={
+                  /^(http|https):/.test(nodesInputData[id].fileUrl)
+                    ? nodesInputData[id].fileUrl
+                    : nodesInputData[id]?.selectedOption === "upload" &&
+                    URL.createObjectURL(nodesInputData[id].fileUrl)
+                }
+                alt={"Image"}
+                className="w-full h-full object-fit rounded-lg"
+              />
+            ) : accept === "video" ? (
+              <video
+                src={
+                  /^(http|https):/.test(nodesInputData[id].fileUrl)
+                    ? nodesInputData[id].fileUrl
+                    : nodesInputData[id]?.selectedOption === "upload" &&
+                    URL.createObjectURL(nodesInputData[id].fileUrl)
+                }
+                controls={true}
+                // height={200}
+                className="w-full h-full object-fit rounded-lg"
+              ></video>
+            ) : accept === "document" ? (
+              // https://view.officeapps.live.com/op/embed.aspx?src=${previewDialog.url} add for excel
+              <iframe
+
+                // src={
+                //   nodesInputData[id]?.selectedOption === "upload"
+                //     ? (nodesInputData[id]?.isExcel
+                //       ? `https://view.officeapps.live.com/op/embed.aspx?src=${URL.createObjectURL(nodesInputData[id].fileUrl)}`
+                //       : URL.createObjectURL(nodesInputData[id].fileUrl))
+                //     : nodesInputData[id].fileUrl
+
+                // }
+
+                src={
+                  nodesInputData[id]?.selectedOption === "upload"
+                    ? nodesInputData[id]?.isExcel
+                      ? `https://view.officeapps.live.com/op/embed.aspx?src=${URL.createObjectURL(nodesInputData[id].fileUrl)}`
+                      : URL.createObjectURL(nodesInputData[id].fileUrl)
+                    : nodesInputData[id]?.selectedOption === "url"
+                      ? nodesInputData[id]?.isExcel
+                        ? `https://view.officeapps.live.com/op/embed.aspx?src=${nodesInputData[id].fileUrl}`
+                        : nodesInputData[id].fileUrl
+                      : null
+
+                }
+                height={200}
+              ></iframe>
+            ) : accept === "audio" ? (
+              // <RenderAudio />
+              <AudioPlayer
+                fileUrl={nodesInputData[id].fileUrl}
+                selectedOption={nodesInputData[id]?.selectedOption}
+              />
+            ) : null)}
+
+          {/* <div className="w-full h-40 flex items-center justify-center rounded-lg">
+            <Lottie
+              animationData={files}
+              loop
+              autoplay
+              className="w-full h-full"
+            />
+          </div> */}
+          {!nodesInputData[id]?.fileUrl && (
+            <div className="w-full h-full flex items-center justify-center rounded-lg">
+              <Lottie
+                animationData={files}
+                loop
+                autoplay
+                className="w-24 h-24"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+
+
+
+
     </div>
   );
 };

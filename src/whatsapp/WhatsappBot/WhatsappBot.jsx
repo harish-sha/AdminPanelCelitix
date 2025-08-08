@@ -12,7 +12,9 @@ import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { motion } from "framer-motion";
+import Lottie from "lottie-react";
 
+import nothinganimation from "@/assets/animation/nothinganimation.json";
 import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 import restaurtantimg from "../../assets/images/restaurant.avif";
 import workinghour from "../../assets/images/workinghour.jpg";
@@ -43,6 +45,10 @@ const WhatsappBot = () => {
   const [searchActive, setSearchActive] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
+  const [selectedBot, setSelectedBot] = useState(null);
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
   // const [dropdownButtonRefs, setDropdownButtonRefs] = useState({});
   const dropdownButtonRefs = useRef({});
 
@@ -62,10 +68,13 @@ const WhatsappBot = () => {
 
   async function handleFetchAllBot() {
     try {
+      setIsLoading(true);
       const res = await getAllBot();
       setAllBots(res);
     } catch (e) {
       // console.log(e);
+    } finally {
+      setIsLoading(false);
     }
   }
   useEffect(() => {
@@ -218,13 +227,58 @@ const WhatsappBot = () => {
       });
     }
   }
+
+  const highlightMatch = (text, query) => {
+    if (!query) return text;
+
+    const parts = text.split(new RegExp(`(${query})`, "gi"));
+    return parts.map((part, i) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <mark key={i} className="bg-yellow-300 rounded">
+          {part}
+        </mark>
+      ) : (
+        part
+      )
+    );
+  };
+
+  const rowsPerPage = 4;
+  const filteredBots = (Array.isArray(allBots) ? allBots : []).filter(
+    (bot) => {
+      const searchText = search.toLowerCase();
+      const botName = (bot?.botName || "").toLowerCase();
+      const botId = String(bot?.botId || "").toLowerCase();
+
+      return botName.includes(searchText) || botId.includes(searchText);
+    }
+  );
+
+  const totalPages = Math.ceil(filteredBots.length / rowsPerPage);
+
+  const paginatedBots = filteredBots
+    .reverse()
+    .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
+  // let paginatedBots = []
+
+  const handleMenuOpen = (event, bot) => {
+    setSelectedBot(bot);
+    setDropdownOpenId(bot.botId);
+  };
+
+  const handleMenuClose = () => {
+    setDropdownOpenId(null);
+    setSelectedBot(null);
+  };
+
   return (
     <>
       {isLoading ? (
         <Loader />
       ) : (
         <div className="p-3 rounded-xl space-y-6 bg-gray-50  w-full overflow-hidden min-h-[90vh]">
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-3 items-center mb-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 md:grid-cols-3 items-center mb-4">
             {/* Title */}
             <div className="flex items-center justify-center lg:justify-start gap-2 text-xl font-semibold text-gray-900">
               Manage Bots
@@ -232,7 +286,7 @@ const WhatsappBot = () => {
             </div>
 
             {/* Search */}
-            <div className="flex justify-center lg:justify-center">
+            {/* <div className="flex justify-center lg:justify-center">
               <div className="relative flex items-center transition-all duration-500">
                 <div
                   className={`relative flex items-center border rounded-lg border-gray-300 transition-all duration-300
@@ -264,7 +318,7 @@ const WhatsappBot = () => {
                   </span>
                 )}
               </div>
-            </div>
+            </div> */}
 
             {/* Button */}
             <div className="flex justify-center lg:justify-end md:justify-end">
@@ -366,108 +420,173 @@ const WhatsappBot = () => {
             />
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow">
-            <h2 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
-              Created Bots <SmartToyOutlinedIcon />
-            </h2>
-            <div className="overflow-auto h-80">
-              {allBots.map((bot) => {
-                const ref = dropdownButtonRefs[bot.botSrno];
+          <div className="bg-white border border-gray-300 rounded-xl shadow-sm md:p-4 p-2 h-auto flex flex-col">
+            <div className="p-2">
+              {/* Header */}
+              <div className="flex flex-col sm:flex-row sm:justify-between items-center mb-4 bg-white">
+                <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2 mb-2 sm:mb-0">
+                  Created Bots
+                  <SmartToyOutlinedIcon sx={{
+                    fontSize: "1.4rem",
+                    color: "green"
+                  }} />
+                </h2>
+                <div className="w-full sm:w-auto">
+                  <input
+                    type="text"
+                    className="border border-gray-300 rounded-md px-3 py-1.5 w-full sm:w-64 text-sm"
+                    placeholder="Search by bot name..."
+                    value={search}
+                    onChange={(e) => {
+                      setSearch(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                  />
+                </div>
+              </div>
 
-                return (
-                  <div
-                    key={bot.botSrno}
-                    className="border rounded-xl overflow-hidden hover:shadow-lg transition-all mb-4"
-                  >
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between bg-blue-50 px-6 py-4 gap-3">
-                      <div className="flex items-center gap-4 flex-1">
-                        <RadioButtonCheckedOutlinedIcon
-                          className="text-green-500"
-                          fontSize="small"
-                        />
-                        <div>
-                          <p className="font-semibold text-gray-800">
-                            {bot.botName}
-                          </p>
-                          {/* <span className="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full">
-                            {bot.isPublish ? "Published" : "Unpublished"}
-                          </span> */}
-                        </div>
+              {/* Bot List / Empty State */}
+              <div className="space-y-4 min-h-[300px] overflow-y-auto lg:overflow-y-visible">
+                {isLoading ? (
+                  <div className="w-full">
+                    <div className="flex flex-col gap-3">
+                      <UniversalSkeleton height="6rem" width="100%" />
+                      <UniversalSkeleton height="6rem" width="100%" />
+                      <UniversalSkeleton height="6rem" width="100%" />
+                      <UniversalSkeleton height="6rem" width="100%" />
+                    </div>
+                  </div>
+                ) : paginatedBots.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-6 min-h-[400px]">
+                    <div className="flex flex-col items-center justify-center border-2 border-dashed p-5 rounded-3xl shadow-2xl border-blue-300">
+                      <div className="w-60 h-60">
+                        <Lottie animationData={nothinganimation} loop />
                       </div>
-                      {/* <div className="text-sm text-gray-700 flex-1">
-                        Versions: <strong>{bot.versions}</strong>
-                      </div> */}
-                      {/* <div className="text-sm text-red-500 font-medium flex-1">
-                        {bot.integrations}
-                      </div> */}
-                      <div className="text-sm text-gray-500 flex-1 flex lg:flex-col md:flex-row items-center md:justify-start gap-1">
-                        Created On: <strong>{moment(bot.saveTime).format("DD-MM-YYYY")}</strong>
+                      <div className="text-xl font-semibold text-gray-500 text-center">
+                        No Bot found.
+                        <br />
+                        <span className="text-base font-normal text-gray-400">
+                          Start your professional journey by creating a new Bot!
+                        </span>
                       </div>
-                      <div className="flex items-center gap-2 relative bot-settings">
-                        <CustomTooltip title="Settings" arrow>
-                          <IconButton
-                            ref={(el) => {
-                              if (el)
-                                dropdownButtonRefs.current[bot.botSrno] = el;
-                            }}
-                            onClick={() => toggleDropdown(bot.botSrno)}
-                          >
-                            <SettingsOutlinedIcon
-                              className="text-gray-600"
-                              fontSize="small"
-                            />
-                          </IconButton>
-                        </CustomTooltip>
-                        {dropdownOpenId === bot.botSrno && (
-                          <DropdownMenuPortal
-                            targetRef={{
-                              current: dropdownButtonRefs.current[bot.botSrno],
-                            }}
-                          >
-                            {dropdownItems.map((item, index) => {
-                              const iconMap = {
-                                Edit: <EditNoteIcon fontSize="small" />,
-                                Duplicate: <FaEnvelope size={14} />,
-                                Share: <FaGlobe size={14} />,
-                              };
-
-                              return (
-                                <button
-                                  key={index}
-                                  onClick={() => {
-                                    handleBtnClick(item, bot);
-                                  }}
-                                  className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
-                                >
-                                  {iconMap[item]}
-                                  {item}
-                                </button>
-                              );
-                            })}
-                          </DropdownMenuPortal>
-                        )}
-
-                        <CustomTooltip title="Delete Bot" arrow>
-                          <IconButton
-                            onClick={() => {
-                              setId(bot?.botSrno);
-                              setIsVisible(true);
-                            }}
-                          >
-                            <MdOutlineDeleteForever
-                              className="text-red-500"
-                              size={20}
-                            />
-                          </IconButton>
-                        </CustomTooltip>
+                      <div className="mt-4 hidden md:block">
+                        <UniversalButton label="+ Create Bot" onClick={handleNavigate} />
                       </div>
                     </div>
                   </div>
-                );
-              })}
+                ) : (
+                  <div className=" h-auto ">
+                    {paginatedBots.map((bot, index) => {
+                      const ref = dropdownButtonRefs[bot.botSrno];
+
+                      return (
+                        <div
+                          key={bot.botSrno}
+                          className="border rounded-xl overflow-hidden hover:shadow-lg transition-all mb-4"
+                        >
+                          <div className="grid lg:grid-cols-4 xl:grid-cols-5 bg-blue-100 px-6 py-4   xs:grid-cols-1 md:grid-cols-3 gap-2 sm:grid-cols-3  items-center justify-between flex-wrap sm:flex-nowrap">
+                            <div className="flex items-center gap-4 flex-1">
+                              <RadioButtonCheckedOutlinedIcon className="text-green-500" fontSize="small" />
+                              <div className="text-sm text-center ">
+                                <div className="font-semibold ">BotName:</div>
+                                <div className="text-gray-500"> {highlightMatch(String(bot.botName || ""), search)} </div>
+
+                              </div>
+                            </div>
+
+                            <div className="text-sm text-center ">
+                              <div className="font-semibold ">Whatsapp Account:</div>
+                              <div className="text-gray-500"> {bot.wabaNumber}  </div>
+                            </div>
+
+                            <div className="text-sm text-center ">
+                              <div className="font-semibold ">Starting KeyWords: </div>
+                              <div className="text-gray-500"> {bot.startKeywords}</div>
+                            </div>
+
+
+                            <div className="text-sm text-center ">
+                              <div className="font-semibold ">
+                                Created On:</div>
+                              <div className="text-gray-500">{moment(bot.saveTime).format("DD-MM-YYYY h:mm:ss a")}</div>
+                            </div>
+
+
+
+                            <div className="flex items-center justify-end gap-2 relative">
+                              <CustomTooltip title="Settings" arrow>
+                                <IconButton
+                                  ref={(el) => {
+                                    if (el) dropdownButtonRefs.current[bot.botSrno] = el;
+                                  }}
+                                  onClick={() => toggleDropdown(bot.botSrno)}
+                                >
+                                  <SettingsOutlinedIcon className="text-gray-600" fontSize="small" />
+                                </IconButton>
+                              </CustomTooltip>
+
+                              {dropdownOpenId === bot.botSrno && (
+                                <DropdownMenuPortal
+                                  targetRef={{ current: dropdownButtonRefs.current[bot.botSrno] }}
+                                >
+                                  {dropdownItems.map((item, idx) => {
+                                    const iconMap = {
+                                      Edit: <EditNoteIcon fontSize="small" />,
+                                      Duplicate: <FaEnvelope size={14} />,
+                                      Share: <FaGlobe size={14} />,
+                                    };
+                                    return (
+                                      <button
+                                        key={idx}
+                                        onClick={() => handleBtnClick(item, bot)}
+                                        className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
+                                      >
+                                        {iconMap[item]}
+                                        {item}
+                                      </button>
+                                    );
+                                  })}
+                                </DropdownMenuPortal>
+                              )}
+
+                              <CustomTooltip title="Delete Bot" arrow>
+                                <IconButton
+                                  onClick={() => {
+                                    setId(bot.botSrno);
+                                    setIsVisible(true);
+                                  }}
+                                >
+                                  <MdOutlineDeleteForever className="text-red-500" size={20} />
+                                </IconButton>
+                              </CustomTooltip>
+                            </div>
+                          </div>
+                        </div>
+
+                      );
+                    })}
+                  </div>
+
+
+
+                )}
+                <div className="flex justify-end items-center mt-4 gap-2 w-full whitespace-nowrap sm:overflow-x-scroll">
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={i + 1}
+                      className={`text-sm px-3 py-1 border rounded-sm cursor-pointer ${currentPage === i + 1 ? "bg-blue-500 text-white" : ""
+                        }`}
+                      onClick={() => setCurrentPage(i + 1)}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+
+        </div >
       )}
 
       <Dialog

@@ -78,21 +78,21 @@ export const Preview = ({
   const MediaRenderer = ({ format, fileUrl, fallbackUrl }) => {
     if (format === "image") {
       return (
-        <div className="w-[10rem] m-auto">
+        <div className="w-full h-36">
           <img
             src={fileUrl || fallbackUrl}
             alt="Template"
-            className="object-contain"
+            className="object-cover w-full h-full"
           />
         </div>
       );
     }
     if (format === "video") {
       return (
-        <div className="w-[10rem] m-auto">
+        <div className="w-full h-36">
           <video
             src={fileUrl || fallbackUrl}
-            className="object-contain"
+            className="object-cover w-full h-full"
             controls={true}
           />
         </div>
@@ -100,8 +100,8 @@ export const Preview = ({
     }
     if (format === "document") {
       return (
-        <div className="w-full">
-          <iframe src={fileUrl || fallbackUrl} className="object-contain" />
+        <div className="w-full h-36">
+          <iframe src={fileUrl || fallbackUrl} className="object-cover w-full h-full" />
         </div>
       );
     }
@@ -146,23 +146,21 @@ export const Preview = ({
             {["image", "video", "document"].includes(
               specificTemplate.templateType
             ) && (
-              <MediaRenderer
-                format={specificTemplate.templateType}
-                fallbackUrl={specificTemplate.media_path}
-                fileUrl={basicDetails.mediaPath}
-              />
-            )}
+                <MediaRenderer
+                  format={specificTemplate.templateType}
+                  fallbackUrl={specificTemplate.media_path}
+                  fileUrl={basicDetails.mediaPath}
+                />
+              )}
           </div>
 
           {specificTemplate.templateType === "location" && (
             <>
               <iframe
                 id="gmap"
-                src={`https://www.google.com/maps?q=${
-                  extractCoordinates(locationData?.url)?.lat
-                },${
-                  extractCoordinates(locationData?.url)?.lng
-                }&hl=es;z=14&output=embed`}
+                src={`https://www.google.com/maps?q=${extractCoordinates(locationData?.url)?.lat
+                  },${extractCoordinates(locationData?.url)?.lng
+                  }&hl=es;z=14&output=embed`}
                 width="100%"
                 height="200"
                 className="border-none "
@@ -180,7 +178,7 @@ export const Preview = ({
           )}
 
           {specificTemplate?.message && (
-            <pre className="whitespace-pre-wrap">
+            <pre className="whitespace-pre-wrap text-sm text-gray-800 ">
               {specificTemplate.message}
             </pre>
           )}

@@ -1,54 +1,54 @@
-import * as React from 'react';
-import { DemoItem } from '@mui/x-date-pickers/internals/demo';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import Box from '@mui/material/Box';
-import Alert from '@mui/material/Alert';
-
-export default function ClearableProp() {
-  const [cleared, setCleared] = React.useState(false);
-
-  React.useEffect(() => {
-    if (cleared) {
-      const timeout = setTimeout(() => {
-        setCleared(false);
-      }, 1500);
-
-      return () => clearTimeout(timeout);
-    }
-    return () => { };
-  }, [cleared]);
-
-  return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box
-        sx={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          position: 'relative',
-        }}
-      >
-        <DemoItem label="DesktopDatePicker">
-          <DesktopDatePicker
-            sx={{ width: 260 }}
-            slotProps={{
-              field: { clearable: true, onClear: () => setCleared(true) },
-            }}
-          />
-        </DemoItem>
-
-        {cleared && (
-          <Alert
-            sx={{ position: 'absolute', bottom: 0, right: 0 }}
-            severity="success"
-          >
-            Field cleared!
-          </Alert>
-        )}
-      </Box>
-    </LocalizationProvider>
-  );
-}
+<div className="flex items-center justify-center rounded-lg border w-full h-56 mt-2">
+  {/* ✅ File preview if fileUrl exists and accept is valid */}
+  {nodesInputData[id]?.fileUrl &&
+    ["image", "video", "document", "audio"].includes(accept) ? (
+    accept === "image" ? (
+      <img
+        src={
+          /^(http|https):/.test(nodesInputData[id].fileUrl)
+            ? nodesInputData[id].fileUrl
+            : nodesInputData[id]?.selectedOption === "upload" &&
+            URL.createObjectURL(nodesInputData[id].fileUrl)
+        }
+        alt="Image"
+        className="w-full h-full object-cover rounded-lg"
+      />
+    ) : accept === "video" ? (
+      <video
+        src={
+          /^(http|https):/.test(nodesInputData[id].fileUrl)
+            ? nodesInputData[id].fileUrl
+            : nodesInputData[id]?.selectedOption === "upload" &&
+            URL.createObjectURL(nodesInputData[id].fileUrl)
+        }
+        controls
+        className="w-full h-full object-cover rounded-lg"
+      />
+    ) : accept === "document" ? (
+      <iframe
+        src={
+          /^(http|https):/.test(nodesInputData[id].fileUrl)
+            ? `https://view.officeapps.live.com/op/embed.aspx?src=${nodesInputData[id].fileUrl}`
+            : nodesInputData[id]?.selectedOption === "upload" &&
+            `https://view.officeapps.live.com/op/embed.aspx?src=${URL.createObjectURL(
+              nodesInputData[id].fileUrl
+            )}`
+        }
+        height={200}
+        className="w-full h-full rounded-lg"
+      />
+    ) : (
+      <RenderAudio />
+    )
+  ) : (
+    // ✅ Default Lottie animation
+    <div className="w-full h-full flex items-center justify-center bg-gray-50 rounded-lg">
+      <Lottie
+        animationData={files}
+        loop
+        autoplay
+        className="w-24 h-24"
+      />
+    </div>
+  )}
+</div>

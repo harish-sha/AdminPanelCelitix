@@ -37,8 +37,8 @@ export const convertToReactFlow = (data) => {
     const nextNodes = isMultiTarget
       ? nodeData.nextNode || []
       : nodeData.nextNode
-      ? [nodeData.nextNode]
-      : [];
+        ? [nodeData.nextNode]
+        : [];
 
     nextNodes.forEach((nextVal, index) => {
       const targetEntry = Object.entries(rawNodes).find(
@@ -111,6 +111,8 @@ export const transformNodesById = (parsedFlowData) => {
         (Array.isArray(node?.apiResponse?.storedData)
           ? node.apiResponse.storedData[0]?.varName
           : "") || "",
+
+      selectedOption: "url"
     };
   });
 

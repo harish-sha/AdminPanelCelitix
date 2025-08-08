@@ -504,7 +504,7 @@ const WhatsappFlows = () => {
           </div>
 
           {/* Flows */}
-          <div className="space-y-4 h-100 overflow-y-auto lg:overflow-y-hidden">
+          <div className="space-y-4 min-h-[300px] overflow-y-auto lg:overflow-y-visible">
             {isLoading ? (
               <div className="w-full">
                 <div className="flex flex-col gap-3">

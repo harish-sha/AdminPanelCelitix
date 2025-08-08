@@ -132,6 +132,12 @@ export const PermissionRoute = () => {
         roles: ["ADMIN", "DIRECTUSER"],
       },
       {
+        name: "Pricing",
+        links: ["/pricing"],
+        roles: ["ADMIN"],
+
+      },
+      {
         name: "ManageContacts",
         links: "/managecontacts",
         roles: ["ADMIN", "DIRECTUSER"],
@@ -156,7 +162,8 @@ export const PermissionRoute = () => {
           "/transactions",
           "/tagmanager",
           "/selfrecharge",
-          "/unsubscribe"
+          "/unsubscribe",
+          "/pricing"
         ],
         roles: ["ADMIN"],
       },

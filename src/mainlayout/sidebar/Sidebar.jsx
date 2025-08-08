@@ -20,7 +20,8 @@ import { motion } from "framer-motion";
 import AssuredWorkloadOutlinedIcon from "@mui/icons-material/AssuredWorkloadOutlined";
 import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
 import QuickreplyOutlinedIcon from '@mui/icons-material/QuickreplyOutlined';
-
+import Pricing from "@/pricing/Pricing"
+import PriceChangeOutlinedIcon from '@mui/icons-material/PriceChangeOutlined';
 
 import { LuWorkflow } from "react-icons/lu";
 import rcsicon from "../../assets/icons/RCS02.svg";
@@ -334,6 +335,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/clicktosettings", label: "Settings" },
       ],
       roles: ["ADMIN"],
+    },
+    {
+      id: '',
+      name: 'Pricing',
+      icon: <PriceChangeOutlinedIcon className="text-gray-600" />,
+      label: 'Pricing',
+      type: "single",
+      to: "/pricing",
+      roles: ["ADMIN", "DIRECTUSER"],
     },
     {
       id: "",

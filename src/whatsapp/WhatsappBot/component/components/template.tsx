@@ -198,39 +198,31 @@ export const TemplateNode = ({
       };
 
       const variableInsert = [];
-      // curlData.template.components.forEach((format) => {
-      //   if (format.type === "BODY") {
-      //     format?.parameters?.map((item, index) => {
-      //       variableInsert.push({
-      //         ...item,
-      //         text: `{{${variables[index]}}}`,
-      //       });
-      //     });
-      //   }
-      // });
-
+    
       botData.template.components = botData.template.components.map(
         (component, index) => {
           if (component.type === "BODY") {
+
+
+            const parameters = variables?.map((variable, index) => ({
+              text: `{{${variable}}}`,
+              type: "text",
+            }));
+
             return {
               ...component,
-              parameters: [
-                {
-                  text: `{{${variables[index]}}}`,
-                  type: "text",
-                },
-              ],
+              parameters
             };
+
           }
           if (component.type === "button") {
+            const parameters = btnVar?.map((variable, index) => ({
+              text: `{{${variable}}}`,
+              type: "text",
+            }));
             return {
               ...component,
-              parameters: [
-                {
-                  text: `{{${btnVar[index]}}}`,
-                  type: "text",
-                },
-              ],
+              parameters
             };
           }
           if (template.type === "image") {
@@ -276,11 +268,6 @@ export const TemplateNode = ({
         }
       );
 
-      // console.log("botData", botData);
-
-      // return;
-
-      // TODO: add variable dropdown values
 
       setNodesInputData((prev) => ({
         ...prev,
@@ -290,6 +277,7 @@ export const TemplateNode = ({
           json: JSON.stringify(botData),
         },
       }));
+
 
       setIsVisible(false);
     } catch (e) {
@@ -386,7 +374,7 @@ export const TemplateNode = ({
                 Location Details
                 <span className="text-red-500">*</span>
               </h1>
-              <div className="space-y-2rounded-b-xl">
+              <div className="space-y-2 rounded-b-xl">
                 <InputField
                   maxLength={100}
                   id="locationurl"
@@ -477,7 +465,7 @@ export const TemplateNode = ({
             />
           </div>
         </div>
-        <div className="w-full">
+        <div className="w-full mb-3">
           <Preview
             specificTemplate={specificTemplate}
             variablesData={variablesData}

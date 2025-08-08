@@ -64,11 +64,11 @@ export const Variables = ({
             variablesData?.data?.map((input, index) => (
               <div key={index}>
                 <div>
-                  <h1>Variables</h1>
+                  <h1 className="text-sm ">Variables</h1>
                 </div>
                 <div>
                   <div className="flex  gap-2 items-center mt-2 w-full">
-                    <label htmlFor="templateMessage">
+                    <label htmlFor="templateMessage" className="text-sm">
                       {`{{${variablesData?.data[index]}}}`}
                     </label>
                     <div className="flex relative w-full">
@@ -106,7 +106,7 @@ export const Variables = ({
           {variablesData?.btn?.length > 0 &&
             variablesData?.btn?.map((input, index) => (
               <div key={index}>
-                <h1>Buttons</h1>
+                <h1 className="text-sm">Buttons</h1>
                 <div className="flex  gap-2 items-center mt-2">
                   <label htmlFor="templateMessage">
                     {`{{${variablesData?.btn[index]}}}`}
@@ -135,7 +135,7 @@ export const Variables = ({
 
       {specificTemplate?.templateType === "image" && (
         <div className="space-y-2 mt-2">
-          <h1>Upload Image</h1>
+          <h1 className="text-sm font-semibold">Upload Image</h1>
           <div className="flex gap-2 items-center">
             <input
               type="file"
@@ -159,7 +159,7 @@ export const Variables = ({
       )}
       {specificTemplate?.templateType === "video" && (
         <div className="space-y-2 mt-2">
-          <h1>Upload Video</h1>
+          <h1 className="text-sm font-semibold">Upload Video</h1>
           <div className="flex gap-2 items-center">
             <input
               type="file"
@@ -183,7 +183,7 @@ export const Variables = ({
       )}
       {specificTemplate?.templateType === "document" && (
         <div className="space-y-2 mt-2">
-          <h1>Upload Document</h1>
+          <h1 className="text-sm font-semibold">Upload Document</h1>
           <div className="flex gap-2 items-center">
             <input
               type="file"

@@ -39,6 +39,7 @@ export const List = ({
 
   function handleOptionAdd() {
     if (options.length >= 10) {
+      toast.error("You can add a maximum of 10 options.");
       return;
     }
     setOptions((prev) => [
@@ -151,6 +152,7 @@ export const List = ({
             id="text"
             name="text"
             tooltipContent="List Heading"
+            placeholder="Enter List Heading"
             maxLength="20"
             // label={nodesInputData[id]?.type === "text" ? "List Heading" : "URL"}
             label={"List Heading"}
@@ -271,7 +273,7 @@ export const List = ({
             }));
           }}
           maxLength={4096}
-          className="resize-none"
+          className="resize-none h-50"
         />
       </div>
       <p className="text-xs">{nodesInputData[id]?.message?.length || 0}/4096</p>
@@ -299,6 +301,7 @@ export const List = ({
           tooltipContent="Give a footer for the list. Maximum 20 characters."
           maxLength="20"
           label={"List Footer"}
+          placeholder="Enter List Footer"
           value={nodesInputData[id]?.listFooter}
           onChange={(e: { target: { value: any } }) => {
             setNodesInputData((prev) => ({
@@ -321,12 +324,17 @@ export const List = ({
             <AddIcon />
           </button>
         </div> */}
-        <div className="flex items-center gap-2 mb-2">
-          <h1 className="text-lg font-semibold mb-2">List Items</h1>
-          <div className="flex justify-end">
-            <button onClick={handleOptionAdd}>
-              <AddIcon />
+        <div className="flex justify-end items-center gap-2 mb-2">
+          {/* <h1 className="text-lg font-semibold mb-2">List Items</h1> */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleOptionAdd}
+              className="flex items-center gap-2 px-2 py-1 rounded-full bg-black text-white text-xs font-medium shadow-md"
+            >
+              <AddIcon fontSize="small" />
+              Add Option
             </button>
+
           </div>
           <div className="mb-1">
             <CustomTooltip
@@ -349,6 +357,7 @@ export const List = ({
                 id="option"
                 name="option"
                 label={`Row-Title-${index + 1}`}
+                placeholder="Enter Row Title"
                 value={options[index]?.option}
                 onChange={(e: { target: { value: any } }) => {
                   handleOptionInput(e.target.value, "option", index);
@@ -357,6 +366,7 @@ export const List = ({
               <InputField
                 id="value"
                 name="value"
+                placeholder="Enter Row Description"
                 label={`Row-Description-${index + 1}`}
                 value={options[index]?.value}
                 onChange={(e: { target: { value: any } }) => {
@@ -365,15 +375,13 @@ export const List = ({
               />
 
               {options.length > 1 && (
-                <Button
+                <span
                   id="deleteInput"
-                  name="deleteInput"
-                  variant="destructive"
                   onClick={() => handleOptionDelete(index)}
-                  className="mt-7"
+                  className="mt-7 text-red-700 cursor-pointer hover:text-red-700 transition-colors duration-200 "
                 >
-                  <MdOutlineDeleteForever />
-                </Button>
+                  <MdOutlineDeleteForever fontSize={24} />
+                </span>
               )}
             </div>
           ))}
