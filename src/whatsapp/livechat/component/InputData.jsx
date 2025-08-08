@@ -169,14 +169,14 @@ export const InputData = ({
           <div
             className={`absolute top-0 -left-8 w-full md:w-88 shadow-lg z-40 transform transition-transform duration-300 md:ml-4 ${isOpen ? "translate-x-0 left-0" : "-translate-x-full"
               }`}
-          >
+            >
             <AnimatedDropdown
               id="createSelectWaba"
               name="createSelectWaba"
               // label="Select WABA"
               tooltipContent="Select your whatsapp business account"
               tooltipPlacement="right"
-              options={wabaState.waba?.map((waba) => ({
+              options={wabaState?.waba?.map((waba) => ({
                 value: waba.mobileNo,
                 label: waba.name,
               }))}
@@ -288,7 +288,7 @@ export const InputData = ({
           </div>
         </div>
       </div>
-      {wabaState.selectedWaba && (
+      {wabaState?.selectedWaba && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

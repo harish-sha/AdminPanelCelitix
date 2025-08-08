@@ -9,11 +9,12 @@ export const WabaAgentProvider = ({ children }) => {
   console.log("agentData", agentData)
 
   //other states
-  const[chatData, setChatData] = useState(null);
-  const[selectedContextWaba, setSelectedContextWaba] = useState()
+  const [chatData, setChatData] = useState(null);
+  const [selectedContextWaba, setSelectedContextWaba] = useState()
+  const [agentSelected, setAgentSelected] = useState(false)
 
   return (
-    <WabaAgentContext.Provider value={{ wabaData, setWabaData, agentData, setAgentData, chatData, setChatData, selectedContextWaba, setSelectedContextWaba }}>
+    <WabaAgentContext.Provider value={{ wabaData, setWabaData, agentData, setAgentData, chatData, setChatData, selectedContextWaba, setSelectedContextWaba, agentSelected, setAgentSelected }}>
       {children}
     </WabaAgentContext.Provider>
   );

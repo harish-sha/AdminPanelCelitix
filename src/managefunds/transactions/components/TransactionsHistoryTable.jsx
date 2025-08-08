@@ -10,7 +10,6 @@ import { DataGrid, GridFooterContainer, GridPagination } from '@mui/x-data-grid'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { Paper, Typography, Box, Button } from '@mui/material';
 
-
 const PaginationList = styled("ul")({
     listStyle: "none",
     padding: 0,

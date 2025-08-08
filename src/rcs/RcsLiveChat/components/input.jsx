@@ -45,9 +45,8 @@ export const InputData = ({
             </button>
           )}
           <div
-            className={`absolute top-0 -left-8 w-full md:w-88 shadow-lg z-40 transform transition-transform duration-300 md:ml-4 ${
-              isOpen ? "translate-x-0 left-0" : "-translate-x-full"
-            }`}
+            className={`absolute top-0 -left-8 w-full md:w-88 shadow-lg z-40 transform transition-transform duration-300 md:ml-4 ${isOpen ? "translate-x-0 left-0" : "-translate-x-full"
+              }`}
           >
             <AnimatedDropdown
               // label="Select Agent"
@@ -140,11 +139,10 @@ export const InputData = ({
                   },
                 }));
               }}
-              className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${
-                btnOption === "active"
+              className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "active"
                   ? "text-white font-semibold"
                   : "text-gray-700"
-              }`}
+                }`}
             >
               Active
             </button>
@@ -163,11 +161,10 @@ export const InputData = ({
                   },
                 }));
               }}
-              className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${
-                btnOption === "close"
+              className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "close"
                   ? "text-white font-semibold"
                   : "text-gray-700"
-              }`}
+                }`}
             >
               Close
             </button>

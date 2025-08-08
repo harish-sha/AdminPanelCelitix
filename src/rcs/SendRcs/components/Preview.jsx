@@ -68,7 +68,7 @@ export const Preview = ({
       );
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], { type: "application/pdf" });
-      const url = URL.createObjectURL(blob);
+      url = URL.createObjectURL(blob);
     }
 
     setData({

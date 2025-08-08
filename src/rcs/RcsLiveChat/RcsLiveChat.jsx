@@ -71,7 +71,7 @@ const RcsLiveChat = () => {
 
   const [finalVarList, setFinalVarList] = useState([]);
 
-  const { agentData, setAgentData } = useWabaAgentContext();
+  const { agentData, setAgentData, selectedContextWaba, agentSelected } = useWabaAgentContext();
 
   async function handleFetchAgents() {
     try {
@@ -84,10 +84,17 @@ const RcsLiveChat = () => {
       toast.error("Error fetching conversations");
     }
   }
+  console.log("agentState", agentState)
 
-  useEffect(()=> {
+  useEffect(() => {
     setAgentData(agentState)
   }, [agentState])
+
+  // useEffect(() => {
+  //   setAgentState(agentData)
+  // }, [agentSelected])
+
+  console.log("agentState", agentState)
 
   async function handleFetchAllConvo() {
     if (!agentState?.id) return;
@@ -99,6 +106,7 @@ const RcsLiveChat = () => {
         search: mobileNo,
         active: userActive,
       };
+      console.log("payload", payload)
       const res = await fetchAllConvo(payload);
 
       if (!res.conversationEntityList[0]) {

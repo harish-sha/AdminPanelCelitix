@@ -164,6 +164,8 @@ export default function WhatsappLiveChat() {
     wabaSrno: "",
   });
 
+
+
   const [isSubscribe, setIsSubscribe] = useState(false);
 
   useEffect(()=> {
@@ -185,6 +187,10 @@ export default function WhatsappLiveChat() {
   useEffect(()=>{
     setWabaData(wabaState)
   }, [wabaState])
+
+  useEffect(()=>{
+    setWabaState(wabaData)
+  }, [selectedContextWaba])
 
   const insertEmoji = (emoji) => {
     if (inputRef.current) {
@@ -353,6 +359,7 @@ export default function WhatsappLiveChat() {
   ];
 
   async function handleFetchAllConvo() {
+    console.log('wabaState', wabaState)
     if (!wabaState?.selectedWaba) return;
     if (!btnOption) return;
     const userActive = btnOption == "active" ? 1 : 0;
@@ -364,9 +371,10 @@ export default function WhatsappLiveChat() {
         search: search || "",
         agentSrno: selectedAgent || "",
       };
+      console.log("data", data)
       setIsFetching(true);
       const res = await fetchAllConversations(data);
-
+      console.log("res", res)
       if (!res.conversationEntityList[0]) {
         setChatState((prev) => ({
           ...prev,
@@ -458,14 +466,14 @@ export default function WhatsappLiveChat() {
       if (intervalId) clearInterval(intervalId);
     };
     // setIsSubscribe(true);
-  }, [wabaState.selectedWaba, btnOption, isSubscribe, selectedAgent]);
+  }, [wabaState?.selectedWaba, btnOption, isSubscribe, selectedAgent]);
 
   useEffect(() => {
     setChatState((prev) => ({ ...prev, active: null, allConversations: [] }));
-  }, [wabaState.selectedWaba, btnOption]);
+  }, [wabaState?.selectedWaba, btnOption]);
 
   async function handleFetchAllTemplates() {
-    if (!wabaState.selectedWaba) {
+    if (!wabaState?.selectedWaba) {
       return;
     }
     try {

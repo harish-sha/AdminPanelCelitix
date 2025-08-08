@@ -20,7 +20,7 @@ export const Sidebar = ({ chatState, setChatState, isLoading, agentState }) => {
   }
   return (
     <div className="mt-2 pb-50 h-[100vh] max-h-full overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
-      {!agentState.id && (
+      {!agentState?.id && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -120,7 +120,7 @@ export const Sidebar = ({ chatState, setChatState, isLoading, agentState }) => {
             </motion.div>
           ))}
 
-      {agentState.id && !isLoading && chatState?.allConversations.length === 0 && (
+      {agentState?.id && !isLoading && chatState?.allConversations.length === 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
