@@ -32,6 +32,12 @@ export const updateUserbySrno = async (data) => {
     body: JSON.stringify(data),
   });
 };
+export const updateUserStatusbySrno = async (data) => {
+  return await fetchWithAuth(`/user/updateStatusBySrno?userSrno=${data.userSrno}&status=${data.status}`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
 
 // Save RCS Bot
 export const saveAgentRcs = async (data) => {

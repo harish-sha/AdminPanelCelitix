@@ -75,6 +75,7 @@ import {
   savePETMChain,
   saveServicesByUser,
   updateUserbySrno,
+  updateUserStatusbySrno,
 } from "@/apis/admin/admin";
 import {
   addSmsPricing,
@@ -1383,6 +1384,29 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     setuserReports(true);
   };
 
+  async function handleUpdateUserStatus(row) {
+    if (!row?.srno) return;
+
+    try {
+      const payload = {
+        userSrno: row?.srno,
+        status: Number(!row?.status),
+      };
+      const res = await updateUserStatusbySrno(payload);
+
+      if (!res?.status) {
+        return toast.error(res?.msg);
+      }
+      toast.success("Status updated successfully");
+
+      await fetchAllUsersDetails();
+      return;
+    } catch (e) {
+      console.log(e);
+      toast.error("Failed to fetch user details. Please try again.");
+    }
+  }
+
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     { field: "userId", headerName: "User ID", flex: 1, minWidth: 120 },
@@ -1398,14 +1422,19 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       renderCell: (params) => {
         const isActive = params.value === 1;
         return (
-          <div className="flex items-center gap-2">
+          <button
+            className="flex items-center gap-2"
+            onClick={() => {
+              handleUpdateUserStatus(params.row);
+            }}
+          >
             <span
               className={`w-3 h-3 rounded-full ${
                 isActive ? "bg-green-500" : "bg-red-500"
               }`}
             ></span>
             <span>{isActive ? "Active" : "Inactive"}</span>
-          </div>
+          </button>
         );
       },
     },
