@@ -255,23 +255,23 @@ export const Response = ({
                 <InputField
                   id="variableKey"
                   name="variableKey"
-                  label={`Variable Key ${index + 1}`}
+                  label={`Parameter-${index + 1}`}
                   value={jsonVar[index]?.paramName}
                   onChange={(e) => {
                     handleJsonVarChange(index, "paramName", e.target.value);
                   }}
-                  placeholder="Enter Variable Key"
+                  placeholder="Enter Parameter Name"
                   maxLength={"100"}
                 />
                 <InputField
                   id="varValue"
                   name="varValue"
-                  label={`Variable Value ${index + 1}`}
+                  label={`Variable-${index + 1}`}
                   value={jsonVar[index]?.varName}
                   onChange={(e) => {
                     handleJsonVarChange(index, "varName", e.target.value);
                   }}
-                  placeholder="Enter Variable Value"
+                  placeholder="Enter Variable"
                   maxLength={"100"}
                 />
                 <div className="flex justify-end mb-2">
