@@ -1349,7 +1349,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         }))
       : [];
 
-    obdRateRes &&
+    obdRateRes?.status !== 404 &&
       setVoicerows([
         {
           id: 1,
