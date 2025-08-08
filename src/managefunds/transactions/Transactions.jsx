@@ -131,18 +131,17 @@ const Transactions = () => {
 
   const rows = Array.isArray(transactionalData)
     ? transactionalData
-        .sort(
-          (a, b) =>
-            moment(b.rechargeDate, "DD-MM-YYYY").toDate() -
-            moment(a.rechargeDate, "DD-MM-YYYY").toDate()
-        )
+
         .map((item, index) => ({
           ...item,
           sn: index + 1,
           id: index + 1,
           balance: Number(item.balance).toFixed(2),
         }))
+        .reverse()
     : [];
+
+  console.log("rows", rows);
 
   const type = [
     { value: "Credit", label: "Credit" },
