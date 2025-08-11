@@ -129,76 +129,76 @@ const DayWiseSummaryTableSms = ({ id, name, data = [] }) => {
     { field: "quedate", headerName: "Que Date", flex: 1, minWidth: 100 },
     { field: "smscount", headerName: "SMS Count", flex: 1, minWidth: 100 },
     { field: "smsunits", headerName: "SMS Units", flex: 1, minWidth: 100 },
-    // { field: "pending", headerName: "Pending", flex: 1, minWidth: 90 },
-    // { field: "failed", headerName: "Failed", flex: 1, minWidth: 70 },
-    // { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 70 },
-    // { field: "sent", headerName: "Sent", flex: 1, minWidth: 60 },
-    // { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 90 },
-    // {
-    //   field: "notdelivered",
-    //   headerName: "Not delivered",
-    //   flex: 1,
-    //   minWidth: 120,
-    // },
-    { field: "pendingdr", headerName: "Pending DR", flex: 1, minWidth: 110 },
+    { field: "pending", headerName: "Pending", flex: 1, minWidth: 90 },
+    { field: "failed", headerName: "Failed", flex: 1, minWidth: 70 },
+    { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 70 },
+    { field: "sent", headerName: "Sent", flex: 1, minWidth: 60 },
+    { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 90 },
     {
-      field: "action",
-      headerName: "Action",
+      field: "notdelivered",
+      headerName: "Undelivered",
       flex: 1,
       minWidth: 120,
-      renderCell: (params) => (
-        <CustomTooltip title="Info" placement="top" arrow>
-          <span>
-            <IconButton
-              type="button"
-              ref={(el) => {
-                if (el) dropdownButtonRefs.current[params.row.id] = el;
-              }}
-              onClick={() => handleInfo(params.row)}
-              className="no-xs relative"
-            >
-              <ImInfo size={18} className="text-green-500" />
-            </IconButton>
-
-            <InfoPopover
-              anchorEl={dropdownButtonRefs.current[params.row.id]}
-              open={dropdownOpenId === params.row.id}
-              onClose={closeDropdown}
-            >
-              {clicked && Object.keys(clicked).length > 0 ? (
-                <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden">
-                  <tbody>
-                    {Object.entries(clicked)
-                    .filter(([key]) => infoFieldsToShow.includes(key))
-                    .map(([key, value], index) => (
-                      <tr
-                        key={index}
-                        className="hover:bg-gray-50 transition-colors border-b last:border-none"
-                      >
-                        <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3 text-nowrap">
-                          {additionalInfoLabels[key] || key}
-                        </td>
-                        <td className="px-4 py-2 text-gray-800">
-                          {key === "isEnabledForInsights"
-                            ? value === true || value === "true"
-                              ? "True"
-                              : "False"
-                            : value || "N/A"}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <div className="text-sm text-gray-400 italic px-2 py-2">
-                  No data
-                </div>
-              )}
-            </InfoPopover>
-          </span>
-        </CustomTooltip>
-      ),
     },
+    { field: "pendingdr", headerName: "Pending DR", flex: 1, minWidth: 110 },
+    // {
+    //   field: "action",
+    //   headerName: "Action",
+    //   flex: 1,
+    //   minWidth: 120,
+    //   renderCell: (params) => (
+    //     <CustomTooltip title="Info" placement="top" arrow>
+    //       <span>
+    //         <IconButton
+    //           type="button"
+    //           ref={(el) => {
+    //             if (el) dropdownButtonRefs.current[params.row.id] = el;
+    //           }}
+    //           onClick={() => handleInfo(params.row)}
+    //           className="no-xs relative"
+    //         >
+    //           <ImInfo size={18} className="text-green-500" />
+    //         </IconButton>
+
+    //         <InfoPopover
+    //           anchorEl={dropdownButtonRefs.current[params.row.id]}
+    //           open={dropdownOpenId === params.row.id}
+    //           onClose={closeDropdown}
+    //         >
+    //           {clicked && Object.keys(clicked).length > 0 ? (
+    //             <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden">
+    //               <tbody>
+    //                 {Object.entries(clicked)
+    //                 .filter(([key]) => infoFieldsToShow.includes(key))
+    //                 .map(([key, value], index) => (
+    //                   <tr
+    //                     key={index}
+    //                     className="hover:bg-gray-50 transition-colors border-b last:border-none"
+    //                   >
+    //                     <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3 text-nowrap">
+    //                       {additionalInfoLabels[key] || key}
+    //                     </td>
+    //                     <td className="px-4 py-2 text-gray-800">
+    //                       {key === "isEnabledForInsights"
+    //                         ? value === true || value === "true"
+    //                           ? "True"
+    //                           : "False"
+    //                         : value || "N/A"}
+    //                     </td>
+    //                   </tr>
+    //                 ))}
+    //               </tbody>
+    //             </table>
+    //           ) : (
+    //             <div className="text-sm text-gray-400 italic px-2 py-2">
+    //               No data
+    //             </div>
+    //           )}
+    //         </InfoPopover>
+    //       </span>
+    //     </CustomTooltip>
+    //   ),
+    // },
   ];
   const totalPages = Math.ceil(data.length / paginationModel.pageSize);
   const CustomFooter = () => {
