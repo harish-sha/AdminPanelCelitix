@@ -469,7 +469,7 @@ const ObdManageVoiceClips = () => {
     }
 
     selectedOption === "option2" &&
-      hasConsecutiveDuplicates(dynamicVoice.dynamicList);
+      (isError = hasConsecutiveDuplicates(dynamicVoice.dynamicList));
 
     if (isError) return;
 
