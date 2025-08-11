@@ -68,6 +68,7 @@ import { select } from "@material-tailwind/react";
 import DropdownWithSearch from "../components/DropdownWithSearch";
 import { useUser } from "@/context/auth";
 import moment from "moment";
+import { MdOutlineAddLocationAlt } from "react-icons/md";
 
 export default function WhatsappLiveChat() {
   const { user } = useUser();
@@ -125,6 +126,12 @@ export default function WhatsappLiveChat() {
 
   const [chatIndex, setChatIndex] = useState(1);
   const [chatLoading, setChatLoading] = useState(false);
+
+  const [locationData, setLocationData] = useState({
+    isLocation: false,
+    latitude: "",
+    longitude: "",
+  });
 
   function handleNextCard() {
     setCardIndex(cardIndex + 1);
@@ -330,6 +337,17 @@ export default function WhatsappLiveChat() {
       icon: <TableChartOutlinedIcon style={{ color: "#009688" }} />, // Teal
       command: () => {
         fileInputRef.current.click();
+      },
+    },
+    {
+      label: "Location",
+      // icon: <TableChartOutlinedIcon style={{ color: "#009688" }} />, // Teal
+      icon: <MdOutlineAddLocationAlt className="text-indigo-500 size-5" />,
+      command: () => {
+        setLocationData({
+          isLocation: true,
+        });
+        getLocation();
       },
     },
   ];
@@ -987,6 +1005,29 @@ export default function WhatsappLiveChat() {
     return () => mediaQuery.removeEventListener("change", handleResize);
   }, []);
 
+  const getLocation = () => {
+    try {
+      if (!navigator.geolocation) {
+        toast.error("Geolocation is not supported by your browser");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocationData({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+          });
+          // setError(null);
+        },
+        (err) => {
+          toast.error(err.message);
+        }
+      );
+    } catch (e) {
+      toast.error("Error getting location");
+    }
+  };
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
       <div
