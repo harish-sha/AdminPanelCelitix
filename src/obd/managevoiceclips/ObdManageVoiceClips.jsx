@@ -505,6 +505,7 @@ const ObdManageVoiceClips = () => {
         setIsVisible(false);
         // toast.success(res.msg);
         //  setDynamicVoice({});
+        await handlefetchAllVoiceClips()
       }
     } catch (e) {
       toast.error("Something went wrong");
