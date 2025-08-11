@@ -269,7 +269,7 @@ const ObdCampaignTable = ({
               ? "Multi Broadcasting"
               : item.campaignType === "TTS"
               ? "Talk To Speech"
-              : item.campaignType === "DB"
+              : item.campaignType === "Dynamic" ||  item.campaignType === "DB"
               ? "Dynamic Broadcasting"
               : "" || "-",
           total: item.total || "N/A",
