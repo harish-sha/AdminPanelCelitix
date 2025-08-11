@@ -145,8 +145,6 @@ const ObdCreateCampaign = () => {
     }
   }, [fileHeaders, selectedOption]);
 
-
-
   const resetForm = () => {
     // Clear campaign fields
     setCampaignName("");
@@ -157,8 +155,6 @@ const ObdCreateCampaign = () => {
     setSelectedMBFiletwo("");
     setVoiceDBClip(null);
     setVoiceVariables([]);
-
-
 
     // retry and interval
     setRetry(null);
@@ -180,12 +176,12 @@ const ObdCreateCampaign = () => {
     setSchedule(false);
     setScheduledDateTime(new Date());
     // fileInputRef && (fileInputRef.current.value = null)
-    setIsUploaded(false)
-    setIsUploading(false)
-    setColumns([])
-    setSelectedCountryName("")
-    setCountryList([])
-    setFileData([])
+    setIsUploaded(false);
+    setIsUploading(false);
+    setColumns([]);
+    setSelectedCountryName("");
+    setCountryList([]);
+    setFileData([]);
   };
 
   const fileInputRef = useRef(null);
@@ -426,8 +422,8 @@ const ObdCreateCampaign = () => {
       selectedOptionCampaign === "transactional"
         ? "1"
         : selectedOptionCampaign === "promotional"
-          ? "2"
-          : "";
+        ? "2"
+        : "";
     const retryCount = retry;
     const intervalValue = interval;
     const getCampaignType = () => {
@@ -477,13 +473,14 @@ const ObdCreateCampaign = () => {
         schedule && scheduledDateTime ? formatDateTime(scheduledDateTime) : "0",
       dynamicVoiceCallSrno: slectedDynamicVoiceFile || "",
       // dynamicValueJson: JSON.stringify(formattedObj),
-      dynamicValueJson: obdType === "dynamicbroadcast" ? JSON.stringify(formattedObj) : "",
+      dynamicValueJson:
+        obdType === "dynamicbroadcast" ? JSON.stringify(formattedObj) : "",
       voiceCallSrno:
         obdType === "simplebroadcast"
           ? slectedSBVoiceFile || ""
           : obdType === "multibroadcast"
-            ? slectedSBVoiceFile || ""
-            : "",
+          ? slectedSBVoiceFile || ""
+          : "",
       voiceCallSrno2:
         obdType === "multibroadcast" ? selectedMBFiletwo || "" : "",
     };
@@ -516,8 +513,6 @@ const ObdCreateCampaign = () => {
         setVisibledialog(false);
         toast.error(response.msg);
       }
-
-
     } catch (error) {
       console.error("Error submitting campaign:", error);
       toast.error("Error launching campaign. Please try again.");
@@ -611,11 +606,15 @@ const ObdCreateCampaign = () => {
 
       const enrichedVariables = res.data.map((item) => ({
         sequence: item.sequence,
-        variableSampleValue: item.variableSampleValue || "",
+        // variableSampleValue:
+        //   item.variableSampleValue !== "-" ? item.variableSampleValue : null,
         filePath: item.filePath,
-        fileTile: item.fileTitle
+        fileTile: item.fileTitle,
+        ...(item.variableSampleValue !== "-" && {
+          variableSampleValue: item.variableSampleValue,
+        }),
       }));
-
+      console.log("enrichedVariables", enrichedVariables);
       setVoiceVariables(enrichedVariables);
 
       const audioURL = BASE_AUDIO_URL + (res?.path || "");
@@ -719,9 +718,9 @@ const ObdCreateCampaign = () => {
                           setVoiceDBClip(null);
                           setRetry(null);
                           setInterval(null);
-                          setDynamicVariableValue("")
-                          setDynamicValueJson({})
-                          setVoiceDynamicURLPath("")
+                          setDynamicVariableValue("");
+                          setDynamicValueJson({});
+                          setVoiceDynamicURLPath("");
                           // setDynamicVoiceListData([])
                           // setSelectedDynamicVoiceFile(null)
                           // setVoiceDBClip(null)
@@ -747,7 +746,7 @@ const ObdCreateCampaign = () => {
                           label="Voice Text"
                           tooltipContent="enter voice text"
 
-                        // tooltipContent="Enter Value which you want to convert in (TTS) on select variable either convert the text dynamic"
+                          // tooltipContent="Enter Value which you want to convert in (TTS) on select variable either convert the text dynamic"
                         />
                         <div className="absolute top-7 right-0 z-10">
                           <ObdVariable
@@ -774,55 +773,59 @@ const ObdCreateCampaign = () => {
 
                     {(obdType === "simplebroadcast" ||
                       obdType === "multibroadcast") && (
-                        <div>
-                          <div className="w-full mt-4 border-2 border-dashed rounded-xl p-2 border-gray-400 shadow">
-                            <div className="">
-                              <AnimatedDropdown
-                                options={voiceListData?.map((data) => ({
-                                  value: data.srNo,
-                                  label: data.fileName,
-                                }))}
-                                value={slectedSBVoiceFile}
-                                onChange={(value) => {
-                                  setSelectedSBVoiceFile(value);
-                                  handleSelectSBVoice(value);
-                                }}
-                                placeholder="Select Voice Clip 1"
-                                id="voiceClipOne"
-                                label="Select Voice Clip 1"
-                                tooltipContent="First vocie clip"
-                              />
-                            </div>
+                      <div>
+                        <div className="w-full mt-4 border-2 border-dashed rounded-xl p-2 border-gray-400 shadow">
+                          <div className="">
+                            <AnimatedDropdown
+                              options={voiceListData?.map((data) => ({
+                                value: data.srNo,
+                                label: data.fileName,
+                              }))}
+                              value={slectedSBVoiceFile}
+                              onChange={(value) => {
+                                setSelectedSBVoiceFile(value);
+                                handleSelectSBVoice(value);
+                              }}
+                              placeholder="Select Voice Clip 1"
+                              id="voiceClipOne"
+                              label="Select Voice Clip 1"
+                              tooltipContent="First vocie clip"
+                            />
+                          </div>
+                          <div className="flex flex-col my-2">
+                            <p className="text-sm font-medium text-gray-800 my-1.5">
+                              Voice Clip Audio 1
+                            </p>
+                            <audio src={voiceSBURLPath} controls></audio>
+                          </div>
+                        </div>
+                        {obdType === "multibroadcast" && (
+                          <div className="w-full mt-4 border-2 border-dashed rounded-xl p-2 shadow border-gray-400">
+                            <AnimatedDropdown
+                              options={voiceListData?.map((data) => ({
+                                value: data.srNo,
+                                label: data.fileName,
+                              }))}
+                              value={selectedMBFiletwo}
+                              onChange={(value) => {
+                                setSelectedMBFiletwo(value);
+                                handleSelectMBVoice(value);
+                              }}
+                              placeholder="Select Voice Clip 2"
+                              id="voiceClipTwo"
+                              label="Select Voice Clip 2"
+                              tooltipContent="Second vocie clip"
+                            />
                             <div className="flex flex-col my-2">
-                              <p className="text-sm font-medium text-gray-800 my-1.5">Voice Clip Audio 1</p>
-                              <audio src={voiceSBURLPath} controls></audio>
+                              <p className="text-sm font-medium text-gray-700 my-1.5">
+                                Voice Clip Audio 2
+                              </p>
+                              <audio src={voiceMBURLPath} controls></audio>
                             </div>
                           </div>
-                          {obdType === "multibroadcast" && (
-                            <div className="w-full mt-4 border-2 border-dashed rounded-xl p-2 shadow border-gray-400">
-                              <AnimatedDropdown
-                                options={voiceListData?.map((data) => ({
-                                  value: data.srNo,
-                                  label: data.fileName,
-                                }))}
-                                value={selectedMBFiletwo}
-                                onChange={(value) => {
-                                  setSelectedMBFiletwo(value);
-                                  handleSelectMBVoice(value);
-                                }}
-                                placeholder="Select Voice Clip 2"
-                                id="voiceClipTwo"
-                                label="Select Voice Clip 2"
-                                tooltipContent="Second vocie clip"
-                              />
-                              <div className="flex flex-col my-2">
-                                <p className="text-sm font-medium text-gray-700 my-1.5">Voice Clip Audio 2</p>
-                                <audio src={voiceMBURLPath} controls></audio>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
+                        )}
+                      </div>
+                    )}
 
                     {/* {(obdType === "simplebroadcast" ||
                       obdType === "multibroadcast") && (
@@ -867,33 +870,43 @@ const ObdCreateCampaign = () => {
                               sequence are the voice clips)
                             </div>
                             {voiceVariables.map((item, index) => {
+                              console.log("item", item);
                               return (
                                 <>
                                   <div
                                     key={`variable-${item.sequence}`}
                                     className="relative mt-4"
                                   >
-                                    <InputField
-                                      id={`variable-${item.sequence}`}
-                                      name={`variable-${item.sequence}`}
-                                      label={`Sequence Variable ${item.sequence}`}
-                                      value={item.variableSampleValue}
-                                      onChange={(e) =>
-                                        handleVoiceVariableChange(
-                                          index,
-                                          e.target.value
-                                        )
-                                      }
-                                      placeholder={`Enter value for variable ${item.sequence}`}
-                                      tooltipContent={`Sequence: ${item.sequence}`}
-                                      ref={(el) => {
-                                        if (el) variableRef.current[index] = el;
-                                      }}
-                                    />
-                                    <p className="text-sm font-medium text-gray-700 my-2" >Voice Clip Sequence &nbsp;{item.sequence} - {item.fileTile}</p>
+                                    {item.variableSampleValue && (
+                                      <InputField
+                                        id={`variable-${item.sequence}`}
+                                        name={`variable-${item.sequence}`}
+                                        label={`Sequence Variable ${item.sequence}`}
+                                        value={item.variableSampleValue}
+                                        onChange={(e) =>
+                                          handleVoiceVariableChange(
+                                            index,
+                                            e.target.value
+                                          )
+                                        }
+                                        placeholder={`Enter value for variable ${item.sequence}`}
+                                        tooltipContent={`Sequence: ${item.sequence}`}
+                                        ref={(el) => {
+                                          if (el)
+                                            variableRef.current[index] = el;
+                                        }}
+                                      />
+                                    )}
+                                    <p className="text-sm font-medium text-gray-700 my-2">
+                                      Voice Clip Sequence &nbsp;{item.sequence}{" "}
+                                      - {item.fileTile}
+                                    </p>
 
                                     <div className="mt-4">
-                                      <audio src={`${BASE_AUDIO_URL}${item.filePath}`} controls></audio>
+                                      <audio
+                                        src={`${BASE_AUDIO_URL}${item.filePath}`}
+                                        controls
+                                      ></audio>
                                     </div>
 
                                     {/* Ensure this appears for every input */}
@@ -1081,8 +1094,8 @@ const ObdCreateCampaign = () => {
                   {selectedOptionCampaign === "transactional"
                     ? "Transactional" || "N/A"
                     : selectedOptionCampaign === "promotional"
-                      ? "Promotional" || "N/A"
-                      : "N/A"}
+                    ? "Promotional" || "N/A"
+                    : "N/A"}
                 </p>
                 <span className="font-semibold font-m">Campaign Name : </span>
                 <p className="">{campaignName || "N/A"}</p>
