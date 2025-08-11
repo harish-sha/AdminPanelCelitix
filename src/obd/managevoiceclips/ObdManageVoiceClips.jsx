@@ -90,6 +90,8 @@ const ObdManageVoiceClips = () => {
     ],
   });
 
+  const [currentPlayingIndex, setCurrentPlayingIndex] = useState(null);
+
   const [voiceName, setVoiceName] = useState("");
 
   const fileRef = useRef(null);
@@ -505,7 +507,7 @@ const ObdManageVoiceClips = () => {
         setIsVisible(false);
         // toast.success(res.msg);
         //  setDynamicVoice({});
-        await handlefetchAllVoiceClips()
+        await handlefetchAllVoiceClips();
       }
     } catch (e) {
       toast.error("Something went wrong");
@@ -989,7 +991,11 @@ const ObdManageVoiceClips = () => {
                 {/* <p className="text-sm font-medium mb-1">
                   {item.variableSampleValue !== "-" ? item.variableSampleValue : `Clip ${index + 1}`}
                 </p> */}
-                <MusicPlayerSlider data={item} />
+                <MusicPlayerSlider
+                  data={item}
+                  isPlaying={currentPlayingIndex === index}
+                  onPlay={() => setCurrentPlayingIndex(index)}
+                />
                 <p className="text-sm text-gray-600 mt-3">
                   {item.fileTitle || `Clip ${index + 1}`}
                 </p>
