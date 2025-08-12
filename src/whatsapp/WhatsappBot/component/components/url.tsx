@@ -197,7 +197,7 @@ export const Url = ({
           />
         </div>
         <p className="text-xs mt-2">
-          {nodesInputData[id]?.message?.length || 0}/1024
+          {nodesInputData[id]?.urlbuttonbody?.length || 0}/1024
         </p>
       </div>
 
