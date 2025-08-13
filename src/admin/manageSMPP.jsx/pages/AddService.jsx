@@ -24,15 +24,16 @@ const AddService = () => {
     numOfReceivers: null,
     senderPrefix: null,
     tpsValue: null,
-    orderQueueSize: null,
-    initialQueueSize: null,
-    triggerQueueSize: null,
-    winndowSize: null,
+    orderQueueSize: 500,
+    initialQueueSize: 500,
+    triggerQueueSize: 300,
+    winndowSize: 200,
     DataCoding: null,
-    Destination: null,
+    Destination: "ton=0;npi=0;",
     ExpiryTime: null,
-    Source: null,
+    Source: "ton=0;npi=0;",
     Version: null,
+    registeredDelivery: 1
   });
 
   const handleChangeVersionAddStatus = (event) => {
