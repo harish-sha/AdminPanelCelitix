@@ -697,8 +697,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       userSrno: String(currentUserSrno),
       rate: smsrate,
       dltRate: dltRate || "0",
-      transService: transcheck ? String(trans) : "",
-      promoService: promocheck ? String(promo) : "",
+      transService: String(trans),
+      promoService: String(promo),
     };
 
     const res = await addSmsPricing(payload);
@@ -3139,6 +3139,32 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           {/* SMS */}
           <CustomTabPanel value={value} index={2}>
             <>
+              <div className="flex gap-5">
+                <div className=" lg:w-100 md:w-100">
+                  <AnimatedDropdown
+                    id="transService"
+                    name="transService"
+                    options={transOptions}
+                    value={trans}
+                    label="Transactional Service"
+                    onChange={(e) => {
+                      setTrans(e);
+                    }}
+                  />
+                </div>
+                <div className=" lg:w-100 md:w-100">
+                  <AnimatedDropdown
+                    id="promoService"
+                    name="promoService"
+                    options={promoOption}
+                    value={promo}
+                    label="Promotional Service"
+                    onChange={(e) => {
+                      setPromo(e);
+                    }}
+                  />
+                </div>
+              </div>
               <div className="flex gap-5 items-center justify-start mt-3">
                 <div className=" lg:w-100 md:w-100">
                   <InputField
