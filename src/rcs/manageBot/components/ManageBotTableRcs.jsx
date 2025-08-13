@@ -13,6 +13,12 @@ import usePagination from "@mui/material/usePagination/usePagination";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import moment from "moment";
+import { MdOutlineDeleteForever } from "react-icons/md";
+import { Dialog } from "primereact/dialog";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import UniversalButton from "@/components/common/UniversalButton";
+import toast from "react-hot-toast";
+import { deleteRcsBot } from "@/apis/admin/admin";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -80,6 +86,10 @@ const ManageBotTableRcs = ({ id, name, data = [], onEdit }) => {
     page: 0,
     pageSize: 10,
   });
+  const [deleteDetails, setDeleteDetails] = useState({
+    isOpen: false,
+    id: null,
+  });
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -119,10 +129,30 @@ const ManageBotTableRcs = ({ id, name, data = [], onEdit }) => {
               />
             </IconButton>
           </CustomTooltip>
+          <CustomTooltip arrow title="Delete Bot" placement="top">
+            <IconButton onClick={() => onDelete(params.row)}>
+              <MdOutlineDeleteForever className="text-red-500 cursor-pointer hover:text-red-600 size-5" />
+            </IconButton>
+          </CustomTooltip>
         </>
       ),
     },
   ];
+
+  async function onDelete(row) {
+    if (!row?.srno) return;
+    setDeleteDetails({ isOpen: true, id: row?.srno, name: row?.agent_name });
+  }
+
+  async function handleDeleteBot() {
+    try {
+      if (!deleteDetails.id) return;
+      const res = await deleteRcsBot(deleteDetails.id);
+      console.log(res);
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
+  }
 
   const rows = Array.isArray(data)
     ? data.map((item, index) => ({
@@ -188,41 +218,94 @@ const ManageBotTableRcs = ({ id, name, data = [], onEdit }) => {
   };
 
   return (
-    <Paper sx={{ height: 558 }} id={id} name={name}>
-      <DataGrid
-        id={id}
-        name={name}
-        rows={rows}
-        columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[10, 20, 50]}
-        pagination
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        rowHeight={45}
-        slots={{
-          footer: CustomFooter,
-          noRowsOverlay: CustomNoRowsOverlay,
+    <>
+      <Paper sx={{ height: 558 }} id={id} name={name}>
+        <DataGrid
+          id={id}
+          name={name}
+          rows={rows}
+          columns={columns}
+          initialState={{ pagination: { paginationModel } }}
+          pageSizeOptions={[10, 20, 50]}
+          pagination
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          rowHeight={45}
+          slots={{
+            footer: CustomFooter,
+            noRowsOverlay: CustomNoRowsOverlay,
+          }}
+          onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+          disableRowSelectionOnClick
+          disableColumnResize
+          disableColumnMenu
+          sx={{
+            border: 0,
+            "& .MuiDataGrid-cell": { outline: "none !important" },
+            "& .MuiDataGrid-columnHeaders": {
+              color: "#193cb8",
+              fontSize: "14px",
+              fontWeight: "bold !important",
+            },
+            "& .MuiDataGrid-row--borderBottom": {
+              backgroundColor: "#e6f4ff !important",
+            },
+            "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
+          }}
+        />
+      </Paper>
+
+      <Dialog
+        header="Confirm Delete"
+        visible={deleteDetails.isOpen}
+        onHide={() => {
+          setDeleteDetails({ isOpen: false, id: null });
         }}
-        onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-        disableRowSelectionOnClick
-        disableColumnResize
-        disableColumnMenu
-        sx={{
-          border: 0,
-          "& .MuiDataGrid-cell": { outline: "none !important" },
-          "& .MuiDataGrid-columnHeaders": {
-            color: "#193cb8",
-            fontSize: "14px",
-            fontWeight: "bold !important",
-          },
-          "& .MuiDataGrid-row--borderBottom": {
-            backgroundColor: "#e6f4ff !important",
-          },
-          "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
-        }}
-      />
-    </Paper>
+        className="lg:w-[30rem] md:w-[40rem] w-[17rem]"
+        draggable={false}
+      >
+        <div className="flex items-center justify-center">
+          <CancelOutlinedIcon
+            sx={{ fontSize: 64, color: "ff3f3f" }}
+            size={20}
+          />
+        </div>
+        <div>
+          <div className="p-4 text-center">
+            <p className="text-[1.1rem] font-semibold text-gray-600">
+              Are you sure ?
+            </p>
+            <p>
+              Do you really want to delete{" "}
+              <span className="font-semibold text-red-500">
+                {deleteDetails?.name || ""}
+              </span>
+              ? This process cannot be undo.
+            </p>
+            <div className="flex justify-center gap-4 mt-2">
+              <UniversalButton
+                label="Cancel"
+                style={{
+                  backgroundColor: "#090909",
+                }}
+                onClick={() => {
+                  setDeleteDetails({ isOpen: false, id: null });
+                }}
+              />
+              <UniversalButton
+                label="Delete"
+                style={
+                  {
+                    // backgroundColor: "red",
+                  }
+                }
+                onClick={handleDeleteBot}
+              />
+            </div>
+          </div>
+        </div>
+      </Dialog>
+    </>
   );
 };
 

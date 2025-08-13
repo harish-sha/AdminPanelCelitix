@@ -33,10 +33,13 @@ export const updateUserbySrno = async (data) => {
   });
 };
 export const updateUserStatusbySrno = async (data) => {
-  return await fetchWithAuth(`/user/updateStatusBySrno?userSrno=${data.userSrno}&status=${data.status}`, {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
+  return await fetchWithAuth(
+    `/user/updateStatusBySrno?userSrno=${data.userSrno}&status=${data.status}`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
 };
 
 // Save RCS Bot
@@ -349,5 +352,10 @@ export const saveNotification = async (type, data) => {
   return await fetchWithAuth(`/notification/save-notification?type=${type}`, {
     method: "POST",
     body: JSON.stringify(data),
+  });
+};
+export const deleteRcsBot = async (srno) => {
+  return await fetchWithAuth(`/rcs/bot/delete-bot?srNo=${srno}`, {
+    method: "DELETE",
   });
 };
