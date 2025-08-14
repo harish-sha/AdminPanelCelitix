@@ -118,6 +118,8 @@ const ManagePlanTable = ({
     setEditData((prev) => ({
       ...prev,
       isPlanTimeout: e.target.checked ? "1" : "0",
+      fromTime: undefined,
+      toTime: undefined,
     }));
   };
 
@@ -332,6 +334,18 @@ const ManagePlanTable = ({
 
   async function handleupdatePlan(row) {
     try {
+      // editData.delete()
+      // let payload = {
+      //   ...editData
+      // }
+      // if(isChecked){
+      //   payload = {
+      //     ...payload,
+      //     isPlanTimeout: 1,
+      //     fromTime: editData?.fromTime,
+      //     toTime: editData?.toTime,
+      //   }
+      // }
       const res = await updatePlan(editData);
       if (!res?.status) {
         return toast.error("Failed to update plan");
@@ -528,7 +542,7 @@ const ManagePlanTable = ({
             </div>
           </div>
 
-          {editData.isPlanTimeout === "1" && (
+          {isChecked && (
             <>
               <div className="grid grid-cols-2 gap-4">
                 <InputField

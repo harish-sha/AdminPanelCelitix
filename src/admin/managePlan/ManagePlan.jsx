@@ -328,7 +328,7 @@ const ManagePlan = () => {
               </div>
             </div>
 
-            {createData.isPlanTimeout === "1" && (
+            {isCheckedcreate && (
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <InputField
