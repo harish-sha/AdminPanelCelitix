@@ -253,7 +253,7 @@ const Transactions = () => {
                 },
               }}
             />
-            <Tab
+            {/* <Tab
               label={
                 <span className="flex items-center gap-2">
                   <BsJournalArrowDown size={18} /> wallet Usage
@@ -270,7 +270,7 @@ const Transactions = () => {
                   borderRadius: '8px',
                 },
               }}
-            />
+            /> */}
           </Tabs>
         </div>
         <CustomTabPanel value={value} index={0} className="">

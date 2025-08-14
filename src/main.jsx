@@ -14,6 +14,8 @@ import { Provider } from "react-redux";
 import store from "./whatsapp/whatsappFlows/redux/Store.js";
 import NetworkStatusProvider from "./context/NetworkStatusProvider.jsx";
 import { WabaAgentProvider } from "./context/WabaAndAgent.jsx";
+import { ThemeProvider } from "./ApiDocs/context/ThemeContext.jsx";
+
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -25,12 +27,14 @@ createRoot(document.getElementById("root")).render(
         {/* <ErrorBoundary> */}
         <DownloadProvider>
           <WabaAgentProvider>
-            <DndProvider backend={HTML5Backend}>
-              <Provider store={store}>
-                {/* <NetworkStatusProvider></NetworkStatusProvider> */}
-                <App />
-              </Provider>
-            </DndProvider>
+            <ThemeProvider>
+              <DndProvider backend={HTML5Backend}>
+                <Provider store={store}>
+                  {/* <NetworkStatusProvider></NetworkStatusProvider> */}
+                  <App />
+                </Provider>
+              </DndProvider>
+            </ThemeProvider>
           </WabaAgentProvider>
         </DownloadProvider>
         {/* </ErrorBoundary> */}

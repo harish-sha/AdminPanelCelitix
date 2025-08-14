@@ -2000,7 +2000,7 @@ const SmsReports = () => {
             />
           )}
           <UniversalButton
-            label={isFetching ? "Deleting..." : "Delete"}
+            label={isFetching ? "Confirming..." : "Confirm"}
             style={{}}
             onClick={() => handleCancelConfirm(currentRow.srno)}
             disabled={isFetching}

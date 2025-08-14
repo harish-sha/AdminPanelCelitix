@@ -29,6 +29,7 @@ import DropdownMenuPortalCampaign from "@/utils/DropdownMenuCampaign.jsx";
 import InfoPopover from "../../../components/common/InfoPopover.jsx";
 // import CampaignSummaryUI from "./CampaignSummaryUI.jsx";
 import toast from "react-hot-toast";
+import moment from "moment";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -100,13 +101,13 @@ const ManageScheduleCampaignSmsTable = ({ id, name, data = [], onCancel }) => {
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "sentTime", headerName: "Sent Time", flex: 1, minWidth: 120 },
     {
       field: "campaignName",
       headerName: "Campaign Name",
       flex: 1,
       minWidth: 120,
     },
+    { field: "queTime", headerName: "Que Time", flex: 1, minWidth: 120 },
     {
       field: "campaignDate",
       headerName: "Campaign Date",
@@ -153,11 +154,11 @@ const ManageScheduleCampaignSmsTable = ({ id, name, data = [], onCancel }) => {
       id: index + 1,
       sn: index + 1,
       srno: item.srno,
-      sentTime: item?.sentTime?.split(" ")[1] || "N/A",
+      queTime: moment(item?.sentTime).format("DD-MM-YY hh:mm:ss A") || "N/A",
       campaignName: item.campaignName || "N/A",
-      campaignDate: item.campaignDate || "N/A",
+      campaignDate: moment(item.campaignDate).format("DD-MM-YY"),
       count: item.count || "N/A",
-      processFlag: item.processFlag || "N/A",
+      processFlag: "Scheduled",
     }))
     : [];
 

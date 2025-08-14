@@ -251,9 +251,9 @@ const WhatsappManageCampaign = () => {
     }));
   };
 
-  const handlecampaignDialogSubmithBtn = () => {};
+  const handlecampaignDialogSubmithBtn = () => { };
 
-  const handleCustomDialogSubmithBtn = () => {};
+  const handleCustomDialogSubmithBtn = () => { };
 
   //Export Download Reports end
 
@@ -448,7 +448,7 @@ const WhatsappManageCampaign = () => {
     setIsFetching(true);
     const formattedFromDateLogs = selectedDateLogs
       ? // ? new Date(selectedDateLogs).toLocaleDateString("en-GB")
-        moment(selectedDateLogs).format("YYYY-MM-DD")
+      moment(selectedDateLogs).format("YYYY-MM-DD")
       : new Date().toLocaleDateString("en-GB");
 
     // currently log data mobile no is hardcoded later fetch accoding to the login as user or admin
@@ -1444,7 +1444,7 @@ const WhatsappManageCampaign = () => {
                     name="whatsappManageCampaignTable"
                     data={scheduleData}
                     onCancel={handleCancel}
-                    // fromDate={selectedDate}
+                  // fromDate={selectedDate}
                   />
                 </div>
               )}

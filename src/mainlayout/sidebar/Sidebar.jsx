@@ -109,6 +109,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     }
   }, [location.pathname]);
 
+
+
   const menuItems = [
     {
       id: "",
@@ -356,7 +358,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       icon: <IoWalletOutline />,
       label: "Manage Funds",
       type: "dropdown",
-      links: [{ to: "/recharge", label: "Recharge" }],
+      links: [
+        // { to: "/selfrecharge", label: "Recharge" },
+        { to: "/transactions", label: "Transaction History" }
+
+      ],
       roles: ["ADMIN"],
     },
     {
@@ -407,15 +413,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       to: "/workflow",
       roles: ["ADMIN"],
     },
-    {
-      id: "",
-      name: "recharge",
-      icon: <AssuredWorkloadOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
-      label: "Recharge",
-      type: "single",
-      to: "/selfrecharge",
-      roles: ["ADMIN"],
-    },
+    // {
+    //   id: "",
+    //   name: "recharge",
+    //   icon: <AssuredWorkloadOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
+    //   label: "Recharge",
+    //   type: "single",
+    //   to: "/selfrecharge",
+    //   roles: ["ADMIN"],
+    // },
     // {
     //   id: "",
     //   name: "Wishmanagement",
@@ -440,7 +446,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     //   icon: <DescriptionOutlinedIcon fontSize="20" />,
     //   label: "API Docs",
     //   type: "single",
-    //   onClick: () => navigate("/docs"),
+    //   onClick: () => navigate("/docs/quickstart"),
     //   roles: ["ADMIN"],
     // },
     // {
@@ -489,6 +495,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       "Managecontacts",
       "Workflow",
       "chatManagement",
+      "managefunds",
     ];
 
     // menuItems.forEach((item) => {

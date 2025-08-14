@@ -41,7 +41,7 @@ export const InputData = ({
 
   const [showFilter, setShowFilter] = useState(false);
   const panelRef = useRef(null);
-  
+
   useEffect(() => {
     function handleClickOutside(e) {
       if (panelRef.current && !panelRef.current.contains(e.target)) {
@@ -150,26 +150,31 @@ export const InputData = ({
       <div className="flex flex-col gap-2">
         <div className="relative">
           {/* Toggle Button */}
-          {!isOpen ? (
-            <button
-              onClick={() => setIsOpen(true)}
-              className="absolute -left-3 top-4 transform -translate-y-1/2 z-99 text-3xl text-gray-700 hover:text-blue-500 animate-pulse "
-            >
-              <FaChevronCircleRight className="text-2xl" />
-            </button>
-          ) : (
-            <button
-              onClick={() => setIsOpen(false)}
-              className="absolute -left-3 top-4 transform -translate-y-1/2 z-50 text-3xl text-gray-700 hover:text-blue-500 animate-pulse"
-            >
-              <FaChevronCircleLeft className="text-2xl" />
-            </button>
+
+          {user.role == "AGENT" && (
+            <>
+              {!isOpen ? (
+                <button
+                  onClick={() => setIsOpen(true)}
+                  className="absolute -left-3 top-4 transform -translate-y-1/2 text-3xl text-gray-700 hover:text-blue-500 animate-pulse "
+                >
+                  <FaChevronCircleRight className="text-2xl" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="absolute -left-3 top-4 transform -translate-y-1/2 z-50 text-3xl text-gray-700 hover:text-blue-500 animate-pulse"
+                >
+                  <FaChevronCircleLeft className="text-2xl" />
+                </button>
+              )}
+            </>
           )}
           {/* Sliding Panel */}
           <div
             className={`absolute top-0 -left-8 w-full md:w-88 shadow-lg z-40 transform transition-transform duration-300 md:ml-4 ${isOpen ? "translate-x-0 left-0" : "-translate-x-full"
               }`}
-            >
+          >
             <AnimatedDropdown
               id="createSelectWaba"
               name="createSelectWaba"
@@ -249,7 +254,6 @@ export const InputData = ({
                   </button>
                 )}
                 <CiMenuKebab />
-
                 {showFilter && (
                   <div
                     ref={panelRef}

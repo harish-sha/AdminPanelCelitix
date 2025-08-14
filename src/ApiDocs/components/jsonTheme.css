@@ -1,0 +1,39 @@
+/* jsonTheme.css */
+
+.react-json-pretty {
+    background: transparent !important;
+    font-family: Menlo, Monaco, Consolas, monospace;
+    font-size: 14px;
+    line-height: 24px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    text-align: left;
+    overflow-x: auto;
+    color: #f8fafc 
+  }
+  
+  .react-json-pretty .__json-key__ {
+    color: #ff6b81; /* red-pink for keys */
+  }
+  
+  .react-json-pretty .__json-value__ {
+    color: #ffa500; /* orange for values */
+  }
+  
+  .react-json-pretty .__json-string__ {
+    color: #ffa500; /* orange for string values */
+  }
+  
+  .react-json-pretty .__json-boolean__,
+  .react-json-pretty .__json-number__ {
+    color: #ffa500; /* orange for numbers and booleans */
+  }
+  
+  .react-json-pretty .__json-null__ {
+    color: #ffa500; /* orange for null */
+  }
+  
+  .react-json-pretty .brace,
+.react-json-pretty .comma {
+  color: #fbbf24 !important; /* amber-400 */
+}

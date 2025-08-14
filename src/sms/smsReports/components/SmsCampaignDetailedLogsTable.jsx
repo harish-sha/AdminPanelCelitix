@@ -188,25 +188,36 @@ const SmsCampaignDetailedLogsTable = ({
       ),
     },
     {
-      field: "account_usage_type_id",
-      headerName: "Account Usage Type",
+      field: "actual_status",
+      headerName: "Delivery Status",
       flex: 0,
-      minWidth: 240,
-      renderCell: (params) => {
-        const usageTypes = {
-          1: "Transactional",
-          2: "Promotional",
-          3: "International",
-        };
-        return (
-          <div
-            style={{ display: "flex", alignItems: "center", height: "100%" }}
-          >
-            {usageTypes[params.value] || "Unknown"}
-          </div>
-        );
-      },
+      width: 140,
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          {params.value}
+        </div>
+      ),
     },
+    // {
+    //   field: "account_usage_type_id",
+    //   headerName: "Account Usage Type",
+    //   flex: 0,
+    //   minWidth: 240,
+    //   renderCell: (params) => {
+    //     const usageTypes = {
+    //       1: "Transactional",
+    //       2: "Promotional",
+    //       3: "International",
+    //     };
+    //     return (
+    //       <div
+    //         style={{ display: "flex", alignItems: "center", height: "100%" }}
+    //       >
+    //         {usageTypes[params.value] || "Unknown"}
+    //       </div>
+    //     );
+    //   },
+    // },
     {
       field: "smsunit",
       headerName: "SMS Unit",
@@ -233,9 +244,9 @@ const SmsCampaignDetailedLogsTable = ({
       field: "action",
       headerName: "Action",
       flex: 0,
-      width: 100,                    
+      width: 100,
       renderCell: (params) => (
-        <>
+        <div className="flex items-center justify-start h-full">
           <CustomTooltip title="View Campaign" placement="top" arrow>
             <IconButton
               className="text-xs"
@@ -265,21 +276,30 @@ const SmsCampaignDetailedLogsTable = ({
                     { label: "Circle Srno", key: "circle_srno" },
                     { label: "source", key: "source" },
                     { label: "PE ID", key: "PE_ID" },
+                    { label: "Template ID", key: "template_id" },
+                    { label: "Description", key: "description" },
                     { label: "Unicode", key: "isunicode" },
                     { label: "Character Length", key: "actual_sms_length" },
-                    { label: "Actual Status", key: "actual_status" },
+                    { label: "Country", key: "countrysrno" },
+                    // { label: "Actual Status", key: "actual_status" },
+                    { label: "Service Type", key: "account_usage_type_id" },
                   ].map(({ label, key }) => (
                     <React.Fragment key={key}>
                       <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2 text-nowrap">
                         {label}
                       </div>
                       <div className="text-right font-semibold text-gray-800 border-b border-gray-200 pb-2 text-nowrap">
-
                         {key === "isunicode"
                           ? data[params.row.id][key] === "0"
-                            ? "English"
-                            : "Unicode"
-                          : data[params.row.id][key] ?? "N/A"}
+                            ? "No"
+                            : "Yes"
+                          : key === "account_usage_type_id"
+                            ? ({
+                              1: "Transactional",
+                              2: "Promotional",
+                              3: "International",
+                            }[data[params.row.id][key]] ?? "N/A")
+                            : data[params.row.id][key] ?? "N/A"}
                       </div>
                     </React.Fragment>
                   ))}
@@ -289,7 +309,7 @@ const SmsCampaignDetailedLogsTable = ({
               <div className="text-sm text-gray-500">No Data Available</div>
             )}
           </InfoPopover>
-        </>
+        </div>
       ),
     },
   ];

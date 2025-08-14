@@ -263,7 +263,16 @@ const ObdCampaignTable = ({
                 id: item.campaignSrno,
                 sn: currentPageIndex * pageSize + (index + 1),
                 campaignName: item.campaignName || "N/A",
-                campaignType: item.campaignType || "N/A",
+                campaignType:
+                    item.campaignType === "SB"
+                        ? "Simple Broadcasting"
+                        : item.campaignType === "MB"
+                            ? "Multi Broadcasting"
+                            : item.campaignType === "TTS"
+                                ? "Text To Speech"
+                                : item.campaignType === "Dynamic" || item.campaignType === "DB"
+                                    ? "Dynamic Broadcasting"
+                                    : "" || "-",
                 total: item.total || "N/A",
                 voiceType:
                     item.voiceType === 1

@@ -614,6 +614,28 @@ const DeliveryreportRcs = () => {
                 </>
               )} */}
 
+              <div className="w-full sm:w-56">
+                <AnimatedDropdown
+                  id="nameSearchType"
+                  name="nameSearchType"
+                  label="Search Type"
+                  tooltipContent="Select Search Type"
+                  tooltipPlacement="right"
+                  options={[
+                    { value: 0, label: "Custom" },
+                    { value: 1, label: "Monthly" },
+                  ]}
+                  value={summaryData.isMonthWise}
+                  onChange={(e) => {
+                    setSummaryData({
+                      ...summaryData,
+                      isMonthWise: e,
+                    });
+                  }}
+                  placeholder="Search Type"
+                />
+              </div>
+
               {summaryData.isMonthWise === 1 ? (
                 <>
                   {/* Month Dropdown */}
@@ -737,27 +759,7 @@ const DeliveryreportRcs = () => {
                   Month Wise
                 </label>
               </div> */}
-              <div className="w-full sm:w-56">
-                <AnimatedDropdown
-                  id="nameSearchType"
-                  name="nameSearchType"
-                  label="Search Type"
-                  tooltipContent="Select Search Type"
-                  tooltipPlacement="right"
-                  options={[
-                    { value: 0, label: "Custom" },
-                    { value: 1, label: "Monthly" },
-                  ]}
-                  value={summaryData.isMonthWise}
-                  onChange={(e) => {
-                    setSummaryData({
-                      ...summaryData,
-                      isMonthWise: e,
-                    });
-                  }}
-                  placeholder="Search Type"
-                />
-              </div>
+
               <div className="w-full sm:w-56">
                 <UniversalButton
                   label={isFetching ? "Showing..." : "Show"}

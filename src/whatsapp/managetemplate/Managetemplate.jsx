@@ -410,6 +410,7 @@ const ManageTemplate = () => {
       toast.error("Please select a WABA account to sync templates.");
       return;
     }
+    setIsFetching(true);
     try {
       const res = await syncStatus(syncWabaId);
       toast(
@@ -418,6 +419,8 @@ const ManageTemplate = () => {
       setSyncStatusVisible(false);
     } catch (e) {
       toast.error("Failed to sync template.");
+    } finally {
+      setIsFetching(false);
     }
   };
 
@@ -849,32 +852,38 @@ const ManageTemplate = () => {
         header="Sync Templates"
         visible={syncStatusVisible}
         onHide={() => setSyncStatusVisible(false)}
-        className="w-1/3"
+        className="w-[30rem]"
         draggable={false}
       >
-        <div className="flex flex-col gap-4">
-          <AnimatedDropdown
-            label="Sync Waba Account"
-            id="syncWabaAccount"
-            name="syncWabaAccount"
-            options={wabaList.map((waba) => ({
-              value: waba.wabaSrno,
-              label: waba.name,
-            }))}
-            value={syncWabaId}
-            onChange={(e) => {
-              setSyncWabaId(e);
-            }}
-          />
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-full" >
+            <AnimatedDropdown
+              label="Sync Waba Account"
+              id="syncWabaAccount"
+              name="syncWabaAccount"
+              options={wabaList.map((waba) => ({
+                value: waba.wabaSrno,
+                label: waba.name,
+              }))}
+              value={syncWabaId}
+              onChange={(e) => {
+                setSyncWabaId(e);
+              }}
+            />
+          </div>
 
-          <UniversalButton
-            id="syncTemplates"
-            name="syncTemplates"
-            label="Sync"
-            // icon={<IoSearch />}
-            onClick={handleSyncTemplate}
-            variant="primary"
-          />
+          <div className="w-max" >
+            <UniversalButton
+              id="syncTemplates"
+              name="syncTemplates"
+              label={isFetching ? "Syncing..." : "Sync"}
+              // icon={<IoSearch />}
+              onClick={handleSyncTemplate}
+              variant="primary"
+              disabled={isFetching}
+              icon={<SyncOutlinedIcon fontSize="small" />}
+            />
+          </div>
         </div>
       </Dialog>
     </div>

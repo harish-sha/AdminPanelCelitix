@@ -136,9 +136,9 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
           }}
         />
         <label className="hamburger" htmlFor="toggle">
-          <div className="bar"></div>
-          <div className="bar"></div>
-          <div className="bar"></div>
+          <div className="bar bg-black"></div>
+          <div className="bar bg-black"></div>
+          <div className="bar bg-black"></div>
         </label>
 
         {/* </button> */}
@@ -354,11 +354,11 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                     icon: <IpAddress sx={{ fontSize: 26 }} />,
                     action: handleLoginDetails,
                   },
-                  {
-                    text: "Transaction History",
-                    icon: <HistoryIcon />,
-                    action: handleTransactionHistory,
-                  },
+                  // {
+                  //   text: "Transaction History",
+                  //   icon: <HistoryIcon />,
+                  //   action: handleTransactionHistory,
+                  // },
                   {
                     text: "Settings",
                     icon: <SettingsIcon />,

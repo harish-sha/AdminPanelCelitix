@@ -69,6 +69,7 @@ import DropdownWithSearch from "../components/DropdownWithSearch";
 import { useUser } from "@/context/auth";
 import moment from "moment";
 import { useWabaAgentContext } from "@/context/WabaAndAgent.jsx"
+import { MdOutlineAddLocationAlt } from "react-icons/md";
 
 export default function WhatsappLiveChat() {
   const { user } = useUser();
@@ -126,6 +127,12 @@ export default function WhatsappLiveChat() {
 
   const [chatIndex, setChatIndex] = useState(1);
   const [chatLoading, setChatLoading] = useState(false);
+
+  const [locationData, setLocationData] = useState({
+    isLocation: false,
+    latitude: "",
+    longitude: "",
+  });
   const {
     wabaData,
     setWabaData,
@@ -168,9 +175,9 @@ export default function WhatsappLiveChat() {
 
   const [isSubscribe, setIsSubscribe] = useState(false);
 
-  useEffect(()=> {
+  useEffect(() => {
     setSelectedWaba(selectedContextWaba)
-  },[selectedContextWaba])
+  }, [selectedContextWaba])
 
   async function fetchWaba() {
     const res = await getWabaList();
@@ -184,11 +191,11 @@ export default function WhatsappLiveChat() {
     fetchWaba();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     setWabaData(wabaState)
   }, [wabaState])
 
-  useEffect(()=>{
+  useEffect(() => {
     setWabaState(wabaData)
   }, [selectedContextWaba])
 
@@ -354,6 +361,17 @@ export default function WhatsappLiveChat() {
       icon: <TableChartOutlinedIcon style={{ color: "#009688" }} />, // Teal
       command: () => {
         fileInputRef.current.click();
+      },
+    },
+    {
+      label: "Location",
+      // icon: <TableChartOutlinedIcon style={{ color: "#009688" }} />, // Teal
+      icon: <MdOutlineAddLocationAlt className="text-indigo-500 size-5" />,
+      command: () => {
+        setLocationData({
+          isLocation: true,
+        });
+        getLocation();
       },
     },
   ];
@@ -1013,6 +1031,31 @@ export default function WhatsappLiveChat() {
     // Cleanup
     return () => mediaQuery.removeEventListener("change", handleResize);
   }, []);
+
+
+  const getLocation = () => {
+    try {
+      if (!navigator.geolocation) {
+        toast.error("Geolocation is not supported by your browser");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocationData({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+          });
+          // setError(null);
+        },
+        (err) => {
+          toast.error(err.message);
+        }
+      );
+    } catch (e) {
+      toast.error("Error getting location");
+    }
+  };
 
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
