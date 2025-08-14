@@ -169,12 +169,11 @@ const AddUser = () => {
   async function handleGetPincodeData(pincode) {
     if (!pincode) return;
     try {
-      setInterval(async () => {
-        const res = await getPincodeData(pincode);
-        setCountry("India");
-        setState(res.stateName);
-        setCity(res.district);
-      }, 1000);
+      const res = await getPincodeData(pincode);
+      if(!res?.stateName) return;
+      setCountry("India");
+      setState(res.stateName);
+      setCity(res.district);
     } catch (e) {
       toast.error("Error in Fetching Pincode Data");
     }
@@ -259,7 +258,7 @@ const AddUser = () => {
           value={companyName}
           onChange={(e) => setCompanyName(e.target.value)}
         />
-         <InputField
+        <InputField
           label="Pincode"
           id="pincode"
           name="pincode"
@@ -310,7 +309,6 @@ const AddUser = () => {
           value={zipCode}
           onChange={(e) => setZipCode(e.target.value)}
         /> */}
-       
       </div>
 
       <h2 className="mt-6 mb-4 text-lg font-semibold">Account Details:</h2>

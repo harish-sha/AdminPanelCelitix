@@ -361,6 +361,6 @@ export const deleteRcsBot = async (srno) => {
 };
 export const getPincodeData = async (pincode) => {
   return await fetchWithAuth(`/getPincodeData?pincode=${pincode}`, {
-    method: "DELETE",
+    method: "GET",
   });
 };
