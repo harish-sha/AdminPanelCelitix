@@ -149,10 +149,10 @@ const AddOperator = ({ id, name }) => {
   };
 
   async function handleFetchOpertorList() {
+    if (!searchCountry) return;
     try {
-      const res = await getOperatorList();
+      const res = await getOperatorList(searchCountry);
       const countryList = await getCountryList();
-      setCountryList(countryList);
 
       const countryMap = new Map(
         countryList.map((country) => [country.srNo, country.countryName])
@@ -177,8 +177,17 @@ const AddOperator = ({ id, name }) => {
     }
   }
 
+  async function handlefetchCountryList() {
+    try {
+      const countryList = await getCountryList();
+      setCountryList(countryList);
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
+  }
+
   useEffect(() => {
-    handleFetchOpertorList();
+    handlefetchCountryList();
   }, []);
 
   const rows = Array.isArray(operatorList)
