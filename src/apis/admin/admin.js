@@ -315,9 +315,9 @@ export const liveMonitoringRCSStatus = async () => {
     method: "GET",
   });
 };
-export const liveMonitoringSendingService = async () => {
+export const liveMonitoringSendingService = async (type) => {
   return await fetchWithAuth(
-    `/liveMonitoring/sending-service-data?type=Sending Current Progress`,
+    `/liveMonitoring/sending-service-data?type=${type}`,
     {
       method: "GET",
     }

@@ -22,7 +22,7 @@ const GraphMain = () => {
   const [rcsLiveData, setRcsLiveData] = React.useState([]);
   const [rcsServiceData, setRcsServiceData] = React.useState([]);
   const [whatsappLiveData, setwhatsappLiveData] = React.useState([]);
-  const [sendingServiceData, setsendingServiceData] = React.useState([]);
+  const [sendingServiceData, setsendingServiceData] = React.useState({});
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -67,14 +67,22 @@ const GraphMain = () => {
       toast.error("Something Went Wrong!");
     }
   }
-  async function handleliveMonitoringSendingService() {
+  async function handleliveMonitoringSendingService(type) {
     try {
-      const res = await liveMonitoringSendingService();
+      const res = await liveMonitoringSendingService(type);
       console.log("res-SendingService", res);
       if (!res?.success) {
         return toast.error(res?.message);
       }
-      setsendingServiceData(res?.data);
+      const saveData = {
+        [type]: res?.data,
+      };
+      setsendingServiceData((prev) => {
+        return {
+          ...prev,
+          ...saveData,
+        };
+      });
     } catch (e) {
       console.log(e);
       toast.error("Something Went Wrong!");
@@ -87,7 +95,28 @@ const GraphMain = () => {
     handleliveMonitoringWhatsapp();
     handleliveMonitoringRCS();
     handleliveMonitoringRCSStatus();
-    handleliveMonitoringSendingService();
+    handleliveMonitoringSendingService("Sending Physical Status");
+    handleliveMonitoringSendingService("Offered Physical Status");
+    handleliveMonitoringSendingService("Sending Current Progress");
+    handleliveMonitoringSendingService("Offered Current Progress");
+  }, []);
+
+  React.useEffect(() => {
+    let interval = null;
+
+    interval = setInterval(() => {
+      handleliveMonitoringWhatsapp();
+      handleliveMonitoringRCS();
+      handleliveMonitoringRCSStatus();
+      handleliveMonitoringSendingService("Sending Physical Status");
+      handleliveMonitoringSendingService("Offered Physical Status");
+      handleliveMonitoringSendingService("Sending Current Progress");
+      handleliveMonitoringSendingService("Offered Current Progress");
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
   return (
     <Box
