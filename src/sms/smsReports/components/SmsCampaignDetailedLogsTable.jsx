@@ -9,6 +9,8 @@ import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
 import { useNavigate } from "react-router-dom";
 import { ImInfo } from "react-icons/im";
 import InfoPopover from "@/components/common/InfoPopover.jsx";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 const CustomPagination = ({
   totalPages,
@@ -71,30 +73,23 @@ const CustomPagination = ({
   );
 };
 
-const infoFieldsToShow = [
-  "pending",
-  "failed",
-  "blocked",
-  "sent",
-  "delivered",
-  "not_delivered",
-];
-
 const SmsCampaignDetailedLogsTable = ({
   id,
   name,
   data = [],
   handlePreviosDayDetailDisplay,
 }) => {
-  console.log("data", data);
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
   });
 
+  console.log("data", data)
   const dropdownButtonRefs = useRef({});
+
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
+
   const [clicked, setClicked] = useState({});
   const additionalInfoLabels = {
     // Example mapping: 'queuedate': 'Queue Date'
@@ -135,18 +130,18 @@ const SmsCampaignDetailedLogsTable = ({
       field: "sn",
       headerName: "S.No",
       flex: 0,
-      minWidth: 50,
-      renderCell: (params) => (
-        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
-          {params.value}
-        </div>
-      ),
+      width: 80,
+      // renderCell: (params) => (
+      //   <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+      //     {params.value}
+      //   </div>
+      // ),
     },
     {
       field: "mobile_no",
       headerName: "Mobile No.",
-      flex: 1,
-      minWidth: 120,
+      flex: 0,
+      minWidth: 160,
       renderCell: (params) => (
         <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
           {params.value}
@@ -156,8 +151,8 @@ const SmsCampaignDetailedLogsTable = ({
     {
       field: "que_time",
       headerName: "Sent Time",
-      flex: 1,
-      minWidth: 120,
+      flex: 0,
+      width: 200,
       renderCell: (params) => (
         <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
           {params.value}
@@ -168,7 +163,7 @@ const SmsCampaignDetailedLogsTable = ({
       field: "message",
       headerName: "Message",
       flex: 1,
-      minWidth: 120,
+      minWidth: 220,
       renderCell: (params) => (
         <div
           style={{
@@ -184,8 +179,8 @@ const SmsCampaignDetailedLogsTable = ({
     {
       field: "status",
       headerName: "Status",
-      flex: 1,
-      minWidth: 90,
+      flex: 0,
+      width: 140,
       renderCell: (params) => (
         <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
           {params.value}
@@ -193,30 +188,41 @@ const SmsCampaignDetailedLogsTable = ({
       ),
     },
     {
-      field: "account_usage_type_id",
-      headerName: "Account Usage Type",
+      field: "actual_status",
+      headerName: "Delivery Status",
       flex: 0,
-      minWidth: 240,
-      renderCell: (params) => {
-        const usageTypes = {
-          1: "Transactional",
-          2: "Promotional",
-          3: "International",
-        };
-        return (
-          <div
-            style={{ display: "flex", alignItems: "center", height: "100%" }}
-          >
-            {usageTypes[params.value] || "Unknown"}
-          </div>
-        );
-      },
+      width: 140,
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          {params.value}
+        </div>
+      ),
     },
+    // {
+    //   field: "account_usage_type_id",
+    //   headerName: "Account Usage Type",
+    //   flex: 0,
+    //   minWidth: 240,
+    //   renderCell: (params) => {
+    //     const usageTypes = {
+    //       1: "Transactional",
+    //       2: "Promotional",
+    //       3: "International",
+    //     };
+    //     return (
+    //       <div
+    //         style={{ display: "flex", alignItems: "center", height: "100%" }}
+    //       >
+    //         {usageTypes[params.value] || "Unknown"}
+    //       </div>
+    //     );
+    //   },
+    // },
     {
       field: "smsunit",
-      headerName: "Sms Unit",
-      flex: 1,
-      minWidth: 60,
+      headerName: "SMS Unit",
+      flex: 0,
+      width: 100,
       renderCell: (params) => (
         <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
           {params.value}
@@ -225,9 +231,9 @@ const SmsCampaignDetailedLogsTable = ({
     },
     {
       field: "senderid",
-      headerName: "Sender Id",        
-      flex: 1,
-      minWidth: 90,
+      headerName: "Sender Id",
+      flex: 0,
+      width: 150,
       renderCell: (params) => (
         <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
           {params.value}
@@ -238,9 +244,9 @@ const SmsCampaignDetailedLogsTable = ({
       field: "action",
       headerName: "Action",
       flex: 0,
-      width: 100,                   
+      width: 100,
       renderCell: (params) => (
-        <>
+        <div className="flex items-center justify-start h-full">
           <CustomTooltip title="View Campaign" placement="top" arrow>
             <IconButton
               className="text-xs"
@@ -270,21 +276,30 @@ const SmsCampaignDetailedLogsTable = ({
                     { label: "Circle Srno", key: "circle_srno" },
                     { label: "source", key: "source" },
                     { label: "PE ID", key: "PE_ID" },
+                    { label: "Template ID", key: "template_id" },
+                    { label: "Description", key: "description" },
                     { label: "Unicode", key: "isunicode" },
                     { label: "Character Length", key: "actual_sms_length" },
-                    { label: "Actual Status", key: "actual_status" },
+                    { label: "Country", key: "countrysrno" },
+                    // { label: "Actual Status", key: "actual_status" },
+                    { label: "Service Type", key: "account_usage_type_id" },
                   ].map(({ label, key }) => (
                     <React.Fragment key={key}>
                       <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2 text-nowrap">
                         {label}
                       </div>
                       <div className="text-right font-semibold text-gray-800 border-b border-gray-200 pb-2 text-nowrap">
-
                         {key === "isunicode"
                           ? data[params.row.id][key] === "0"
-                            ? "English"
-                            : "Unicode"
-                          : data[params.row.id][key] ?? "N/A"}
+                            ? "No"
+                            : "Yes"
+                          : key === "account_usage_type_id"
+                            ? ({
+                              1: "Transactional",
+                              2: "Promotional",
+                              3: "International",
+                            }[data[params.row.id][key]] ?? "N/A")
+                            : data[params.row.id][key] ?? "N/A"}
                       </div>
                     </React.Fragment>
                   ))}
@@ -294,7 +309,7 @@ const SmsCampaignDetailedLogsTable = ({
               <div className="text-sm text-gray-500">No Data Available</div>
             )}
           </InfoPopover>
-        </>
+        </div>
       ),
     },
   ];

@@ -68,6 +68,8 @@ import { select } from "@material-tailwind/react";
 import DropdownWithSearch from "../components/DropdownWithSearch";
 import { useUser } from "@/context/auth";
 import moment from "moment";
+import { useWabaAgentContext } from "@/context/WabaAndAgent.jsx"
+import { MdOutlineAddLocationAlt } from "react-icons/md";
 
 export default function WhatsappLiveChat() {
   const { user } = useUser();
@@ -86,6 +88,7 @@ export default function WhatsappLiveChat() {
   const [input, setInput] = useState("");
   const [waba, setWaba] = useState([]);
   const [selectedWaba, setSelectedWaba] = useState("");
+  console.log("selectedWaba", selectedWaba)
   const [btnOption, setBtnOption] = useState("active");
   const [search, setSearch] = useState("");
 
@@ -125,6 +128,20 @@ export default function WhatsappLiveChat() {
   const [chatIndex, setChatIndex] = useState(1);
   const [chatLoading, setChatLoading] = useState(false);
 
+  const [locationData, setLocationData] = useState({
+    isLocation: false,
+    latitude: "",
+    longitude: "",
+  });
+  const {
+    wabaData,
+    setWabaData,
+    chatData,
+    setChatData,
+    selectedContextWaba,
+    setSelectedContextWaba,
+  } = useWabaAgentContext();
+
   function handleNextCard() {
     setCardIndex(cardIndex + 1);
   }
@@ -154,7 +171,13 @@ export default function WhatsappLiveChat() {
     wabaSrno: "",
   });
 
+
+
   const [isSubscribe, setIsSubscribe] = useState(false);
+
+  useEffect(() => {
+    setSelectedWaba(selectedContextWaba)
+  }, [selectedContextWaba])
 
   async function fetchWaba() {
     const res = await getWabaList();
@@ -167,6 +190,15 @@ export default function WhatsappLiveChat() {
   useEffect(() => {
     fetchWaba();
   }, []);
+
+  useEffect(() => {
+    setWabaData(wabaState)
+  }, [wabaState])
+
+  useEffect(() => {
+    setWabaState(wabaData)
+  }, [selectedContextWaba])
+
   const insertEmoji = (emoji) => {
     if (inputRef.current) {
       const inputref = inputRef.current;
@@ -331,9 +363,21 @@ export default function WhatsappLiveChat() {
         fileInputRef.current.click();
       },
     },
+    {
+      label: "Location",
+      // icon: <TableChartOutlinedIcon style={{ color: "#009688" }} />, // Teal
+      icon: <MdOutlineAddLocationAlt className="text-indigo-500 size-5" />,
+      command: () => {
+        setLocationData({
+          isLocation: true,
+        });
+        getLocation();
+      },
+    },
   ];
 
   async function handleFetchAllConvo() {
+    console.log('wabaState', wabaState)
     if (!wabaState?.selectedWaba) return;
     if (!btnOption) return;
     const userActive = btnOption == "active" ? 1 : 0;
@@ -345,9 +389,10 @@ export default function WhatsappLiveChat() {
         search: search || "",
         agentSrno: selectedAgent || "",
       };
+      console.log("data", data)
       setIsFetching(true);
       const res = await fetchAllConversations(data);
-
+      console.log("res", res)
       if (!res.conversationEntityList[0]) {
         setChatState((prev) => ({
           ...prev,
@@ -439,14 +484,14 @@ export default function WhatsappLiveChat() {
       if (intervalId) clearInterval(intervalId);
     };
     // setIsSubscribe(true);
-  }, [wabaState.selectedWaba, btnOption, isSubscribe, selectedAgent]);
+  }, [wabaState?.selectedWaba, btnOption, isSubscribe, selectedAgent]);
 
   useEffect(() => {
     setChatState((prev) => ({ ...prev, active: null, allConversations: [] }));
-  }, [wabaState.selectedWaba, btnOption]);
+  }, [wabaState?.selectedWaba, btnOption]);
 
   async function handleFetchAllTemplates() {
-    if (!wabaState.selectedWaba) {
+    if (!wabaState?.selectedWaba) {
       return;
     }
     try {
@@ -986,6 +1031,31 @@ export default function WhatsappLiveChat() {
     // Cleanup
     return () => mediaQuery.removeEventListener("change", handleResize);
   }, []);
+
+
+  const getLocation = () => {
+    try {
+      if (!navigator.geolocation) {
+        toast.error("Geolocation is not supported by your browser");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocationData({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+          });
+          // setError(null);
+        },
+        (err) => {
+          toast.error(err.message);
+        }
+      );
+    } catch (e) {
+      toast.error("Error getting location");
+    }
+  };
 
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">

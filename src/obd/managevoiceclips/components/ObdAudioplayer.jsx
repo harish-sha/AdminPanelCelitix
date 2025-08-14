@@ -81,11 +81,22 @@ const TinyText = styled(Typography)({
   letterSpacing: 0.2,
 });
 
-export default function MusicPlayerSlider({ data }) {
+export default function MusicPlayerSlider({ data, isPlaying, onPlay }) {
   const audioRef = useRef(null);
   const [paused, setPaused] = useState(true);
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(0);
+
+  React.useEffect(() => {
+    if (isPlaying) {
+      setPaused(false);
+      audioRef.current.play();
+    } else {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setPaused(true);
+    }
+  }, [isPlaying]);
 
   function formatDuration(value) {
     if (!value || isNaN(value)) return "0:00";
@@ -97,6 +108,7 @@ export default function MusicPlayerSlider({ data }) {
   // Handle play/pause
   const togglePlayPause = () => {
     if (paused) {
+      onPlay();
       audioRef.current.play();
     } else {
       audioRef.current.pause();

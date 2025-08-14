@@ -150,20 +150,25 @@ export const InputData = ({
       <div className="flex flex-col gap-2">
         <div className="relative">
           {/* Toggle Button */}
-          {!isOpen ? (
-            <button
-              onClick={() => setIsOpen(true)}
-              className="absolute -left-3 top-4 transform -translate-y-1/2 z-99 text-3xl text-gray-700 hover:text-blue-500 animate-pulse "
-            >
-              <FaChevronCircleRight className="text-2xl" />
-            </button>
-          ) : (
-            <button
-              onClick={() => setIsOpen(false)}
-              className="absolute -left-3 top-4 transform -translate-y-1/2 z-50 text-3xl text-gray-700 hover:text-blue-500 animate-pulse"
-            >
-              <FaChevronCircleLeft className="text-2xl" />
-            </button>
+
+          {user.role == "AGENT" && (
+            <>
+              {!isOpen ? (
+                <button
+                  onClick={() => setIsOpen(true)}
+                  className="absolute -left-3 top-4 transform -translate-y-1/2 text-3xl text-gray-700 hover:text-blue-500 animate-pulse "
+                >
+                  <FaChevronCircleRight className="text-2xl" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="absolute -left-3 top-4 transform -translate-y-1/2 z-50 text-3xl text-gray-700 hover:text-blue-500 animate-pulse"
+                >
+                  <FaChevronCircleLeft className="text-2xl" />
+                </button>
+              )}
+            </>
           )}
           {/* Sliding Panel */}
           <div
@@ -249,7 +254,6 @@ export const InputData = ({
                   </button>
                 )}
                 <CiMenuKebab />
-
                 {showFilter && (
                   <div
                     ref={panelRef}

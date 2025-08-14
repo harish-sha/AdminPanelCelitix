@@ -8,6 +8,8 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOfflineOutlined";
 import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
+
 
 const CustomPagination = ({
   totalPages,
@@ -91,18 +93,30 @@ const ScheduleLogsTable = ({ id, name, data }) => {
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
     {
+      field: "campaign_name",
+      headerName: "Campaign Name",
+      flex: 1,
+      minWidth: 150,
+    },
+    { field: "que_time", headerName: "Que Time", flex: 1, minWidth: 120 },
+    {
       field: "campaign_date",
       headerName: "Campaign Date",
       flex: 1,
       minWidth: 120,
     },
     {
-      field: "campaign_name",
-      headerName: "Campaign Name",
+      field: "processFlag",
+      headerName: "Status",
       flex: 1,
-      minWidth: 150,
+      minWidth: 120,
     },
-    { field: "sent_time", headerName: "Sent Time", flex: 1, minWidth: 120 },
+    {
+      field: "count",
+      headerName: "Count",
+      flex: 1,
+      minWidth: 120,
+    },
     {
       field: "action",
       headerName: "Action",

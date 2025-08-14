@@ -436,7 +436,7 @@ export default function CannedMessageDropdown({ onSelect, onClose }) {
                         onSelect(content);
                         onClose();
                       }}
-                      className="p-2 border  rounded-md hover:bg-gray-100 cursor-pointer bg-white shadow-sm"
+                      className="p-2 border  rounded-md hover:bg-gray-100 cursor-pointer bg-white shadow-sm break-words"
                       whileHover={{ scale: 1 }}
                       whileTap={{ scale: 0.98 }}
                     >

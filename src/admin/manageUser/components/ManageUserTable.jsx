@@ -1020,109 +1020,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   // =======================================IBD RATE END=======================================
 
 
-  //=======================================ADD-UPDATE SERVICES START=======================================
 
-  const [enableServices, setEnableServices] = useState([
-    {
-      id: 1,
-      name: "SMS",
-      enable: false,
-    },
-    {
-      id: 2,
-      name: "WHATSAPP",
-      enable: false,
-    },
-    {
-      id: 3,
-      name: "RCS",
-      enable: false,
-    },
-    {
-      id: 7,
-      name: "OBD",
-      enable: false,
-    },
-    {
-      id: "",
-      name: "Two Way",
-      enable: false,
-    },
-    {
-      id: "",
-      name: "Missed Call",
-      enable: false,
-    },
-    {
-      id: "",
-      name: "C2C",
-      enable: false,
-    },
-    {
-      id: "",
-      name: "Email",
-      enable: false,
-    },
-    {
-      id: "",
-      name: "IBD",
-      enable: false,
-    },
-  ]);
-
-  useEffect(() => {
-    async function handleGetAllowedServices() {
-      if (!currentUserSrno) return;
-      try {
-        const data = `?userSrno=${currentUserSrno}`;
-        const res = await getAllowedServices(data);
-
-        const formattedData = [
-          { id: 1, name: "SMS", enable: false },
-          { id: 2, name: "WHATSAPP", enable: false },
-          { id: 3, name: "RCS", enable: false },
-          { id: 7, name: "OBD", enable: false },
-          { id: "", name: "Two Way", enable: false },
-          { id: "", name: "Missed Call", enable: false },
-          { id: "", name: "C2C", enable: false },
-          { id: "", name: "Email", enable: false },
-          { id: "", name: "IBD", enable: false },
-        ];
-
-        const entriesWithId = formattedData.filter((item) => item.id !== "");
-        const entriesWithoutId = formattedData.filter((item) => item.id === "");
-
-        const formattedMap = new Map(
-          entriesWithId.map((item) => [item.id, item])
-        );
-
-        res?.forEach((item) => {
-          const id = item.service_type_id;
-          const name = item.display_name;
-
-          if (formattedMap.has(id)) {
-            const existing = formattedMap.get(id);
-            existing.enable = true;
-            existing.name = name;
-          } else {
-            formattedMap.set(id, { id, name, enable: true });
-          }
-        });
-
-        const updatedFormattedData = [
-          ...Array.from(formattedMap.values()),
-          ...entriesWithoutId,
-        ];
-
-        setEnableServices(updatedFormattedData);
-      } catch (e) {
-        toast.error("Something went wrong");
-      }
-    }
-    handleGetAllowedServices();
-  }, [assignService]);
-
-  //=======================================ADD-UPDATE SERVICES END=======================================
   const [accountUrl, setAccountUrl] = useState("");
   const [isReadOnly, setIsReadOnly] = useState(true);
   const [userType, setUserType] = useState("");
@@ -1530,6 +1428,110 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   };
 
   //=======================================ASSIGN RATE DIALOG END=======================================
+
+  //=======================================ADD-UPDATE SERVICES START=======================================
+
+  const [enableServices, setEnableServices] = useState([
+    {
+      id: 1,
+      name: "SMS",
+      enable: false,
+    },
+    {
+      id: 2,
+      name: "WHATSAPP",
+      enable: false,
+    },
+    {
+      id: 3,
+      name: "RCS",
+      enable: false,
+    },
+    {
+      id: 7,
+      name: "OBD",
+      enable: false,
+    },
+    {
+      id: "",
+      name: "Two Way",
+      enable: false,
+    },
+    {
+      id: "",
+      name: "Missed Call",
+      enable: false,
+    },
+    {
+      id: "",
+      name: "C2C",
+      enable: false,
+    },
+    {
+      id: "",
+      name: "Email",
+      enable: false,
+    },
+    {
+      id: "",
+      name: "IBD",
+      enable: false,
+    },
+  ]);
+
+  useEffect(() => {
+    async function handleGetAllowedServices() {
+      if (!currentUserSrno) return;
+      try {
+        const data = `?userSrno=${currentUserSrno}`;
+        const res = await getAllowedServices(data);
+
+        const formattedData = [
+          { id: 1, name: "SMS", enable: false },
+          { id: 2, name: "WHATSAPP", enable: false },
+          { id: 3, name: "RCS", enable: false },
+          { id: 7, name: "OBD", enable: false },
+          { id: "", name: "Two Way", enable: false },
+          { id: "", name: "Missed Call", enable: false },
+          { id: "", name: "C2C", enable: false },
+          { id: "", name: "Email", enable: false },
+          { id: "", name: "IBD", enable: false },
+        ];
+
+        const entriesWithId = formattedData.filter((item) => item.id !== "");
+        const entriesWithoutId = formattedData.filter((item) => item.id === "");
+
+        const formattedMap = new Map(
+          entriesWithId.map((item) => [item.id, item])
+        );
+
+        res?.forEach((item) => {
+          const id = item.service_type_id;
+          const name = item.display_name;
+
+          if (formattedMap.has(id)) {
+            const existing = formattedMap.get(id);
+            existing.enable = true;
+            existing.name = name;
+          } else {
+            formattedMap.set(id, { id, name, enable: true });
+          }
+        });
+
+        const updatedFormattedData = [
+          ...Array.from(formattedMap.values()),
+          ...entriesWithoutId,
+        ];
+
+        setEnableServices(updatedFormattedData);
+      } catch (e) {
+        toast.error("Something went wrong");
+      }
+    }
+    handleGetAllowedServices();
+  }, [assignService, assignRate]);
+
+  //=======================================ADD-UPDATE SERVICES END=======================================
 
   //=======================================ENABLE USER REPORT START=======================================
   const [userReports, setuserReports] = useState("");
@@ -2668,6 +2670,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           <CustomTabPanel value={value} index={0} className="">
             <div>
               <>
+                {enableServices.find((s) => s.name == "WHATSAPP")?.enable ? (
+                  <p className="mb-2 text-green-500">Service is enabled</p>
+                ) : (
+                  <p className="mb-2 text-red-500">Service is disabled</p>
+                )}
                 <div className="mb-2 flex gap-2 items-end justify-start">
                   <InputField
                     id="charges"
@@ -2880,6 +2887,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           {/* RCS */}
           <CustomTabPanel value={value} index={1}>
             <>
+              {enableServices.find((s) => s.name == "RCS")?.enable ? (
+                <p className="mb-2 text-green-500">Service is enabled</p>
+              ) : (
+                <p className="mb-2 text-red-500">Service is disabled</p>
+              )}
               <div id="rcstable">
                 <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                   <DropdownWithSearch
@@ -3019,6 +3031,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           {/* SMS */}
           <CustomTabPanel value={value} index={2}>
             <>
+              {enableServices.find((s) => s.name == "SMS")?.enable ? (
+                <p className="mb-2 text-green-500">Service is enabled</p>
+              ) : (
+                <p className="mb-2 text-red-500">Service is disabled</p>
+              )}
               {/* <div className="space-y-2">
                 <p>Transaction Service</p>
                 <div className="flex mb-2 lg:w-100 md:w-100">
@@ -3102,6 +3119,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           {/* OBD */}
           <CustomTabPanel value={value} index={3}>
             <>
+              {enableServices.find((s) => s.name == "OBD")?.enable ? (
+                <p className="mb-2 text-green-500">Service is enabled</p>
+              ) : (
+                <p className="mb-2 text-red-500">Service is disabled</p>
+              )}
               <div className=" lg:w-100 md:w-100">
                 <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
                   {/* Option 1 */}

@@ -458,8 +458,6 @@ const Recharge = () => {
 
   const selectedUserObj = allUsers.find((u) => u.srNo === selectedUser);
 
-
-
   useEffect(() => {
     if (user.role === "RESELLER") {
       const fetchAllUsersDetails = async () => {
@@ -488,11 +486,8 @@ const Recharge = () => {
         setGstAmount(gst.toFixed(2));
         setIncludingGst((parsedAmount + gst).toFixed(2));
       } else if (selectedOption === "option2") {
-        // Excluding GST means Amount is total, extract GST
-        const gst = (parsedAmount * 18) / 100;
-        const base = parsedAmount - gst;
-        setGstAmount(gst.toFixed(2));
-        setExcludingGst(base.toFixed(2));
+        setGstAmount(0);
+        setExcludingGst(parsedAmount);
         setIncludingGst(parsedAmount.toFixed(2));
       }
     } else {
@@ -516,11 +511,12 @@ const Recharge = () => {
     setIsSubmitting(true);
     const payload = {
       selectedUserId: selectedUser,
-      actualAmount: selectedOption === "option1" ? includingGst : excludingGst,
-      amount: amount,
-      gst: gstAmount,
+      actualAmount: amount,
+      amount: selectedOption === "option1" ? includingGst : excludingGst,
+
       rechargeType: selectedRechargeType,
       withGST: selectedOption === "option2" ? 0 : 1,
+      ...(selectedOption !== "option2" && { gst: gstAmount }),
       remark: remark.trim(),
     };
     try {
@@ -624,7 +620,7 @@ const Recharge = () => {
                 </label>
               </div>
             </div>
-            <div className="cursor-pointer px-2 py-2 shadow border rounded-lg bg-white">
+            {/* <div className="cursor-pointer px-2 py-2 shadow border rounded-lg bg-white">
               <div className="flex items-center gap-2">
                 <RadioButton
                   inputId="radioOption2"
@@ -640,7 +636,7 @@ const Recharge = () => {
                   Exclude GST
                 </label>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="flex w-full gap-3">
@@ -650,6 +646,7 @@ const Recharge = () => {
             placeholder="Enter Amount"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
+            type="number"
           />
           <InputField
             label="Remark"
@@ -670,7 +667,11 @@ const Recharge = () => {
             readOnly
           />
           <InputField
-            label={selectedOption === "option1" ? "Total Amount Including GST" : "Total Amount Exclude GST"}
+            label={
+              selectedOption === "option1"
+                ? "Total Amount Including GST"
+                : "Total Amount Exclude GST"
+            }
             tooltipContent="Actual Amount of recharge"
             placeholder="Total Amount GST"
             value={selectedOption === "option1" ? includingGst : excludingGst}
@@ -787,10 +788,18 @@ const Recharge = () => {
               <p className="text-lg font-medium text-gray-800 leading-relaxed">
                 You are about to recharge&nbsp;
                 <span className="text-blue-700 font-semibold">
-                  {allUsers.find((u) => u.srNo === selectedUser)?.userName || "None selected"}
+                  {allUsers.find((u) => u.srNo === selectedUser)?.userName ||
+                    "None selected"}
                 </span>
-                &nbsp;with an amount of&nbsp;
-                <span className="text-green-600 font-bold">₹{selectedOption === "option1" ? includingGst : excludingGst}</span>.
+                &nbsp;with a recharge amount of&nbsp;
+                <span className="text-green-600 font-bold">₹{amount}</span>
+                &nbsp;and a payable amount
+                {selectedOption === "option1" && "(including GST)"}
+                &nbsp;of&nbsp;
+                <span className="text-green-700 font-bold">
+                  ₹{selectedOption === "option1" ? includingGst : excludingGst}
+                </span>
+                .
                 <br />
                 Please confirm to proceed.
               </p>

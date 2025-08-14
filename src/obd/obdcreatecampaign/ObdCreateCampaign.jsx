@@ -609,11 +609,22 @@ const ObdCreateCampaign = () => {
         return;
       }
 
+      // const enrichedVariables = res.data.map((item) => ({
+      //   sequence: item.sequence,
+      //   variableSampleValue: item.variableSampleValue || "",
+      //   filePath: item.filePath,
+      //   fileTile: item.fileTitle
+      // }));
+
       const enrichedVariables = res.data.map((item) => ({
         sequence: item.sequence,
-        variableSampleValue: item.variableSampleValue || "",
+        // variableSampleValue:
+        //   item.variableSampleValue !== "-" ? item.variableSampleValue : null,
         filePath: item.filePath,
-        fileTile: item.fileTitle
+        fileTile: item.fileTitle,
+        ...(item.variableSampleValue !== "-" && {
+          variableSampleValue: item.variableSampleValue,
+        }),
       }));
 
       setVoiceVariables(enrichedVariables);
@@ -873,23 +884,25 @@ const ObdCreateCampaign = () => {
                                     key={`variable-${item.sequence}`}
                                     className="relative mt-4"
                                   >
-                                    <InputField
-                                      id={`variable-${item.sequence}`}
-                                      name={`variable-${item.sequence}`}
-                                      label={`Sequence Variable ${item.sequence}`}
-                                      value={item.variableSampleValue}
-                                      onChange={(e) =>
-                                        handleVoiceVariableChange(
-                                          index,
-                                          e.target.value
-                                        )
-                                      }
-                                      placeholder={`Enter value for variable ${item.sequence}`}
-                                      tooltipContent={`Sequence: ${item.sequence}`}
-                                      ref={(el) => {
-                                        if (el) variableRef.current[index] = el;
-                                      }}
-                                    />
+                                    {item.variableSampleValue && (
+                                      <InputField
+                                        id={`variable-${item.sequence}`}
+                                        name={`variable-${item.sequence}`}
+                                        label={`Sequence Variable ${item.sequence}`}
+                                        value={item.variableSampleValue}
+                                        onChange={(e) =>
+                                          handleVoiceVariableChange(
+                                            index,
+                                            e.target.value
+                                          )
+                                        }
+                                        placeholder={`Enter value for variable ${item.sequence}`}
+                                        tooltipContent={`Sequence: ${item.sequence}`}
+                                        ref={(el) => {
+                                          if (el) variableRef.current[index] = el;
+                                        }}
+                                      />
+                                    )}
                                     <p className="text-sm font-medium text-gray-700 my-2" >Voice Clip Sequence &nbsp;{item.sequence} - {item.fileTile}</p>
 
                                     <div className="mt-4">

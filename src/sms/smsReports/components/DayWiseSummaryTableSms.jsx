@@ -1,12 +1,14 @@
 import { Box, Button, Paper, styled, Typography } from "@mui/material";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import IconButton from "@mui/material/IconButton";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
 import usePagination from "@mui/material/usePagination";
 import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOfflineOutlined";
 import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
 import { useNavigate } from "react-router-dom";
+import { ImInfo } from "react-icons/im";
+import InfoPopover from "@/components/common/InfoPopover.jsx";
 
 const CustomPagination = ({
   totalPages,
@@ -69,7 +71,18 @@ const CustomPagination = ({
   );
 };
 
-const DayWiseSummaryTableSms = ({ id, name, data }) => {
+const infoFieldsToShow = [
+  "pending",
+  "failed",
+  "blocked",
+  "sent",
+  "delivered",
+  "not_delivered",
+];
+
+
+const DayWiseSummaryTableSms = ({ id, name, data = [] }) => {
+  console.log("data", data);
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -80,58 +93,114 @@ const DayWiseSummaryTableSms = ({ id, name, data }) => {
     navigate("/download");
   };
 
-  const rows = data || [];
+  const dropdownButtonRefs = useRef({});
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+  const [clicked, setClicked] = useState({});
+  const additionalInfoLabels = {
+    // Example mapping: 'queuedate': 'Queue Date'
+  };
+
+  const handleInfo = (row) => {
+    setClicked(row);
+    setDropdownOpenId(row.id);
+  };
+
+  const closeDropdown = () => {
+    setDropdownOpenId(null);
+  };
+
+  const rows = data.map((item, index) => ({
+    id: index + 1,
+    sn: index + 1,
+    quedate: item.queuedate || "-",
+    smscount: item.smscount ?? 0,
+    smsunits: item.smsunits ?? 0,
+    pending: item.pending ?? 0,
+    failed: item.failed ?? 0,
+    blocked: item.blocked ?? 0,
+    sent: item.sent ?? 0,
+    delivered: item.delivered ?? 0,
+    notdelivered: item.not_delivered ?? 0,
+    pendingdr: item.dr_not_available ?? 0,
+  }));
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-    { field: "queuedate", headerName: "Que Date", flex: 1, minWidth: 50 },
-    { field: "smscount", headerName: "SMS Count", flex: 1, minWidth: 50 },
-    { field: "smsunits", headerName: "SMS Units", flex: 1, minWidth: 50 },
-    { field: "pending", headerName: "Pending", flex: 1, minWidth: 50 },
-    { field: "failed", headerName: "Failed", flex: 1, minWidth: 50 },
-    { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 50 },
-    { field: "sent", headerName: "Sent", flex: 1, minWidth: 50 },
-    { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 50 },
+    { field: "quedate", headerName: "Que Date", flex: 1, minWidth: 100 },
+    { field: "smscount", headerName: "SMS Count", flex: 1, minWidth: 100 },
+    { field: "smsunits", headerName: "SMS Units", flex: 1, minWidth: 100 },
+    { field: "pending", headerName: "Pending", flex: 1, minWidth: 90 },
+    { field: "failed", headerName: "Failed", flex: 1, minWidth: 70 },
+    { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 70 },
+    { field: "sent", headerName: "Sent", flex: 1, minWidth: 60 },
+    { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 90 },
     {
-      field: "not_delivered",
-      headerName: "Not delivered",
+      field: "notdelivered",
+      headerName: "Undelivered",
       flex: 1,
-      minWidth: 50,
+      minWidth: 120,
     },
-    {
-      field: "pending",
-      headerName: "Pending DR",
-      flex: 1,
-      minWidth: 50,
-    },
-    {
-      field: "action",
-      headerName: "Action",
-      flex: 1,
-      minWidth: 50,
-      renderCell: (params) => (
-        <>
-          <CustomTooltip title="Download" placement="top" arrow>
-            <IconButton
-              className="no-xs"
-              onClick={() => {
-                // console.log(params.row);
-              }}
-            >
-              <DownloadForOfflineOutlinedIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "green",
-                }}
-              />
-            </IconButton>
-          </CustomTooltip>
-        </>
-      ),
-    },
-  ];
+    { field: "pendingdr", headerName: "Pending DR", flex: 1, minWidth: 110 },
+    // {
+    //   field: "action",
+    //   headerName: "Action",
+    //   flex: 1,
+    //   minWidth: 120,
+    //   renderCell: (params) => (
+    //     <CustomTooltip title="Info" placement="top" arrow>
+    //       <span>
+    //         <IconButton
+    //           type="button"
+    //           ref={(el) => {
+    //             if (el) dropdownButtonRefs.current[params.row.id] = el;
+    //           }}
+    //           onClick={() => handleInfo(params.row)}
+    //           className="no-xs relative"
+    //         >
+    //           <ImInfo size={18} className="text-green-500" />
+    //         </IconButton>
 
-  const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+    //         <InfoPopover
+    //           anchorEl={dropdownButtonRefs.current[params.row.id]}
+    //           open={dropdownOpenId === params.row.id}
+    //           onClose={closeDropdown}
+    //         >
+    //           {clicked && Object.keys(clicked).length > 0 ? (
+    //             <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden">
+    //               <tbody>
+    //                 {Object.entries(clicked)
+    //                   .filter(([key]) => infoFieldsToShow.includes(key))
+    //                   .map(([key, value], index) => (
+    //                     <tr
+    //                       key={index}
+    //                       className="hover:bg-gray-50 transition-colors border-b last:border-none"
+    //                     >
+    //                       <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3 text-nowrap">
+    //                         {additionalInfoLabels[key] || key}
+    //                       </td>
+    //                       <td className="px-4 py-2 text-gray-800">
+    //                         {key === "isEnabledForInsights"
+    //                           ? value === true || value === "true"
+    //                             ? "True"
+    //                             : "False"
+    //                           : value || "N/A"}
+    //                       </td>
+    //                     </tr>
+    //                   ))}
+    //               </tbody>
+    //             </table>
+    //           ) : (
+    //             <div className="text-sm text-gray-400 italic px-2 py-2">
+    //               No data
+    //             </div>
+    //           )}
+    //         </InfoPopover>
+    //       </span>
+    //     </CustomTooltip>
+    //   ),
+    // },
+  ];
+  const totalPages = Math.ceil(data.length / paginationModel.pageSize);
   const CustomFooter = () => {
     return (
       <GridFooterContainer
@@ -163,7 +232,7 @@ const DayWiseSummaryTableSms = ({ id, name, data }) => {
           )}
 
           <Typography variant="body2">
-            Total Records: <span className="font-semibold">{rows.length}</span>
+            Total Records: <span className="font-semibold">{data.length}</span>
           </Typography>
         </Box>
 

@@ -581,9 +581,11 @@ const SmsReports = () => {
         ? res.map((item, i) => ({
           id: item.srno || `row-${i}`,
           sn: i + 1,
-          campaign_date: item.campaignDate || "-",
+          campaign_date: moment(item.campaignDate).format("DD-MM-YY"),
           campaign_name: item.campaignName || "-",
-          sent_time: item.sentTime || "-",
+          que_time: moment(item?.sentTime).format("DD-MM-YY hh:mm:ss A") || "N/A",
+          processFlag: "Scheduled" || "-",
+          count: item.count || "-",
           campaignSrno: item.srno,
         }))
         : [];
@@ -1808,7 +1810,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="flex flex-wrap w-full gap-4 sm:w-56">
+              {/* <div className="flex flex-wrap w-full gap-4 sm:w-56">
                 <AnimatedDropdown
                   label="SmsType"
                   id="SmsTyoe"
@@ -1826,7 +1828,7 @@ const SmsReports = () => {
                     }));
                   }}
                 />
-              </div>
+              </div> */}
 
               <div className="w-full sm:w-56">
                 <AnimatedDropdown
@@ -2055,7 +2057,7 @@ const SmsReports = () => {
             />
           )}
           <UniversalButton
-            label={isFetching ? "Deleting..." : "Delete"}
+            label={isFetching ? "Confirming..." : "Confirm"}
             style={{}}
             onClick={() => handleCancelConfirm(currentRow.srno)}
             disabled={isFetching}
