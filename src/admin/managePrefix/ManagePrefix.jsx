@@ -52,6 +52,7 @@ const ManagePrefix = () => {
       toast.error("Something went wrong");
     }
   }
+
   async function handleFetchCountryList() {
     try {
       const res = await getCountryList();
@@ -278,6 +279,7 @@ const ManagePrefix = () => {
             options={dropdownData.country}
             onChange={(e) => {
               setAddPrefixData({ ...addPrefixData, countrySrno: e });
+              handleFetchOperatorList(e);
             }}
             value={addPrefixData.countrySrno}
           />
