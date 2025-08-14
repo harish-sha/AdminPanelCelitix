@@ -1317,8 +1317,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     );
 
     // set SMS data
-    if (userSmsData?.data) {
-      const d = userSmsData.data;
+    if (userSmsData) {
+      const d = userSmsData;
       setTranscheck(!!d.transService);
       setPromocheck(!!d.promoService);
       setTrans(d.transService || null);
