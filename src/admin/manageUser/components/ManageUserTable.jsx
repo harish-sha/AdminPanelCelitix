@@ -977,7 +977,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       }
     }
     handleGetAllowedServices();
-  }, [assignService]);
+  }, [assignService, assignRate]);
 
   async function handleChargesSave() {
     try {
@@ -2847,6 +2847,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           <CustomTabPanel value={value} index={0} className="">
             <div>
               <>
+                {enableServices.find((s) => s.name == "WHATSAPP")?.enable ? (
+                  <p className="mb-2 text-green-500">Service is enabled</p>
+                ) : (
+                  <p className="mb-2 text-red-500">Service is disabled</p>
+                )}
                 <div className="mb-2 flex gap-2 items-end justify-start">
                   <InputField
                     id="charges"
@@ -3054,6 +3059,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           {/* RCS */}
           <CustomTabPanel value={value} index={1}>
             <>
+              {enableServices.find((s) => s.name == "RCS")?.enable ? (
+                <p className="mb-2 text-green-500">Service is enabled</p>
+              ) : (
+                <p className="mb-2 text-red-500">Service is disabled</p>
+              )}
               <div id="rcstable">
                 <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                   <DropdownWithSearch
@@ -3139,6 +3149,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           {/* SMS */}
           <CustomTabPanel value={value} index={2}>
             <>
+              {enableServices.find((s) => s.name == "SMS")?.enable ? (
+                <p className="mb-2 text-green-500">Service is enabled</p>
+              ) : (
+                <p className="mb-2 text-red-500">Service is disabled</p>
+              )}
               <div className="flex gap-5">
                 <div className=" lg:w-100 md:w-100">
                   <AnimatedDropdown
@@ -3204,6 +3219,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           {/* OBD */}
           <CustomTabPanel value={value} index={3}>
             <>
+              {enableServices.find((s) => s.name == "OBD")?.enable ? (
+                <p className="mb-2 text-green-500">Service is enabled</p>
+              ) : (
+                <p className="mb-2 text-red-500">Service is disabled</p>
+              )}
               <div className=" lg:w-100 md:w-100">
                 <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
                   {/* Option 1 */}
