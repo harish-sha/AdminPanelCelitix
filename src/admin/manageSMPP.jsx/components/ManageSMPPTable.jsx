@@ -345,7 +345,10 @@ const ManageSMPPTable = ({ id, name, data }) => {
 
   const handleUpdateSmpp = async () => {
     try {
-      const res = await updateSMPP(editDetails);
+      const res = await updateSMPP({
+        ...editDetails,
+        ExpiryTime: "null",
+      });
       if (!res?.status) {
         return toast.error("Error updating SMPP");
       }
