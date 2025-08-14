@@ -13,7 +13,7 @@ import {
 import "@xyflow/react/dist/style.css";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
-import InputField from "@/components/layout/InputField";
+
 import UniversalButton from "@/components/common/UniversalButton";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
@@ -32,7 +32,18 @@ import obd from "../../assets/icons/OBD02.svg";
 import rcsicon from "../../assets/icons/RCS02.svg";
 import { LuMessageSquareMore } from "react-icons/lu";
 import RestartAltOutlinedIcon from "@mui/icons-material/RestartAltOutlined";
-
+// import ParticleBackground from "./components/ParticleBackground";
+import CustomTooltip from "@/whatsapp/components/CustomTooltip";
+import { AnimatePresence, motion } from "framer-motion";
+import { RiRobot2Line } from "react-icons/ri";
+import ImportContactsOutlinedIcon from "@mui/icons-material/ImportContactsOutlined";
+import { LuWorkflow } from "react-icons/lu";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import Tooltip from "@mui/material/Tooltip";
+import { FiEdit } from "react-icons/fi";
+import IconButton from "@mui/material/IconButton";
+import InputField from "@/components/layout/InputField";
+import ParticleBackground from "@/whatsapp/whatsappFlows/components/ParticleBackground";
 function NodeComponent({
   id,
   data,
@@ -57,73 +68,142 @@ function NodeComponent({
   const options = nodesInputData?.[id]?.options || [];
   const buttonTexts = nodesInputData?.[id]?.buttonTexts || [];
 
+  const NodeBtnClass =
+    "h-6 w-6 shadow text-xs bg-blue-200 rounded-full flex items-center justify-center text-gray-700";
+
   return (
-    <div className="relative p-1.5 bg-white border border-gray-300 rounded-md shadow-md">
-      <button
-        className="absolute -top-2 -right-1 text-xs text-white bg-red-500 rounded-full hover:bg-red-700 h-4 w-4 text-center"
-        onClick={() => {
-          onDelete(id);
-          setIsVisible(false);
-          setNodesInputData((prev) => {
-            const newData = {};
-            const keys = Object.keys(prev).sort(
-              (a, b) => parseInt(a) - parseInt(b)
-            );
+    <div className="relative p-1.5 bg-white border border-gray-300 group rounded-md shadow-md min-h-12 max-h-auto flex justify-center flex-col ">
+      <div className="absolute -top-1 -right-3 text-xs text-white  rounded-full h-4 w-4 text-center">
+        <AnimatePresence>
+          <motion.div
+            initial={{ x: 20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: 20, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="hidden group-hover:block "
+          >
+            <Tooltip title="Delete Component" placement="right">
+              <IconButton
+                onClick={() => {
+                  onDelete(id);
+                  setIsVisible(false);
+                  setNodesInputData((prev) => {
+                    const newData = {};
+                    const keys = Object.keys(prev).sort(
+                      (a, b) => parseInt(a) - parseInt(b)
+                    );
 
-            let shift = false;
+                    let shift = false;
 
-            keys.forEach((key) => {
-              const keyNum = parseInt(key);
-              if (key === id) {
-                shift = true;
-                return;
-              }
+                    keys.forEach((key) => {
+                      const keyNum = parseInt(key);
+                      if (key === id) {
+                        shift = true;
+                        return;
+                      }
 
-              if (shift) {
-                const newKey = String(keyNum - 1);
-                newData[newKey] = prev[key];
-              } else {
-                newData[key] = prev[key];
-              }
-            });
+                      if (shift) {
+                        const newKey = String(keyNum - 1);
+                        newData[newKey] = prev[key];
+                      } else {
+                        newData[key] = prev[key];
+                      }
+                    });
 
-            return newData;
-          });
-        }}
-      >
-        <CloseOutlinedIcon
-          fontSize="small"
-          style={{
-            fontSize: "10px",
-          }}
-        />
-      </button>
+                    return newData;
+                  });
+                }}
+              >
+                <DeleteForeverIcon
+                  style={{ fontSize: "19px" }}
+                  className="text-red-700 "
+                />
+              </IconButton>
+            </Tooltip>
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-      <button
-        className="absolute -left-2 p-0 text-xs -top-2"
-        onClick={() => {
-          setIsVisible(true);
-        }}
-        title="Settings"
-      >
-        <SettingsOutlinedIcon fontSize="small" />
-      </button>
+      <div className="absolute -left-7 -top-1 p-0">
+        <AnimatePresence>
+          <motion.div
+            initial={{ x: 20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: 20, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="hidden group-hover:block "
+          >
+            <Tooltip title="Settings" placement="left">
+              <IconButton
+                className=" text-xs"
+                onClick={() => {
+                  setIsVisible(true);
+                }}
+                title="Settings"
+              >
+                <SettingsOutlinedIcon
+                  style={{ fontSize: "18px" }}
+                  className="font-bold text-md"
+                />
+              </IconButton>
+            </Tooltip>
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-      {id !== "1" && (
-        <button
-          className="absolute left-5 -top-2 p-0 text-xs"
-          onClick={() => setDetailsDialogVisible(true)}
-          title={`Configure ${data.type} node`}
-        >
-          <HiOutlineDocument className="font-bold text-lg" />
-        </button>
-      )}
+      <div className="absolute -left-6.5 top-5 p-0">
+        <AnimatePresence>
+          <motion.div
+            initial={{ x: 20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: 20, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="hidden group-hover:block "
+          >
+            <Tooltip title="Edit Component" placement="left">
+              {id !== "1" && (
+                <IconButton
+                  className=" text-xs"
+                  onClick={() => setDetailsDialogVisible(true)}
+                  title={`Configure ${data.type} node`}
+                >
+                  <FiEdit style={{ fontSize: "15px" }} className="font-bold" />
+                </IconButton>
+              )}
+            </Tooltip>
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
       <div className="font-medium text-center">
-        {data.type === "voice" && <p>Voice Node ({id})</p>}
-        {data.type === "rcs" && <p>RCS Node ({id})</p>}
-        {data.type === "whatsapp" && <p>Whatsapp Node ({id})</p>}
-        {data.type === "sms" && <p>SMS Node ({id})</p>}
+        {data.type === "voice" && (
+          <span className="flex items-center gap-2">
+            <img src={obd} className="w-5 h-4 " />
+            <p>Voice</p>
+            <div className={NodeBtnClass}>{id}</div>
+          </span>
+        )}
+        {data.type === "rcs" && (
+          <span className="flex items-center gap-2">
+            <img src={rcsicon} className="w-4 h-4" />
+            <p>RCS</p>
+            <div className={NodeBtnClass}>{id}</div>
+          </span>
+        )}
+        {data.type === "whatsapp" && (
+          <span className="flex items-center gap-2">
+            <FaWhatsapp className="" />
+            <p>Whatsapp</p>
+            <div className={NodeBtnClass}>{id}</div>
+          </span>
+        )}
+        {data.type === "sms" && (
+          <span className="flex items-center gap-2">
+            <LuMessageSquareMore className="" />
+            <p>SMS</p>
+            <div className={NodeBtnClass}>{id}</div>
+          </span>
+        )}
       </div>
 
       <>
@@ -132,6 +212,8 @@ function NodeComponent({
           position={Position.Left}
           className={`${id == "1" ? "hidden" : ""} `}
           style={{
+            height: "10px",
+            width: "10px",
             background: connectionType === "source" ? "green" : "blue",
           }}
         />
@@ -155,6 +237,8 @@ function NodeComponent({
                   top: "50%",
                   transform: "translateY(-50%)",
                   right: -8,
+                  height: "10px",
+                  width: "10px",
                 }}
               />
             </div>
@@ -212,7 +296,7 @@ export const WorkflowCreate = () => {
 
   const commonButtonClass =
     // "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-blue-400 to-gray-600 shadow-lg ";
-    "cursor-pointer flex flex-col h-auto text-[0.7rem] bg-white text-gray-900 border-2 border-gray-500 shadow-lg hover:bg-gradient-to-br hover:from-blue-200 hover:to-blue-300 hover:text-gray-900 hover:shadow-2xl hover:scale-105";
+    "cursor-pointer flex flex-col h-18 text-[0.7rem] bg-white text-gray-800 w-full p-1.5 gap-3 shadow-lg hover:bg-gradient-to-br hover:from-white hover:to-white hover:text-gray-900 hover:shadow-2xl hover:scale-105";
 
   const addNode = (type: string, position?: { x: number; y: number }) => {
     // if (nodes.length >= 5) return toast.error("You can add only 5 nodes");
@@ -395,12 +479,103 @@ export const WorkflowCreate = () => {
 
   return (
     <>
-      <div className="flex flex-wrap md:flex-nowrap h-[100%] md:overflow-hidden">
+      <div className="relative rounded-xl overflow-hidden shadow-md z-50">
+        <div className="relative z-10 bg-gradient-to-tr from-indigo-100 via-blue-50 to-purple-100 px-3 py-3 flex flex-col sm:flex-row items-center justify-between gap-4 transition-all duration-300 md:overflow-x-scroll">
+          <ParticleBackground />
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            className="flex items-center gap-2"
+          >
+            <div className="bg-white shadow-md p-2 rounded-full">
+              <LuWorkflow className="text-indigo-600 text-xl" />
+            </div>
+            <div className="flex gap-5 items-center">
+              <h1 className="text-lg font-semibold text-indigo-900 tracking-tight">
+                Design Your Workflow
+              </h1>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            // transition={{ duration: 0.4, delay: 0.2 }}
+            className="flex flex-col sm:flex-row gap-3 items-center w-full sm:w-auto"
+          >
+            {/* <div className="flex items-center gap-3 justify-between relative "> */}
+            <div className="flex flex-col sm:flex-col md:flex-row items-center gap-3 justify-between relative ">
+              {/* Error Dialog Box Button */}
+              <motion.button
+                // whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ duration: 0.1, delay: 0.2 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <div className="flex items-center gap-2  rounded-md  cursor-pointer">
+                  <InputField
+                    value={name}
+                    placeholder="Enter WorkFlow Name"
+                    onChange={(e: {
+                      target: { value: React.SetStateAction<string> };
+                    }) => {
+                      setName(e.target.value);
+                    }}
+                    maxLength={20}
+                  />
+                </div>
+              </motion.button>
+
+              <CustomTooltip
+                title="Export the flow in JSON format. Ensure all configuration errors are resolved before exporting. [Save flow first!]"
+                placement="top"
+                arrow
+              >
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.1, delay: 0.5 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer`}
+                  onClick={handleSaveWorkflow}
+                >
+                  <SettingsOutlinedIcon sx={{ fontSize: "1.2rem" }} />
+                  Save
+                </motion.button>
+              </CustomTooltip>
+
+              {/* Export button */}
+              <CustomTooltip
+                title="Export the flow in JSON format. Ensure all configuration errors are resolved before exporting. [Save flow first!]"
+                placement="top"
+                arrow
+              >
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.1, delay: 0.5 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer`}
+                  // onClick={() => setOpenGuide(true)}
+                >
+                  <ImportContactsOutlinedIcon sx={{ fontSize: "1.2rem" }} />
+                  Guides
+                </motion.button>
+              </CustomTooltip>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+      <div className="flex flex-wrap md:flex-nowrap h-[80vh] md:overflow-hidden border rounded-2xl mt-2 border-indigo-100 shadow-md ">
         <div
-          className="w-full md:w-[calc(100vw-220px)] h-[calc(100vh-1rem)]"
+          className="w-full "
           onDrop={handleDrop}
-          onDragOver={handleDragOver}>
-       
+          onDragOver={handleDragOver}
+        >
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -418,6 +593,14 @@ export const WorkflowCreate = () => {
               setIsConnecting(false);
               setConnectionType("");
             }}
+            defaultEdgeOptions={{
+              type: "bezier",
+              animated: true,
+              style: {
+                stroke: "#6D28D9", // emerald green
+                strokeWidth: 2,
+              },
+            }}
             // fitView
           >
             <Background />
@@ -426,99 +609,121 @@ export const WorkflowCreate = () => {
           </ReactFlow>
         </div>
 
-        <div className="flex flex-col sm:flex-col md:flex-col lg:flex-col xl:flex-col  justify-between w-full sm:w-[200px] bg-gray-50 gap-4 px-2 py-3 rounded-md h-auto  overflow-x-auto sm:overflow-visible ">
-          <div >
+        <div className="flex flex-col sm:flex-col md:flex-col lg:flex-col xl:flex-col  justify-between w-full sm:w-[200px] bg-gray-200 gap-4 px-2 py-3 rounded-md h-auto  overflow-x-auto sm:overflow-visible ">
+          <div>
             <h1 className="font-semibold text-lg">Select Channel</h1>
             <div className="flex flex-row flex-wrap md:flex-col gap-3 p-1 overflow-x-auto md:overflow-hidden">
-              <Button
-                draggable
-                onDragStart={(event) => {
-                  handleDragStart(event, "voice");
-                }}
-                onClick={() => {
-                  addNode("voice");
-                }}
-                className={commonButtonClass}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0 }}
+                className="w-full"
               >
-                <img src={obd} className="w-4 h-4" /> OBD
-              </Button>
-              <Button
-                draggable
-                onDragStart={(event) => {
-                  handleDragStart(event, "whatsapp");
-                }}
-                onClick={() => {
-                  addNode("whatsapp");
-                }}
-                className={commonButtonClass}
+                <Button
+                  draggable
+                  onDragStart={(event) => {
+                    handleDragStart(event, "voice");
+                  }}
+                  onClick={() => {
+                    addNode("voice");
+                  }}
+                  className={commonButtonClass}
+                >
+                  <img src={obd} className="w-5 h-4 text-purple-900" />
+                  <span className="text-xs text-purple-900 font-semibold">
+                    OBD
+                  </span>
+                </Button>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0 }}
+                className="w-full"
               >
-                <FaWhatsapp />
-                WhatsApp
-              </Button>
-              <Button
-                draggable
-                onDragStart={(event) => {
-                  handleDragStart(event, "rcs");
-                }}
-                onClick={() => {
-                  addNode("rcs");
-                }}
-                className={commonButtonClass}
+                <Button
+                  draggable
+                  onDragStart={(event) => {
+                    handleDragStart(event, "whatsapp");
+                  }}
+                  onClick={() => {
+                    addNode("whatsapp");
+                  }}
+                  className={commonButtonClass}
+                >
+                  <FaWhatsapp />
+                  <span className="text-xs text-purple-900 font-semibold">
+                    WhatsApp
+                  </span>
+                </Button>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0 }}
+                className="w-full"
               >
-                <img src={rcsicon} className="w-4 h-4" />
-                RCS
-              </Button>
-              <Button
-                draggable
-                onDragStart={(event) => {
-                  handleDragStart(event, "sms");
-                }}
-                onClick={() => {
-                  addNode("sms");
-                }}
-                className={commonButtonClass}
+                <Button
+                  draggable
+                  onDragStart={(event) => {
+                    handleDragStart(event, "rcs");
+                  }}
+                  onClick={() => {
+                    addNode("rcs");
+                  }}
+                  className={commonButtonClass}
+                >
+                  <img src={rcsicon} className="w-4 h-4" />
+                  <span className="text-xs text-purple-900 font-semibold">
+                    RCS
+                  </span>
+                </Button>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0 }}
+                className="w-full"
               >
-                <LuMessageSquareMore />
-                SMS
-              </Button>
-              <Button
-                draggable
-                onDragStart={(event) => {}}
-                onClick={() => {
-                  reset();
-                }}
-                className="cursor-pointer flex flex-col h-fit text-[0.9rem] bg-[#3671D6] hover:bg-[#527ECA] shadow-lg"
+                <Button
+                  draggable
+                  onDragStart={(event) => {
+                    handleDragStart(event, "sms");
+                  }}
+                  onClick={() => {
+                    addNode("sms");
+                  }}
+                  className={commonButtonClass}
+                >
+                  <LuMessageSquareMore />
+                  <span className="text-xs text-purple-900 font-semibold">
+                    SMS
+                  </span>
+                </Button>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 1.4 }}
+                className="w-full"
               >
-                <RestartAltOutlinedIcon />
-                Reset
-              </Button>
-            </div>
-             
-          </div>
-          <div className="w-full space-y-2 ">
-            <InputField
-              id="workflowName"
-              name="workflowName"
-              label="WorkFlow Name"
-              tooltipContent="Enter WorkFlow Name. Name should be unique. Only Alphabets and numbers are allowed. Maximum 20 characters allowed."
-              value={name}
-              placeholder="Enter WorkFlow Name"
-              onChange={(e: {
-                target: { value: React.SetStateAction<string> };
-              }) => {
-                setName(e.target.value);
-              }}
-              maxLength={20}
-            />
+                <Button
+                  draggable
+                  onDragStart={(event) => {}}
+                  onClick={() => {
+                    reset();
+                  }}
+                  className={commonButtonClass}
+                >
+                  <RestartAltOutlinedIcon />
 
-            <UniversalButton
-              id="saveWorkFlow"
-              name="saveWorkFlow"
-              label={`Save`}
-              onClick={handleSaveWorkflow}
-              style={{ width: "100%" }}
-            />
-          </div>  
+                  <span className="text-xs text-purple-900 font-semibold">
+                    Reset
+                  </span>
+                </Button>
+              </motion.div>
+            </div>
+          </div>
         </div>
       </div>
 

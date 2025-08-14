@@ -9,7 +9,6 @@
   }
 
   @keyframes pulse-grow {
-
     0%,
     100% {
       transform: scale(1);
@@ -38,6 +37,16 @@
     border-radius: 10px;
     height: 20px;
   }
+}
+
+/* Hide scrollbar but allow scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 .popf {
@@ -302,11 +311,11 @@ a {
   stroke-dasharray: 12 63;
 }
 
-.hamburger input:checked+svg {
+.hamburger input:checked + svg {
   transform: rotate(-45deg);
 }
 
-.hamburger input:checked+svg .line-top-bottom {
+.hamburger input:checked + svg .line-top-bottom {
   stroke-dasharray: 20 300;
   stroke-dashoffset: -32.42;
 }
@@ -334,23 +343,23 @@ a {
   position: relative;
 }
 
-.toggle-checkbox:checked+.hamburger .bar:nth-child(2) {
+.toggle-checkbox:checked + .hamburger .bar:nth-child(2) {
   transform: translate(0px, 10px);
   opacity: 0;
   transition-delay: 0.3s;
 }
 
-.toggle-checkbox:checked+.hamburger .bar:nth-child(3) {
+.toggle-checkbox:checked + .hamburger .bar:nth-child(3) {
   transform: translate(0px, -10px);
   transition-delay: 0s;
 }
 
-.toggle-checkbox:checked+.hamburger .bar:nth-child(1) {
+.toggle-checkbox:checked + .hamburger .bar:nth-child(1) {
   transform: rotate(45deg) scale(0.9);
   transition-delay: 0.6s;
 }
 
-.toggle-checkbox:checked+.hamburger .bar:nth-child(3) {
+.toggle-checkbox:checked + .hamburger .bar:nth-child(3) {
   transform: rotate(-45deg) scale(0.9);
   transition-delay: 0.6s;
 }
@@ -542,10 +551,12 @@ a {
   left: -100%;
   width: 200%;
   height: 100%;
-  background: linear-gradient(120deg,
-      transparent,
-      rgba(255, 255, 255, 0.6),
-      transparent);
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  );
   animation: shine 1.2s linear infinite;
 }
 
@@ -556,8 +567,6 @@ a {
   -background-clip: text;
   -text-fill-color: transparent;
 }
-
-
 
 .css-1wulh66-MuiInputAdornment-root {
   display: -webkit-box;
@@ -575,9 +584,7 @@ a {
   margin-right: -20px !important;
 }
 
-
 @keyframes blink-grow {
-
   0%,
   100% {
     opacity: 1;
