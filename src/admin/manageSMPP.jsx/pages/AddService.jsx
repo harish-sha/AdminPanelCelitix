@@ -6,8 +6,10 @@ import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../../whatsapp/components/UniversalButton";
 import { saveSMPP } from "@/apis/admin/admin";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const AddService = () => {
+  const navigate = useNavigate();
   const [versionaddStatus, setVersionAddStatus] = useState("disable");
   const [tpaddStatus, setTpAddStatus] = useState("disable");
 
@@ -23,7 +25,6 @@ const AddService = () => {
     bindMode: null,
     numOfReceivers: null,
     senderPrefix: null,
-    tpsValue: null,
     orderQueueSize: 500,
     initialQueueSize: 500,
     triggerQueueSize: 300,
@@ -32,7 +33,7 @@ const AddService = () => {
     Destination: "ton=0;npi=0;",
     ExpiryTime: null,
     Source: "ton=0;npi=0;",
-    Version: null,
+    Version: "3.4",
     registeredDelivery: 1
   });
 
@@ -299,6 +300,7 @@ const AddService = () => {
         return;
       }
       toast.success(res?.msg);
+      navigate("/manageSMPP");
     } catch (e) {
       console.log(e);
     }
