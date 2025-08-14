@@ -7,9 +7,8 @@ import UniversalButton from "../../../whatsapp/components/UniversalButton";
 import { useEffect } from "react";
 import { RadioButton } from "primereact/radiobutton";
 import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
-import { getPincodeDetails } from "@/apis/common/common";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
-import { addUser } from "@/apis/admin/admin";
+import { addUser, getPincodeData } from "@/apis/admin/admin";
 import toast from "react-hot-toast";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
@@ -102,7 +101,7 @@ const AddUser = () => {
 
     if (!/^[a-zA-Z0-9]+$/.test(userid)) {
       toast.error("User Id should be alphanumeric only");
-      return
+      return;
     }
 
     if (!userLastName) {
@@ -164,6 +163,20 @@ const AddUser = () => {
       navigate("/manageuser");
     } catch (e) {
       toast.error("Error in Adding User");
+    }
+  }
+
+  async function handleGetPincodeData(pincode) {
+    if (!pincode) return;
+    try {
+      setInterval(async () => {
+        const res = await getPincodeData(pincode);
+        setCountry("India");
+        setState(res.stateName);
+        setCity(res.district);
+      }, 1000);
+    } catch (e) {
+      toast.error("Error in Fetching Pincode Data");
     }
   }
 
@@ -246,6 +259,17 @@ const AddUser = () => {
           value={companyName}
           onChange={(e) => setCompanyName(e.target.value)}
         />
+         <InputField
+          label="Pincode"
+          id="pincode"
+          name="pincode"
+          placeholder="Enter your Pincode"
+          value={zipCode}
+          onChange={(e) => {
+            setZipCode(e.target.value);
+            handleGetPincodeData(e.target.value);
+          }}
+        />
         <InputField
           label="Address"
           id="address"
@@ -286,14 +310,7 @@ const AddUser = () => {
           value={zipCode}
           onChange={(e) => setZipCode(e.target.value)}
         /> */}
-        <DropdownWithSearch
-          label="Pincode"
-          id="pincode"
-          name="pincode"
-          options={pincodeOptions}
-          value={zipCode}
-          onChange={(selected) => setZipCode(selected)}
-        />
+       
       </div>
 
       <h2 className="mt-6 mb-4 text-lg font-semibold">Account Details:</h2>
