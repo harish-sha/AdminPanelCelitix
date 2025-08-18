@@ -252,7 +252,11 @@ export const EditCallback = () => {
                     value="1"
                     checked={authorization === "1"}
                     onChange={(e) => {
-                      setAuthorization(e.target.value);
+                      setAuthorization("1");
+                      setDetails((prev) => ({
+                        ...prev,
+                        authorizationType: "1",
+                      }));
                     }}
                   />
                   <label className="text-gray-600 font-semibold">Yes</label>
@@ -262,7 +266,11 @@ export const EditCallback = () => {
                     value="0"
                     checked={authorization === "0"}
                     onChange={(e) => {
-                      setAuthorization(e.target.value);
+                      setAuthorization("0");
+                      setDetails((prev) => ({
+                        ...prev,
+                        authorizationType: "0",
+                      }));
                     }}
                   />
                   <label className="text-gray-600 font-semibold">NO</label>
