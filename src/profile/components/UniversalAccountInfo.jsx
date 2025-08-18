@@ -20,6 +20,7 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { motion } from "framer-motion";
 import { FiAlertCircle } from "react-icons/fi";
 import { useUser } from "@/context/auth";
+import { fetchIpDetails } from "@/apis/settings/setting";
 
 const CustomPagination = ({
   totalPages,
@@ -83,7 +84,7 @@ const CustomPagination = ({
 };
 
 function AccountInfoModal({ show, handleClose }) {
-    const { user } = useUser();
+  const { user } = useUser();
   const [showRcsPricing, setShowRcsPricing] = useState(false);
   const [showWhatsPricing, setShowWhatsPricing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -95,6 +96,7 @@ function AccountInfoModal({ show, handleClose }) {
   const [accountInfo, setAccountInfo] = useState([]);
   const [countryList, setCountryList] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
+  const [ipDetails, setIpDetails] = useState([]);
 
   useEffect(() => {
     async function getRcsRateData() {
@@ -103,6 +105,11 @@ function AccountInfoModal({ show, handleClose }) {
       setFilteredData(data);
     }
 
+    const IpDetails = async () => {
+      const response = await fetchIpDetails();
+      setIpDetails(response[0]);
+    };
+
     async function getWhatsAppRateDate() {
       const data = await getWhatsAppRate();
       setWhatsAppRate(data);
@@ -110,7 +117,7 @@ function AccountInfoModal({ show, handleClose }) {
     }
 
     async function getaccountInfoData() {
-       if (user.role === "AGENT") return;
+      if (user.role === "AGENT") return;
       setIsFetching(true);
       const data = await getaccountInfo();
       setAccountInfo(Array(data));
@@ -126,7 +133,12 @@ function AccountInfoModal({ show, handleClose }) {
     getWhatsAppRateDate();
     getaccountInfoData();
     getCountryListData();
+    IpDetails();
   }, []);
+
+  useEffect(() => {
+    console.log("ipDetails", ipDetails);
+  }, [ipDetails]);
 
   const accountrows = [
     {
@@ -148,7 +160,9 @@ function AccountInfoModal({ show, handleClose }) {
       id: 3,
       service: "OBD",
       created_on: accountInfo[0]?.voiceUpdateTime,
-      pricing: `${accountInfo[0]?.voiceRate15Sec ? "15sec -" : "30sec -"} ${accountInfo[0]?.voiceRate15Sec || accountInfo[0]?.voiceRate30Sec} INR/Credit`,
+      pricing: `${accountInfo[0]?.voiceRate15Sec ? "15sec -" : "30sec -"} ${
+        accountInfo[0]?.voiceRate15Sec || accountInfo[0]?.voiceRate30Sec
+      } INR/Credit`,
     },
     {
       sn: 4,
@@ -233,7 +247,12 @@ function AccountInfoModal({ show, handleClose }) {
     { field: "sn", headerName: "S.No", flex: 0, width: 70 },
     { field: "service", headerName: "Service", flex: 1, minWidth: 80 },
 
-    { field: "created_on", headerName: "Activation Date", flex: 1, minWidth: 80 },
+    {
+      field: "created_on",
+      headerName: "Activation Date",
+      flex: 1,
+      minWidth: 80,
+    },
     // { field: "plan_expiry", headerName: "Plan Expiry", flex: 1, minWidth: 80 },
     {
       field: "pricing",
@@ -276,23 +295,23 @@ function AccountInfoModal({ show, handleClose }) {
 
   const whatsApprows = Array.isArray(filteredWhatsAppData)
     ? filteredWhatsAppData?.map((item, index) => ({
-      id: index + 1,
-      sn: index + 1,
-      countryName: item.country_name ?? "-",
-      countryCode: `+ ${item.ISO_code}` ?? "-",
-      transactional: item.transactional,
-      promotional: item.promotional,
-    }))
+        id: index + 1,
+        sn: index + 1,
+        countryName: item.country_name ?? "-",
+        countryCode: `+ ${item.ISO_code}` ?? "-",
+        transactional: item.transactional,
+        promotional: item.promotional,
+      }))
     : [];
 
   const rcsrows = Array.isArray(filteredData)
     ? filteredData?.map((item, index) => ({
-      id: index + 1,
-      sn: index + 1,
-      country_name: item.country_name,
-      ISO_code: "+" + item.ISO_code,
-      rate: item.rate,
-    }))
+        id: index + 1,
+        sn: index + 1,
+        country_name: item.country_name,
+        ISO_code: "+" + item.ISO_code,
+        rate: item.rate,
+      }))
     : [];
 
   // const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
@@ -373,10 +392,15 @@ function AccountInfoModal({ show, handleClose }) {
           </div>
         ) : (
           <>
-            <div className="flex justify-end mb-3">
+            <div className="flex justify-between mb-3">
               <span className="px-3 py-1 font-medium text-blue-700 bg-blue-100 rounded-md">
                 Account Expiry: {accountInfo[0]?.expiryDate}
               </span>
+              {ipDetails?.ip && (
+                <span className="px-3 py-1 font-sm text-blue-700 bg-blue-100 rounded-md">
+                  Last Login: {ipDetails?.ip || "-"}({ipDetails?.insert_time})
+                </span>
+              )}
             </div>
 
             {new Date() < new Date(accountInfo[0]?.expiryDate) ? (
@@ -436,7 +460,6 @@ function AccountInfoModal({ show, handleClose }) {
                   Please contact the admin to renew or reactivate your account.
                 </p>
               </motion.div>
-
             )}
           </>
         )}
