@@ -182,6 +182,7 @@ import Arihant from "../../random/arihant";
 import { ReelPost } from "@/Instagram/InstagramLiveChat/reels";
 import { WorkFlowIndex } from "@/whatsapp/whatsappFlows/Pages";
 import { FlowReplies } from "@/whatsapp/whatsappFlows/Pages/replies";
+import { EditTemplate } from "@/whatsapp/managetemplate/edit";
 
 const Approutes = () => {
   return (
@@ -238,6 +239,8 @@ const Approutes = () => {
         {/* whatsapp */}
         <Route path="managetemplate" element={<ManageTemplate />} />
         <Route path="createtemplate" element={<WhatsappCreateTemplate />} />
+        <Route path="edit-template" element={<EditTemplate />} />
+
         <Route path="wlaunchcampaign" element={<WhatsappLaunchCampaign />} />
         <Route path="wlivechat" element={<WhatsappLiveChat />} />
         <Route path="wmanagecampaign" element={<WhatsappManageCampaign />} />

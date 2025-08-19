@@ -718,3 +718,15 @@ export const getFlowSampleRequest = async (data) => {
     }
   );
 };
+
+
+export const getWhatsAppTemplateDetails = async (data) => {
+  const url = `/wrapper/waba/WATemplateLibraryList?` +
+    `search=${data.searchTerm}` +
+    `&topic=${data.topic}` +
+    `&usecase=${data.usecase}` +
+    `&industry=${data.industry}` +
+    `&language=${data.language}`;
+
+  return await fetchWithAuth(url, { method: "POST" });
+};
