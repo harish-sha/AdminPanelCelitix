@@ -21,10 +21,11 @@ import React, { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const EditTemplate = () => {
   const { state } = useLocation();
-
+  const navigate = useNavigate();
   const [wabaList, setWabaList] = useState(null);
   const [selectedWaba, setSelectedWaba] = useState("");
   const [selectedWabaSno, setSelectedWabaSno] = useState("");
@@ -36,6 +37,7 @@ export const EditTemplate = () => {
   const [selectedLanguage, setSelectedLanguage] = useState(
     state?.language || ""
   );
+  const [cards, setCards] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(
     state?.category || ""
   );
@@ -109,7 +111,6 @@ export const EditTemplate = () => {
 
     setVariables(requiredVariable);
   }, [state]);
-
 
   // WABA LIST
   useEffect(() => {

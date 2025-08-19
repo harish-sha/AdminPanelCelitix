@@ -58,6 +58,7 @@ import "../style.css";
 import { RadioButton } from "primereact/radiobutton";
 import { Dialog } from "primereact/dialog";
 import moment from "moment";
+import TemplateLibrary from "./components/TemplateLib.jsx";
 
 const ManageTemplate = () => {
   const navigate = useNavigate();
@@ -377,14 +378,15 @@ const ManageTemplate = () => {
     setIsFetching(false);
   };
 
-
   const applyFilters = (data) => {
     const filtered = data.filter((item) => {
       const itemCategory = item.category?.toLowerCase().trim() || "";
       const itemType = item.type?.toLowerCase().trim() || "";
       const itemStatus = item.status?.toLowerCase().trim() || "";
       const itemName = item.templateName?.toLowerCase().trim() || "";
-      const itemDateLocal = moment(new Date(item?.createdDate)).format("DD-MM-YYYY");
+      const itemDateLocal = moment(new Date(item?.createdDate)).format(
+        "DD-MM-YYYY"
+      );
       let selectedDateLocal = "";
       if (selectedDate) {
         selectedDateLocal = moment(selectedDate).format("DD-MM-YYYY");
@@ -403,7 +405,6 @@ const ManageTemplate = () => {
     });
     setFilteredData(filtered);
   };
-
 
   const handleSyncTemplate = async () => {
     if (!syncWabaId) {
@@ -566,151 +567,10 @@ const ManageTemplate = () => {
                 },
               }}
             />
-
           </Tabs>
           <CustomTabPanel value={value} index={1}>
-            <div className="flex flex-wrap gap-3 min-h-[90vh]">
-              <div className="flex flex-col bg-[#e6f4ff] rounded-md shadow-md w-70 overflow-scroll px-2 py-2">
-                {/* categrories */}
-                <div className="">
-                  <label className="font-medium text-gray-600 text-md">
-                    Categories
-                  </label>
-                  {categories.map((category) => (
-                    <div
-                      key={category.id}
-                      className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl  transition-shadow duration-300 flex items-center gap-2 
-                     ${selectedOptionCategory === category.id
-                          ? "bg-white"
-                          : "bg-transparent"
-                        }`}
-                    >
-                      <RadioButton
-                        inputId={`radio_${category.id}`}
-                        name="radioGroupCategory"
-                        value={category.id}
-                        onChange={handleChangeOptionsCategory}
-                        checked={selectedOptionCategory === category.id}
-                      />
-                      <label
-                        htmlFor={`radio_${category.id}`}
-                        className={`font-medium text-sm cursor-pointer ${selectedOptionCategory === category.id
-                          ? "text-green-600"
-                          : "text-gray-700"
-                          }`}
-                      >
-                        {category.label}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Industries */}
-                <div className="mt-2">
-                  <label className="mb-2 font-medium text-gray-600 text-md">
-                    Industries
-                  </label>
-                  <div
-                    className={`overflow-y-auto transition-all duration-300 ${showAllIndustries ? "max-h-[400px]" : "max-h-[300px]"
-                      } rounded-md`}
-                  >
-                    {industries
-                      .slice(0, showAllIndustries ? industries.length : 4)
-                      .map((industry) => (
-                        <div
-                          key={industry.id}
-                          className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl transition-shadow duration-300 flex items-center gap-2 
-                    ${selectedOptionIndustry === industry.id
-                              ? "bg-white"
-                              : "bg-transparent"
-                            }`}
-                        >
-                          <RadioButton
-                            inputId={`radio_${industry.id}`}
-                            name="radioGroupIndustry"
-                            value={industry.id}
-                            onChange={handleChangeOptionsIndustry}
-                            checked={selectedOptionIndustry === industry.id}
-                          />
-                          <label
-                            htmlFor={`radio_${industry.id}`}
-                            className={`font-medium text-sm cursor-pointer flex gap-2 items-center 
-                        ${selectedOptionIndustry === industry.id
-                                ? "text-green-600"
-                                : "text-gray-700"
-                              }`}
-                          >
-                            {industry.icon} {industry.label}
-                          </label>
-                        </div>
-                      ))}
-                  </div>
-
-                  {industries.length > 4 && (
-                    <div className="flex justify-center mt-2">
-                      <button
-                        className="text-sm font-medium text-blue-500 transition-all duration-300 cursor-pointer hover:underline"
-                        onClick={() => setShowAllIndustries(!showAllIndustries)}
-                      >
-                        {showAllIndustries
-                          ? "View Less Industries"
-                          : "View More Industries"}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-              {/* Fixed Layout for Template Section */}
-              <div className="p-2 overflow-auto bg-white rounded-md flex-2">
-                <div>
-                  <div className="flex justify-end px-2 py-2">
-                    {/* <h2 className="text-sm font-semibold text-gray-500">
-                      Showing result <KeyboardArrowRightOutlinedIcon /> 50 of 12
-                    </h2> */}
-                    <h2 className="text-sm font-semibold text-green-500">
-                      {selectedOptionCategory.toUpperCase()}{" "}
-                      <KeyboardArrowRightOutlinedIcon />{" "}
-                      {/* <ShoppingCartOutlinedIcon fontSize="small" /> */}
-                      {selectedOptionIndustry.toUpperCase()}
-                    </h2>
-                    {/* <div></div> */}
-                    {/* <div></div> */}
-                    {/* <span></span> */}
-                  </div>
-
-                  <div className="grid md:grid-cols-3 grid-cols-1 border-gray-400 border-t-2 gap-4 max-h-[74vh] mt-2 overflow-auto pt-2">
-                    {templates?.map((template) => (
-                      <div
-                        key={template.sr_no}
-                        className="p-4 transition-shadow duration-500 bg-white border-2 border-gray-200 rounded-lg shadow-md hover:border-2 hover:border-green-500 hover:shadow-xl"
-                      >
-                        <h3 className="font-semibold text-gray-700">
-                          {template.template_title}
-                        </h3>
-                        <p className="mt-2 text-sm text-gray-500">
-                          {template.template_body}
-                        </p>
-                        {/* <div className="mt-3">
-                          {template.button.type === "cta" ? (
-                            <a
-                              href={template.button.link}
-                              className="px-4 py-2 text-sm text-white transition-all bg-blue-500 rounded-md hover:bg-blue-600"
-                            >
-                              {template.button.text}
-                            </a>
-                          ) : (
-                            <button className="px-4 py-2 text-sm text-gray-700 transition-all bg-gray-200 rounded-md hover:bg-gray-300">
-                              {template.button.text}
-                            </button>
-                          )}
-                        </div> */}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CustomTabPanel>
+            <TemplateLibrary />
+        </CustomTabPanel>
           <CustomTabPanel value={value} index={0}>
             <div className="w-full">
               <>
