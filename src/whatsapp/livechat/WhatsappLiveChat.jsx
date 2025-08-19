@@ -163,6 +163,7 @@ export default function WhatsappLiveChat() {
   });
 
   const [isSubscribe, setIsSubscribe] = useState(false);
+  const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
 
   async function fetchWaba() {
     const res = await getWabaList();
@@ -508,6 +509,7 @@ export default function WhatsappLiveChat() {
     const size = `${files?.size / 1024}MB`;
     setSelectedImage({ files, type, fileName, size });
     // setSelectedImage(files);
+    setIsSpeedDialOpen(false);
   };
 
   const formatDate = (dateString) => {
@@ -1175,6 +1177,8 @@ export default function WhatsappLiveChat() {
               handleFetchSpecificConversation={handleFetchSpecificConversation}
               chatLoading={chatLoading}
               // specificConversation={specificConversation}
+              isSpeedDialOpen={isSpeedDialOpen}
+              setIsSpeedDialOpen={setIsSpeedDialOpen}
             />
           </motion.div>
         )}

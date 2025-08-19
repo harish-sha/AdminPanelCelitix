@@ -74,6 +74,8 @@ export const ChatScreen = ({
   setChatIndex,
   chatIndex,
   chatLoading,
+  isSpeedDialOpen,
+  setIsSpeedDialOpen,
 }) => {
   const messageRef = useRef(null);
   const endOfMessagesRef = useRef(null);
@@ -873,18 +875,12 @@ export const ChatScreen = ({
       {/* media full screen preview */}
 
       {/* Image Preview */}
-      {selectedImage && (
+      {selectedImage?.type && selectedImage.files && (
         <div className="flex flex-wrap gap-2 mt-2">
           <div className="relative">
-            {/* <button className="flex items-center gap-1">
-              <img
-                src={URL.createObjectURL(selectedImage)}
-                alt=""
-                className="object-cover w-20 h-20"
-              />
-            </button> */}
-            {selectedImage.type === "image" && (
+            {selectedImage?.type == "image" && (
               <button className="flex items-center gap-1">
+
                 <img
                   src={URL.createObjectURL(selectedImage?.files)}
                   alt=""
@@ -1066,6 +1062,8 @@ export const ChatScreen = ({
             insertEmoji={insertEmoji}
             setChatState={setChatState}
             chatState={chatState}
+            isSpeedDialOpen={isSpeedDialOpen}
+            setIsSpeedDialOpen={setIsSpeedDialOpen}
           />
         ) : (
           <ClosedChat
