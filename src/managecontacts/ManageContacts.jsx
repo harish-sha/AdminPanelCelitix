@@ -318,7 +318,7 @@ const ManageContacts = () => {
     try {
       // Call the API
       const response = await addContact(payload);
-      console.log("add contact resposne", response)
+      console.log("add contact resposne", response);
 
       if (response.flag == true) {
         // Success
@@ -449,7 +449,9 @@ const ManageContacts = () => {
           minWidth: 120,
           renderCell: (params) => {
             return (
-              <CustomTooltip arrow placement="top"
+              <CustomTooltip
+                arrow
+                placement="top"
                 // title="Allow/ Disallow"
                 title={params.row.status === 1 ? "Active" : "Inactive"}
               >
@@ -463,9 +465,9 @@ const ManageContacts = () => {
                       color: "#34C759",
                     },
                     "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                    {
-                      backgroundColor: "#34C759",
-                    },
+                      {
+                        backgroundColor: "#34C759",
+                      },
                   }}
                 />
               </CustomTooltip>
@@ -655,11 +657,15 @@ const ManageContacts = () => {
       emailId: updateContactDetails.email || "",
       uniqueId: updateContactDetails.uniqueId || "",
       gender: updateContactDetails.gender || "",
-      // 
+      //
       activeStatus: updateContactDetails.status,
       // key should check
-      birthDate: moment(updateContactDetails.birthDate).format("YYYY-MM-DD") || "1800-01-01",
-      anniversaryDate: moment(updateContactDetails.mariageDate).format("YYYY-MM-DD") || "1800-01-01",
+      birthDate:
+        moment(updateContactDetails.birthDate).format("YYYY-MM-DD") ||
+        "1800-01-01",
+      anniversaryDate:
+        moment(updateContactDetails.mariageDate).format("YYYY-MM-DD") ||
+        "1800-01-01",
       // allowishes: updatedContactDetails.allowishes || "",
       allowishes: updateContactDetails.allowishes,
     };
@@ -671,7 +677,7 @@ const ManageContacts = () => {
     await getContactListByGrpId({
       groupSrNo: selectedMultiGroup,
       status: selectedStatus,
-    })
+    });
     await handleSearchGroup();
     toast.success(res?.message);
     setUpdateContactVisible(false);
@@ -945,10 +951,10 @@ const ManageContacts = () => {
 
   const rows = Array.isArray(grpList)
     ? grpList.map((grp, index) => ({
-      id: grp.groupCode,
-      sn: index + 1,
-      groupName: grp.groupName,
-    }))
+        id: grp.groupCode,
+        sn: index + 1,
+        groupName: grp.groupName,
+      }))
     : [];
 
   const filteredRows = selectedmanageGroups?.value
@@ -1013,7 +1019,9 @@ const ManageContacts = () => {
   return (
     <div>
       <div className="flex flex-wrap items-end w-full gap-2 mb-4 md:justify-between justify-center">
-        <h1 className="text-xl font-semibold text-gray-700 text-center">Manage Contacts</h1>
+        <h1 className="text-xl font-semibold text-gray-700 text-center">
+          Manage Contacts
+        </h1>
         <div className="flex items-center gap-2 flex-wrap">
           <div className="w-max-content">
             <UniversalButton
@@ -1124,6 +1132,13 @@ const ManageContacts = () => {
             onClick={() => {
               if (selectedRows.length === 0) {
                 toast.error("Please select at least one contact to delete.");
+              } else if (
+                selectedRows.length > 100
+                // selectedRows[0].status === "Deleted"
+              ) {
+                toast.error(
+                  "You can't delete more than 100 contacts at a time."
+                );
               } else {
                 setConfirmMultiDeleteVisible(true);
               }
@@ -1392,7 +1407,7 @@ const ManageContacts = () => {
                   birthDate: e,
                 })
               }
-            // required={true}
+              // required={true}
             />
             <UniversalDatePicker
               label="Anniversary Date"
@@ -1620,8 +1635,9 @@ const ManageContacts = () => {
                     <button
                       onClick={handleFileUpload}
                       disabled={isUploading}
-                      className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
-                        }`}
+                      className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
+                        isUploading ? "disabled" : ""
+                      }`}
                     >
                       <FileUploadOutlinedIcon
                         sx={{ color: "white", fontSize: "23px" }}
@@ -2109,7 +2125,6 @@ const ManageContacts = () => {
                 required={true}
               /> */}
 
-
               <div className="w-full">
                 <UniversalLabel
                   text="Allow wishes"
@@ -2132,7 +2147,9 @@ const ManageContacts = () => {
                             allowishes: e.value,
                           })
                         }
-                        checked={String(updateContactDetails.allowishes) === "1"}
+                        checked={
+                          String(updateContactDetails.allowishes) === "1"
+                        }
                       />
                       <label
                         htmlFor="AllowishesOption1"
@@ -2156,7 +2173,9 @@ const ManageContacts = () => {
                             allowishes: e.value,
                           })
                         }
-                        checked={String(updateContactDetails.allowishes) === "0"}
+                        checked={
+                          String(updateContactDetails.allowishes) === "0"
+                        }
                       />
                       <label
                         htmlFor="AllowishesOption2"
@@ -2168,7 +2187,6 @@ const ManageContacts = () => {
                   </div>
                 </div>
               </div>
-
 
               {/* <RadioGroupField
                 label={"Gender?"}
