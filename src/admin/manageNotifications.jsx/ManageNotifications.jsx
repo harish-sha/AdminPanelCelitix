@@ -1,10 +1,12 @@
-import { getNotificationList } from "@/apis/admin/admin";
+import { deleteNotification, getNotificationList } from "@/apis/admin/admin";
 import UniversalButton from "@/components/common/UniversalButton";
 import { DataTable } from "@/components/layout/DataTable";
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import CustomTooltip from "../components/CustomTooltip";
+import { MdOutlineDeleteForever } from "react-icons/md";
 
 const ManageNotifications = () => {
   const navigate = useNavigate();
@@ -47,7 +49,46 @@ const ManageNotifications = () => {
       flex: 1,
       minWidth: 120,
     },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params) => (
+        <>
+          <CustomTooltip title="Delete Notification" placement="top" arrow>
+            <IconButton
+              className="no-xs"
+              onClick={() => handleDelete(params.row)}
+            >
+              <MdOutlineDeleteForever
+                className="text-red-500 cursor-pointer hover:text-red-600"
+                size={20}
+              />
+            </IconButton>
+          </CustomTooltip>
+        </>
+      ),
+    },
   ];
+
+  async function handleDelete(row) {
+    if (!row?.sr_no) return;
+    console.log(row);
+    const payload = {
+      reminderSrno: row?.sr_no,
+      status: "",
+      type: "",
+    };
+
+    return;
+    try {
+      const res = await deleteNotification(payload);
+      console.log("res", res);
+    } catch (e) {
+      toast.error("Error deleting notification.");
+    }
+  }
   return (
     <Box
       sx={{
