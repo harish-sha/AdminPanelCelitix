@@ -90,7 +90,6 @@ const TemplateTypes = ({
     typing: false,
   });
 
-
   const TypingText = ({ text, onDone }) => {
     const [displayed, setDisplayed] = useState("");
 
@@ -148,8 +147,9 @@ const TemplateTypes = ({
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_REACT_APP_OPENAI_API_KEY
-              }`,
+            Authorization: `Bearer ${
+              import.meta.env.VITE_REACT_APP_OPENAI_API_KEY
+            }`,
           },
         }
       );
@@ -193,7 +193,6 @@ const TemplateTypes = ({
     <div className="w-full">
       {selectedTemplateType === "text" && (
         <div>
-
           <div className="w-full mb-4">
             <div className="flex items-center mb-2">
               <label className="text-sm font-medium text-gray-700">
@@ -362,9 +361,15 @@ const TemplateTypes = ({
               className="hidden"
               onChange={(e) => {
                 const selectedFile = e.target.files[0];
-                if (selectedFile) {
-                  setFile(selectedFile);
+                if (!selectedFile) return;
+
+                const size = selectedFile.size / 1024 / 1024;
+
+                if (Number(size.toFixed(2)) > 5.0) {
+                  return toast.error("File size exceeds 5 MB limit!");
                 }
+
+                setFile(selectedFile);
               }}
               ref={fileInputRef}
             />
@@ -398,7 +403,7 @@ const TemplateTypes = ({
                   setFile(null);
                   setVideoUrl(null);
                   fileInputRef.current.value = "";
-                  document.getElementById("videoUpload").value = "";
+                  // document.getElementById("videoUpload").value = "";
                   toast.success("Video removed successfully!");
                 }}
               />
@@ -604,7 +609,6 @@ const TemplateTypes = ({
             ref={textAreaRef}
           />
         </div>
-
 
         {/* <div className="w-full mb-4 relative">
           <AnimatePresence>
