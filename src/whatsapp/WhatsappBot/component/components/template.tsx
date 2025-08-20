@@ -257,41 +257,36 @@ export const TemplateNode = ({
               ],
             };
           }
-          // if (template.type === "video") {
-          //   return {
-          //     type: "HEADER",
-          //     parameters: [
-          //       {
-          //         type: "video",
-          //         video: {
-          //           link: basicDetails.mediaPath,
-          //         },
-          //       },
-          //     ],
-          //   };
-          // }
-          // if (template.type === "document") {
-          //   return {
-          //     type: "HEADER",
-          //     parameters: [
-          //       {
-          //         type: "document",
-          //         document: {
-          //           link: basicDetails.mediaPath,
-          //         },
-          //       },
-          //     ],
-          //   };
-          // }
+          if (template.type === "video") {
+            return {
+              type: "HEADER",
+              parameters: [
+                {
+                  type: "video",
+                  video: {
+                    link: basicDetails.mediaPath,
+                  },
+                },
+              ],
+            };
+          }
+          if (template.type === "document") {
+            return {
+              type: "HEADER",
+              parameters: [
+                {
+                  type: "document",
+                  document: {
+                    link: basicDetails.mediaPath,
+                  },
+                },
+              ],
+            };
+          }
           return component;
         }
       );
 
-      // console.log("botData", botData);
-
-      // return;
-
-      // TODO: add variable dropdown values
 
       setNodesInputData((prev) => ({
         ...prev,
@@ -338,8 +333,6 @@ export const TemplateNode = ({
 
     return null;
   };
-
-  
 
   return (
     <div className="w-full flex flex-col h-[calc(80vh-100px)]">
@@ -408,7 +401,7 @@ export const TemplateNode = ({
               </h1>
               <div className="space-y-2  rounded-b-xl">
                 <InputField
-                  maxLength={100}
+                  maxLength={"100"}
                   id="locationurl"
                   name="locationurl"
                   label={"Location URL (optional)"}
@@ -426,7 +419,7 @@ export const TemplateNode = ({
                 />
                 <div className="flex items-center gap-2">
                   <InputField
-                    maxLength={100}
+                    maxLength={"100"}
                     id="latitude"
                     name="latitude"
                     label={"Latitude"}
@@ -440,7 +433,7 @@ export const TemplateNode = ({
                     placeholder="Enter Latitude value"
                   />
                   <InputField
-                    maxLength={100}
+                    maxLength={"100"}
                     id="longitude"
                     name="longitude"
                     label={"Longitude"}
@@ -455,7 +448,7 @@ export const TemplateNode = ({
                   />
                 </div>
                 <InputField
-                  maxLength={20}
+                  maxLength={"20"}
                   id="name"
                   name="name"
                   label={"Name"}
@@ -469,7 +462,7 @@ export const TemplateNode = ({
                   placeholder="Enter A name for the location"
                 />
                 <InputField
-                  maxLength={100}
+                  maxLength={"100"}
                   id="address"
                   name="address"
                   label={"Address"}
