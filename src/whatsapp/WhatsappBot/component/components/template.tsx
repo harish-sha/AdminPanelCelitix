@@ -209,82 +209,84 @@ export const TemplateNode = ({
       //   }
       // });
 
-      botData.template.components = botData.template.components.map(
-        (
-          component: {
-            type: string;
-            parameters: {
-              text: string;
+      if (Array.isArray(botData.template.components)) {
+        botData.template.components = botData.template.components.map(
+          (
+            component: {
               type: string;
-              image: { link: string };
-            }[];
-          },
-          index: number
-        ) => {
-          if (component.type === "BODY") {
-            const params = component.parameters.map((item, i) => ({
-              ...item,
-              text: `${variables[i]}`,
-            }));
+              parameters: {
+                text: string;
+                type: string;
+                image: { link: string };
+              }[];
+            },
+            index: number
+          ) => {
+            if (component.type === "BODY") {
+              const params = component.parameters.map((item, i) => ({
+                ...item,
+                text: `${variables[i]}`,
+              }));
 
-            return {
-              ...component,
-              parameters: params,
-            };
-          }
-          if (component.type === "button") {
-            return {
-              ...component,
-              parameters: [
-                {
-                  text: `${btnVar[index]}`,
-                  type: "text",
-                },
-              ],
-            };
-          }
-          if (template.type === "image") {
-            return {
-              type: "HEADER",
-              parameters: [
-                {
-                  type: "image",
-                  image: {
-                    link: basicDetails.mediaPath,
+              return {
+                ...component,
+                parameters: params,
+              };
+            }
+            if (component.type === "button") {
+              return {
+                ...component,
+                parameters: [
+                  {
+                    text: `${btnVar[index]}`,
+                    type: "text",
                   },
-                },
-              ],
-            };
-          }
-          if (template.type === "video") {
-            return {
-              type: "HEADER",
-              parameters: [
-                {
-                  type: "video",
-                  video: {
-                    link: basicDetails.mediaPath,
+                ],
+              };
+            }
+            if (template.type === "image") {
+              return {
+                type: "HEADER",
+                parameters: [
+                  {
+                    type: "image",
+                    image: {
+                      link: basicDetails.mediaPath,
+                    },
                   },
-                },
-              ],
-            };
-          }
-          if (template.type === "document") {
-            return {
-              type: "HEADER",
-              parameters: [
-                {
-                  type: "document",
-                  document: {
-                    link: basicDetails.mediaPath,
+                ],
+              };
+            }
+            if (template.type === "video") {
+              return {
+                type: "HEADER",
+                parameters: [
+                  {
+                    type: "video",
+                    video: {
+                      link: basicDetails.mediaPath,
+                    },
                   },
-                },
-              ],
-            };
+                ],
+              };
+            }
+            if (template.type === "document") {
+              return {
+                type: "HEADER",
+                parameters: [
+                  {
+                    type: "document",
+                    document: {
+                      link: basicDetails.mediaPath,
+                    },
+                  },
+                ],
+              };
+            }
+            return component;
           }
-          return component;
-        }
-      );
+        );
+      }
 
       setNodesInputData((prev) => ({
         ...prev,
@@ -297,6 +299,7 @@ export const TemplateNode = ({
 
       setIsVisible(false);
     } catch (e) {
+      console.log("e", e);
       return toast.error("Error saving template data");
     }
   }
