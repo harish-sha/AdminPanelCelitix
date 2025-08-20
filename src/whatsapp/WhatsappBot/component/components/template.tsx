@@ -210,16 +210,26 @@ export const TemplateNode = ({
       // });
 
       botData.template.components = botData.template.components.map(
-        (component, index) => {
+        (
+          component: {
+            type: string;
+            parameters: {
+              text: string;
+              type: string;
+              image: { link: string };
+            }[];
+          },
+          index: number
+        ) => {
           if (component.type === "BODY") {
+            const params = component.parameters.map((item, i) => ({
+              ...item,
+              text: `${variables[i]}`,
+            }));
+
             return {
               ...component,
-              parameters: [
-                {
-                  text: `{{${variables[index]}}}`,
-                  type: "text",
-                },
-              ],
+              parameters: params,
             };
           }
           if (component.type === "button") {
@@ -227,18 +237,7 @@ export const TemplateNode = ({
               ...component,
               parameters: [
                 {
-                  text: `{{${btnVar[index]}}}`,
-                  type: "text",
-                },
-              ],
-            };
-          }
-          if (component.type === "button") {
-            return {
-              ...component,
-              parameters: [
-                {
-                  text: `{{${btnVar[index]}}}`,
+                  text: `${btnVar[index]}`,
                   type: "text",
                 },
               ],
@@ -286,7 +285,6 @@ export const TemplateNode = ({
           return component;
         }
       );
-
 
       setNodesInputData((prev) => ({
         ...prev,
