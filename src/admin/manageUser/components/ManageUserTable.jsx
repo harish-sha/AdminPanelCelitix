@@ -298,6 +298,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [petmDialogVisible, setPETMDialogVisible] = useState(false);
   const [otpService, setOtpService] = useState(false);
   const [viewService, setViewService] = useState(false);
+  const [userBalanceDialogVisible, setUserBalanceDialogVisible] = useState({
+    isOpen: false,
+    balance: 0,
+  });
   const [editService, setEditDetailsDialogVisible] = useState(false);
   const [assignRate, setassignRate] = useState(false);
   const [manageApiKeys, setManageApiKeys] = useState(false);
@@ -1147,18 +1151,19 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const handleFetchBalance = async (id) => {
     try {
       const res = await fetchBalance(id);
-      const data = {
-        id,
-        balance: res?.balance || 0,
-      };
-      const updatedBalance = [...userBalance];
-      if (updatedBalance.findIndex((item) => item.id === id) != "-1") {
-        updatedBalance[updatedBalance.findIndex((item) => item.id === id)] =
-          data;
-      } else {
-        updatedBalance.push(data);
-      }
-      setUserBalance(updatedBalance);
+      // const data = {
+      //   id,
+      //   balance: res?.balance || 0,
+      // };
+      // const updatedBalance = [...userBalance];
+      // if (updatedBalance.findIndex((item) => item.id === id) != "-1") {
+      //   updatedBalance[updatedBalance.findIndex((item) => item.id === id)] =
+      //     data;
+      // } else {
+      //   updatedBalance.push(data);
+      // }
+      // setUserBalance(updatedBalance);
+      setUserBalanceDialogVisible({ isOpen: true, balance: res?.balance });
     } catch (e) {
       console.log(e);
       toast.error("Error in fetching balance");
@@ -1463,6 +1468,28 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               />
             </IconButton>
           </CustomTooltip>
+          {/* <IconButton
+            onClick={() => handleFetchBalance(params.row.srno)}
+            sx={{
+              position: "relative",
+            }}
+          >
+            <WalletIcon
+              sx={{
+                fontSize: "1.2rem",
+                color: "gray",
+              }}
+            />
+            {userBalance
+              .find((balance) => balance.id == params.row.srno)
+              ?.balance.toString() && (
+              <div className="z-9999 absolute bottom-[1rem] -right-[2.2rem] bg-white border border-gray-300 rounded-md shadow-lg text-xs p-1">
+                {userBalance
+                  .find((balance) => balance.id == params.row.srno)
+                  ?.balance?.toString()}
+              </div>
+            )}
+          </IconButton> */}
           <CustomTooltip arrow title="OTP Validation Numbers" placement="top">
             <IconButton onClick={() => handleOtp(params.row.srno)}>
               <EmergencyOutlinedIcon
@@ -2645,6 +2672,15 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         ) : (
           <p className="text-center text-gray-500">Loading user details...</p>
         )}
+      </Dialog>
+      <Dialog
+        header="View Balance"
+        visible={userBalanceDialogVisible.isOpen}
+        onHide={() => setUserBalanceDialogVisible({ isOpen: false, balance: 0 })}
+        className="w-[48rem] max-w-full"
+        draggable={false}
+      >
+        Customer Balance: ₹{userBalanceDialogVisible?.balance || 0}
       </Dialog>
       {/* View details */}
 
