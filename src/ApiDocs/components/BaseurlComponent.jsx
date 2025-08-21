@@ -1,51 +1,56 @@
-import { useState, useRef } from 'react';
+import { useState, useRef } from "react";
 import { MdContentCopy } from "react-icons/md";
 import { IoMdCheckmark } from "react-icons/io";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 
-const BaseurlComponent = ({ urlPrefix, requestType: initialRequestType, param = '' }) => {
+const BaseurlComponent = ({
+  urlPrefix,
+  requestType: initialRequestType,
+  param = "",
+}) => {
   const [requestType, setRequestType] = useState(initialRequestType);
   const [copied, setCopied] = useState(false);
   const textRef = useRef(null);
 
-  // const endpoint = '/directory/secure/api/v1/bots/templates'; 
+  // const endpoint = '/directory/secure/api/v1/bots/templates';
 
   const baseUrl = `{${urlPrefix}}`;
   const fullUrl = baseUrl + param;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(fullUrl)
+    navigator.clipboard
+      .writeText(fullUrl)
       .then(() => {
         setCopied(true);
-        toast.success('Copied to clipboard!', {
+        toast.success("Copied to clipboard!", {
           duration: 2000,
-          position: 'top-center',
+          position: "top-center",
           style: {
-            backgroundColor: '#fff',
-            color: '#000',
+            backgroundColor: "#fff",
+            color: "#000",
           },
           iconTheme: {
-            primary: '#10B981',
-            secondary: '#fff'
-          }
+            primary: "#10B981",
+            secondary: "#fff",
+          },
         });
         setTimeout(() => setCopied(false), 2000);
       })
-      .catch(err => {
-        toast.error('Failed to copy text', {
+      .catch((err) => {
+        toast.error("Failed to copy text", {
           duration: 2000,
-          position: 'top-center',
+          position: "top-center",
           style: {
-            backgroundColor: '#fff',
-            color: '#000',
-          }
+            backgroundColor: "#fff",
+            color: "#000",
+          },
         });
-        console.error('Could not copy text: ', err);
+        console.error("Could not copy text: ", err);
       });
   };
 
   return (
-    <div className="lg:w-3xl md:w-2xl w-[320px] mx-auto">
+    <div className="w-full mx-auto">
       <div className="bg-gray-700 text-white p-4 rounded-lg shadow-md flex items-center flex-col h-32 relative overflow-hidden">
         <Toaster />
         <div className="flex justify-between items-center absolute right-2.5">
@@ -63,7 +68,11 @@ const BaseurlComponent = ({ urlPrefix, requestType: initialRequestType, param = 
               className="p-1 rounded hover:bg-gray-700 transition-colors"
               aria-label="Copy to clipboard"
             >
-              {copied ? <IoMdCheckmark fontSize="large" /> : <MdContentCopy fontSize="large" />}
+              {copied ? (
+                <IoMdCheckmark fontSize="large" />
+              ) : (
+                <MdContentCopy fontSize="large" />
+              )}
             </button>
           </div>
         </div>

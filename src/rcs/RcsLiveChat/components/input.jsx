@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import { SearchOutlined } from "@mui/icons-material";
 import { motion } from "framer-motion";
@@ -7,9 +8,11 @@ import { FaChevronCircleLeft } from "react-icons/fa";
 import { FaFilter } from "react-icons/fa";
 import { CiMenuKebab } from "react-icons/ci";
 import { useState } from "react";
+import { useRcsContext } from "@/context/RcsContext";
+
 export const InputData = ({
-  agentState,
-  setAgentState,
+  // agentState,
+  // setAgentState,
   chatState,
   setChatState,
   search,
@@ -19,6 +22,15 @@ export const InputData = ({
   setBtnOption,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  // console.log("agentState", agentState);
+
+  // context
+  const {
+    contextAgentList,
+    setContextAgentList,
+  } = useRcsContext();
+
+
   return (
     <motion.div
       className="p-3 bg-white rounded-2xl shadow-md"
@@ -29,35 +41,35 @@ export const InputData = ({
       <div className="flex flex-col gap-2">
         <div className="relative">
           {/* Toggle Button */}
-          {!isOpen ? (
+          {/* {!isOpen ? (
             <button
               onClick={() => setIsOpen(true)}
               className="absolute -left-3 top-4 transform -translate-y-1/2 z-99 text-3xl text-gray-700 hover:text-blue-500 animate-pulse "
             >
               <FaChevronCircleRight className="text-2xl" />
             </button>
-          ) : (
+            ) : (
             <button
               onClick={() => setIsOpen(false)}
               className="absolute -left-3 top-4 transform -translate-y-1/2 z-50 text-3xl text-gray-700 hover:text-blue-500 animate-pulse"
             >
               <FaChevronCircleLeft className="text-2xl" />
             </button>
-          )}
-          <div
+          )} */}
+          {/* <div
             className={`absolute top-0 -left-8 w-full md:w-88 shadow-lg z-40 transform transition-transform duration-300 md:ml-4 ${isOpen ? "translate-x-0 left-0" : "-translate-x-full"
               }`}
-          >
+            >
             <AnimatedDropdown
               // label="Select Agent"
               id="agentList"
               name="agentList"
-              options={agentState?.all?.map((item) => ({
+              options={contextAgentList?.all?.map((item) => ({
                 label: item?.agent_name,
                 value: item?.agent_id,
               }))}
               onChange={(e) => {
-                setAgentState((prev) => ({ ...prev, id: e }));
+                setContextAgentList((prev) => ({ ...prev, id: e }));
                 setChatState({
                   active: null,
                   input: "",
@@ -71,9 +83,9 @@ export const InputData = ({
                 setIsOpen(false);
               }}
               placeholder="Select Agent"
-              value={agentState?.id}
+              value={contextAgentList?.id}
             />
-          </div>
+          </div> */}
           <div className="flex items-center justify-between gap-3">
             <div
               id="input"
@@ -107,7 +119,7 @@ export const InputData = ({
         </div>
       </div>
 
-      {agentState?.id && (
+      {contextAgentList?.id && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

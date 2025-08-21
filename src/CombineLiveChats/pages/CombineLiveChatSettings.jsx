@@ -8,7 +8,6 @@ import WhatsappChats, { WhatsappChatSettingSetup } from "@/CombineLiveChats/comp
 import RcsLiveChat from "@/rcs/rcslivechat/RcsLiveChat";
 import InstagramLiveChat from "@/Instagram/InstagramLiveChat/InstagramLiveChat";
 import InstagramChats, { InstagramChatsSettings } from "../components/ServiceLayout/InstagramChats";
-import MessengerView from "./channels/MessengerView";
 import MessengerChats, { MessengerChatsSetting } from "../components/ServiceLayout/MessengerChats";
 import RcsChats, { RcsSettings } from "@/CombineLiveChats/components/ServiceLayout/RcsChats";
 import ChannelTabSettings from "../components/Settings/ChannelTabSettings";
@@ -21,9 +20,9 @@ const CombineLiveChatSettings = () => {
   const { user } = useUser();
   const allowedServiceIds =
     user?.services?.map((s) => s.service_type_id.toString()) || [];
-    // const allowedServiceIds = ["7", "8", "9", "10"]; // dummmy
+  // const allowedServiceIds = ["7", "8", "9", "10"]; // dummmy
 
-    // RCSLiveChatSettings - later map this at rcslivechat
+  // RCSLiveChatSettings - later map this at rcslivechat
 
   const { pathname } = useLocation();
   const tab = pathname.split("/")[2];
@@ -45,7 +44,7 @@ const CombineLiveChatSettings = () => {
           ;
       case "messengerlcsetting":
         return allowedServiceIds.includes("5") ?
-          <MessengerView />
+          <MessengerChatsSetting />
           :
           <MessengerChatsSetting />
           ;

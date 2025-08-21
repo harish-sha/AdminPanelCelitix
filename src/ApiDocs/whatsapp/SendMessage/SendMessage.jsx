@@ -17,8 +17,6 @@ const SendMessage = () => {
   const sections = [
     { id: "session-text-message", title: "Session Text Message" },
     { id: "media-message", title: "Media Message" },
-    
-   
   ];
 
   useEffect(() => {
@@ -52,7 +50,6 @@ const SendMessage = () => {
 
   const HeaderTableColumns = ["Name", "Value"];
 
-
   const requestDataSessionTextMessage = [
     {
       requestPrefix: `{
@@ -77,18 +74,18 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
  `;
 
   const SessionTextMessageResponseData = {
-    "messaging_product": "whatsapp",
-    "contacts": [
+    messaging_product: "whatsapp",
+    contacts: [
       {
-        "input": "+919999595313",
-        "wa_id": "919999595313"
-      }
+        input: "+919999595313",
+        wa_id: "919999595313",
+      },
     ],
-    "messages": [
+    messages: [
       {
-        "id": "wamid.HBgMOTE5OTk5NTk1MzEzFQIAERgSQUMwM0Y5RjNEMjIwQTFEMEE5AA=="
-      }
-    ]
+        id: "wamid.HBgMOTE5OTk5NTk1MzEzFQIAERgSQUMwM0Y5RjNEMjIwQTFEMEE5AA==",
+      },
+    ],
   };
 
   const SessionTextMessageResponseheaders = [
@@ -101,7 +98,6 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
       value: "appId=cid-v1:3842b663-3342-4b73-804d-2baaedf43f32",
     },
   ];
-
 
   const requestDataMediaMessage = [
     {
@@ -118,7 +114,6 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
     },
   ];
 
-
   const MediaMessagecURL = `
 curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/messages' \
 --header 'x-access-token: YOUR_TOKEN' \
@@ -126,22 +121,20 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
 --header 'Content-Type: application/json' \
    `;
 
-
-   const MediaMessageResponseData = {
-    "messaging_product": "whatsapp",
-    "contacts": [
+  const MediaMessageResponseData = {
+    messaging_product: "whatsapp",
+    contacts: [
       {
-        "input": "+919999595313",
-        "wa_id": "919999595313"
-      }
+        input: "+919999595313",
+        wa_id: "919999595313",
+      },
     ],
-    "messages": [
+    messages: [
       {
-        "id": "wamid.HBgMOTE5OTk5NTk1MzEzFQIAERgSQUMwM0Y5RjNEMjIwQTFEMEE5AA=="
-      }
-    ]
-  }
-
+        id: "wamid.HBgMOTE5OTk5NTk1MzEzFQIAERgSQUMwM0Y5RjNEMjIwQTFEMEE5AA==",
+      },
+    ],
+  };
 
   const MediaMessageResponseheaders = [
     { key: "Content-Type", value: "application/json" },
@@ -156,29 +149,43 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
 
   return (
     <div
-    className={`flex w-[100%]   ${
-      isDarkMode ? "bg-slate-800 text-white" : "bg-[#eeeeee] text-gray-800"
-    }`}
-  >
-    <div className=" p-4 lg:p-6 overflow-y-auto w-full ">
-      <section id="session-text-message" className="mb-16">
-      <div className="flex flex-col justify-center items-center gap-2 popins  ">
+      className={`flex w-[100%]   ${
+        isDarkMode ? "bg-slate-800 text-white" : "bg-[#eeeeee] text-gray-800"
+      }`}
+    >
+      <div className=" p-4 lg:p-6 overflow-y-auto w-4xl mx-auto ">
+        <section id="session-text-message" className="mb-16">
+          <div className="flex flex-col justify-center items-center gap-2 popins  ">
             <h2 className="text-xl md:text-3xl lg:text-3xl font-medium ">
               SESSION TEXT MESSAGE
             </h2>
             <div className=" flex items-center justify-center md:text-start w-xs md:w-2xl lg:w-3xl mx-auto sm:text-center mt-2">
               <p>
-              To send a text message, make a POST call to /PHONE_NUMBER_ID/messages and attach a message object with type=text. Then, add a <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages#text-object" target="_blank" rel="noopener noreferrer">text object</Link></span> .
+                To send a text message, make a POST call to
+                /PHONE_NUMBER_ID/messages and attach a message object with
+                type=text. Then, add a{" "}
+                <span className="text-blue-500 hover:underline">
+                  <Link
+                    to="https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages#text-object"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    text object
+                  </Link>
+                </span>{" "}
+                .
               </p>
             </div>
           </div>
 
           <div className="mt-5 flex flex-col justify-center ">
-          <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center mb-4">
-             Base URL
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center mb-4">
+              Base URL
             </h2>
-            <BaseurlComponent 
-             urlPrefix="Base URL" requestType="POST" param="/YOUR_PHONE_NUMBER_ID/messages" 
+            <BaseurlComponent
+              urlPrefix="Base URL"
+              requestType="POST"
+              param="/YOUR_PHONE_NUMBER_ID/messages"
             />
           </div>
 
@@ -188,43 +195,41 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            
-              <Table columns={HeaderTableColumns}>
-                <tr className={`${colors.tableBorder} border-b`}>
-                  <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                  <td className="px-4 py-4 text-sm popins text-orange-500">
-                    YOUR_TOKEN <br />{" "}
-                    <span className="text-gray-400">
-                      Enter the access token shared by us
-                    </span>
-                  </td>
-                </tr>
+            <Table columns={HeaderTableColumns}>
+              <tr className={`${colors.tableBorder} border-b`}>
+                <td className="px-4 py-4 text-sm popins">x-access-token</td>
+                <td className="px-4 py-4 text-sm popins text-orange-500">
+                  YOUR_TOKEN <br />{" "}
+                  <span className="text-gray-400">
+                    Enter the access token shared by us
+                  </span>
+                </td>
+              </tr>
 
-                <tr className={`${colors.tableBorder} border-b`}>
-                  <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                  <td className="px-4 py-4 text-sm popins text-orange-500">
-                    YOUR_WABA_ID <br />{" "}
-                    <span className="text-gray-400">
-                      Enter your WhatsApp Business Account ID
-                    </span>
-                  </td>
-                </tr>
+              <tr className={`${colors.tableBorder} border-b`}>
+                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
+                <td className="px-4 py-4 text-sm popins text-orange-500">
+                  YOUR_WABA_ID <br />{" "}
+                  <span className="text-gray-400">
+                    Enter your WhatsApp Business Account ID
+                  </span>
+                </td>
+              </tr>
 
-                <tr>
-                  <td className="px-4 py-4 text-sm popins">Content-type</td>
-                  <td className="px-4 py-4 text-sm popins text-orange-500">
-                    application/json
-                  </td>
-                </tr>
-              </Table>
+              <tr>
+                <td className="px-4 py-4 text-sm popins">Content-type</td>
+                <td className="px-4 py-4 text-sm popins text-orange-500">
+                  application/json
+                </td>
+              </tr>
+            </Table>
           </div>
 
- 
           <div className="flex flex-col items-center justify-center mt-4">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataSessionTextMessage}
                 curlBase={SessionTextMessagecURL}
@@ -234,48 +239,89 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
 
           <div className="mt-4 flex flex-col items-center justify-center">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
-            Example  Response
+              Example Response
             </h2>
-            <ResponseComponent
-              jsonData={SessionTextMessageResponseData}
-              headers={SessionTextMessageResponseheaders}
-            />
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={SessionTextMessageResponseData}
+                headers={SessionTextMessageResponseheaders}
+              />
+            </div>
           </div>
-        
+        </section>
 
-       </section>
-
-
-       <section id="media-message" >
-       <div className="flex flex-col justify-center items-center gap-2 popins  ">
+        <section id="media-message">
+          <div className="flex flex-col justify-center items-center gap-2 popins  ">
             <h2 className="text-xl md:text-3xl lg:text-3xl font-medium ">
               MEDIA MESSAGE
             </h2>
             <div className=" flex flex-col  justify-center md:text-start w-xs md:w-2xl lg:w-3xl mx-auto sm:text-center mt-2">
               <p className="mt-2">
-              Use the POST <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages" target="_blank" rel="noopener noreferrer">WhatsApp Business Phone Number &gt; Messages</Link></span> endpoint to send a media message. Use the type property to indicate the media asset's type (audio, document, image, sticker, or video) and either the id or link property to indicate its ID (which you must generate) or location on your public server.
+                Use the POST{" "}
+                <span className="text-blue-500 hover:underline">
+                  <Link
+                    to="https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    WhatsApp Business Phone Number &gt; Messages
+                  </Link>
+                </span>{" "}
+                endpoint to send a media message. Use the type property to
+                indicate the media asset's type (audio, document, image,
+                sticker, or video) and either the id or link property to
+                indicate its ID (which you must generate) or location on your
+                public server.
               </p>
-             
-             <p className="mt-2">
-             If using id, you must first <span className="text-blue-500 hover:underline"><Link to='https://developers.facebook.com/docs/whatsapp/cloud-api/reference/media#upload-media'  target="_blank" rel="noopener noreferrer">upload your media asset</Link ></span> to our servers and capture the returned media ID. If using link, your asset must be on a publicly accessible server or the message will fail to send.
-             </p>
-            
-            <p className="mt-2">To reduce the likelihood of errors and avoid unnecessary requests to your public server, we recommend that you upload your media assets and use their IDs when sending messages.</p>
 
-            <p className="mt-2">Media assets can also be cached. See <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#media-http-caching"  target="_blank" rel="noopener noreferrer">Media HTTP Caching</Link></span>.</p>
+              <p className="mt-2">
+                If using id, you must first{" "}
+                <span className="text-blue-500 hover:underline">
+                  <Link
+                    to="https://developers.facebook.com/docs/whatsapp/cloud-api/reference/media#upload-media"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    upload your media asset
+                  </Link>
+                </span>{" "}
+                to our servers and capture the returned media ID. If using link,
+                your asset must be on a publicly accessible server or the
+                message will fail to send.
+              </p>
+
+              <p className="mt-2">
+                To reduce the likelihood of errors and avoid unnecessary
+                requests to your public server, we recommend that you upload
+                your media assets and use their IDs when sending messages.
+              </p>
+
+              <p className="mt-2">
+                Media assets can also be cached. See{" "}
+                <span className="text-blue-500 hover:underline">
+                  <Link
+                    to="https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#media-http-caching"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Media HTTP Caching
+                  </Link>
+                </span>
+                .
+              </p>
             </div>
-          </div> 
-         
-
-          <div className="mt-5 flex flex-col justify-center ">
-          <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center mb-4">
-             Base URL
-            </h2>
-            <BaseurlComponent
-             urlPrefix="Base URL" requestType="POST" param="/YOUR_PHONE_NUMBER_ID/messages" 
-            />
           </div>
 
+          <div className="mt-5 flex flex-col justify-center ">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center mb-4">
+              Base URL
+            </h2>
+            <BaseurlComponent
+              urlPrefix="Base URL"
+              requestType="POST"
+              param="/YOUR_PHONE_NUMBER_ID/messages"
+            />
+          </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center">
@@ -283,44 +329,44 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            
-              <Table columns={HeaderTableColumns}>
-                <tr className={`${colors.tableBorder} border-b`}>
-                  <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                  <td className="px-4 py-4 text-sm popins text-orange-500">
-                    YOUR_TOKEN <br />{" "}
-                    <span className="text-gray-400">
-                      Enter the access token shared by us
-                    </span>
-                  </td>
-                </tr>
+            <Table columns={HeaderTableColumns}>
+              <tr className={`${colors.tableBorder} border-b`}>
+                <td className="px-4 py-4 text-sm popins">x-access-token</td>
+                <td className="px-4 py-4 text-sm popins text-orange-500">
+                  YOUR_TOKEN <br />{" "}
+                  <span className="text-gray-400">
+                    Enter the access token shared by us
+                  </span>
+                </td>
+              </tr>
 
-                <tr className={`${colors.tableBorder} border-b`}>
-                  <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                  <td className="px-4 py-4 text-sm popins text-orange-500">
-                    YOUR_WABA_ID <br />{" "}
-                    <span className="text-gray-400">
-                      Enter your WhatsApp Business Account ID
-                    </span>
-                  </td>
-                </tr>
+              <tr className={`${colors.tableBorder} border-b`}>
+                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
+                <td className="px-4 py-4 text-sm popins text-orange-500">
+                  YOUR_WABA_ID <br />{" "}
+                  <span className="text-gray-400">
+                    Enter your WhatsApp Business Account ID
+                  </span>
+                </td>
+              </tr>
 
-                <tr>
-                  <td className="px-4 py-4 text-sm popins">Content-type</td>
-                  <td className="px-4 py-4 text-sm popins text-orange-500">
-                    application/json
-                  </td>
-                </tr>
-              </Table>
+              <tr>
+                <td className="px-4 py-4 text-sm popins">Content-type</td>
+                <td className="px-4 py-4 text-sm popins text-orange-500">
+                  application/json
+                </td>
+              </tr>
+            </Table>
           </div>
 
- 
           <div className="flex flex-col items-center justify-center mt-4">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Request
             </h2>
-            <p className="mt-2 font-medium">Sample request using image with link:</p>
-            <div>
+            <p className="mt-2 font-medium">
+              Sample request using image with link:
+            </p>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataMediaMessage}
                 curlBase={MediaMessagecURL}
@@ -330,20 +376,20 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
 
           <div className="mt-4 flex flex-col items-center justify-center">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
-            Example  Response
+              Example Response
             </h2>
+            <div className="w-full">
             <ResponseComponent
               jsonData={MediaMessageResponseData}
               headers={MediaMessageResponseheaders}
             />
+            </div>
           </div>
+        </section>
+      </div>
 
-       </section>
-   </div>
-
-
- {/* Mini Map Navigation  */}
- <div
+      {/* Mini Map Navigation  */}
+      <div
         className={`${
           isDarkMode ? "bg-gray-500 text-white" : "bg-[#cecece] text-black"
         } hidden lg:block  h-fit sticky  top-4 p-2 shrink-0 rounded-2xl  mr-4 w-66`}
@@ -395,8 +441,8 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
           </div>
         </div>
       </div>
-   </div>
-  )
-}
+    </div>
+  );
+};
 
-export default SendMessage
+export default SendMessage;

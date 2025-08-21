@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 // import UniversalSkeleton from "../components/UniversalSkeleton.jsx";
 import CustomNoRowsOverlay from "@/whatsapp/components/CustomNoRowsOverlay.jsx";
 import InputField from "@/components/layout/InputField.jsx";
-import AnimatedDropdown from "@/admin/components/AnimatedDropdown.jsx";
+// import AnimatedDropdown from "@/admin/components/AnimatedDropdown.jsx";
 import UniversalButton from "@/components/common/UniversalButton.jsx";
 import UniversalSkeleton from "@/components/common/UniversalSkeleton.jsx";
 import { fetchCampaignDetailReport } from "@/apis/rcs/rcs";

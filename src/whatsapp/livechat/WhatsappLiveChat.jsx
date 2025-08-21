@@ -68,7 +68,7 @@ import { select } from "@material-tailwind/react";
 import DropdownWithSearch from "../components/DropdownWithSearch";
 import { useUser } from "@/context/auth";
 import moment from "moment";
-import { useWabaAgentContext } from "@/context/WabaAndAgent.jsx"
+import { useWabaAgentContext } from "@/context/WabaAndAgent.jsx";
 import { MdOutlineAddLocationAlt } from "react-icons/md";
 
 export default function WhatsappLiveChat() {
@@ -88,7 +88,6 @@ export default function WhatsappLiveChat() {
   const [input, setInput] = useState("");
   const [waba, setWaba] = useState([]);
   const [selectedWaba, setSelectedWaba] = useState("");
-  console.log("selectedWaba", selectedWaba)
   const [btnOption, setBtnOption] = useState("active");
   const [search, setSearch] = useState("");
 
@@ -136,10 +135,20 @@ export default function WhatsappLiveChat() {
   const {
     wabaData,
     setWabaData,
+    contextAgentList,
+    setContextAgentList,
     chatData,
     setChatData,
     selectedContextWaba,
     setSelectedContextWaba,
+    convoDetails,
+    setConvoDetails,
+    setInactiveConvo,
+    setActiveConvo,
+    initialChatState,
+    setInititialChatState,
+    agentInfo,
+    setAgentInfo
   } = useWabaAgentContext();
 
   function handleNextCard() {
@@ -151,6 +160,7 @@ export default function WhatsappLiveChat() {
     setCardIndex(cardIndex - 1);
   }
 
+  console.log("agentInfo", agentInfo);
   //merge related States
   const [chatState, setChatState] = useState({
     active: null,
@@ -171,13 +181,12 @@ export default function WhatsappLiveChat() {
     wabaSrno: "",
   });
 
-
-
   const [isSubscribe, setIsSubscribe] = useState(false);
+  const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
 
   useEffect(() => {
-    setSelectedWaba(selectedContextWaba)
-  }, [selectedContextWaba])
+    setSelectedWaba(selectedContextWaba);
+  }, [selectedContextWaba]);
 
   async function fetchWaba() {
     const res = await getWabaList();
@@ -192,12 +201,13 @@ export default function WhatsappLiveChat() {
   }, []);
 
   useEffect(() => {
-    setWabaData(wabaState)
-  }, [wabaState])
+    setWabaData(wabaState);
+  }, [wabaState]);
 
   useEffect(() => {
-    setWabaState(wabaData)
-  }, [selectedContextWaba])
+    setWabaState(wabaData);
+  }, [selectedContextWaba]);
+
 
   const insertEmoji = (emoji) => {
     if (inputRef.current) {
@@ -376,8 +386,111 @@ export default function WhatsappLiveChat() {
     },
   ];
 
+  useEffect(() => {
+    const fetchConversations = async () => {
+      if (!wabaState?.selectedWaba) return;
+      if (!btnOption) return;
+
+      try {
+        const data = {
+          mobileNo: wabaState?.selectedWaba,
+          srno: 0,
+          active: 1, // or 0 in the other effect
+          search: search || "",
+          agentSrno: selectedAgent || "",
+        };
+
+        setIsFetching(true);
+        const res = await fetchAllConversations(data);
+
+        setActiveConvo(res.conversationEntityList); // or setInactiveConvo
+
+        if (!res.conversationEntityList[0]) {
+          setChatState((prev) => ({
+            ...prev,
+            allConversations: [],
+          }));
+          return;
+        }
+
+        const mappedConversations = res.conversationEntityList?.map((chat) => {
+          const unread = res.unreadCounts.find(
+            (unreadChat) => unreadChat.mobile === chat.mobileNo
+          );
+          return {
+            ...chat,
+            unreadCount: unread ? unread.unreadCount : 0,
+          };
+        });
+
+        // setChatState((prev) => ({
+        //   ...prev,
+        //   allConversations: mappedConversations,
+        // }));
+      } catch (e) {
+        toast.error("Error fetching active conversations");
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    fetchConversations();
+  }, [wabaState?.selectedWaba]);
+
+  useEffect(() => {
+    const fetchConversations = async () => {
+      if (!wabaState?.selectedWaba) return;
+      if (!btnOption) return;
+
+      try {
+        const data = {
+          mobileNo: wabaState?.selectedWaba,
+          srno: 0,
+          active: 0, // or 1 in the other effect
+          search: search || "",
+          agentSrno: selectedAgent || "",
+        };
+
+        setIsFetching(true);
+        const res = await fetchAllConversations(data);
+
+        setInactiveConvo(res.conversationEntityList); // or setInactiveConvo
+
+        if (!res.conversationEntityList[0]) {
+          setChatState((prev) => ({
+            ...prev,
+            allConversations: [],
+          }));
+          return;
+        }
+
+        const mappedConversations = res.conversationEntityList?.map((chat) => {
+          const unread = res.unreadCounts.find(
+            (unreadChat) => unreadChat.mobile === chat.mobileNo
+          );
+          return {
+            ...chat,
+            unreadCount: unread ? unread.unreadCount : 0,
+          };
+        });
+
+
+        // setChatState((prev) => ({
+        //   ...prev,
+        //   allConversations: mappedConversations,
+        // }));
+      } catch (e) {
+        toast.error("Error fetching active conversations");
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    fetchConversations();
+  }, [wabaState?.selectedWaba]);
+
+
   async function handleFetchAllConvo() {
-    console.log('wabaState', wabaState)
     if (!wabaState?.selectedWaba) return;
     if (!btnOption) return;
     const userActive = btnOption == "active" ? 1 : 0;
@@ -389,10 +502,16 @@ export default function WhatsappLiveChat() {
         search: search || "",
         agentSrno: selectedAgent || "",
       };
-      console.log("data", data)
+
+      console.log("selectedAgent", selectedAgent);
       setIsFetching(true);
       const res = await fetchAllConversations(data);
-      console.log("res", res)
+      console.log("resssssssss", res);
+      if (data.agentSrno) {
+        setAgentInfo(res)
+      }
+      setConvoDetails(res);
+
       if (!res.conversationEntityList[0]) {
         setChatState((prev) => ({
           ...prev,
@@ -423,6 +542,8 @@ export default function WhatsappLiveChat() {
         allConversations: mappedConversations,
         // allConversations: [],
       }));
+
+
     } catch (e) {
       // console.log(e);
       return toast.error("Error fetching all conversations");
@@ -484,7 +605,13 @@ export default function WhatsappLiveChat() {
       if (intervalId) clearInterval(intervalId);
     };
     // setIsSubscribe(true);
-  }, [wabaState?.selectedWaba, btnOption, isSubscribe, selectedAgent]);
+  }, [
+    wabaState?.selectedWaba,
+    btnOption,
+    isSubscribe,
+    selectedAgent,
+    convoDetails,
+  ]);
 
   useEffect(() => {
     setChatState((prev) => ({ ...prev, active: null, allConversations: [] }));
@@ -532,6 +659,7 @@ export default function WhatsappLiveChat() {
     const size = `${files?.size / 1024}MB`;
     setSelectedImage({ files, type, fileName, size });
     // setSelectedImage(files);
+    setIsSpeedDialOpen(false);
   };
 
   const formatDate = (dateString) => {
@@ -1032,7 +1160,6 @@ export default function WhatsappLiveChat() {
     return () => mediaQuery.removeEventListener("change", handleResize);
   }, []);
 
-
   const getLocation = () => {
     try {
       if (!navigator.geolocation) {
@@ -1061,7 +1188,8 @@ export default function WhatsappLiveChat() {
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
       <div
         className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${chatState?.active ? "hidden md:block" : "block"
-          }`}>
+          }`}
+      >
         <InputData
           setSearch={setSearch}
           search={search}
@@ -1075,6 +1203,7 @@ export default function WhatsappLiveChat() {
           setSelectedAgent={setSelectedAgent}
           selectedAgent={selectedAgent}
           agentList={agentList}
+          chatState={chatState}
         />
 
         <ChatSidebar
@@ -1089,7 +1218,6 @@ export default function WhatsappLiveChat() {
         />
       </div>
       <AnimatePresence>
-
         {!chatState.active && !isSmallScreen && (
           <motion.div
             key="empty-chat"
@@ -1170,7 +1298,6 @@ export default function WhatsappLiveChat() {
           </motion.div>
         )}
 
-
         {chatState.active && (
           <motion.div
             key="chat-screen"
@@ -1178,7 +1305,7 @@ export default function WhatsappLiveChat() {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="relative flex flex-col flex-1 h-screen md:h-full"
+            className="relative flex flex-col flex-1 h-screen md:h-full -z-"
           >
             <ChatScreen
               setVisibleRight={setVisibleRight}
@@ -1203,6 +1330,8 @@ export default function WhatsappLiveChat() {
               chatIndex={chatIndex}
               handleFetchSpecificConversation={handleFetchSpecificConversation}
               chatLoading={chatLoading}
+              isSpeedDialOpen={isSpeedDialOpen}
+              setIsSpeedDialOpen={setIsSpeedDialOpen}
             // specificConversation={specificConversation}
             />
           </motion.div>

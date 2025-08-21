@@ -20,8 +20,10 @@ export const ChatInput = ({
   selectedImage,
   items,
   insertEmoji,
+  isSpeedDialOpen,
+  setIsSpeedDialOpen,
 }) => {
-  const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
+  // const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
   const [showCannedDropdown, setShowCannedDropdown] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ top: 0, left: 0 });
 

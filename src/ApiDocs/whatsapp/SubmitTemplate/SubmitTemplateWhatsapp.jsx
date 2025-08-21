@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Table from "../../components/Table";
 import CircleIcon from "@mui/icons-material/Circle";
 import { useTheme } from "../../context/ThemeContext";
@@ -7,11 +7,10 @@ import RequestComponent from "../../components/RequestComponent";
 import ResponseComponent from "../../components/ResponseComponent";
 import BaseurlComponent from "../../components/BaseurlComponent";
 
-
 import { Link } from "react-router-dom";
 
 const SubmitTemplateWhatsapp = () => {
-  const [activeSection, setActiveSection] = useState("text-templates");
+  // const [activeSection, setActiveSection] = useState("text-templates");
 
   const { isDarkMode } = useTheme();
   const colors = themeColors(isDarkMode);
@@ -41,34 +40,58 @@ const SubmitTemplateWhatsapp = () => {
     { id: "deleting-tempalte-by-name", title: "Deleting Template (by NAME)" },
   ];
 
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     const scrollPosition = window.scrollY;
+
+  //     // Find which section is currently in view
+  //     for (let i = sections.length - 1; i >= 0; i--) {
+  //       const section = document.getElementById(sections[i].id);
+  //       if (section && section.offsetTop <= scrollPosition + 200) {
+  //         setActiveSection(sections[i].id);
+  //         break;
+  //       }
+  //     }
+  //   };
+
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, []);
+
+  // const activeIndex = sections.findIndex((s) => s.id === activeSection);
+  // const scrollerPosition = (activeIndex / (sections.length - 1)) * 100;
+
+  // const scrollToSection = (sectionId) => {
+  //   const element = document.getElementById(sectionId);
+  //   if (element) {
+  //     element.scrollIntoView({ behavior: "smooth" });
+  //     setActiveSection(sectionId);
+  //   }
+  // };
+
+  const [active, setActive] = useState("text-templates");
+  const containerRef = useRef(null);
+
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
+    const container = containerRef.current || document;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-40% 0px -55% 0px", threshold: [0, 1] }
+    );
 
-      // Find which section is currently in view
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = document.getElementById(sections[i].id);
-        if (section && section.offsetTop <= scrollPosition + 200) {
-          setActiveSection(sections[i].id);
-          break;
-        }
-      }
-    };
+    sections.forEach((s) => {
+      const el = document.getElementById(s.id);
+      if (el) observer.observe(el);
+    });
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => observer.disconnect();
   }, []);
-
-  const activeIndex = sections.findIndex((s) => s.id === activeSection);
-  const scrollerPosition = (activeIndex / (sections.length - 1)) * 100;
-
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-      setActiveSection(sectionId);
-    }
-  };
 
   const HeaderTableColumns = ["Name", "Value"];
 
@@ -241,8 +264,6 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/messag
       value: "appId=cid-v1:3842b663-3342-4b73-804d-2baaedf43f32",
     },
   ];
-
-
 
   const RequestParameterCarouselTemplateColumn = [
     "Placeholder",
@@ -418,7 +439,6 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/messag
     },
   ];
 
-
   const requestDataLimitedTimeOfferTemplate = [
     {
       requestPrefix: `
@@ -479,7 +499,6 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/messag
     },
   ];
 
-
   const LimitedTimeOfferTemplatecURL = `
 curl --location 'https://amped-express.interakt.ai/api/v17.0/237518749451250/message_templates' \
 --header 'x-access-token: YOUR_TOKEN' \
@@ -487,13 +506,11 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/237518749451250/mes
 --header 'Content-Type: application/json' \
   `;
 
-
   const LimitedTimeOfferTemplatejsonData = {
-    "id": "825263059450263",
-    "status": "PENDING",
-    "category": "MARKETING"
+    id: "825263059450263",
+    status: "PENDING",
+    category: "MARKETING",
   };
-
 
   const LimitedTimeOfferTemplateResponseheaders = [
     { key: "Content-Type", value: "text/plain; charset=utf-8" },
@@ -505,7 +522,6 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/237518749451250/mes
       value: "appId=cid-v1:3842b663-3342-4b73-804d-2baaedf43f32",
     },
   ];
-
 
   const requestDataCouponCodeTemplate = [
     {
@@ -550,8 +566,7 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/237518749451250/mes
     }
 `,
     },
-  ]
-
+  ];
 
   const CouponCodeTemplatecURL = `
 curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/message_templates' \
@@ -560,13 +575,11 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/messag
 --header 'Content-Type: application/json' \
   `;
 
-
   const CouponCodeTemplatejsonData = {
-    "id": "396116563335401",
-    "status": "PENDING",
-    "category": "MARKETING"
+    id: "396116563335401",
+    status: "PENDING",
+    category: "MARKETING",
   };
-
 
   const CouponCodeTemplateResponseheaders = [
     { key: "Content-Type", value: "application/json" },
@@ -578,7 +591,6 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/messag
       value: "appId=cid-v1:3842b663-3342-4b73-804d-2baaedf43f32",
     },
   ];
-
 
   const requestDataOrderDetailsTemplate = [
     {
@@ -796,7 +808,6 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/messag
     },
   ];
 
-
   const requestDataGetTemplate = [
     {
       requestPrefix: `{
@@ -804,8 +815,7 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/messag
 }
 `,
     },
-  ]
-
+  ];
 
   const getTemplatecURL = `
 curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/message_templates/id/YOUR_TEMPLATE_ID' \
@@ -814,35 +824,32 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/messag
 --header 'Content-Type: application/json' \
  `;
 
-
-
   const getTemplatejsonData = {
-    "data": [
+    data: [
       {
-        "name": "seasonal_promotion_text_only",
-        "status": "APPROVED",
-        "id": "564750795574598"
+        name: "seasonal_promotion_text_only",
+        status: "APPROVED",
+        id: "564750795574598",
       },
       {
-        "name": "seasonal_promotion_video",
-        "status": "PENDING",
-        "id": "1252715608684590"
+        name: "seasonal_promotion_video",
+        status: "PENDING",
+        id: "1252715608684590",
       },
       {
-        "name": "seasonal_promotion_image_header",
-        "status": "PENDING",
-        "id": "1372429296936443"
-      }
+        name: "seasonal_promotion_image_header",
+        status: "PENDING",
+        id: "1372429296936443",
+      },
     ],
-    "paging": {
-      "cursors": {
-        "before": "MAZDZD",
-        "after": "MgZDZD"
+    paging: {
+      cursors: {
+        before: "MAZDZD",
+        after: "MgZDZD",
       },
-      "next": "https://graph.facebook.com/v19.0/102290129340398/message_templates?fields=name%2Cstatus&limit=3&after=MgZDZD"
-    }
-  }
-
+      next: "https://graph.facebook.com/v19.0/102290129340398/message_templates?fields=name%2Cstatus&limit=3&after=MgZDZD",
+    },
+  };
 
   const GetTemplateResponseheaders = [
     { key: "Content-Type", value: "application/json" },
@@ -855,10 +862,11 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/messag
     },
   ];
 
-
   const QueryStringParameterGetTemplateColumn = [
-    "Placeholder", "Description", "Sample Value"
-  ]
+    "Placeholder",
+    "Description",
+    "Sample Value",
+  ];
 
   const requestDataGetTemplateByID = [
     {
@@ -867,7 +875,7 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/messag
 }
 `,
     },
-  ]
+  ];
 
   const getTemplateByIdcURL = `
 curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/message_templates/id/YOUR_TEMPLATE_ID' \
@@ -877,15 +885,12 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/messag
  `;
 
   const getTemplateByIdjsonData = [
-
     {
-      "name": "seasonal_promotion_image_header",
-      "status": "PENDING",
-      "id": "1372429296936443"
-    }
-
-  ]
-
+      name: "seasonal_promotion_image_header",
+      status: "PENDING",
+      id: "1372429296936443",
+    },
+  ];
 
   const GetTemplateByIdResponseheaders = [
     { key: "Content-Type", value: "application/json" },
@@ -898,7 +903,6 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/messag
     },
   ];
 
-
   const requestDataCompareTemplate = [
     {
       requestPrefix: `{
@@ -906,8 +910,7 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/messag
 }
 `,
     },
-  ]
-
+  ];
 
   const compareTemplatecURL = `
 curl --location -g 'https://amped-express.interakt.ai/api/v17.0/YOUR_TEMPLATE_ID/compare?template_ids=[%3CTEMPLATE_IDS]&start=%3CSTART%3E&end=%3CEND%3E' \
@@ -916,42 +919,38 @@ curl --location -g 'https://amped-express.interakt.ai/api/v17.0/YOUR_TEMPLATE_ID
 --header 'Content-type: application/json' \
 `;
 
-
-  const CompareTemplatejsonData =
-  {
-    "data": [
+  const CompareTemplatejsonData = {
+    data: [
       {
-        "metric": "BLOCK_RATE",
-        "type": "RELATIVE",
-        "order_by_relative_metric": "<ORDER_BY_RELATIVE_METRIC>"
+        metric: "BLOCK_RATE",
+        type: "RELATIVE",
+        order_by_relative_metric: "<ORDER_BY_RELATIVE_METRIC>",
       },
       {
-        "metric": "MESSAGE_SENDS",
-        "type": "NUMBER_VALUES",
-        "number_values": "<NUMBER_VALUES>"
+        metric: "MESSAGE_SENDS",
+        type: "NUMBER_VALUES",
+        number_values: "<NUMBER_VALUES>",
       },
       {
-        "metric": "TOP_BLOCK_REASON",
-        "type": "STRING_VALUES",
-        "string_values": "<STRING_VALUES>"
-      }
-    ]
-  }
+        metric: "TOP_BLOCK_REASON",
+        type: "STRING_VALUES",
+        string_values: "<STRING_VALUES>",
+      },
+    ],
+  };
 
+  const CompareTemplateResponseheaders = [
+    { key: "Content-Type", value: "application/json" },
+    { key: "Date", value: "Sun, 18 Feb 2024 19:44:51 GMT" },
+    { key: "Server", value: "Kestrel" },
+    { key: "Transfer-Encoding", value: "chunked" },
+    {
+      key: "Request-Context",
+      value: "appId=cid-v1:3842b663-3342-4b73-804d-2baaedf43f32",
+    },
+  ];
 
-
-
-  const CompareTemplateResponseheaders = [{ key: "Content-Type", value: "application/json" },
-  { key: "Date", value: "Sun, 18 Feb 2024 19:44:51 GMT" },
-  { key: "Server", value: "Kestrel" },
-  { key: "Transfer-Encoding", value: "chunked" },
-  {
-    key: "Request-Context",
-    value: "appId=cid-v1:3842b663-3342-4b73-804d-2baaedf43f32",
-  },]
-
-  const QueryParameterColumn = ["Placeholder", "Description"]
-
+  const QueryParameterColumn = ["Placeholder", "Description"];
 
   const requestDataDeletingTemplateByID = [
     {
@@ -960,30 +959,29 @@ curl --location -g 'https://amped-express.interakt.ai/api/v17.0/YOUR_TEMPLATE_ID
 }
 `,
     },
-  ]
+  ];
 
   const deletingTemplateByIdcURL = `
 curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/message_templates?hsm_id=%3CTEMPLATE%2FHSM_ID%3E%2C&name=%3CTEMPLATE_NAME%3E' \
 --header 'x-access-token: YOUR_TOKEN' \
 --header 'x-waba-id: YOUR_WABA_ID' \
 --header 'Content-type: application/json' \
-`
-
+`;
 
   const deletingTemplateByIdjsonData = {
-    "success": true
-  }
+    success: true,
+  };
 
-
-  const DeletingTemplateByIdResponseheaders = [{ key: "Content-Type", value: "application/json" },
-  { key: "Date", value: "Sun, 18 Feb 2024 19:44:51 GMT" },
-  { key: "Server", value: "Kestrel" },
-  { key: "Transfer-Encoding", value: "chunked" },
-  {
-    key: "Request-Context",
-    value: "appId=cid-v1:3842b663-3342-4b73-804d-2baaedf43f32",
-  },]
-
+  const DeletingTemplateByIdResponseheaders = [
+    { key: "Content-Type", value: "application/json" },
+    { key: "Date", value: "Sun, 18 Feb 2024 19:44:51 GMT" },
+    { key: "Server", value: "Kestrel" },
+    { key: "Transfer-Encoding", value: "chunked" },
+    {
+      key: "Request-Context",
+      value: "appId=cid-v1:3842b663-3342-4b73-804d-2baaedf43f32",
+    },
+  ];
 
   const requestDataDeletingTemplateByName = [
     {
@@ -992,36 +990,37 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
   }
   `,
     },
-  ]
-
+  ];
 
   const deletingTemplateByNamecURL = `
 curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/message_templates?name=%3CTemplate_Name%3E' \
 --header 'x-access-token: YOUR_TOKEN' \
 --header 'x-waba-id: YOUR_WABA_ID' \
 --header 'Content-type: application/json' \
-  `
-
+  `;
 
   const deletingTemplateByNamejsonData = {
-    "success": true
-  }
+    success: true,
+  };
 
-  const DeletingTemplateByNameResponseheaders = [{ key: "Content-Type", value: "application/json" },
-  { key: "Date", value: "Sun, 18 Feb 2024 19:44:51 GMT" },
-  { key: "Server", value: "Kestrel" },
-  { key: "Transfer-Encoding", value: "chunked" },
-  {
-    key: "Request-Context",
-    value: "appId=cid-v1:3842b663-3342-4b73-804d-2baaedf43f32",
-  },]
+  const DeletingTemplateByNameResponseheaders = [
+    { key: "Content-Type", value: "application/json" },
+    { key: "Date", value: "Sun, 18 Feb 2024 19:44:51 GMT" },
+    { key: "Server", value: "Kestrel" },
+    { key: "Transfer-Encoding", value: "chunked" },
+    {
+      key: "Request-Context",
+      value: "appId=cid-v1:3842b663-3342-4b73-804d-2baaedf43f32",
+    },
+  ];
 
   return (
     <div
-      className={`flex w-[100%]   ${isDarkMode ? "bg-slate-800 text-white" : "bg-[#eeeeee] text-gray-800"
-        }`}
+      className={`flex w-[100%]   ${
+        isDarkMode ? "bg-slate-800 text-white" : "bg-[#eeeeee] text-gray-800"
+      }`}
     >
-      <div className=" p-4 lg:p-6 overflow-y-auto w-full ">
+      <div className=" p-4 lg:p-6 overflow-y-auto w-4xl mx-auto ">
         <section id="text-templates" className="mb-16">
           <div className="flex flex-col justify-center items-center gap-2 popins  ">
             <h2 className="text-xl md:text-3xl lg:text-3xl font-medium ">
@@ -1033,9 +1032,27 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                   <h3 className="font-semibold">Template Categories</h3>
                   <p className="mt-4">
                     Templates must be categorized as one of the following
-                    categories. Categories factor into <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/pricing" target="_blank" rel="noopener noreferrer">pricing</Link></span> and the category
-                    you designate will be <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#category-validation" target="_blank" rel="noopener noreferrer">validated</Link></span> at the time of template
-                    creation.
+                    categories. Categories factor into{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/pricing"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        pricing
+                      </Link>
+                    </span>{" "}
+                    and the category you designate will be{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#category-validation"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        validated
+                      </Link>
+                    </span>{" "}
+                    at the time of template creation.
                   </p>
                   <ul className="space-y-2 p-4">
                     <li className="relative pl-6">
@@ -1070,9 +1087,18 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                   <p className="mt-4">
                     Templates are composed of various text, media, and
                     interactive components, based on your business needs. Refer
-                    to the <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/components" target="_blank" rel="noopener noreferrer">Template Components</Link></span> document for a list of all
-                    possible components and their requirements as well as
-                    samples and example queries.
+                    to the{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/components"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Template Components
+                      </Link>
+                    </span>{" "}
+                    document for a list of all possible components and their
+                    requirements as well as samples and example queries.
                   </p>
                   <p className="mt-4">
                     When creating a template, define its components by assigning
@@ -1087,14 +1113,21 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
           <div className="mt-5 flex flex-col justify-center ">
             <div className=" flex flex-col  justify-center md:text-start w-xs md:w-2xl lg:w-3xl mx-auto sm:text-center mt-2">
               <p className="text-base md:text-lg lg:text-base text-center lg:text-start">
-                Send a POST request to the <span className="text-blue-500 hover:underline">
-                  <Link to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-account/message_templates/#Creating" target="_blank" rel="noopener noreferrer">
-                    WhatsApp Business Account &gt; Message Templates</Link>
-                </span> endpoint to create a template.
+                Send a POST request to the{" "}
+                <span className="text-blue-500 hover:underline">
+                  <Link
+                    to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-account/message_templates/#Creating"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    WhatsApp Business Account &gt; Message Templates
+                  </Link>
+                </span>{" "}
+                endpoint to create a template.
               </p>
             </div>
-
-
+          </div>
+          <div className="mt-5 flex flex-col justify-center ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
               Base URL
             </h2>
@@ -1139,7 +1172,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 </td>
               </tr>
             </Table>
-
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
@@ -1168,10 +1200,16 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 <td className="px-4 py-4  text-sm popins">
                   <span className="text-black font-medium">Required. </span>{" "}
                   <br /> <br /> Template category. See{" "}
-                  <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-categories" target="_blank" rel="noopener noreferrer">
-
-                    Template Categories
-                  </Link></span> below.
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-categories"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Template Categories
+                    </Link>
+                  </span>{" "}
+                  below.
                 </td>
                 <td className="px-4 py-4"> UTILITY </td>
               </tr>
@@ -1182,9 +1220,17 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 </td>
                 <td className="px-4 py-4  text-sm popins">
                   <span className="text-black font-medium">Optional.</span>{" "}
-                  <br /> <br /> Set to true to allow us to <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#automatic-categorization" target="_blank" rel="noopener noreferrer">
-                    automatically assign a category.
-                  </Link></span> If omitted, the template may be rejected due to
+                  <br /> <br /> Set to true to allow us to{" "}
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#automatic-categorization"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      automatically assign a category.
+                    </Link>
+                  </span>{" "}
+                  If omitted, the template may be rejected due to
                   miscategorization.
                 </td>
                 <td className="px-4 py-4  text-sm popins "> true </td>
@@ -1198,9 +1244,15 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                   <span className="text-black font-medium">Required. </span>{" "}
                   <br />
                   <br /> Template{" "}
-                  <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/supported-languages" target="_blank" rel="noopener noreferrer">
-                    language and locale code.
-                  </Link></span>
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/supported-languages"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      language and locale code.
+                    </Link>
+                  </span>
                 </td>
                 <td className="px-4 py-4  text-sm popins ">en_US</td>
               </tr>
@@ -1216,14 +1268,30 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                   </span>{" "}
                   <br />
                   <br /> Components that make up the template. See{" "}
-                  <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-components" target="_blank" rel="noopener noreferrer">
-                    {" "}
-                    Template Components{" "}
-                  </Link></span>
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-components"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {" "}
+                      Template Components{" "}
+                    </Link>
+                  </span>
                   below.{" "}
                 </td>
                 <td className="px-4 py-4  text-sm popins">
-                  See <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-components" target="_blank" rel="noopener noreferrer">Template Components </Link></span>below.
+                  See{" "}
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-components"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Template Components{" "}
+                    </Link>
+                  </span>
+                  below.
                 </td>
               </tr>
             </Table>
@@ -1233,7 +1301,7 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataTextTemplate}
                 curlBase={textTemplatecURL}
@@ -1245,10 +1313,12 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
-            <ResponseComponent
-              jsonData={TextTemplatejsonData}
-              headers={TextTemplateResponseheaders}
-            />
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={TextTemplatejsonData}
+                headers={TextTemplateResponseheaders}
+              />
+            </div>
           </div>
         </section>
 
@@ -1261,7 +1331,16 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
               <p>
                 Media headers can be an image, video, or a document such as a
                 PDF. All media must be uploaded with the{" "}
-                <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/graph-api/guides/upload" target="_blank" rel="noopener noreferrer"> Resumable Upload API. </Link></span>
+                <span className="text-blue-500 hover:underline">
+                  <Link
+                    to="https://developers.facebook.com/docs/graph-api/guides/upload"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {" "}
+                    Resumable Upload API.{" "}
+                  </Link>
+                </span>
                 The syntax for defining a media header is the same for all media
                 types.
               </p>
@@ -1271,11 +1350,19 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
           <div className=" flex flex-col  justify-center md:text-start w-xs md:w-2xl lg:w-3xl mx-auto sm:text-center mt-2">
             <p className="text-base md:text-lg lg:text-base text-center lg:text-start mt-4">
               Send a POST request to the{" "}
-              <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-account/message_templates/#Creating" target="_blank" rel="noopener noreferrer">
-                WhatsApp Business Account &gt; Message Templates
-              </Link></span> endpoint to create a template.
+              <span className="text-blue-500 hover:underline">
+                <Link
+                  to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-account/message_templates/#Creating"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  WhatsApp Business Account &gt; Message Templates
+                </Link>
+              </span>{" "}
+              endpoint to create a template.
             </p>
-
+          </div>
+          <div className="mt-5 flex flex-col justify-center ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
               Base URL
             </h2>
@@ -1320,7 +1407,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 </td>
               </tr>
             </Table>
-
           </div>
 
           <div className="flex flex-col justify-center items-center popins sm:flex  text-center  mt-10 ">
@@ -1342,7 +1428,16 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 <td className="px-4 py-4 text-orange-500 text-sm popins"></td>
                 <td className="px-4 py-4  text-sm popins">
                   Uploaded media asset handle. Use the{" "}
-                  <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/graph-api/guides/upload" target="_blank" rel="noopener noreferrer">Resumable Upload API</Link></span> to generate an asset handle.
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/graph-api/guides/upload"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Resumable Upload API
+                    </Link>
+                  </span>{" "}
+                  to generate an asset handle.
                 </td>
                 <td className="px-4 py-4"> 4::aW...</td>
               </tr>
@@ -1351,9 +1446,9 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
 
           <div className="flex flex-col items-center justify-center mt-4">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
-              Example  Request
+              Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataMediaTemplate}
                 curlBase={mediaTemplatecURL}
@@ -1363,12 +1458,14 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
 
           <div className="mt-4 flex flex-col items-center justify-center ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
-              Example  Response
+              Example Response
             </h2>
-            <ResponseComponent
-              jsonData={MediaTemplatejsonData}
-              headers={MediaTemplateResponseheaders}
-            />
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={MediaTemplatejsonData}
+                headers={MediaTemplateResponseheaders}
+              />
+            </div>
           </div>
         </section>
 
@@ -1397,7 +1494,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-
             <Table columns={HeaderTableColumns}>
               <tr className={`${colors.tableBorder} border-b`}>
                 <td className="px-4 py-4 text-sm popins">x-access-token</td>
@@ -1426,14 +1522,13 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 </td>
               </tr>
             </Table>
-
           </div>
 
           <div className="flex flex-col items-center justify-center mt-4">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
-              Example  Request
+              Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataLocationTemplate}
                 curlBase={locationTemplatecURL}
@@ -1443,16 +1538,16 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
 
           <div className="mt-4 flex flex-col items-center justify-center">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
-              Example  Response
+              Example Response
             </h2>
-            <ResponseComponent
-              jsonData={LocationTemplatejsonData}
-              headers={LocationTemplateResponseheaders}
-            />
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={LocationTemplatejsonData}
+                headers={LocationTemplateResponseheaders}
+              />
+            </div>
           </div>
         </section>
-
-
 
         <section id="carousel-template" className="mb-16 ">
           <div className="flex flex-col justify-center items-center gap-2 popins  ">
@@ -1472,16 +1567,17 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
           <div className=" flex flex-col  justify-center md:text-start w-xs md:w-2xl lg:w-3xl mx-auto sm:text-center mt-2">
             <h3 className="text-xl font-medium">Creating Carousel Templates</h3>
             <p className="mt-4">
-              Use the <span className="text-blue-500 hover:underline">
+              Use the{" "}
+              <span className="text-blue-500 hover:underline">
                 <Link
                   to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-account/message_templates/#Creating"
                   target="_blank"
                   rel="noopener noreferrer"
-
                 >
                   {" "}
                   WhatsApp Business Account &gt; Message Templates{" "}
-                </Link></span>
+                </Link>
+              </span>
               endpoint to create a carousel template.
             </p>
           </div>
@@ -1530,7 +1626,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Request Syntax
             </h2>
-            <div></div>
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
@@ -1884,9 +1979,9 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
 
           <div className="flex flex-col items-center justify-center mt-4">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
-              Example  Request
+              Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataCarouselTemplate}
                 curlBase={carouselTemplatecURL}
@@ -1898,10 +1993,12 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
-            <ResponseComponent
-              jsonData={CarouselTemplatejsonData}
-              headers={CarouselTemplateResponseheaders}
-            />
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={CarouselTemplatejsonData}
+                headers={CarouselTemplateResponseheaders}
+              />
+            </div>
           </div>
         </section>
 
@@ -1915,9 +2012,9 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
               <div>
                 <p className="mt-4">
                   Limited-time offer templates allow you to display expiration
-                  dates and running countdown timers for offer codes in
-                  template messages, making it easy for you to communicate
-                  time-bound offers and drive customer engagement.
+                  dates and running countdown timers for offer codes in template
+                  messages, making it easy for you to communicate time-bound
+                  offers and drive customer engagement.
                 </p>
               </div>
 
@@ -1948,21 +2045,17 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                       style={{ fontSize: "0.4rem" }}
                     />
                     Users who view a limited-time offer template message using
-                    that WhatsApp web app or desktop app will not see the
-                    offer, but will instead see a message indicating that they
-                    have received a message but that it's not supported in the
-                    client they are using.
+                    that WhatsApp web app or desktop app will not see the offer,
+                    but will instead see a message indicating that they have
+                    received a message but that it's not supported in the client
+                    they are using.
                   </li>
                 </ul>
               </div>
             </div>
-
           </div>
 
-
-
-
-          <div className="mt-5 flex flex-col justify-center ">
+          <div className="flex flex-col justify-center items-center  popins  ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
               Base URL
             </h2>
@@ -1972,7 +2065,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
               param="/YOUR_WABA_ID/message_templates"
             />
           </div>
-
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center">
@@ -2010,8 +2102,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </Table>
           </div>
 
-
-
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Request Parameter
@@ -2027,15 +2117,16 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 <td className="px-4 py-4  text-sm popins">
                   <span className="text-black font-medium">Required</span>
                   <br /> <br />
-
-                  Body component text. Supports variables.<br />
+                  Body component text. Supports variables.
+                  <br />
                   <br /> Maximum 600 characters.{" "}
                 </td>
                 <td className="px-4 py-4">
-                  Good news,<span>{"{{1}}"}</span>! Use code<span>{"{{2}}"}</span> to get 25% off all Caribbean Destination packages!
+                  Good news,<span>{"{{1}}"}</span>! Use code
+                  <span>{"{{2}}"}</span> to get 25% off all Caribbean
+                  Destination packages!
                 </td>
               </tr>
-
 
               <tr className={` ${colors.tableBorder} border-b`}>
                 <td className="px-4 py-4 text-orange-500 text-sm popins">
@@ -2046,8 +2137,10 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                     Required if body component text uses variables.
                   </span>
                   <br /> <br />
-                  Array of example variable strings.  <br /><br />
-                  Must supply examples for all placeholders in string.  <br /><br />
+                  Array of example variable strings. <br />
+                  <br />
+                  Must supply examples for all placeholders in string. <br />
+                  <br />
                   No maximum, but counts against maximum.
                 </td>
                 <td className="px-4 py-4">["Harsh","HOTS25"]</td>
@@ -2060,13 +2153,27 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 <td className="px-4 py-4  text-sm popins">
                   <span className="text-black font-medium">Optional.</span>{" "}
                   <br /> <br />
-                  Set to true to have the <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/limited-time-offer-templates#offer-expiration-details" target="_blank" rel="noopener noreferrer">offer expiration details</Link></span> appear in the delivered message.  <br /><br />
-                  If set to true, the copy code button component must be included in the buttons array, and must appear first in the array.   <br /> <br />
-                  If set to false, offer expiration details will not appear in the delivered message and the copy code button component is optional. If including the copy code button, it must appear first in the buttons array.
+                  Set to true to have the{" "}
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/limited-time-offer-templates#offer-expiration-details"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      offer expiration details
+                    </Link>
+                  </span>{" "}
+                  appear in the delivered message. <br />
+                  <br />
+                  If set to true, the copy code button component must be
+                  included in the buttons array, and must appear first in the
+                  array. <br /> <br />
+                  If set to false, offer expiration details will not appear in
+                  the delivered message and the copy code button component is
+                  optional. If including the copy code button, it must appear
+                  first in the buttons array.
                 </td>
-                <td className="px-4 py-4">
-                  true
-                </td>
+                <td className="px-4 py-4">true</td>
               </tr>
 
               <tr className={` ${colors.tableBorder} border-b`}>
@@ -2078,7 +2185,13 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                     Required if using an image or video header.
                   </span>
                   <br /> <br />
-                  Uploaded media asset handle. Use the <span className="text-blue-500 hover:underline"><Link to="" target="_blank" rel="noopener noreferrer">Resumable Upload API</Link> </span> to generate an asset handle.
+                  Uploaded media asset handle. Use the{" "}
+                  <span className="text-blue-500 hover:underline">
+                    <Link to="" target="_blank" rel="noopener noreferrer">
+                      Resumable Upload API
+                    </Link>{" "}
+                  </span>{" "}
+                  to generate an asset handle.
                 </td>
                 <td className="px-4 py-4">4::aW...</td>
               </tr>
@@ -2088,10 +2201,12 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                   Enum
                 </td>
                 <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black font-medium">Required if using a header.
+                  <span className="text-black font-medium">
+                    Required if using a header.
                   </span>{" "}
                   <br />
-                  <br />Can be IMAGE, or VIDEO.
+                  <br />
+                  Can be IMAGE, or VIDEO.
                 </td>
                 <td className="px-4 py-4">IMAGE</td>
               </tr>
@@ -2103,7 +2218,9 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 <td className="px-4 py-4  text-sm popins">
                   <span className="font-medium text-black">Required</span>{" "}
                   <br />
-                  <br />Offer details text.  <br /><br />
+                  <br />
+                  Offer details text. <br />
+                  <br />
                   Maximum 16 characters.
                 </td>
                 <td className="px-4 py-4">Expiring offer!</td>
@@ -2114,9 +2231,7 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                   String
                 </td>
                 <td className="px-4 py-4  text-sm popins">
-                  <span className="font-medium text-black">
-                    Required
-                  </span>
+                  <span className="font-medium text-black">Required</span>
                   <br />
                   <br />
                   Example offer code.
@@ -2133,7 +2248,16 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 <td className="px-4 py-4  text-sm popins">
                   <span className="font-medium text-black">Required.</span>{" "}
                   <br />
-                  <br /> Template <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/supported-languages" target="_blank" rel="noopener noreferrer">language and locale code.</Link></span>
+                  <br /> Template{" "}
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/supported-languages"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      language and locale code.
+                    </Link>
+                  </span>
                 </td>
                 <td className="px-4 py-4">en</td>
               </tr>
@@ -2143,8 +2267,10 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                   String
                 </td>
                 <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black">Required.</span> <br /><br />
-                  Template name.  <br /><br />
+                  <span className="text-black">Required.</span> <br />
+                  <br />
+                  Template name. <br />
+                  <br />
                   Maximum 512 characters.
                 </td>
                 <td className="px-4 py-4"> limited_time_offer</td>
@@ -2158,7 +2284,17 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                   <span className="font-medium text-black">Required.</span>
                   <br />
                   <br />
-                  <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/components#url-buttons" target="_blank" rel="noopener noreferrer">URL button</Link></span> label text. Supports 1 variable.   <br /><br />
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/components#url-buttons"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      URL button
+                    </Link>
+                  </span>{" "}
+                  label text. Supports 1 variable. <br />
+                  <br />
                   25 characters maximum.
                 </td>
                 <td className="px-4 py-4">Book now!</td>
@@ -2169,16 +2305,33 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                   String
                 </td>
                 <td className="px-4 py-4  text-sm popins">
-                  <span className="font-medium text-black">
-                    Required
-                  </span><br /><br />
-                  URL of website that loads in the device's default mobile web browser when the <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/components#url-buttons" target="_blank" rel="noopener noreferrer">URL button</Link></span> is tapped by the WhatsApp user.  <br /><br />
-                  Supports 1 variable appended to the end of the URL string.  <br /><br />
+                  <span className="font-medium text-black">Required</span>
+                  <br />
+                  <br />
+                  URL of website that loads in the device's default mobile web
+                  browser when the{" "}
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/components#url-buttons"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      URL button
+                    </Link>
+                  </span>{" "}
+                  is tapped by the WhatsApp user. <br />
+                  <br />
+                  Supports 1 variable appended to the end of the URL string.{" "}
+                  <br />
+                  <br />
                   Maximum 2000 characters.
                 </td>
-                <td className="px-4 py-4"> https://awesomedestinations.com/offers?code=<span>{"{{1}}"}</span> </td>
+                <td className="px-4 py-4">
+                  {" "}
+                  https://awesomedestinations.com/offers?code=
+                  <span>{"{{1}}"}</span>{" "}
+                </td>
               </tr>
-
 
               <tr>
                 <td className="px-4 py-4 text-orange-500 text-sm popins">
@@ -2187,8 +2340,10 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 <td className="px-4 py-4  text-sm popins">
                   <span className="font-medium text-black">
                     Required if URL uses a variable.
-                  </span><br /> <br />
-                  Example URL with example variable appended to the end.  <br /><br />
+                  </span>
+                  <br /> <br />
+                  Example URL with example variable appended to the end. <br />
+                  <br />
                   No maximum, but value counts against maximum.
                 </td>
                 <td className="px-4 py-4">
@@ -2200,9 +2355,9 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
 
           <div className="flex flex-col items-center justify-center mt-4">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
-              Example  Request
+              Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataLimitedTimeOfferTemplate}
                 curlBase={LimitedTimeOfferTemplatecURL}
@@ -2214,10 +2369,12 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
-            <ResponseComponent
-              jsonData={LimitedTimeOfferTemplatejsonData}
-              headers={LimitedTimeOfferTemplateResponseheaders}
-            />
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={LimitedTimeOfferTemplatejsonData}
+                headers={LimitedTimeOfferTemplateResponseheaders}
+              />
+            </div>
           </div>
         </section>
 
@@ -2230,7 +2387,9 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
               <div>
                 <div>
                   <p className="mt-4">
-                    Coupon code templates are marketing templates that display a single copy code button. When tapped, the code is copied to the customer's clipboard.
+                    Coupon code templates are marketing templates that display a
+                    single copy code button. When tapped, the code is copied to
+                    the customer's clipboard.
                   </p>
                 </div>
 
@@ -2242,7 +2401,8 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                         className="absolute left-0 top-1.5 text-gray-500"
                         style={{ fontSize: "0.4rem" }}
                       />
-                      Coupon code templates are currently not supported by the WhatsApp web client.
+                      Coupon code templates are currently not supported by the
+                      WhatsApp web client.
                     </li>
 
                     <li className="relative pl-6">
@@ -2277,8 +2437,7 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </div>
           </div>
 
-
-          <div className="mt-5 flex flex-col justify-center ">
+          <div className="flex flex-col justify-center items-center  popins  ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
               Base URL
             </h2>
@@ -2289,7 +2448,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
               param="/YOUR_WABA_ID/message_templates"
             />
           </div>
-
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center">
@@ -2327,9 +2485,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </Table>
           </div>
 
-
-
-
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Request Parameter
@@ -2337,12 +2492,14 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
           </div>
 
           <div className="mt-5 flex justify-center items-center">
-
             <Table columns={RequestParameterMediaTemplateColumn}>
               <tr className={` ${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-orange-500 text-sm popins">String</td>
+                <td className="px-4 py-4 text-orange-500 text-sm popins">
+                  String
+                </td>
                 <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black font-medium">Required</span> <br /> <br />
+                  <span className="text-black font-medium">Required</span>{" "}
+                  <br /> <br />
                   Template name. <br /> <br />
                   Maximum 512 characters.
                 </td>
@@ -2350,34 +2507,46 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
               </tr>
 
               <tr className={` ${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-orange-500 text-sm popins">Enum</td>
+                <td className="px-4 py-4 text-orange-500 text-sm popins">
+                  Enum
+                </td>
                 <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black font-medium">Required</span> <br /> <br />
-                  Template <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/supported-languages" target="_blank" rel="noopener noreferrer">language and locale code.</Link></span>
+                  <span className="text-black font-medium">Required</span>{" "}
+                  <br /> <br />
+                  Template{" "}
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/supported-languages"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      language and locale code.
+                    </Link>
+                  </span>
                 </td>
                 <td className="px-4 py-4">en_US</td>
               </tr>
 
               <tr>
-                <td className="px-4 py-4 text-orange-500 text-sm popins">String</td>
+                <td className="px-4 py-4 text-orange-500 text-sm popins">
+                  String
+                </td>
                 <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black font-medium">Required</span> <br /> <br />
+                  <span className="text-black font-medium">Required</span>{" "}
+                  <br /> <br />
                   Coupon code to be copied when tapped. <br /> <br />
                   Maximum 15 characters.
                 </td>
                 <td className="px-4 py-4">25OFF</td>
               </tr>
             </Table>
-
           </div>
-
-
 
           <div className="flex flex-col items-center justify-center mt-4">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataCouponCodeTemplate}
                 curlBase={CouponCodeTemplatecURL}
@@ -2389,12 +2558,13 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
-            <ResponseComponent
-              jsonData={CouponCodeTemplatejsonData}
-              headers={CouponCodeTemplateResponseheaders}
-            />
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={CouponCodeTemplatejsonData}
+                headers={CouponCodeTemplateResponseheaders}
+              />
+            </div>
           </div>
-
         </section>
 
         <section id="order-details-template" className="mb-16">
@@ -2407,7 +2577,16 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
               <p className="mt-4">
                 Media headers can be an image, video, or a document such as a
                 PDF. All media must be uploaded with the{" "}
-                <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/graph-api/guides/upload" target="_blank" rel="noopener noreferrer"> Resumable Upload API. </Link></span>
+                <span className="text-blue-500 hover:underline">
+                  <Link
+                    to="https://developers.facebook.com/docs/graph-api/guides/upload"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {" "}
+                    Resumable Upload API.{" "}
+                  </Link>
+                </span>
                 The syntax for defining a media header is the same for all media
                 types.
               </p>
@@ -2417,14 +2596,19 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
           <div className=" flex flex-col  justify-center md:text-start w-xs md:w-2xl lg:w-3xl mx-auto sm:text-center mt-2">
             <p className="text-base md:text-lg lg:text-base text-center lg:text-start mt-4">
               Send a POST request to the{" "}
-              <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-account/message_templates/#Creating" target="_blank" rel="noopener noreferrer">
-
-                WhatsApp Business Account &gt; Message Templates{" "}
-              </Link></span>
+              <span className="text-blue-500 hover:underline">
+                <Link
+                  to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-account/message_templates/#Creating"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  WhatsApp Business Account &gt; Message Templates{" "}
+                </Link>
+              </span>
               endpoint to create a template.
             </p>
-
-
+          </div>
+          <div className="flex flex-col justify-center items-center gap-2 popins  ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
               Base URL
             </h2>
@@ -2442,13 +2626,11 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
           </div>
 
           <div className="mt-5 flex justify-center items-center">
-
             <Table columns={RequestParameterMediaTemplateColumn}>
               <tr className={` ${colors.tableBorder} border-b`}>
                 <td className="px-4 py-4 text-orange-500 text-sm popins"></td>
                 <td className="px-4 py-4  text-sm popins">
-                  Indicates media asset type. Set to IMAGE, VIDEO, or
-                  DOCUMENT.
+                  Indicates media asset type. Set to IMAGE, VIDEO, or DOCUMENT.
                 </td>
                 <td className="px-4 py-4">IMAGE</td>
               </tr>
@@ -2456,14 +2638,20 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 <td className="px-4 py-4 text-orange-500 text-sm popins"></td>
                 <td className="px-4 py-4  text-sm popins">
                   Uploaded media asset handle. Use the{" "}
-                  <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/graph-api/guides/upload" target="_blank" rel="noopener noreferrer">
-                    Resumable Upload API
-                  </Link></span> to generate an asset handle.
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/graph-api/guides/upload"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Resumable Upload API
+                    </Link>
+                  </span>{" "}
+                  to generate an asset handle.
                 </td>
                 <td className="px-4 py-4"> 4::aW...</td>
               </tr>
             </Table>
-
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
@@ -2500,14 +2688,13 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 </td>
               </tr>
             </Table>
-
           </div>
 
           <div className="flex flex-col items-center justify-center mt-4">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataOrderDetailsTemplate}
                 curlBase={orderdetailsTemplatecURL}
@@ -2519,10 +2706,12 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
-            <ResponseComponent
-              jsonData={OrderDetailsTemplatejsonData}
-              headers={OrderDetailsTemplateResponseheaders}
-            />
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={OrderDetailsTemplatejsonData}
+                headers={OrderDetailsTemplateResponseheaders}
+              />
+            </div>
           </div>
         </section>
 
@@ -2551,7 +2740,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-
             <Table columns={HeaderTableColumns}>
               <tr className={`${colors.tableBorder} border-b`}>
                 <td className="px-4 py-4 text-sm popins">x-access-token</td>
@@ -2574,14 +2762,13 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 </td>
               </tr>
             </Table>
-
           </div>
 
           <div className="flex flex-col items-center justify-center mt-4">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
-              Example  Request
+              Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataCtaButtonTemplate}
                 curlBase={ctaButtonTemplatecURL}
@@ -2649,7 +2836,7 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataFlowTemplate}
                 curlBase={flowTemplatecURL}
@@ -2661,10 +2848,12 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
-            <ResponseComponent
-              jsonData={FlowTemplatejsonData}
-              headers={FlowTemplateResponseheaders}
-            />
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={FlowTemplatejsonData}
+                headers={FlowTemplateResponseheaders}
+              />
+            </div>
           </div>
         </section>
 
@@ -2678,7 +2867,16 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 <div>
                   <h3 className="font-semibold">Editing Templates</h3>
                   <p className="mt-4">
-                    Send a POST request to the <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-hsm/" target="_blank" rel="noopener noreferrer">WhatsApp Message Template </Link></span>
+                    Send a POST request to the{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-hsm/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        WhatsApp Message Template{" "}
+                      </Link>
+                    </span>
                     endpoint to edit a template. You can also edit a template
                     manually using the WhatsApp Manager &gt; Account tools &gt;
                     Message templates panel.
@@ -2862,7 +3060,7 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataEditingTemplateCategory}
                 curlBase={editingCategoryTemplatecURL}
@@ -2874,10 +3072,12 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
-            <ResponseComponent
-              jsonData={EdingTemplateCategoryjsonData}
-              headers={EditingTemplateCategoryResponseheaders}
-            />
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={EdingTemplateCategoryjsonData}
+                headers={EditingTemplateCategoryResponseheaders}
+              />
+            </div>
           </div>
         </section>
 
@@ -2946,7 +3146,7 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataEditingTemplatesComponent}
                 curlBase={editingComponentTemplatecURL}
@@ -2958,10 +3158,12 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
-            <ResponseComponent
-              jsonData={EdingTemplateComponentjsonData}
-              headers={EditingTemplateComponentResponseheaders}
-            />
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={EdingTemplateComponentjsonData}
+                headers={EditingTemplateComponentResponseheaders}
+              />
+            </div>
           </div>
         </section>
 
@@ -2972,11 +3174,22 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
             <div className=" flex flex-col  justify-center md:text-start w-xs md:w-2xl lg:w-3xl mx-auto sm:text-center mt-2">
               <p>
-                Send a GET request to the <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-account/message_templates" target="_blank" rel="noopener noreferrer"> WhatsApp Business Account &gt; Message Templates </Link></span> endpoint to get a list of templates owned by a WhatsApp Business Account.
+                Send a GET request to the{" "}
+                <span className="text-blue-500 hover:underline">
+                  <Link
+                    to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-account/message_templates"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {" "}
+                    WhatsApp Business Account &gt; Message Templates{" "}
+                  </Link>
+                </span>{" "}
+                endpoint to get a list of templates owned by a WhatsApp Business
+                Account.
               </p>
             </div>
           </div>
-
 
           <div className="mt-5 flex flex-col justify-center ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
@@ -2994,9 +3207,7 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Request Syntax
             </h2>
-            <div></div>
           </div>
-
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
@@ -3007,24 +3218,43 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
           <div className="mt-5 flex justify-center items-center">
             <Table columns={QueryStringParameterGetTemplateColumn}>
               <tr className={` ${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-orange-500 text-sm popins">Comma-separated list</td>
+                <td className="px-4 py-4 text-orange-500 text-sm popins">
+                  Comma-separated list
+                </td>
                 <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black font-medium">Optional</span> <br /><br />
-                  List of <span className="text-blue-500 hover:underline"> <Link to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-hsm/#fields" target="_blank" rel="noopener noreferrer">template fields </Link></span> you want returned.
+                  <span className="text-black font-medium">Optional</span>{" "}
+                  <br />
+                  <br />
+                  List of{" "}
+                  <span className="text-blue-500 hover:underline">
+                    {" "}
+                    <Link
+                      to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-hsm/#fields"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      template fields{" "}
+                    </Link>
+                  </span>{" "}
+                  you want returned.
                 </td>
                 <td className="px-4 py-4">name,status</td>
               </tr>
               <tr>
-                <td className="px-4 py-4 text-orange-500 text-sm popins">Integer</td>
+                <td className="px-4 py-4 text-orange-500 text-sm popins">
+                  Integer
+                </td>
                 <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black font-medium">Optional</span> <br /><br />
-                  The maximum number of templates you want returned in each page of results.
+                  <span className="text-black font-medium">Optional</span>{" "}
+                  <br />
+                  <br />
+                  The maximum number of templates you want returned in each page
+                  of results.
                 </td>
                 <td className="px-4 py-4"> 10</td>
               </tr>
             </Table>
           </div>
-
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center">
@@ -3062,12 +3292,11 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </Table>
           </div>
 
-
           <div className="flex flex-col items-center justify-center mt-4">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataGetTemplate}
                 curlBase={getTemplatecURL}
@@ -3079,23 +3308,21 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
-            <ResponseComponent
-              jsonData={getTemplatejsonData}
-              headers={GetTemplateResponseheaders}
-            />
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={getTemplatejsonData}
+                headers={GetTemplateResponseheaders}
+              />
+            </div>
           </div>
-
-        </section >
-
+        </section>
 
         <section id="get-template-by-id" className="mb-16">
           <div className="flex justify-center items-center  popins ">
             <h2 className="text-xl md:text-3xl lg:text-3xl font-medium ">
               GET TEMPLATES BY ID (SINGLE)
             </h2>
-
           </div>
-
 
           <div className="mt-5 flex flex-col justify-center ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
@@ -3109,7 +3336,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             />
           </div>
 
-
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center">
               HEADERS
@@ -3150,7 +3376,7 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataGetTemplateByID}
                 curlBase={getTemplateByIdcURL}
@@ -3162,13 +3388,14 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
-            <ResponseComponent
-              jsonData={getTemplateByIdjsonData}
-              headers={GetTemplateByIdResponseheaders}
-            />
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={getTemplateByIdjsonData}
+                headers={GetTemplateByIdResponseheaders}
+              />
+            </div>
           </div>
         </section>
-
 
         <section id="compare-templates-only-2" className="mb-16">
           <div className="flex flex-col justify-center items-center gap-2 popins  ">
@@ -3178,9 +3405,10 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
 
             <div className=" flex flex-col items-center justify-center md:text-start w-xs md:w-2xl lg:w-3xl mx-auto sm:text-center mt-2">
               <p className="mt-4">
-                You can compare two templates by examining how often each one is sent, which one has the lower ratio of blocks to sends, and each template's top reason for being blocked.
+                You can compare two templates by examining how often each one is
+                sent, which one has the lower ratio of blocks to sends, and each
+                template's top reason for being blocked.
               </p>
-
 
               <div className="mt-4">
                 <h3 className="font-semibold">Limitations</h3>
@@ -3199,7 +3427,8 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                       className="absolute left-0 top-1.5 text-gray-500"
                       style={{ fontSize: "0.4rem" }}
                     />
-                    Both templates must be in the same WhatsApp Business Account.
+                    Both templates must be in the same WhatsApp Business
+                    Account.
                   </li>
 
                   <li className="relative pl-6">
@@ -3208,7 +3437,8 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                       className="absolute left-0 top-1.5 text-gray-500"
                       style={{ fontSize: "0.4rem" }}
                     />
-                    Templates must have been sent at least 1,000 times in the queries specified timeframe.
+                    Templates must have been sent at least 1,000 times in the
+                    queries specified timeframe.
                   </li>
 
                   <li className="relative pl-6">
@@ -3217,22 +3447,40 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                       className="absolute left-0 top-1.5 text-gray-500"
                       style={{ fontSize: "0.4rem" }}
                     />
-                    Timeframes are limited to 7, 30, 60 and 90 day lookbacks from the time of the request.
+                    Timeframes are limited to 7, 30, 60 and 90 day lookbacks
+                    from the time of the request.
                   </li>
                 </ul>
               </div>
 
               <div className="mt-4">
                 <h3 className="font-semibold">Comparing Templates</h3>
-                <p className="mt-2"> Use the <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-hsm/compare" target="_blank" rel="noopener noreferrer">WhatsApp Message Template &gt; Compare</Link></span> endpoint to target one template and compare it with another.</p>
+                <p className="mt-2">
+                  {" "}
+                  Use the{" "}
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-hsm/compare"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      WhatsApp Message Template &gt; Compare
+                    </Link>
+                  </span>{" "}
+                  endpoint to target one template and compare it with another.
+                </p>
               </div>
 
               <div className="mt-4">
                 <h3 className="font-semibold">Timeframes</h3>
 
-
                 <p className="mt-2">
-                  Timeframes are limited to 7, 30, 60 and 90 day lookbacks from the time of the request. To define a timeframe, set your end date to the current time as a UNIX timestamp, then subtract the number of days for your desired timeframe, in seconds, from that value:   </p>
+                  Timeframes are limited to 7, 30, 60 and 90 day lookbacks from
+                  the time of the request. To define a timeframe, set your end
+                  date to the current time as a UNIX timestamp, then subtract
+                  the number of days for your desired timeframe, in seconds,
+                  from that value:{" "}
+                </p>
 
                 <ul className="space-y-2 p-4 mt-2">
                   <li className="relative pl-6">
@@ -3271,9 +3519,7 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                   </li>
                 </ul>
               </div>
-
             </div>
-
           </div>
 
           <div className="mt-5 flex flex-col justify-center ">
@@ -3288,14 +3534,12 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             />
           </div>
 
-
           <div className="flex flex-col items-center justify-center mt-4">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Request Syntax
             </h2>
             <div></div>
           </div>
-
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
@@ -3310,7 +3554,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 <td className="px-4 py-4  text-sm popins">
                   ID of the WhatsApp Message Template to target.
                 </td>
-
               </tr>
 
               <tr className={` ${colors.tableBorder} border-b`}>
@@ -3318,23 +3561,40 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 <td className="px-4 py-4  text-sm popins">
                   ID of the WhatsApp Message Template to compare the target to.
                 </td>
-
               </tr>
 
               <tr className={` ${colors.tableBorder} border-b`}>
                 <td className="px-4 py-4 text-orange-500 text-sm popins"></td>
                 <td className="px-4 py-4  text-sm popins">
-                  UNIX timestamp indicating start of timeframe. See <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/template-comparison/#timeframes" target="_blank" rel="noopener noreferrer">Timeframes</Link></span>.
+                  UNIX timestamp indicating start of timeframe. See{" "}
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/template-comparison/#timeframes"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Timeframes
+                    </Link>
+                  </span>
+                  .
                 </td>
-
               </tr>
 
               <tr>
                 <td className="px-4 py-4 text-orange-500 text-sm popins"></td>
                 <td className="px-4 py-4  text-sm popins">
-                  UNIX timestamp indicating end of timeframe. See <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/template-comparison/#timeframes" target="_blank" rel="noopener noreferrer">Timeframes</Link></span>.
+                  UNIX timestamp indicating end of timeframe. See{" "}
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/template-comparison/#timeframes"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Timeframes
+                    </Link>
+                  </span>
+                  .
                 </td>
-
               </tr>
             </Table>
           </div>
@@ -3356,7 +3616,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 </td>
               </tr>
 
-
               <tr>
                 <td className="px-4 py-4 text-sm popins">x-waba-id</td>
                 <td className="px-4 py-4 text-sm popins text-orange-500">
@@ -3368,7 +3627,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
               </tr>
             </Table>
           </div>
-
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center">
@@ -3383,7 +3641,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                   [&lt;TEMPLATE_IDS]
                 </td>
               </tr>
-
 
               <tr className={`${colors.tableBorder} border-b`}>
                 <td className="px-4 py-4 text-sm popins">start</td>
@@ -3405,7 +3662,7 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataCompareTemplate}
                 curlBase={compareTemplatecURL}
@@ -3417,14 +3674,14 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
-            <ResponseComponent
-              jsonData={CompareTemplatejsonData}
-              headers={CompareTemplateResponseheaders}
-            />
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={CompareTemplatejsonData}
+                headers={CompareTemplateResponseheaders}
+              />
+            </div>
           </div>
-
         </section>
-
 
         <section id="deleting-tempaltes-by-id" className="mb-16">
           <div className="flex flex-col justify-center items-center gap-2 popins  ">
@@ -3435,7 +3692,17 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <div className=" flex flex-col items-center justify-center md:text-start w-xs md:w-2xl lg:w-3xl mx-auto sm:text-center mt-2">
               <div>
                 <p className="mt-4">
-                  Use the <span className="text-blue-500 hover:underline"><Link to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-account/message_templates/#Deleting" target="_blank" rel="noopener noreferrer">WhatsApp Business Account &gt; Message Templates </Link></span>endpoint to delete a template by name or by ID.
+                  Use the{" "}
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-account/message_templates/#Deleting"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      WhatsApp Business Account &gt; Message Templates{" "}
+                    </Link>
+                  </span>
+                  endpoint to delete a template by name or by ID.
                 </p>
               </div>
 
@@ -3447,7 +3714,13 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                       className="absolute left-0 top-1.5 text-gray-500"
                       style={{ fontSize: "0.4rem" }}
                     />
-                    If you delete a template that has been sent in a template message but has yet to be delivered (e.g. because the customer's phone is turned off), the template's status will be set to PENDING_DELETION and we will attempt to deliver the message for 30 days. After this time you will receive a "Structure Unavailable" error and the customer will not receive the message.
+                    If you delete a template that has been sent in a template
+                    message but has yet to be delivered (e.g. because the
+                    customer's phone is turned off), the template's status will
+                    be set to PENDING_DELETION and we will attempt to deliver
+                    the message for 30 days. After this time you will receive a
+                    "Structure Unavailable" error and the customer will not
+                    receive the message.
                   </li>
 
                   <li className="relative pl-6">
@@ -3456,25 +3729,25 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                       className="absolute left-0 top-1.5 text-gray-500"
                       style={{ fontSize: "0.4rem" }}
                     />
-                    Names of an approved template that has been deleted cannot be used again for 30 days.
+                    Names of an approved template that has been deleted cannot
+                    be used again for 30 days.
                   </li>
-
-
                 </ul>
               </div>
             </div>
-
           </div>
-
 
           <div className="mt-5 flex flex-col justify-center ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
               Base URL
             </h2>
 
-            <BaseurlComponent urlPrefix="Base URL" requestType="DELETE" param="/YOUR_TEMPLATE_ID/compare?template_ids=[<TEMPLATE_IDS]&start=<START>&end=<END>" />
+            <BaseurlComponent
+              urlPrefix="Base URL"
+              requestType="DELETE"
+              param="/YOUR_TEMPLATE_ID/compare?template_ids=[<TEMPLATE_IDS]&start=<START>&end=<END>"
+            />
           </div>
-
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center">
@@ -3512,7 +3785,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </Table>
           </div>
 
-
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center">
               PARAMS
@@ -3527,7 +3799,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 </td>
               </tr>
 
-
               <tr>
                 <td className="px-4 py-4 text-sm popins">name</td>
                 <td className="px-4 py-4 text-sm popins text-orange-500">
@@ -3539,9 +3810,9 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
 
           <div className="flex flex-col items-center justify-center mt-4">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
-              Example  Request
+              Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataDeletingTemplateByID}
                 curlBase={deletingTemplateByIdcURL}
@@ -3553,18 +3824,16 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
-            <ResponseComponent
-              jsonData={deletingTemplateByIdjsonData}
-              headers={DeletingTemplateByIdResponseheaders}
-            />
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={deletingTemplateByIdjsonData}
+                headers={DeletingTemplateByIdResponseheaders}
+              />
+            </div>
           </div>
-
-
         </section>
 
-
-
-        <section section id="deleting-tempalte-by-name" >
+        <section section id="deleting-tempalte-by-name">
           <div className="flex justify-center items-center  popins  ">
             <h2 className="text-xl md:text-3xl lg:text-3xl font-medium ">
               DELETING TEMPLATE (BY NAME)
@@ -3583,7 +3852,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             />
           </div>
 
-
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center">
               HEADERS
@@ -3620,7 +3888,6 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </Table>
           </div>
 
-
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center">
               PARAMS
@@ -3637,82 +3904,150 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </Table>
           </div>
 
-
           <div className="flex flex-col items-center justify-center mt-4">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Request
             </h2>
-            <div>
+            <div className="w-full">
               <RequestComponent
                 requestData={requestDataDeletingTemplateByName}
                 curlBase={deletingTemplateByNamecURL}
               />
             </div>
           </div>
-
-          <div className="mt-4 flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center mt-4">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
-            <ResponseComponent
-              jsonData={deletingTemplateByNamejsonData}
-              headers={DeletingTemplateByNameResponseheaders}
-            />
+            <div classNmae="w-full">
+              <ResponseComponent
+                jsonData={deletingTemplateByNamejsonData}
+                headers={DeletingTemplateByNameResponseheaders}
+              />
+            </div>
           </div>
-
         </section>
-
-
-
       </div>
 
       {/* Mini Map Navigation - Hidden on small screens */}
-      <div
+      {/* <div
         className={`${isDarkMode ? "bg-gray-500 text-white" : "bg-[#cecece] text-black"
           } hidden lg:block  h-fit sticky  top-4 p-2 shrink-0 rounded-2xl  mr-4 w-70`}
       >
         <div className="rounded-lg h-full flex flex-row">
           <div className="relative">
             {/* Track line */}
-            <div
-              className={`${isDarkMode ? "bg-gray-600" : "bg-gray-200"
-                } w-1 h-auto top-5  rounded absolute left-3`}
+      {/* <div
+              className={`${
+                isDarkMode ? "bg-gray-600" : "bg-gray-200"
+              } w-1 h-auto top-5  rounded absolute left-3`}
               style={{
                 height: `${(sections.length - 1) * 40}px`,
                 top: "20px",
               }}
-            >
-              {/* Moving indicator */}
-              <div
-                className={`${isDarkMode ? "bg-white" : "bg-black"
-                  } w-1 bg-black rounded absolute transition-all duration-300`}
+            > */}
+      {/* Moving indicator */}
+      {/* <div
+                className={`${
+                  isDarkMode ? "bg-white" : "bg-black"
+                } w-1 bg-black rounded absolute transition-all duration-300`}
                 style={{
                   height: "20px",
-                  top: `${scrollerPosition}%`,
+                  // top: `${scrollToSection}%`,
                   transform: "translateY(-50%)",
                 }}
-              ></div>
-            </div>
+              ></div> */}
+      {/* </div> *
 
             <div className="ml-6">
-              {sections.map((section) => (
+              {/* {sections.map((section) => (
                 <div
                   key={section.id}
                   onClick={() => scrollToSection(section.id)}
                   className={`p-2 mb-1 rounded cursor-pointer text-sm transition-colors ${activeSection === section.id
-                    ? `${isDarkMode
-                      ? "text-white font-semibold"
-                      : "text-black font-semibold"
-                    }`
-                    : `${isDarkMode ? "text-gray-900" : "text-gray-600"}`
+                      ? `${isDarkMode
+                        ? "text-white font-semibold"
+                        : "text-black font-semibold"
+                      }`
+                      : `${isDarkMode ? "text-gray-900" : "text-gray-600"}`
                     }`}
                 >
                   {section.title}
                 </div>
-              ))}
+              ))}  *
+
+              {/* <nav className="lg:sticky lg:top-[68px] h-max rounded-2xl border bg-white shadow-sm"> */}
+
+      {/* <ul className="p-2"> *
+                  {sections.map((s) => (
+                    <li key={s.id}>
+                      <a
+                        href={`#${s.id}`}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm hover:bg-slate-50 focus:outline-none focus:ring-2 ring-emerald-400 ${active === s.id
+                          ? "bg-emerald-50 text-emerald-700 font-semibold"
+                          : ""
+                          }`}
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${active === s.id ? "bg-emerald-600" : "bg-gray-800"
+                            }`}
+                        />
+                        {s.title}
+                      </a>
+                    </li>
+                  ))}
+                {/* </ul> */}
+      {/* </nav> *
+
+
             </div>
           </div>
         </div>
+      </div> */}
+
+      <div
+        className={`${
+          isDarkMode ? "bg-gray-500 text-white" : "bg-[#cecece] text-black"
+        } hidden lg:block h-fit sticky top-4 p-2 shrink-0 rounded-2xl mr-4 w-70 relative`}
+      >
+        {/* Scroll track */}
+        <div
+          className={`${isDarkMode ? "bg-gray-600" : "bg-gray-200"} 
+      w-1 rounded absolute left-3 top-5`}
+          style={{
+            height: `${sections.length * 40}px`, // total nav height
+          }}
+        >
+          {/* Moving scroll indicator */}
+          <div
+            className={`
+        ${isDarkMode ? "bg-white" : "bg-black"} 
+        w-1 rounded absolute transition-all duration-300
+        ${active ? "bg-emerald-600" : ""}
+      `}
+            style={{
+              height: "20px", // height of indicator
+              top: `${sections.findIndex((s) => s.id === active) * 40}px`, // position by active index
+            }}
+          />
+        </div>
+
+        <ul className="relative ml-6">
+          {sections.map((s) => (
+            <li key={s.id}>
+              <a
+                href={`#${s.id}`}
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm hover:bg-slate-50 focus:outline-none focus:ring-2 ring-emerald-400 ${
+                  active === s.id
+                    ? "bg-emerald-50 text-emerald-700 font-semibold"
+                    : ""
+                }`}
+              >
+                {s.title}
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

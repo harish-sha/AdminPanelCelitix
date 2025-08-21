@@ -285,17 +285,20 @@ import { load } from "@cashfreepayments/cashfree-js";
 import toast from "react-hot-toast";
 import Lottie from "lottie-react";
 import rechargeAnim from "../assets/animation/recharge.json";
-import { rechargeCreateOrderCashFree, verifyRechargeStatus } from "@/apis/recharge/recharge";
+import {
+  rechargeCreateOrderCashFree,
+  verifyRechargeStatus,
+} from "@/apis/recharge/recharge";
 
 export default function RechargeFullWidth() {
   const [cashfree, setCashfree] = useState(null);
   const [amount, setAmount] = useState("");
-  const [addedGstAmount, setAddedGstAmount] = useState("")
+  const [addedGstAmount, setAddedGstAmount] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [paymentSessionId, setPaymentSessionId] = useState(null);
-  const [newOrderId, setNewOrderId] = useState()
+  const [newOrderId, setNewOrderId] = useState();
 
   useEffect(() => {
     const amt = parseFloat(amount);
@@ -308,7 +311,6 @@ export default function RechargeFullWidth() {
       setAddedGstAmount("");
     }
   }, [amount]);
-
 
   useEffect(() => {
     // load({ mode: "sandbox" }).then((cf) => setCashfree(cf));
@@ -333,7 +335,6 @@ export default function RechargeFullWidth() {
   const handlePayNow = async (e) => {
     e.preventDefault();
 
-
     if (!name || !email || !phone || !amount) {
       toast.error("Please fill in all fields.");
       return;
@@ -350,9 +351,7 @@ export default function RechargeFullWidth() {
       // const domain = window.location.hostname;
       const domain = "https://app.celitix.com";
       try {
-
         const payload = {
-          order_id: orderId,
           order_amount: addedGstAmount,
           order_currency: "INR",
           customer_details: {
@@ -367,8 +366,8 @@ export default function RechargeFullWidth() {
             // notify_url:
             //   "https://webhook.site/fe86c8d7-fa74-4ad7-819c-af7b9f612511",
           },
-        }
-        const res = await rechargeCreateOrderCashFree(payload)
+        };
+        const res = await rechargeCreateOrderCashFree(payload);
         // if (res?.status === true && res?.paymentSessionId) {
         //   setPaymentSessionId(res.paymentSessionId);
         //   const result = await cashfree.checkout({
@@ -381,7 +380,7 @@ export default function RechargeFullWidth() {
         //   toast.error("Failed to create payment session.");
         //   return;
         // }
-        setNewOrderId(res.orderId)
+        setNewOrderId(res.orderId);
 
         if (res?.cashfree_error?.code) {
           const message =
@@ -400,16 +399,19 @@ export default function RechargeFullWidth() {
           return;
         }
 
-        await cashfree.checkout({
+        const { error } = await cashfree.checkout({
           paymentSessionId,
           redirectTarget: "_modal",
         });
+        // console.log("error", result);
+        if (error) {
+          return toast.error("Either Payment was aborted or something went wrong");
+        }
+
+
         const rechargeStatus = await verifyRechargeStatus({
           order_id: newOrderId,
         });
-
-        console.log("rechargeStatus", rechargeStatus)
-
 
         if (rechargeStatus?.status !== "received") {
           return toast.error("Payment Failed!");
@@ -430,7 +432,6 @@ export default function RechargeFullWidth() {
         setPaymentSessionId(null);
       }
     }
-
 
     // if (!cashfree) {
     //   toast.error("Payment SDK not loaded yet. Try again in a moment.");
@@ -457,119 +458,177 @@ export default function RechargeFullWidth() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-[90vh]">
-      <div className="w-full max-w-6xl bg-white bg-opacity-90 backdrop-filter backdrop-blur-md rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border-4 border-dashed border-blue-300 p-3">
+    <div className="min-h-[90vh] w-full flex items-center justify-center px-4 sm:px-6 lg:px-8 py-6">
+      <div className="w-full max-w-6xl rounded-3xl border border-blue-200/70 bg-white/90 backdrop-blur-md shadow-xl p-4 sm:p-6">
+        {/* Title */}
+        <h1 className="text-4xl sm:text-4xl font-semibold text-blue-800 text-center mb-4">
+          Recharge Wallet
+        </h1>
 
-        {/* Lottie Panel */}
-        <div className="md:w-1/2 relative h-64 md:h-auto bg-[#EDF5FF] rounded-2xl shadow-lg">
-          <Lottie
-            animationData={rechargeAnim}
-            loop
-            autoplay
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute top-40 md:top-50 lg:top-75 right-6 md:right-8 lg:right-12 inset-0 bg-opacity-20 flex items-center justify-center">
-            <h2 className="text-black md:text-2xl lg:text-3xl font-bold">Recharge</h2>
+        {/* Grid: stacks on mobile, side-by-side on md+ */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+          {/* Lottie panel */}
+          <div className="relative rounded-2xl bg-[#EDF5FF] shadow-md border border-blue-100 p-3 hidden md:hidden lg:block">
+            <div className="rounded-xl overflow-hidden aspect-[16/10] sm:aspect-[4/3] md:aspect-[5/4]">
+              <Lottie
+                animationData={rechargeAnim}
+                loop
+                autoplay
+                className="h-full w-full"
+              />
+            </div>
+
+            {/* overline badge */}
+            <div className="absolute left-1/2 -translate-x-1/2 -bottom-3">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white shadow-md border px-4 py-1.5 text-sm font-semibold text-gray-700">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                Recharge
+              </span>
+            </div>
           </div>
-        </div>
 
-        {/* Divider */}
-        <div className="hidden lg:flex flex-col items-center justify-center px-2">
-          <div className="h-full w-1 bg-gradient-to-b from-indigo-100 via-indigo-300 to-indigo-100 rounded-full" />
-        </div>
+          {/* Form panel */}
+          <div className="rounded-2xl bg-white shadow-md border border-slate-200 p-4 sm:p-6">
+            <form onSubmit={handlePayNow} className="space-y-4">
+              {/* Full Name */}
+              <div>
+                <label
+                  htmlFor="fullName"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
+                  Full Name
+                </label>
+                <input
+                  id="fullName"
+                  type="text"
+                  placeholder="Enter your full name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  // required
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition"
+                />
+              </div>
 
-        {/* Form Panel */}
-        <div className="md:w-1/2 p-8">
-          <h1 className="text-4xl font-bold text-gray-700 mb-6 text-center">
-            Recharge Wallet
-          </h1>
-          <form onSubmit={handlePayNow} className="space-y-4">
-            {/* Full Name */}
-            <div>
-              <label htmlFor="fullName" className="block text-gray-700 mb-2">
-                Full Name
-              </label>
-              <input
-                id="fullName"
-                type="text"
-                placeholder="Enter your full name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 transition"
-              />
-            </div>
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-gray-700 mb-2">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 transition"
-              />
-            </div>
-            {/* Phone */}
-            <div>
-              <label htmlFor="phone" className="block text-gray-700 mb-2">
-                Phone Number
-              </label>
-              <input
-                id="phone"
-                type="tel"
-                placeholder="Enter your phone number"
-                value={phone}
-                // onChange={(e) => setPhone(e.target.value)}
-                onChange={(e) => {
-                  const numberRegex = /^[0-9]*$/;
-                  if (numberRegex.test(e.target.value)) {
-                    setPhone(e.target.value);
-                  }
-                }}
-                disabled={paymentSessionId !== null && phone.length === 13}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 transition"
-              />
-            </div>
-            {/* Amount */}
-            <div>
-              <label htmlFor="amount" className="block text-gray-700 mb-2">
-                Amount (INR)
-              </label>
-              <input
-                id="amount"
-                type="number"
-                placeholder="Enter amount"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 transition"
-              />
-            </div>
+              {/* Email */}
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  // required
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition"
+                />
+              </div>
 
-            <div>
-              <label htmlFor="amount" className="block text-gray-700 mb-2">
-                Added GST Amount (INR)
-              </label>
-              <input
-                id="gstAmount"
-                type="number"
-                placeholder="GST added amount"
-                value={addedGstAmount}
-                // onChange={(e) => setAmount(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 transition"
-              />
-            </div>
+              {/* Phone */}
+              <div>
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
+                  Phone Number (India)
+                </label>
+                <div className="flex gap-2">
+                  <span className="select-none inline-flex items-center px-3 rounded-lg border border-slate-300 bg-slate-50 text-slate-700">
+                    +91
+                  </span>
+                  <input
+                    id="phone"
+                    inputMode="numeric"
+                    type="tel"
+                    placeholder="10-digit number"
+                    value={phone}
+                    onChange={(e) => {
+                      // keep digits only, trim to 13
+                      const v = e.target.value.replace(/\D/g, "").slice(0, 10);
+                      setPhone(v);
+                    }}
+                    maxLength={13}
+                    pattern="^\d{0,13}$"
+                    title="Enter up to 13 digits"
+                    disabled={paymentSessionId !== null && phone.length === 13}
+                    // required
+                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition"
+                  />
+                </div>
 
-            {/* Single Pay Now Button */}
-            <button
-              type="submit"
-              className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition shadow"
-            >
-              Pay Now
-            </button>
-          </form>
+                <p className="mt-1 text-xs text-slate-500">
+                  {phone.length}/10 digits
+                </p>
+              </div>
+              {/* Amount */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    htmlFor="amount"
+                    className="block text-sm font-medium text-slate-700 mb-1"
+                  >
+                    Amount (INR)
+                  </label>
+                  <input
+                    id="amount"
+                    type="number"
+                    min="0"
+                    step="1"
+                    placeholder="Enter amount"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    // required
+                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="amount"
+                    className="block text-sm font-medium text-slate-700 mb-1"
+                  >
+                    Added GST Amount (INR)
+                  </label>
+
+                  <input
+                    id="gstAmount"
+                    type="number"
+                    placeholder="GST added amount"
+                    value={addedGstAmount}
+                    // onChange={(e) => setAmount(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none  transition bg-gray-100 cursor-not-allowed"
+                  />
+                </div>
+              </div>
+
+              {/* Total (read-only) */}
+              {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="sm:col-span-2">
+                  <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+                    <span className="text-sm font-medium text-emerald-800">Total payable</span>
+                    <span className="text-lg font-bold text-emerald-900">₹ {total.toLocaleString("en-IN")}</span>
+                  </div>
+                </div>
+              </div> */}
+
+              {/* Submit */}
+              <button
+                type="submit"
+                className="w-full py-3 rounded-xl font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 transition shadow-sm"
+              >
+                Pay Now
+              </button>
+
+              {/* Small help text */}
+              <p className="text-[12px] text-slate-500 text-center">
+                Payments are secured & encrypted
+              </p>
+            </form>
+          </div>
         </div>
       </div>
     </div>

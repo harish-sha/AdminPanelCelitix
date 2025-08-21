@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "VITE");
 
   return {
-    plugins: [react(), tailwindcss(), mkcert()],
+    plugins: [react(), tailwindcss(),mkcert()],
     define: {
       "process.env": env,
     },
@@ -18,6 +18,10 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
+      host: true,
+      allowedHosts: [
+        ".ngrok-free.app",
+      ],
       historyApiFallback: true,
       proxy: {
         "/api": {

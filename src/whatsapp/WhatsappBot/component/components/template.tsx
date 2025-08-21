@@ -86,7 +86,7 @@ export const TemplateNode = ({
       );
 
       setAllTemplates(approvedTemplates);
-      // setSelectedTemplate(Number(data?.whatsappTemplate));
+
       let tempId = null;
       if (data?.template?.name) {
         tempId = approvedTemplates.find(
@@ -209,78 +209,84 @@ export const TemplateNode = ({
       //   }
       // });
 
-      botData.template.components = botData.template.components.map(
-        (component, index) => {
-          if (component.type === "BODY") {
-            return {
-              ...component,
-              parameters: [
-                {
-                  text: `{{${variables[index]}}}`,
-                  type: "text",
-                },
-              ],
-            };
-          }
-          if (component.type === "button") {
-            return {
-              ...component,
-              parameters: [
-                {
-                  text: `{{${btnVar[index]}}}`,
-                  type: "text",
-                },
-              ],
-            };
-          }
-          if (template.type === "image") {
-            return {
-              type: "HEADER",
-              parameters: [
-                {
-                  type: "image",
-                  image: {
-                    link: basicDetails.mediaPath,
+      if (Array.isArray(botData.template.components)) {
+        botData.template.components = botData.template.components.map(
+          (
+            component: {
+              type: string;
+              parameters: {
+                text: string;
+                type: string;
+                image: { link: string };
+              }[];
+            },
+            index: number
+          ) => {
+            if (component.type === "BODY") {
+              const params = component.parameters.map((item, i) => ({
+                ...item,
+                text: `${variables[i]}`,
+              }));
+
+              return {
+                ...component,
+                parameters: params,
+              };
+            }
+            if (component.type === "button") {
+              return {
+                ...component,
+                parameters: [
+                  {
+                    text: `${btnVar[index]}`,
+                    type: "text",
                   },
-                },
-              ],
-            };
+                ],
+              };
+            }
+            if (template.type === "image") {
+              return {
+                type: "HEADER",
+                parameters: [
+                  {
+                    type: "image",
+                    image: {
+                      link: basicDetails.mediaPath,
+                    },
+                  },
+                ],
+              };
+            }
+            if (template.type === "video") {
+              return {
+                type: "HEADER",
+                parameters: [
+                  {
+                    type: "video",
+                    video: {
+                      link: basicDetails.mediaPath,
+                    },
+                  },
+                ],
+              };
+            }
+            if (template.type === "document") {
+              return {
+                type: "HEADER",
+                parameters: [
+                  {
+                    type: "document",
+                    document: {
+                      link: basicDetails.mediaPath,
+                    },
+                  },
+                ],
+              };
+            }
+            return component;
           }
-          // if (template.type === "video") {
-          //   return {
-          //     type: "HEADER",
-          //     parameters: [
-          //       {
-          //         type: "video",
-          //         video: {
-          //           link: basicDetails.mediaPath,
-          //         },
-          //       },
-          //     ],
-          //   };
-          // }
-          // if (template.type === "document") {
-          //   return {
-          //     type: "HEADER",
-          //     parameters: [
-          //       {
-          //         type: "document",
-          //         document: {
-          //           link: basicDetails.mediaPath,
-          //         },
-          //       },
-          //     ],
-          //   };
-          // }
-          return component;
-        }
-      );
-
-      // console.log("botData", botData);
-
-      // return;
-
-      // TODO: add variable dropdown values
+        );
+      }
 
       setNodesInputData((prev) => ({
         ...prev,
@@ -293,6 +299,7 @@ export const TemplateNode = ({
 
       setIsVisible(false);
     } catch (e) {
+      console.log("e", e);
       return toast.error("Error saving template data");
     }
   }
@@ -364,6 +371,13 @@ export const TemplateNode = ({
                   address: "",
                   name: "",
                 });
+                setLocationData({
+                  url: "",
+                  latitude: "",
+                  longitude: "",
+                  address: "",
+                  name: "",
+                });
               }}
               disabled={false}
             />
@@ -381,14 +395,14 @@ export const TemplateNode = ({
             />
           )}
           {templateType === "location" && (
-            <div className="w-full mt-4 p-2">
+            <div className="w-full mt-4 p-2 ">
               <h1 className="mb-2 text-lg font-semibold text-gray-700">
                 Location Details
                 <span className="text-red-500">*</span>
               </h1>
-              <div className="space-y-2rounded-b-xl">
+              <div className="space-y-2  rounded-b-xl">
                 <InputField
-                  maxLength={100}
+                  maxLength={"100"}
                   id="locationurl"
                   name="locationurl"
                   label={"Location URL (optional)"}
@@ -406,7 +420,7 @@ export const TemplateNode = ({
                 />
                 <div className="flex items-center gap-2">
                   <InputField
-                    maxLength={100}
+                    maxLength={"100"}
                     id="latitude"
                     name="latitude"
                     label={"Latitude"}
@@ -420,7 +434,7 @@ export const TemplateNode = ({
                     placeholder="Enter Latitude value"
                   />
                   <InputField
-                    maxLength={100}
+                    maxLength={"100"}
                     id="longitude"
                     name="longitude"
                     label={"Longitude"}
@@ -435,7 +449,7 @@ export const TemplateNode = ({
                   />
                 </div>
                 <InputField
-                  maxLength={20}
+                  maxLength={"20"}
                   id="name"
                   name="name"
                   label={"Name"}
@@ -449,7 +463,7 @@ export const TemplateNode = ({
                   placeholder="Enter A name for the location"
                 />
                 <InputField
-                  maxLength={100}
+                  maxLength={"100"}
                   id="address"
                   name="address"
                   label={"Address"}

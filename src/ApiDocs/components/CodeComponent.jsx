@@ -51,7 +51,7 @@ const CodeComponent = ({ sampleData }) => {
   };
 
   return (
-    <div className="w-3xl mx-auto">
+    <div className="w-full mx-auto">
       <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md flex items-center flex-col h-66 relative">
         <Toaster />
         <div className="flex justify-between items-center absolute right-2.5">

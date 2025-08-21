@@ -420,6 +420,15 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
             anchorEl={menuAnchorEl}
             open={Boolean(menuAnchorEl)}
             onClose={() => handleMenu()}
+            sx={{
+              "& .MuiPaper-root": { borderRadius: "15px", padding: "5px 0", boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)" },
+              "MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-urgdh2-MuiButtonBase-root-MuiMenuItem-root": {
+                "&:hover": { backgroundColor: "#e6f4ff", color: "#1e3a8a", boxShadow: "0 4px 20px rgba(0, 0, 0, 0.09)", scale: 1.01, transition: "all 0.2s ease-in", borderBottom: "1px solid #e0e0e0", marginBottom: "3px" },
+              }
+            }}
+            PaperProps={{
+              component: motion.div, initial: { opacity: 0, y: -10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -10 }, transition: { duration: 0.2 }
+            }}
           >
             {[
               {
@@ -429,7 +438,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
               },
               // { text: "Balance", icon: <PaymentsIcon /> },
               { text: "Balance", icon: <WalletIcon /> },
-              { text: "Download", icon: <DownloadIcon /> },
+              { text: "Download", icon: <DownloadIcon />, action: handleViewDownload },
               {
                 text: "Profile",
                 icon: <ProfileIcon />,
@@ -455,7 +464,10 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
               <MenuItem
                 key={idx}
                 sx={{ fontSize: "15px", fontWeight: "500" }}
-                onClick={action}
+                onClick={() => {
+                  handleMenu();        // closes the menu
+                  action?.();          // run action if defined
+                }}
               >
                 <div>
                   {icon} <span className="ml-2">{text}</span>
@@ -471,15 +483,13 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
         </div>
       )}
 
-      {
-        showModal && (
-          <UniversalAccountInfo
-            show={showModal}
-            handleClose={() => setShowModal(false)}
-          />
-        )
-      }
-    </nav >
+      {showModal && (
+        <UniversalAccountInfo
+          show={showModal}
+          handleClose={() => setShowModal(false)}
+        />
+      )}
+    </nav>
   );
 };
 

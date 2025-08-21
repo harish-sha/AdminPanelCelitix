@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
-import Tabs from "@mui/material/Tabs";
+import Tabs, { tabsClasses } from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Loader from "../../whatsapp/components/Loader";
 import PasswordOutlinedIcon from "@mui/icons-material/PasswordOutlined";
@@ -267,6 +267,14 @@ const Settings = () => {
             aria-label="Settings Tabs"
             textColor="primary"
             indicatorColor="primary"
+            variant="scrollable"
+            scrollButtons
+            allowScrollButtonsMobile
+            sx={{
+              [`& .${tabsClasses.scrollButtons}`]: {
+                "&.Mui-disabled": { opacity: 0.3 }, // ✅ keep disabled buttons visible
+              },
+            }}
           // variant="fullWidth"
           >
             {/* <Tab

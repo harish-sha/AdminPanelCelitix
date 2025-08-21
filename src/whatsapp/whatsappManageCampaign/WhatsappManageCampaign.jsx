@@ -132,6 +132,11 @@ const WhatsappManageCampaign = () => {
   const [campaign, setCampaign] = useState([]);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [campaignList, setCampaignList] = useState([]);
+  const [exportDialogState, setExportDialogState] = useState({
+    isOpen: false,
+    toDate: new Date(),
+    fromDate: new Date(),
+  });
 
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
     campaignName: false,
@@ -633,8 +638,8 @@ const WhatsappManageCampaign = () => {
       const payload = {
         type: 2,
         selectedUserId: "",
-        fromDate: moment(selectedDateLogs).format("YYYY-MM-DD"),
-        toDate: moment(selectedDateLogs).format("YYYY-MM-DD"),
+        fromDate: moment(exportDialogState.fromDate).format("YYYY-MM-DD"),
+        toDate: moment(exportDialogState.toDate).format("YYYY-MM-DD"),
         isCustomField: 1,
         // customColumns: "",
         customColumns:
@@ -650,6 +655,7 @@ const WhatsappManageCampaign = () => {
       }
 
       toast.success(res?.msg);
+      setExportDialogState({ isOpen: false, fromDate: new Date(), toDate: new Date() });
       triggerDownloadNotification();
     } catch (e) {
       console.log(e);
@@ -1012,7 +1018,7 @@ const WhatsappManageCampaign = () => {
                     <UniversalButton
                       id="export"
                       name="export"
-                      onClick={handleExport}
+                      onClick={() => { setExportDialogState({ isOpen: true, toDate: new Date(), fromDate: new Date() }) }}
                       label={"Export"}
                       icon={
                         <IosShareOutlinedIcon
@@ -1071,6 +1077,60 @@ const WhatsappManageCampaign = () => {
                   </Box>
                 </div>
               )}
+              <Dialog
+                header={"Export Data"}
+                visible={exportDialogState.isOpen}
+                style={{ width: "27rem" }}
+                onHide={() => setExportDialogState({
+                  isOpen: false,
+                  toDate: new Date(),
+                  fromDate: new Date()
+                })}
+                draggable={false}
+              >
+                <div className="space-y-2">
+
+
+                  <UniversalDatePicker
+                    id="fromDate"
+                    name="fromDate"
+                    label="From Date"
+                    tooltipContent="Select From Date"
+                    onChange={(e) => {
+                      setExportDialogState((prev) => (
+                        {
+                          ...prev,
+                          fromDate: e
+                        }
+                      ))
+                    }}
+                    value={exportDialogState.fromDate}
+                  />
+                  <UniversalDatePicker
+                    id="toDate"
+                    name="toDate"
+                    label="To Date"
+                    tooltipContent="Select To Date"
+                    onChange={(e) => {
+                      setExportDialogState((prev) => (
+                        {
+                          ...prev,
+                          toDate: e
+                        }
+                      ))
+                    }}
+                    value={exportDialogState.toDate}
+                  />
+                  <div className="flex items-center gap-2 justify-center mt-2">
+                    <UniversalButton
+                      id="export"
+                      name="export"
+                      onClick={handleExport}
+                      label={"Export"}
+                    />
+                  </div>
+                </div>
+              </Dialog>
             </div>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>

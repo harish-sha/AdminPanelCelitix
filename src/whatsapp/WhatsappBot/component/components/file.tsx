@@ -9,6 +9,7 @@ import { extractVariable } from "./helper/extractVariable";
 import { IconButton, Slider } from "@mui/material";
 import PauseRounded from "@mui/icons-material/PauseRounded";
 import PlayArrowRounded from "@mui/icons-material/PlayArrowRounded";
+import UniversalTextArea from "@/whatsapp/components/UniversalTextArea";
 
 export const FileNodeContent = ({
   accept,
@@ -299,8 +300,12 @@ export const FileNodeContent = ({
           <RenderAudio />
         ) : null)}
 
-      <InputField
-        label="Caption text"
+      <label className="text-sm font-semibold text-gray-700">
+        Caption text
+      </label>
+      <textarea
+        // label="Caption text"
+        className="w-full p-1.5 border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm"
         id="captionText"
         name="captionText"
         placeholder="Enter Caption Text"

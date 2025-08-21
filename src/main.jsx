@@ -14,27 +14,32 @@ import { Provider } from "react-redux";
 import store from "./whatsapp/whatsappFlows/redux/Store.js";
 import NetworkStatusProvider from "./context/NetworkStatusProvider.jsx";
 import { WabaAgentProvider } from "./context/WabaAndAgent.jsx";
+import { InstagramProvider } from "./context/InstagramContext.jsx";
+import { MessangerProvider } from "./context/MessengerContext.jsx";
+import { RcsProvider } from "./context/RcsContext.jsx";
 import { ThemeProvider } from "./ApiDocs/context/ThemeContext.jsx";
-
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    {/* User Context */}
     <UserProvider>
-      {/* Prime React */}
       <PrimeReactProvider>
-        {/* Error Boundary*/}
         {/* <ErrorBoundary> */}
         <DownloadProvider>
           <WabaAgentProvider>
-            <ThemeProvider>
-              <DndProvider backend={HTML5Backend}>
-                <Provider store={store}>
-                  {/* <NetworkStatusProvider></NetworkStatusProvider> */}
-                  <App />
-                </Provider>
-              </DndProvider>
-            </ThemeProvider>
+            <InstagramProvider>
+              <RcsProvider>
+                <MessangerProvider>
+                  <ThemeProvider>
+                    <DndProvider backend={HTML5Backend}>
+                      <Provider store={store}>
+                        {/* <NetworkStatusProvider></NetworkStatusProvider> */}
+                        <App />
+                      </Provider>
+                    </DndProvider>
+                  </ThemeProvider>
+                </MessangerProvider>
+              </RcsProvider>
+            </InstagramProvider>
           </WabaAgentProvider>
         </DownloadProvider>
         {/* </ErrorBoundary> */}

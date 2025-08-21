@@ -17,7 +17,10 @@ import { CiMenuKebab } from "react-icons/ci";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import { MdFilterAltOff } from "react-icons/md";
 import { useUser } from "@/context/auth";
-
+import { TbFilterX } from "react-icons/tb";
+import { RxCrossCircled } from "react-icons/rx";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+import { useWabaAgentContext } from "@/context/WabaAndAgent.jsx";
 
 export const InputData = ({
   setSearch,
@@ -34,13 +37,26 @@ export const InputData = ({
   setSelectedAgent,
   selectedAgent,
   agentList,
+  chatState,
 }) => {
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [agentInfoSummary, setAgentInfoSummary] = useState("");
+  const [chatSwitched, setChatSwitched] = useState("read");
 
   const [showFilter, setShowFilter] = useState(false);
   const panelRef = useRef(null);
+  const {
+    assignedChat,
+    agentInfo,
+    setAgentInfo,
+    convoDetails,
+    activeConvo,
+    inactiveConvo,
+    switchChat,
+    setSwitchChat,
+  } = useWabaAgentContext();
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -56,6 +72,30 @@ export const InputData = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showFilter]);
 
+  const [readStatus, setReadStatus] = useState({});
+  const [selected, setSelected] = useState("");
+  const [isRead, setIsRead] = useState(false);
+
+
+
+  useEffect(()=>{
+    setSwitchChat(convoDetails?.conversationEntityList)
+  }, [convoDetails])
+
+  const handleSelect = (agent) => {
+
+    setAgentInfoSummary(agent.label);
+    setSelected(agent);
+    setSelectedAgent(agent.value);
+    console.log("agent full object:", agent);
+
+    setReadStatus((prev) => ({
+      ...prev,
+      [agent.value]: true,
+    }));
+    console.log("agentSrno:", agent.value);
+  };
+
   const handleChipClick = () => {
     setOpenDialog(true);
   };
@@ -63,6 +103,7 @@ export const InputData = ({
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
+
   return (
     <motion.div
       className="p-3 bg-white rounded-2xl shadow-md"
@@ -172,8 +213,9 @@ export const InputData = ({
           )}
           {/* Sliding Panel */}
           <div
-            className={`absolute top-0 -left-8 w-full md:w-88 shadow-lg z-40 transform transition-transform duration-300 md:ml-4 ${isOpen ? "translate-x-0 left-0" : "-translate-x-full"
-              }`}
+            className={`absolute top-0 -left-8 w-full md:w-88 shadow-lg z-40 transform transition-transform duration-300 md:ml-4 ${
+              isOpen ? "translate-x-0 left-0" : "-translate-x-full"
+            }`}
           >
             <AnimatedDropdown
               id="createSelectWaba"
@@ -215,7 +257,7 @@ export const InputData = ({
           <div className="flex items-center justify-between gap-3">
             <div
               id="input"
-              className="flex items-center justify-center w-full px-3 py-1 border-gray-300 rounded-full border ml-4"
+              className="flex items-center justify-center w-full px-3 py-2 border-gray-300 rounded-full border ml-4"
             >
               <input
                 type="text"
@@ -238,7 +280,7 @@ export const InputData = ({
               </button>
             </div>
             {user.role !== "AGENT" && (
-              <div className="flex items-center gap-2 mt-1">
+              <div className="flex items-center gap-2 mt-1 relative">
                 {/* <FaFilter /> */}
                 {/* <CiMenuKebab /> */}
                 {/* <button onClick={() => setShowFilter((v) => !v)}>
@@ -253,14 +295,15 @@ export const InputData = ({
                     <MdFilterAltOff className="size-5 cursor-pointer hover:text-blue-600 transition" />
                   </button>
                 )}
-                <CiMenuKebab />
-                {showFilter && (
+                {/* <CiMenuKebab /> */}
+                {/* {showFilter && (
                   <div
                     ref={panelRef}
                     className="absolute right-0 top-10 mt-2 w-62 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
                   >
-                    <div className="p-4">
-                      <DropdownWithSearch
+                   
+                    <div className="p-4" onClick={() => setOpen((o) => !o)}>
+                      {/* <DropdownWithSearch
                         id="selectAgent"
                         name="selectAgent"
                         value={selectedAgent}
@@ -273,11 +316,11 @@ export const InputData = ({
                           value: item.sr_no,
                           label: item.name,
                         }))}
-                      />
+                      /> 
                     </div>
 
                     <button
-                      className="px-4 py-2 text-sm  bg-gray-400 rounded-md text-white ml-auto mr-auto"
+                      className="px-4 py-2 text-sm  bg-gray-400 rounded-md text-white ml-auto mr-auto mb-1"
                       onClick={() => {
                         setSelectedAgent(null);
                         setShowFilter(false);
@@ -286,6 +329,147 @@ export const InputData = ({
                       Clear Filters
                     </button>
                   </div>
+                )} */}
+
+                {showFilter && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -10 }}
+                    ref={panelRef}
+                    className="fixed left-166 top-47 w-100 bg-white border border-gray-200 rounded-lg shadow-lg z-100"
+                  >
+                    <div className="absolute right-1 top-1.5 flex items-center gap-2">
+                      <button
+                        className="rounded-full text-md  text-gray-900 flex items-center justify-center cursor-pointer transition-all duration-200"
+                        onClick={() => {
+                          setSelectedAgent(null);
+                          // setShowFilter(false);
+                          setAgentInfo(null);
+                          setAgentInfoSummary("");
+                        }}
+                      >
+                        <TbFilterX className="" />
+                      </button>
+                      <div
+                        className=" font-medium text-gray-500 cursor-pointer"
+                        onClick={() => setShowFilter(false)}
+                      >
+                        <RxCrossCircled />
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2 items-center justify-between p-3 border-b">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium text-gray-700">
+                          {/* {selectedAgent ? selectedAgent.label : "Select Agent"} */}
+                          {selectedAgent ? selectedAgent.label : ""} Agents
+                        </p>
+                        <p className="flex items-center gap-1 text-sm text-gray-700">
+                          <span className="font-medium">
+                            {agentInfoSummary}
+                          </span>
+                          {agentInfo ? (
+                            <span className="inline-flex items-center justify-center text-green-700 font-medium">
+                              {agentInfo?.conversationEntityList.length} chats
+                              assigned
+                            </span>
+                          ) : (
+                            ""
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="p-3 grid grid-cols-2 gap-2">
+                      {/* List of Options */}
+                      <div className="space-y-2 max-h-[250px] overflow-y-auto border-r pr-2 scrollbar-hide">
+                        {agentList?.data?.map((item) => (
+                          <div
+                            key={item.sr_no}
+                            className={`flex items-center gap-2 p-1 border-2 hover:bg-[#5584AC] hover:text-white transition-all duration-200 cursor-pointer rounded-md overflow-y-auto  ${
+                              selectedAgent === item.sr_no
+                                ? "bg-[#5584AC] border-[#5584AC] text-white"
+                                : "bg-gray-100 border-[#5584AC]"
+                            }
+                               `}
+                            onClick={() =>
+                              handleSelect({
+                                value: item.sr_no,
+                                label: item.name,
+                              })
+                            }
+                          >
+                            <div
+                              className={`w-7 h-7 flex items-center justify-center rounded-full border-2 bg-white text-md font-semibold  text-[#22577E] 
+                               ${
+                                 item.isRead
+                                   ? "border-green-500"
+                                   : "border-[#5584AC]"
+                               }`}
+                            >
+                              {item.name?.charAt(0).toUpperCase()}
+                            </div>
+                            <span className="text-sm">{item.name}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="flex flex-col gap-3 w-full">
+                        <div
+                          className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold text-gray-800 rounded-xl shadow-sm
+      ${
+        chatSwitched === "read"
+          ? "bg-green-50 border border-green-400 focus:outline-none focus:ring-2 focus:ring-green-400"
+          : "bg-gray-50 border-gray-400"
+      }
+      hover:bg-green-50 hover:shadow-md transition-all duration-200 ease-in-out cursor-pointer`}
+                          onClick={() => {
+                            setSwitchChat(
+                              btnOption === "active"
+                                ? convoDetails?.conversationEntityList
+                                : []
+                            );
+                            
+                            setChatSwitched("read");
+                          }}
+                        >
+                          <DoneAllIcon
+                            className="text-green-300 text-xs"
+                            sx={{ fontSize: "18px" }}
+                          />
+                          Read Count:{" "}
+                          <span className="font-medium">
+                            {btnOption === "active"
+                              ? activeConvo?.length || 0
+                              : inactiveConvo?.length || 0}
+                          </span>{" "}
+                        </div>
+                        <div
+                          className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold text-gray-800 
+                             rounded-xl shadow-sm ${
+                               chatSwitched === "unread"
+                                 ? "bg-green-50 border border-green-400 focus:outline-none focus:ring-2 focus:ring-green-400"
+                                 : "bg-gray-50 border-gray-400"
+                             } 
+                              hover:bg-gray-50 hover:shadow-md transition-all duration-200 ease-in-out 
+                               focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer`}
+                          onClick={() => {
+                            setSwitchChat(convoDetails?.unreadCounts || []);
+                            setChatSwitched("unread");
+                          }}
+                        >
+                          <DoneAllIcon
+                            className="text-gray-400"
+                            sx={{ fontSize: "18px" }}
+                          />
+                          Unread Count:{" "}
+                          <span className="font-medium">
+                            {convoDetails?.unreadCounts?.length || 0}
+                          </span>{" "}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
                 )}
               </div>
             )}
@@ -377,10 +561,11 @@ export const InputData = ({
                 setBtnOption("active");
                 setIsSubscribed(false);
               }}
-              className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "active"
-                ? "text-white font-semibold"
-                : "text-gray-700"
-                }`}
+              className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${
+                btnOption === "active"
+                  ? "text-white font-semibold"
+                  : "text-gray-700"
+              }`}
             >
               Active
             </button>
@@ -389,10 +574,11 @@ export const InputData = ({
                 setBtnOption("close");
                 setIsSubscribed(false);
               }}
-              className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "close"
-                ? "text-white font-semibold"
-                : "text-gray-700"
-                }`}
+              className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${
+                btnOption === "close"
+                  ? "text-white font-semibold"
+                  : "text-gray-700"
+              }`}
             >
               Close
             </button>

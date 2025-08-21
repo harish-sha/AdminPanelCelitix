@@ -106,6 +106,7 @@ import IntroductionDocsClickTwoCall from "../../ApiDocs/clicktwocall/Introductio
 import SubmitTemplateClickTwoCall from "../../ApiDocs/clicktwocall/SubmitTemplate/SubmitTemplateClickTwoCall"
 import UpdateTemplateClickTwoCall from "../../ApiDocs/clicktwocall/UpdateTemplate/UpdateTemplateClickTwoCall"
 import DeleteTemplateClickTwoCall from "../../ApiDocs/clicktwocall/DeleteTemplate/DeleteTemplateClickTwoCall"
+import SendMessageNew from "@/ApiDocs/whatsapp/SendMessage/SendMessageNew";
 
 const Apiroutes = () => {
   return (
@@ -127,6 +128,7 @@ const Apiroutes = () => {
         <Route path="/submit-template-whatsapp" element={<SubmitTemplateWhatsapp />} />
         <Route path="/send-template-whatsapp" element={<SendTemplateWhatsapp />} />
         <Route path="/send-message-whatsapp" element={<SendMessage />} />
+        <Route path="/send-messages-whatsapp" element={<SendMessageNew />} />
 
         {/* Sms */}
         <Route path="sms" element={<IntroductionDocsSms />} />

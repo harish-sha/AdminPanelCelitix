@@ -45,8 +45,8 @@ const RequestComponent = ({ requestData = [], curlBase = "" }) => {
     switch (selectedLang) {
       case "cURL":
         // Uses provided curlBase + body
-        return `${curlBase}
---data '${raw}'`;
+                return `${curlBase}
+        --data '${raw}'`;
 
       case "Node.js (fetch)":
         return `// Fill your actual URL, method and headers as needed
@@ -125,11 +125,10 @@ echo $code . "\\n" . $resp;`;
 
   return (
     <>
-      <Toaster />
-      <div className="w-[320px] md:w-2xl lg:w-3xl mx-auto mt-4">
+      <div className="w-full mx-auto mt-4">
         <div
           className={`bg-gray-700 text-white p-4 rounded-lg shadow-md flex flex-col relative transition-all duration-300 ${
-            expanded ? "max-h-full" : "h-66 overflow-hidden"
+            expanded ? "max-h-full" : "h-full overflow-hidden"
           }`}
         >
           {/* top-right actions */}
@@ -163,14 +162,14 @@ echo $code . "\\n" . $resp;`;
           </div>
 
           {/* expand/collapse */}
-          <div className="mt-4 self-center">
+          {/* <div className="mt-4 self-center">
             <button
               className="text-blue-400 underline"
               onClick={() => setExpanded(!expanded)}
             >
               {expanded ? "View Less" : "View More"}
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
 

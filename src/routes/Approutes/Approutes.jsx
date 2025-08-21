@@ -38,6 +38,7 @@ import WhatsappFlows from "@/whatsapp/whatsappFlows/Pages/WhatsappFlows";
 import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
 import { BlockUser } from "@/whatsapp/blockUser";
 import { EditFlow } from "@/whatsapp/whatsappFlows/Pages/FlowEditPage";
+import { EditTemplate } from "@/whatsapp/managetemplate/edit";
 // MMLite
 import MmLite from "@/whatsapp/mmlite/MmLite";
 
@@ -53,27 +54,6 @@ import Settings from "@/profile/pages/Settings";
 import ProfilePage from "@/profile/pages/Profile";
 import LoginIpDetails from "@/profile/pages/LoginIpDetails";
 import WhatsappCreateTemplate from "@/whatsapp/whatsappcreatetemplate/WhatsappCreateTemplate";
-
-// Admin
-import ManageUser from "@/admin/manageUser/ManageUser";
-import ManageDltTemplate from "@/admin/manageDltTemplate/ManageDltTemplate";
-import ManageVoiceClips from "@/admin/manageVoiceClips/ManageVoiceClips";
-import ManagePlan from "@/admin/managePlan/ManagePlan";
-import AccountManager from "@/admin/accountManager/AccountManager";
-import GraphMain from "@/admin/graphMain/GraphMain";
-import GraphUserWise from "@/admin/graphUserWise/GraphUserWise";
-import ManageSMPP from "@/admin/manageSMPP.jsx/ManageSMPP";
-import ManagePrefix from "@/admin/managePrefix/managePrefix";
-import Blacklist from "@/admin/blacklist/blacklist";
-import ManageNotifications from "@/admin/manageNotifications.jsx/manageNotifications";
-import ManageRouting from "@/admin/manageRouting/ManageRouting";
-import AddUser from "@/admin/manageUser/pages/AddUser";
-import AddService from "@/admin/manageSMPP.jsx/pages/AddService";
-import AddRouting from "@/admin/manageRouting/pages/AddRouting";
-import EditRouting from "@/admin/manageRouting/pages/EditRouting";
-import SMPPErrorCode from "@/admin/smmpErrorCode/SMPPErrorCode";
-import AddOperator from "@/admin/managePrefix/pages/AddOperator";
-import CreateWhatsappTemplateAdmin from "@/admin/createWhatsappTemplate/CreateWhatsappTemplateAdmin";
 
 // sms
 import SmsReports from "@/sms/smsReports/SmsReports";
@@ -189,30 +169,6 @@ const Approutes = () => {
         <Route index element={<ResellerDashboard />} />
         {/* <Route path="resellerdash" element={<ResellerDashboard />} /> */}
 
-        {/* admin */}
-        <Route path="manageuser" element={<ManageUser />} />
-        <Route path="manageadduser" element={<AddUser />} />
-        <Route path="managedlttemplate" element={<ManageDltTemplate />} />
-        <Route path="managevoiceclips" element={<ManageVoiceClips />} />
-        <Route path="manageplan" element={<ManagePlan />} />
-        <Route path="accountmanager" element={<AccountManager />} />
-        <Route path="GraphMain" element={<GraphMain />} />
-        <Route path="graphuserwise" element={<GraphUserWise />} />
-        <Route path="manageSMPP" element={<ManageSMPP />} />
-        <Route path="managerouting" element={<ManageRouting />} />
-        <Route path="manageprefix" element={<ManagePrefix />} />
-        <Route path="blacklist" element={<Blacklist />} />
-        <Route path="managenotifications" element={<ManageNotifications />} />
-        <Route path="addrouting" element={<AddRouting />} />
-        <Route path="editrouting" element={<EditRouting />} />
-        <Route path="SMPPerrorcode" element={<SMPPErrorCode />} />
-        <Route path="addservice" element={<AddService />} />
-        <Route path="addoperator" element={<AddOperator />} />
-        <Route
-          path="createwhatsapptemplateadmin"
-          element={<CreateWhatsappTemplateAdmin />}
-        />
-
         {/* SMS */}
         <Route path="sendsms" element={<SendSms />} />
         <Route path="smsreports" element={<SmsReports />} />
@@ -235,6 +191,7 @@ const Approutes = () => {
         {/* whatsapp */}
         <Route path="managetemplate" element={<ManageTemplate />} />
         <Route path="createtemplate" element={<WhatsappCreateTemplate />} />
+        <Route path="edit-template" element={<EditTemplate />} />
         <Route path="wlaunchcampaign" element={<WhatsappLaunchCampaign />} />
         <Route path="wlivechat" element={<WhatsappLiveChat />} />
         <Route path="wmanagecampaign" element={<WhatsappManageCampaign />} />

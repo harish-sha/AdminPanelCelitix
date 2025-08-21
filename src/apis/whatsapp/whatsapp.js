@@ -7,6 +7,20 @@ export const getWabaList = async () => {
   });
 };
 
+// get whatsapp template details
+export const getWhatsAppTemplateDetails = async (data) => {
+  console.log("data", data);
+  const url =
+    `/wrapper/waba/WATemplateLibraryList?` +
+    `search=${data.searchTerm}` +
+    `&topic=${data.topic}` +
+    `&usecase=${data.usecase}` +
+    `&industry=${data.industry}` +
+    `&language=${data.language}`;
+
+  return await fetchWithAuth(url, { method: "POST" });
+};
+
 // Get All Template Details
 export const getWabaTemplateDetails = async (wabaNumber, isHide = "-1") => {
   return await fetchWithAuth(
@@ -617,7 +631,6 @@ export const flowReplyDetails = async (fromQueDateTime) => {
     }
   );
 };
-
 
 // flow reply/response details
 export const flowMainResponse = async (data) => {

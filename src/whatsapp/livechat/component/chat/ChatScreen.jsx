@@ -75,6 +75,8 @@ export const ChatScreen = ({
   setChatIndex,
   chatIndex,
   chatLoading,
+  isSpeedDialOpen,
+  setIsSpeedDialOpen,
 }) => {
   const messageRef = useRef(null);
   const endOfMessagesRef = useRef(null);
@@ -111,9 +113,8 @@ export const ChatScreen = ({
   const mediaRender = (isSent) => {
     return (
       <div
-        className={`flex items-center gap-2 w-full ${
-          isSent ? "flex-row-reverse" : ""
-        }`}
+        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+          }`}
       >
         <div className={`p-2 ${msg?.caption ? " rounded-md" : ""}`}></div>
       </div>
@@ -416,11 +417,10 @@ export const ChatScreen = ({
                     );
                   }}
                   disabled={isBlocking}
-                  className={`px-3 py-1 rounded-md text-xs transition cursor-pointer ${
-                    isBlocking
-                      ? "bg-red-300 text-white"
-                      : "bg-red-500 text-white hover:bg-red-600"
-                  }`}
+                  className={`px-3 py-1 rounded-md text-xs transition cursor-pointer ${isBlocking
+                    ? "bg-red-300 text-white"
+                    : "bg-red-500 text-white hover:bg-red-600"
+                    }`}
                 >
                   {isBlocking ? "Blocking..." : "Block"}
                 </button>
@@ -450,20 +450,22 @@ export const ChatScreen = ({
         ref={messageRef}
         className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col mb-35 md:mb-18 md:-mt-5 bg-[url(/WB.png)]"
       >
-        <div className="flex items-center justify-center mt-2">
-          <button
-            className="bg-[#22577E] text-white px-4 py-2 rounded-md flex gap-2 items-center"
-            onClick={() => {
-              setChatIndex((prev) => prev + 1);
-              // handleFetchSpecificConversation(true);
-            }}
-          >
-            <LuHistory />
-            Load Older
-          </button>
-        </div>
+        {chatState?.specificConversation?.length !== 0 && (
+          <div className="flex items-center justify-center mt-2">
+            <button
+              className="bg-[#22577E] text-white px-4 py-2 rounded-md flex gap-2 items-center"
+              onClick={() => {
+                setChatIndex((prev) => prev + 1);
+                // handleFetchSpecificConversation(true);
+              }}
+            >
+              <LuHistory />
+              Load Older
+            </button>
+          </div>
+        )}
         {chatState.specificConversation?.map((group, groupIndex) => (
-          <div key={groupIndex}>
+          <div key={groupIndex} className="mb-5">
             <div className="my-4 text-xs text-center text-black font-semibold">
               {group?.date}
             </div>
@@ -509,9 +511,8 @@ export const ChatScreen = ({
                       stiffness: 300,
                       damping: 20,
                     }}
-                    className={`p-2 rounded-lg max-w-[90%] my-1 ${
-                      isSent ? "self-end" : "self-start"
-                    }`}
+                    className={`p-2 rounded-lg max-w-[90%] my-1 ${isSent ? "self-end" : "self-start"
+                      }`}
                   >
                     {isReply && (
                       <div className="bg-gray-100 border-l-4 border-green-500 p-2 rounded-sm mb-0">
@@ -524,9 +525,8 @@ export const ChatScreen = ({
                     {/* {isReply && <div className="text-sm border-b-2 bg-blue-300 px-3 py-2 rounded-t-md border-gray-700">{msg?.replyMessage}</div>} */}
                     {(isImage || isVideo || isDocument || isAudio) && (
                       <div
-                        className={`flex items-center gap-2 w-full ${
-                          isSent ? "flex-row-reverse" : ""
-                        }`}
+                        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+                          }`}
                       >
                         <div
                           className={`${msg?.caption ? "p-2 rounded-md" : ""}`}
@@ -535,20 +535,18 @@ export const ChatScreen = ({
                             <>
                               {isImage && (
                                 <div
-                                  className={`relative group w-full h-full ${
-                                    msg?.caption
-                                      ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E]"
-                                      : ""
-                                  }`}
+                                  className={`relative group w-full h-full ${msg?.caption
+                                    ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E]"
+                                    : ""
+                                    }`}
                                 >
                                   <img
                                     src={mediaUrl}
                                     alt="Image"
-                                    className={`mb-1 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${
-                                      msg?.caption
-                                        ? "rounded-t-lg"
-                                        : "rounded-md"
-                                    }`}
+                                    className={`mb-1 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${msg?.caption
+                                      ? "rounded-t-lg"
+                                      : "rounded-md"
+                                      }`}
                                   />
                                   {msg?.caption && (
                                     <div className="text-sm text-white mb-1 ml-2 whitespace-pre-wrap break-words">
@@ -575,11 +573,10 @@ export const ChatScreen = ({
                               )}
                               {isVideo && (
                                 <div
-                                  className={`${
-                                    msg?.caption
-                                      ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E] relative group"
-                                      : "relative group"
-                                  }`}
+                                  className={`${msg?.caption
+                                    ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E] relative group"
+                                    : "relative group"
+                                    }`}
                                 >
                                   <video
                                     src={mediaUrl}
@@ -612,11 +609,10 @@ export const ChatScreen = ({
                               )}
                               {isAudio && (
                                 <div
-                                  className={`${
-                                    msg?.caption
-                                      ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E] relative group"
-                                      : "relative group"
-                                  }`}
+                                  className={`${msg?.caption
+                                    ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E] relative group"
+                                    : "relative group"
+                                    }`}
                                 >
                                   <WhatsAppVoiceMessage
                                     src={mediaUrl}
@@ -649,11 +645,10 @@ export const ChatScreen = ({
                               )}
                               {isDocument && (
                                 <div
-                                  className={`${
-                                    msg?.caption
-                                      ? "border border-gray-200 mb-1 rounded-md max-w-[200px] bg-[#22577E] p-1 relative group"
-                                      : "relative group"
-                                  }`}
+                                  className={`${msg?.caption
+                                    ? "border border-gray-200 mb-1 rounded-md max-w-[200px] bg-[#22577E] p-1 relative group"
+                                    : "relative group"
+                                    }`}
                                 >
                                   {/* <iframe
                                     src={mediaUrl}
@@ -798,17 +793,15 @@ export const ChatScreen = ({
 
                     {isText && (
                       <div
-                        className={`flex items-center gap-2 max-w-[200px]  ${
-                          isSent ? "flex-row-reverse" : ""
-                        }`}
+                        className={`flex items-center gap-2 max-w-[200px]  ${isSent ? "flex-row-reverse" : ""
+                          }`}
                       >
                         <div className="max-w-[250px]">
                           <p
-                            className={`whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${
-                              isSent
-                                ? "bg-[#22577E] text-white rounded-br-none"
-                                : "bg-[#5584AC] text-white rounded-bl-none"
-                            }`}
+                            className={`whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${isSent
+                              ? "bg-[#22577E] text-white rounded-br-none"
+                              : "bg-[#5584AC] text-white rounded-bl-none"
+                              }`}
                           >
                             {msg.messageBody}
                           </p>
@@ -834,14 +827,12 @@ export const ChatScreen = ({
                     {isBot && <BotPreview template={msg} />}
 
                     <div
-                      className={`mt-1 text-[0.7rem] ${
-                        isSent ? "text-end" : "text-start"
-                      }`}
+                      className={`mt-1 text-[0.7rem] ${isSent ? "text-end" : "text-start"
+                        }`}
                     >
                       <div
-                        className={`flex gap-2 items-center ${
-                          isSent ? "justify-end" : "justify-start"
-                        }`}
+                        className={`flex gap-2 items-center ${isSent ? "justify-end" : "justify-start"
+                          }`}
                       >
                         {!isSent && (
                           <>
@@ -874,7 +865,7 @@ export const ChatScreen = ({
 
         {chatIndex > 1 && (
           <button
-            className="bg-[#22577E] text-white px-4 py-2 rounded-md flex gap-2 items-center ml-auto mr-auto"
+            className="bg-[#22577E] text-white px-4 py-2 rounded-md flex gap-2 items-center ml-auto mr-auto mt-2"
             onClick={() => {
               setChatIndex((prev) => prev - 1);
               // handleFetchSpecificConversation(true);
@@ -886,6 +877,74 @@ export const ChatScreen = ({
         )}
 
         <div ref={endOfMessagesRef} />
+        {/* Image Preview */}
+        {selectedImage?.type && selectedImage.files && (
+          <div className="fixed bottom-20">
+            <div className="relative">
+              {/* <button className="flex items-center gap-1">
+              <img
+                src={URL.createObjectURL(selectedImage)}
+                alt=""
+                className="object-cover w-20 h-20"
+              />
+            </button> */}
+              {selectedImage?.type === "image" && (
+                <button className="flex items-center gap-1">
+                  <img
+                    src={URL.createObjectURL(selectedImage?.files)}
+                    alt=""
+                    className="object-cover w-20 h-20"
+                  />
+                </button>
+              )}
+              {selectedImage.type === "video" && (
+                <button className="flex items-center gap-1">
+                  <video
+                    src={URL.createObjectURL(selectedImage.files)}
+                    alt=""
+                    className="object-cover w-50 h-20"
+                  />
+                </button>
+              )}
+              {selectedImage.type === "application" && (
+                <button className="flex items-center gap-1">
+                  <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md flex items-center gap-3">
+                    <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
+                      {getFileType(selectedImage.fileType)}
+                    </div>
+                    <div className="flex flex-col">
+                      <div
+                        className="font-medium truncate break-words max-w-[10rem]"
+                        title={selectedImage.fileName}
+                      >
+                        {selectedImage.fileName || "Untitled Document"}
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              )}
+              <span
+                className="absolute text-red-500 cursor-pointer top-1 right-1"
+                onClick={() => deleteImages("4")}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* media full screen preview */}
@@ -929,74 +988,7 @@ export const ChatScreen = ({
 
       {/* media full screen preview */}
 
-      {/* Image Preview */}
-      {selectedImage && (
-        <div className="flex flex-wrap gap-2 mt-2">
-          <div className="relative">
-            {/* <button className="flex items-center gap-1">
-              <img
-                src={URL.createObjectURL(selectedImage)}
-                alt=""
-                className="object-cover w-20 h-20"
-              />
-            </button> */}
-            {selectedImage.type === "image" && (
-              <button className="flex items-center gap-1">
-                <img
-                  src={URL.createObjectURL(selectedImage?.files)}
-                  alt=""
-                  className="object-cover w-20 h-20"
-                />
-              </button>
-            )}
-            {selectedImage.type === "video" && (
-              <button className="flex items-center gap-1">
-                <video
-                  src={URL.createObjectURL(selectedImage.files)}
-                  alt=""
-                  className="object-cover w-50 h-20"
-                />
-              </button>
-            )}
-            {selectedImage.type === "application" && (
-              <button className="flex items-center gap-1">
-                <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md flex items-center gap-3">
-                  <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
-                    {getFileType(selectedImage.fileType)}
-                  </div>
-                  <div className="flex flex-col">
-                    <div
-                      className="font-medium truncate break-words max-w-[10rem]"
-                      title={selectedImage.fileName}
-                    >
-                      {selectedImage.fileName || "Untitled Document"}
-                    </div>
-                  </div>
-                </div>
-              </button>
-            )}
-            <span
-              className="absolute text-red-500 cursor-pointer top-1 right-1"
-              onClick={() => deleteImages("4")}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </span>
-          </div>
-        </div>
-      )}
+
 
       {/* Input Area */}
       <div className="absolute bottom-16 md:bottom-0 w-full">
@@ -1155,6 +1147,8 @@ export const ChatScreen = ({
             insertEmoji={insertEmoji}
             setChatState={setChatState}
             chatState={chatState}
+            isSpeedDialOpen={isSpeedDialOpen}
+            setIsSpeedDialOpen={setIsSpeedDialOpen}
           />
         ) : (
           <ClosedChat

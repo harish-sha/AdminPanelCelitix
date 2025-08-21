@@ -17,8 +17,8 @@ import Loader from "../../whatsapp/components/Loader";
 
 import { getCountryList } from "../../apis/common/common";
 import { ProgressSpinner } from "primereact/progressspinner";
-import { motion } from "framer-motion";
-import { FiAlertCircle } from "react-icons/fi";
+import InputField from "@/components/layout/InputField";
+import { fetchIpDetails } from "@/apis/settings/setting";
 
 const CustomPagination = ({
   totalPages,
@@ -93,6 +93,7 @@ function AccountInfoModal({ show, handleClose }) {
   const [accountInfo, setAccountInfo] = useState([]);
   const [countryList, setCountryList] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
+  const [ipDetails, setIpDetails] = useState([]);
 
   useEffect(() => {
     async function getRcsRateData() {
@@ -123,7 +124,13 @@ function AccountInfoModal({ show, handleClose }) {
     getWhatsAppRateDate();
     getaccountInfoData();
     getCountryListData();
+    IpDetails();
   }, []);
+
+  const IpDetails = async () => {
+    const response = await fetchIpDetails();
+    setIpDetails(response[0]);
+  };
 
   const accountrows = [
     {
@@ -228,15 +235,15 @@ function AccountInfoModal({ show, handleClose }) {
 
   const accountcolumns = [
     { field: "sn", headerName: "S.No", flex: 0, width: 70 },
-    { field: "service", headerName: "Service", flex: 1, minWidth: 80 },
+    { field: "service", headerName: "Service", flex: 1, minWidth: 120 },
 
-    { field: "created_on", headerName: "Activation Date", flex: 1, minWidth: 80 },
+    { field: "created_on", headerName: "Activation Date", flex: 1, minWidth: 160 },
     // { field: "plan_expiry", headerName: "Plan Expiry", flex: 1, minWidth: 80 },
     {
       field: "pricing",
       headerName: "Pricing",
       flex: 1,
-      minWidth: 80,
+      minWidth: 100,
       renderCell: (params) => params.value,
     },
   ];
@@ -254,13 +261,13 @@ function AccountInfoModal({ show, handleClose }) {
       field: "transactional",
       headerName: "Utility (INR/Credit)",
       flex: 1,
-      minWidth: 120,
+      minWidth: 160,
     },
     {
       field: "promotional",
       headerName: "Marketing (INR/Credit)",
       flex: 1,
-      minWidth: 120,
+      minWidth: 150,
     },
   ];
 
@@ -358,7 +365,8 @@ function AccountInfoModal({ show, handleClose }) {
       <Dialog
         header="Account Info"
         visible={show}
-        style={{ width: "50vw" }}
+        // style={{ width: "50vw" }}
+        className="lg:w-[60rem] md:w-[55rem] w-full"
         onHide={handleClose}
         modal
         draggable={false}
@@ -370,11 +378,17 @@ function AccountInfoModal({ show, handleClose }) {
           </div>
         ) : (
           <>
-            <div className="flex justify-end mb-3">
+            <div className="flex justify-between mb-3">
+              {ipDetails?.ip && (
+                <span className="px-3 py-1 font-sm text-gray-700 rounded-md tracking-wide">
+                  Last Login: {ipDetails?.ip || "-"}({ipDetails?.insert_time})
+                </span>
+              )}
               <span className="px-3 py-1 font-medium text-blue-700 bg-blue-100 rounded-md">
                 Account Expiry: {accountInfo[0]?.expiryDate}
               </span>
             </div>
+
 
             {new Date() < new Date(accountInfo[0]?.expiryDate) ? (
               <Paper sx={{ height: "auto" }}>
@@ -419,21 +433,10 @@ function AccountInfoModal({ show, handleClose }) {
                 />
               </Paper>
             ) : (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="flex flex-col items-center justify-center text-center h-40"
-              >
-                <FiAlertCircle className="text-red-600 text-5xl mb-2" />
-                <p className="text-2xl font-semibold text-gray-800">
-                  Your account has expired
-                </p>
-                <p className="text-lg text-gray-600 mt-1">
-                  Please contact the admin to renew or reactivate your account.
-                </p>
-              </motion.div>
-
+              <h1 className="text-center text-xl text-gray-700 font-semibold" >
+                Your account is expired. Please contact Admin to activate your
+                account.
+              </h1>
             )}
           </>
         )}
@@ -443,7 +446,8 @@ function AccountInfoModal({ show, handleClose }) {
       <Dialog
         header="RCS Price"
         visible={showRcsPricing}
-        style={{ width: "50vw" }}
+        // style={{ width: "50vw" }}
+        className="md:w-[60rem] w-[25rem]"
         onHide={() => {
           setShowRcsPricing(false);
           setFilteredData(rcsrate);
@@ -452,9 +456,11 @@ function AccountInfoModal({ show, handleClose }) {
         draggable={false}
         disabled
       >
-        <div className="flex items-center mb-4 space-x-3">
-          <input
+        <div className="flex items-end mb-4 space-x-3">
+          <InputField
             type="text"
+            label="Search Country"
+            tooltipContent="Search by country name or code"
             placeholder="Country Name or Code"
             className="w-full p-2 border rounded-md"
             value={searchTerm}
@@ -512,7 +518,9 @@ function AccountInfoModal({ show, handleClose }) {
       <Dialog
         header="WhatsApp Price"
         visible={showWhatsPricing}
-        style={{ width: "50vw" }}
+        // style={{ width: "50vw" }}
+        className="md:w-[60rem] w-[25rem]"
+
         onHide={() => {
           setShowWhatsPricing(false);
           setFilteredWhatsAppData(whatsapprate);
@@ -520,9 +528,11 @@ function AccountInfoModal({ show, handleClose }) {
         modal
         draggable={false}
       >
-        <div className="flex items-center mb-4 space-x-3">
-          <input
+        <div className="flex items-end mb-4 space-x-3">
+          <InputField
             type="text"
+            label="Search Country"
+            tooltipContent="Search by country name or code"
             placeholder="Country Name or Code"
             className="w-full p-2 border rounded-md"
             value={searchTerm}

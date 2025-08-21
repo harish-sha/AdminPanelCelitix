@@ -18,7 +18,7 @@ const ResponseComponent = ({ jsonData, headers }) => {
   };
 
   return (
-    <div className="w-[320px] md:w-2xl lg:w-3xl mx-auto mt-6 p-4 rounded-lg shadow-lg bg-gray-600 ">
+    <div className="w-full mx-auto mt-6 p-4 rounded-lg shadow-lg bg-gray-600 ">
       {/* Buttons */}
       <div className="flex gap-4 mb-4">
         <button

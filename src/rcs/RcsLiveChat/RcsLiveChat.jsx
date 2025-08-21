@@ -15,14 +15,25 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChatScreen } from "./components/chatScreen";
 import moment from "moment";
 import { TemplateDialog } from "./components/templateDialog";
-import { useWabaAgentContext } from "@/context/WabaAndAgent.jsx"
+import { useWabaAgentContext } from "@/context/WabaAndAgent.jsx";
+import { useRcsContext } from "@/context/RcsContext";
 
 const RcsLiveChat = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [agentState, setAgentState] = useState({
-    all: [],
-    id: "",
-  });
+  const {
+    contextAgentList,
+    setContextAgentList,
+    allChats,
+    setAllChats,
+    setActiveRcsChat,
+    setCloseRcsChat,
+    activeRcsChat,
+    closeRcsChat,
+  } = useRcsContext();
+  // const [agentState, setAgentState] = useState({
+  //   all: [],
+  //   id: "",
+  // });
 
   const [mobileNo, setMobileNo] = useState("");
   const [btnOption, setBtnOption] = useState("active");
@@ -71,12 +82,29 @@ const RcsLiveChat = () => {
 
   const [finalVarList, setFinalVarList] = useState([]);
 
-  const { agentData, setAgentData, selectedContextWaba, agentSelected } = useWabaAgentContext();
+  const { agentData, setAgentData, selectedContextWaba, agentSelected } =
+    useWabaAgentContext();
+
+
+
+  // useEffect(() => {
+  //   if (btnOption === "active") {
+  //     setActiveRcsChat(chatState?.allConversations || []);
+  //   }
+  // }, [btnOption, chatState?.allConversations]);
+
+
+  // useEffect(() => {
+  //   if (btnOption === "close") {
+  //     setCloseRcsChat(chatState?.allConversations);
+  //   }
+  // }, [btnOption, chatState?.allConversations]);
+
 
   async function handleFetchAgents() {
     try {
       const res = await fetchAllBotsList();
-      setAgentState({
+      setContextAgentList({
         all: res,
         id: "",
       });
@@ -84,30 +112,71 @@ const RcsLiveChat = () => {
       toast.error("Error fetching conversations");
     }
   }
-  console.log("agentState", agentState)
 
   useEffect(() => {
-    setAgentData(agentState)
-  }, [agentState])
+    const fetchConversations = async () => {
+      if (!contextAgentList?.id) return;
+      try {
+        setIsLoading(true);
 
-  // useEffect(() => {
-  //   setAgentState(agentData)
-  // }, [agentSelected])
+        const payload = {
+          agentId: contextAgentList?.id,
+          search: mobileNo,
+          active: 1,
+        };
 
-  console.log("agentState", agentState)
+        const res = await fetchAllConvo(payload);
+        setActiveRcsChat(res);
+
+      } catch (e) {
+        toast.error("Error fetching conversations");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchConversations();
+  }, [contextAgentList?.id]);
+
+  useEffect(() => {
+    const fetchConversations = async () => {
+      if (!contextAgentList?.id) return;
+      try {
+        setIsLoading(true);
+
+        const payload = {
+          agentId: contextAgentList?.id,
+          search: mobileNo,
+          active: 0,
+        };
+
+        const res = await fetchAllConvo(payload);
+        setCloseRcsChat(res);
+
+      } catch (e) {
+        toast.error("Error fetching conversations");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchConversations();
+  }, [contextAgentList?.id]);
+
 
   async function handleFetchAllConvo() {
-    if (!agentState?.id) return;
+    if (!contextAgentList?.id) return;
     try {
       setIsLoading(true);
       const userActive = btnOption == "active" ? 1 : 0;
       const payload = {
-        agentId: agentState?.id,
+        agentId: contextAgentList?.id,
         search: mobileNo,
         active: userActive,
       };
-      console.log("payload", payload)
+
       const res = await fetchAllConvo(payload);
+      setAllChats(res);
 
       if (!res.conversationEntityList[0]) {
         setChatState((prev) => ({
@@ -224,8 +293,8 @@ const RcsLiveChat = () => {
 
   async function handleFetchTemplates() {
     try {
-      if (!agentState?.id) return;
-      const res = await fetchAllTemplates(agentState?.id);
+      if (!contextAgentList?.id) return;
+      const res = await fetchAllTemplates(contextAgentList?.id);
       setTemplateState({
         all: res?.Data,
         selected: "",
@@ -275,7 +344,11 @@ const RcsLiveChat = () => {
   }
 
   async function handleSendTemplateMessage() {
-    if (!agentState.id || !chatState.active || !templateState.templateName)
+    if (
+      !contextAgentList.id ||
+      !chatState.active ||
+      !templateState.templateName
+    )
       return;
     try {
       const payload = {
@@ -284,7 +357,7 @@ const RcsLiveChat = () => {
             templateCode: templateState.templateName,
           },
           mobileno: chatState.active.mobileNo,
-          botId: agentState.id,
+          botId: contextAgentList.id,
         },
       };
 
@@ -368,8 +441,16 @@ const RcsLiveChat = () => {
   }, []);
 
   useEffect(() => {
+    let interval = null;
+    interval = setInterval(() => {
+      handleFetchAllConvo();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [btnOption, contextAgentList]);
+
+  useEffect(() => {
     handleFetchAllConvo();
-  }, [btnOption, agentState]);
+  }, [btnOption, contextAgentList]);
 
   useEffect(() => {
     handleFetchSpecificConvo();
@@ -382,8 +463,6 @@ const RcsLiveChat = () => {
   useEffect(() => {
     handleFetchTemplateDetails();
   }, [templateState?.selected]);
-
-
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
@@ -408,10 +487,9 @@ const RcsLiveChat = () => {
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
       <div
         className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${chatState?.active ? "hidden md:block" : "block"
-          }`}>
+          }`}
+      >
         <InputData
-          agentState={agentState}
-          setAgentState={setAgentState}
           chatState={chatState}
           setChatState={setChatState}
           search={mobileNo}
@@ -425,7 +503,7 @@ const RcsLiveChat = () => {
           chatState={chatState}
           setChatState={setChatState}
           isLoading={isLoading}
-          agentState={agentState}
+          // agentState={agentState}
           handleFetchSpecificConvo={handleFetchSpecificConvo}
         />
       </div>
