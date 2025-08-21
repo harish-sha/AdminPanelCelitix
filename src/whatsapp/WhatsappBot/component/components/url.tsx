@@ -234,7 +234,7 @@ export const Url = ({
             },
           }));
         }}
-        maxLength="20"
+        maxLength="200"
       />
 
       <div className="flex items-end gap-2 w-full">
