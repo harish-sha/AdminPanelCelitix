@@ -4,8 +4,20 @@ import "react-loading-skeleton/dist/skeleton.css";
 import Lottie from "lottie-react";
 import pointingAnimation from "@/assets/animation/pointing.json";
 import moment from "moment";
+import { useRcsContext } from "@/context/RcsContext";
 
-export const Sidebar = ({ chatState, setChatState, isLoading, agentState }) => {
+export const Sidebar = ({ chatState, setChatState, isLoading }) => {
+  const {
+    contextAgentList,
+    setContextAgentList,
+    rcsChatData,
+    setRcsChatData,
+    activeRcsChat,
+    setActiveRcsChat,
+    closeRcsChat,
+    setCloseRcsChat,
+  } = useRcsContext();
+
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -20,7 +32,7 @@ export const Sidebar = ({ chatState, setChatState, isLoading, agentState }) => {
   }
   return (
     <div className="mt-2 pb-50 h-[100vh] max-h-full overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
-      {!agentState?.id && (
+      {!contextAgentList?.id && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -65,7 +77,7 @@ export const Sidebar = ({ chatState, setChatState, isLoading, agentState }) => {
         </motion.div>
       )}
 
-      {!isLoading &&
+      {!isLoading && contextAgentList?.id &&
         chatState.allConversations.length > 0 &&
         chatState.allConversations
           ?.slice()
@@ -118,16 +130,18 @@ export const Sidebar = ({ chatState, setChatState, isLoading, agentState }) => {
             </motion.div>
           ))}
 
-      {agentState.id && !isLoading && chatState?.allConversations.length === 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="text-md font-normal text-gray-900 mb-2  flex items-center justify-center h-[90%]"
-        >
-          No conversation found
-        </motion.div>
-      )}
+      {contextAgentList?.id &&
+        !isLoading &&
+        chatState?.allConversations.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="text-md font-normal text-gray-900 mb-2  flex items-center justify-center h-[90%]"
+          >
+            No conversation found
+          </motion.div>
+        )}
     </div>
   );
 };

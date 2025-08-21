@@ -12,23 +12,31 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { DownloadProvider } from "./context/DownloadProvider.jsx";
 import { Provider } from "react-redux";
 import store from "./whatsapp/whatsappFlows/redux/Store.js";
+// import NetworkStatusProvider from "./context/NetworkStatusProvider.jsx";
 import { WabaAgentProvider } from "./context/WabaAndAgent.jsx";
+import { InstagramProvider } from "./context/InstagramContext.jsx";
+import { MessangerProvider } from "./context/MessengerContext.jsx";
+import { RcsProvider } from "./context/RcsContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    {/* User Context */}
     <UserProvider>
-      {/* Prime React */}
       <PrimeReactProvider>
-        {/* Error Boundary*/}
         {/* <ErrorBoundary> */}
         <DownloadProvider>
           <WabaAgentProvider>
-            <DndProvider backend={HTML5Backend}>
-              <Provider store={store}>
-                <App />
-              </Provider>
-            </DndProvider>
+            <InstagramProvider>
+              <RcsProvider>
+                <MessangerProvider>
+                  <DndProvider backend={HTML5Backend}>
+                    <Provider store={store}>
+                      {/* <NetworkStatusProvider></NetworkStatusProvider> */}
+                      <App />
+                    </Provider>
+                  </DndProvider>
+                </MessangerProvider>
+              </RcsProvider>
+            </InstagramProvider>
           </WabaAgentProvider>
         </DownloadProvider>
         {/* </ErrorBoundary> */}

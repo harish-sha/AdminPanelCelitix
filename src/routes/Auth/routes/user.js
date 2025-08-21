@@ -52,6 +52,7 @@ export const userItems = [
       "/cannedmessagemanager",
       "/wflowedit",
       "/wmmlite",
+      "/edit-template",
     ],
     roles: ["ADMIN"],
   },

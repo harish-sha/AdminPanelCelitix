@@ -299,8 +299,28 @@ export const FileNodeContent = ({
           <RenderAudio />
         ) : null)}
 
-      <InputField
+      {/* <InputField
         label="Caption text"
+        id="captionText"
+        name="captionText"
+        placeholder="Enter Caption Text"
+        value={nodesInputData[id]?.fileCaption}
+        onChange={(e: { target: { value: any } }) => {
+          setNodesInputData((prev) => ({
+            ...prev,
+            [id]: {
+              ...prev[id],
+              fileCaption: e.target.value,
+            },
+          }));
+        }}
+      /> */}
+      <label className="text-sm font-semibold text-gray-700">
+        Caption text
+      </label>
+      <textarea
+        // label="Caption text"
+        className="w-full p-1.5 border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm"
         id="captionText"
         name="captionText"
         placeholder="Enter Caption Text"

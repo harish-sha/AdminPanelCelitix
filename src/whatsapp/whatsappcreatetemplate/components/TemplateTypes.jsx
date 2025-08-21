@@ -360,11 +360,23 @@ const TemplateTypes = ({
               name="createTemplateVideoUpload"
               accept="video/mp4, video/avi"
               className="hidden"
+              // onChange={(e) => {
+              //   const selectedFile = e.target.files[0];
+              //   if (selectedFile) {
+              //     setFile(selectedFile);
+              //   }
+              // }}
               onChange={(e) => {
                 const selectedFile = e.target.files[0];
-                if (selectedFile) {
-                  setFile(selectedFile);
+                if (!selectedFile) return;
+
+                const size = selectedFile.size / 1024 / 1024;
+
+                if (Number(size.toFixed(2)) > 5.0) {
+                  return toast.error("File size exceeds 5 MB limit!");
                 }
+
+                setFile(selectedFile);
               }}
               ref={fileInputRef}
             />
@@ -398,7 +410,7 @@ const TemplateTypes = ({
                   setFile(null);
                   setVideoUrl(null);
                   fileInputRef.current.value = "";
-                  document.getElementById("videoUpload").value = "";
+                  // document.getElementById("videoUpload").value = "";
                   toast.success("Video removed successfully!");
                 }}
               />

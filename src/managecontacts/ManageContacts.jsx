@@ -1019,7 +1019,7 @@ const ManageContacts = () => {
             <UniversalButton
               id="addgroupbtn"
               name="addgroupbtn"
-              label="Add Group"
+              label="Manage Group"
               onClick={() => setaddGroupVisible(true)}
             />
           </div>
@@ -1124,6 +1124,13 @@ const ManageContacts = () => {
             onClick={() => {
               if (selectedRows.length === 0) {
                 toast.error("Please select at least one contact to delete.");
+              } else if (
+                selectedRows.length > 100
+                // selectedRows[0].status === "Deleted"
+              ) {
+                toast.error(
+                  "You can't delete more than 100 contacts at a time."
+                );
               } else {
                 setConfirmMultiDeleteVisible(true);
               }
@@ -1952,7 +1959,7 @@ const ManageContacts = () => {
             <UniversalButton
               id="addgroupbtn"
               name="addgroupbtn"
-              label="Update Group Name"
+              label="Update"
               className="mt-2"
               onClick={handleUpdateGrpName}
             />

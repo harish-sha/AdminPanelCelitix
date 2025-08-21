@@ -102,7 +102,8 @@ import {
   saveEditRcsRate,
   saveEditWhatsappRate,
   saveVoiceRate,
-  deleteVoiceRateBySrno
+  deleteVoiceRateBySrno,
+  deleteSmsRateByUser
 } from "@/apis/admin/userRate";
 import { getCountryList } from "@/apis/common/common";
 import {
@@ -523,16 +524,22 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   }
 
   const whatsaappcolumns = [
-    { field: "sn", headerName: "S.No", flex: 0.5 },
-    { field: "countryName", headerName: "Country", flex: 1 },
-    { field: "utility", headerName: "Utility", flex: 1 },
-    { field: "authentication", headerName: "Authentication", flex: 1 },
-    { field: "marketing", headerName: "Marketing", flex: 1 },
-    { field: "updateTime", headerName: "Updated On", flex: 1 },
+    { field: "sn", headerName: "S.No", flex: 0, Width: 120 },
+    { field: "countryName", headerName: "Country", flex: 1, minWidth: 120 },
+    { field: "utility", headerName: "Utility", flex: 1, minWidth: 120 },
+    {
+      field: "authentication",
+      headerName: "Authentication",
+      flex: 1,
+      minWidth: 120,
+    },
+    { field: "marketing", headerName: "Marketing", flex: 1, minWidth: 150 },
+    { field: "updateTime", headerName: "Updated On", flex: 1, minWidth: 150 },
     {
       field: "actions",
       headerName: "Actions",
       flex: 1,
+      minWidth: 150,
       renderCell: (params) => (
         <>
           <CustomTooltip arrow title="Edit Rate" placement="top">
@@ -655,14 +662,15 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   }
 
   const rcscolumns = [
-    { field: "sn", headerName: "S.No", flex: 0.5 },
-    { field: "country_name", headerName: "Country", flex: 1 },
-    { field: "rate", headerName: "Rate", flex: 1 },
-    { field: "update_time", headerName: "Updated On", flex: 1 },
+    { field: "sn", headerName: "S.No", flex: 0, width: 100 },
+    { field: "country_name", headerName: "Country", flex: 1, minWidth: 120 },
+    { field: "rate", headerName: "Rate", flex: 1, minWidth: 120 },
+    { field: "update_time", headerName: "Updated On", flex: 1, minWidth: 150 },
     {
       field: "actions",
       headerName: "Actions",
       flex: 1,
+      minWidth: 120,
       renderCell: (params) => (
         <>
           <CustomTooltip arrow title="Edit Rate" placement="top">
@@ -671,13 +679,15 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="Delete Rate" placement="top">
-            <IconButton onClick={() => {
-              setDeletingRcsRow({
-                sr_no: params.row.sr_no,
-                countryName: params.row.country_name,
-              });
-              setRcsDeleteVisible(true);
-            }}>
+            <IconButton
+              onClick={() => {
+                setDeletingRcsRow({
+                  sr_no: params.row.sr_no,
+                  countryName: params.row.country_name,
+                });
+                setRcsDeleteVisible(true);
+              }}
+            >
               <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
             </IconButton>
           </CustomTooltip>
@@ -751,6 +761,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [transOptions, setTransOptions] = useState([]);
   const [promoOption, setPromoOption] = useState([]);
   const [dltRate, setDltRate] = useState("");
+  const [smsDeleteVisible, setSMSDeleteVisible] = useState(false);
+
 
   const resetSmsFields = () => {
     setTrans(null);
@@ -774,10 +786,33 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     const res = await addSmsPricing(payload);
     if (res?.statusCode === 200) {
       toast.success(res.message || "SMS Pricing saved successfully!");
-      resetSmsFields();
-      setassignRate(false);
+      getSmsRateByUser(currentUserSrno)
+      // resetSmsFields();
+      // setassignRate(false);
     } else {
       toast.error(res.message || "Failed to save SMS Pricing.");
+    }
+  };
+
+  const handleRemoveSMSPricing = async () => {
+    try {
+      const res = await deleteSmsRateByUser(currentUserSrno);
+
+      if (res?.status === true) {
+        toast.success(res?.message || "Price removed successfully.");
+        setSmsRate("");
+        setDltRate("");
+        setSMSDeleteVisible(false);
+      } else {
+        toast.error(res?.message || "Failed to remove SMS pricing.");
+      }
+    } catch (e) {
+      console.error(e);
+      if (e?.response?.data?.message) {
+        toast.error(e.response.data.message);
+      } else {
+        toast.error("Something went wrong while removing SMS pricing.");
+      }
     }
   };
   // =======================================SMS RATE END=======================================
@@ -900,11 +935,12 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   }
 
   const voiceCols = [
-    { field: "sn", headerName: "S.No", flex: 0.5 },
+    { field: "sn", headerName: "S.No", flex: 0, width: 120 },
     {
       field: "type",
       headerName: "Type",
       flex: 1,
+      minWidth: 120,
       renderCell: (params) => {
         if (params.row.voicePlan === 1) {
           return "15sec";
@@ -918,6 +954,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       field: "rate",
       headerName: "Rate",
       flex: 1,
+      minWidth: 100,
       renderCell: (params) => {
         if (params.row.voicePlan === 2) {
           return params.row.voiceRate2;
@@ -926,11 +963,12 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         }
       },
     },
-    { field: "updateTime", headerName: "Updated On", flex: 1 },
+    { field: "updateTime", headerName: "Updated On", flex: 1, minWidth: 180 },
     {
       field: "actions",
       headerName: "Actions",
       flex: 1,
+      minWidth: 150,
       renderCell: (params) => (
         <>
           <CustomTooltip arrow title="Edit Rate" placement="top">
@@ -1187,22 +1225,27 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   //=======================================FETCH USER BALANCE START=======================================
   const [userBalance, setUserBalance] = useState([]);
+  const [userBalanceDialogVisible, setUserBalanceDialogVisible] = useState({
+    isOpen: false,
+    balance: 0,
+  });
 
   const handleFetchBalance = async (id) => {
     try {
       const res = await fetchBalance(id);
-      const data = {
-        id,
-        balance: res?.balance || 0,
-      };
-      const updatedBalance = [...userBalance];
-      if (updatedBalance.findIndex((item) => item.id === id) != "-1") {
-        updatedBalance[updatedBalance.findIndex((item) => item.id === id)] =
-          data;
-      } else {
-        updatedBalance.push(data);
-      }
-      setUserBalance(updatedBalance);
+      // const data = {
+      //   id,
+      //   balance: res?.balance || 0,
+      // };
+      // const updatedBalance = [...userBalance];
+      // if (updatedBalance.findIndex((item) => item.id === id) != "-1") {
+      //   updatedBalance[updatedBalance.findIndex((item) => item.id === id)] =
+      //     data;
+      // } else {
+      //   updatedBalance.push(data);
+      // }
+      // setUserBalance(updatedBalance);
+      setUserBalanceDialogVisible({ isOpen: true, balance: res?.balance });
     } catch (e) {
       console.log(e);
       toast.error("Error in fetching balance");
@@ -1920,6 +1963,19 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
       {/* Dialog Section Start */}
 
+      {/* View user balance start */}
+      <Dialog
+        header="View Balance"
+        // header={selectedUserDetails?.firstName || "View Balance"}
+        visible={userBalanceDialogVisible.isOpen}
+        onHide={() => setUserBalanceDialogVisible({ isOpen: false, balance: 0 })}
+        className="w-[25rem]"
+        draggable={false}
+      >
+        Customer Balance: ₹{userBalanceDialogVisible?.balance || 0}
+      </Dialog>
+      {/* View user balance end */}
+
       {/* Edit User details Start*/}
       <Dialog
         header="Edit details"
@@ -2479,7 +2535,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           setassignRate(false);
           setCharges(0);
         }}
-        className="lg:w-[65rem] md:w-[50rem] w-[20rem]"
+        className="lg:w-[69rem] md:w-[55rem] w-full"
         draggable={false}
       >
         <Box sx={{ width: "100%" }}>
@@ -2786,7 +2842,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                       }))
                     }
                   /> */}
-                  <div className="flex items-center gap-5">
+                  <div className="flex items-center gap-5 flex-wrap md:flex-nowrap w-full">
                     <InputField
                       label="Utility"
                       value={editWhatsappForm.utility}
@@ -3105,14 +3161,53 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 </div>
               </div>
 
-              <div className="flex justify-center mt-3">
+              <div className="flex justify-center mt-3 gap-2">
                 <UniversalButton
                   label="Save"
                   id="smsSave"
                   name="smsSave"
                   onClick={handleSaveSmsPricing}
                 />
+                <UniversalButton
+                  label="Remove Pricing"
+                  id="Delete"
+                  name="Delete"
+                  variant="danger"
+                  onClick={() => {
+                    setSMSDeleteVisible(true);
+                  }}
+                />
               </div>
+
+              <Dialog
+                header="Delete SMS Rate"
+                visible={smsDeleteVisible}
+                style={{ width: "27rem" }}
+                onHide={() => setSMSDeleteVisible(false)}
+                draggable={false}
+              >
+                <div className="flex items-center justify-center">
+                  <CancelOutlinedIcon sx={{ fontSize: 64, color: "#ff3f3f" }} />
+                </div>
+                <div className="p-4 text-center">
+                  <p className="text-[1.1rem] font-semibold text-gray-700">
+                    Remove Pricing?
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    This action cannot be undone.
+                  </p>
+                </div>
+                <div className="flex justify-center gap-4 mt-4">
+                  <UniversalButton
+                    label="Cancel"
+                    onClick={() => setSMSDeleteVisible(false)}
+                  />
+                  <UniversalButton
+                    label="Delete"
+                    onClick={handleRemoveSMSPricing}
+                  />
+                </div>
+              </Dialog>
             </>
           </CustomTabPanel>
 

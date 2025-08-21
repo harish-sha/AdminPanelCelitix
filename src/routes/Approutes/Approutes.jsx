@@ -33,6 +33,8 @@ import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
 import { EditFlow } from "@/whatsapp/whatsappFlows/Pages/FlowEditPage";
 import { BlockUser } from "@/whatsapp/blockUser";
 import MmLite from "@/whatsapp/mmlite/MmLite";
+import { EditTemplate } from "@/whatsapp/managetemplate/edit";
+
 
 // Canned Message Manager
 import CannedMessage from "@/cannedmessage/CannedMessage";
@@ -214,6 +216,7 @@ const Approutes = () => {
         {/* whatsapp */}
         <Route path="managetemplate" element={<ManageTemplate />} />
         <Route path="createtemplate" element={<WhatsappCreateTemplate />} />
+        <Route path="edit-template" element={<EditTemplate />} />
         <Route path="wlaunchcampaign" element={<WhatsappLaunchCampaign />} />
         <Route path="wlivechat" element={<WhatsappLiveChat />} />
         <Route path="wmanagecampaign" element={<WhatsappManageCampaign />} />

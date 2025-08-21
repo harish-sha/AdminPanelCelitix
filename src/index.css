@@ -19,6 +19,16 @@
   }
 }
 
+/* Hide scrollbar but allow scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
 .popf {
   font-family: "Poppins", sans-serif !important;
 }
@@ -305,7 +315,7 @@ a {
 .hamburger .bar {
   width: 100%;
   height: 3.5px;
-  background-color: #333;
+  /* background-color: #333; */
   border-radius: 15px;
   transition: transform 0.3s ease, opacity 0.3s ease;
   position: relative;
@@ -502,4 +512,52 @@ a {
   @apply inline-flex items-center px-1 sm:px-2 py-1 text-sm font-medium
          bg-white border border-gray-300 rounded hover:bg-gray-50
          transition;
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  );
+  animation: shine 1.2s linear infinite;
+}
+
+.bluetxt {
+  background: linear-gradient(to right, #2b40b0, #8447c6, #36bae2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -background-clip: text;
+  -text-fill-color: transparent;
+}
+
+.css-1wulh66-MuiInputAdornment-root {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  max-height: 2em;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  white-space: nowrap;
+  color: rgba(0, 0, 0, 0.54);
+  margin-left: 0px !important;
+  margin-right: -20px !important;
 }

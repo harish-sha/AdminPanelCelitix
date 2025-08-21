@@ -8,9 +8,9 @@ import WhatsappChats from "@/CombineLiveChats/components/ServiceLayout/whatsappC
 import RcsLiveChat from "@/rcs/rcslivechat/RcsLiveChat";
 import InstagramLiveChat from "@/Instagram/InstagramLiveChat/InstagramLiveChat";
 import InstagramChats from "../components/ServiceLayout/InstagramChats";
-import MessengerView from "./channels/MessengerView";
 import MessengerChats from "../components/ServiceLayout/MessengerChats";
 import RcsChats from "@/CombineLiveChats/components/ServiceLayout/RcsChats";
+import MessengerLiveChat from "@/messenger/MessengerLiveChat/MessengerLiveChat";
 
 const LiveChatLayout = () => {
   const { channel } = useParams();
@@ -39,8 +39,8 @@ const LiveChatLayout = () => {
           <InstagramChats />
         );
       case "messengerchats":
-        return allowedServiceIds.includes("10") ? (
-          <MessengerChats />
+        return allowedServiceIds.includes("8") ? (
+          <MessengerLiveChat />
         ) : (
           <MessengerChats />
         );

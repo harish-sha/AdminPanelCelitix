@@ -17,6 +17,20 @@ export const getWabaTemplateDetails = async (wabaNumber, isHide = "-1") => {
   );
 };
 
+// get whatsapp template details
+export const getWhatsAppTemplateDetails = async (data) => {
+  console.log("data", data);
+  const url =
+    `/wrapper/waba/WATemplateLibraryList?` +
+    `search=${data.searchTerm}` +
+    `&topic=${data.topic}` +
+    `&usecase=${data.usecase}` +
+    `&industry=${data.industry}` +
+    `&language=${data.language}`;
+
+  return await fetchWithAuth(url, { method: "POST" });
+};
+
 // Get particular waba Template Details
 export const getWabaTemplate = async (wabaAccountId, templateName) => {
   return await fetchWithAuth(

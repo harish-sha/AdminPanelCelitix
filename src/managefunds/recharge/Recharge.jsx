@@ -459,21 +459,19 @@ const Recharge = () => {
   const selectedUserObj = allUsers.find((u) => u.srNo === selectedUser);
 
   useEffect(() => {
-    if (user.role === "RESELLER") {
-      const fetchAllUsersDetails = async () => {
-        const data = { userSrno: "", date: "" };
-        try {
-          setIsFetching(true);
-          const res = await fetchUserSrno(data);
-          setAllUsers(res);
-        } catch (e) {
-          toast.error("Something went wrong! Please try again later.");
-        } finally {
-          setIsFetching(false);
-        }
-      };
-      fetchAllUsersDetails();
-    }
+    const fetchAllUsersDetails = async () => {
+      const data = { userSrno: "", date: "" };
+      try {
+        setIsFetching(true);
+        const res = await fetchUserSrno(data);
+        setAllUsers(res);
+      } catch (e) {
+        toast.error("Something went wrong! Please try again later.");
+      } finally {
+        setIsFetching(false);
+      }
+    };
+    fetchAllUsersDetails();
   }, []);
 
   useEffect(() => {
@@ -559,50 +557,40 @@ const Recharge = () => {
           </h1>
         </div>
 
-        <div className="flex items-end justify-center gap-3 w-full">
-          {user.role === "RESELLER" && (
-            <div className="flex-1">
-              <DropdownWithSearch
-                id="manageuser"
-                name="manageuser"
-                label="Select User"
-                tooltipContent="Select user you want to recharge"
-                tooltipPlacement="right"
-                // options={allUsers.map((user) => ({
-                //   label: user.userName,
-                //   value: user.srNo,
-                // }))}
-                options={allUsers
-                  .slice()
-                  .sort((a, b) => a.userName.localeCompare(b.userName))
-                  .map((user) => ({
-                    label: user.userName,
-                    value: user.srNo,
-                  }))}
-                value={selectedUser}
-                onChange={setSelectedUser}
-                placeholder="Select User"
-              />
-            </div>
-          )}
-          <div className="flex-1">
-            <AnimatedDropdown
-              id="rechargeType"
-              name="rechargeType"
-              label="Recharge Type"
-              tooltipContent="Select recharge type"
-              tooltipPlacement="right"
-              options={[
-                { value: "1", label: "Recharge" },
-                { value: "3", label: "Credit" },
-                { value: "4", label: "Debit" },
-              ]}
-              value={selectedRechargeType}
-              onChange={setSelectedRechargeType}
-              placeholder="Category"
-            />
-          </div>
-          <div className="flex items-end gap-2 ">
+        <div className="flex items-end gap-3 w-full md:flex-nowrap flex-wrap">
+          <DropdownWithSearch
+            id="manageuser"
+            name="manageuser"
+            label="Select User"
+            tooltipContent="Select user you want to recharge"
+            tooltipPlacement="right"
+            options={allUsers
+              .slice()
+              .sort((a, b) => a.userName.localeCompare(b.userName))
+              .map((user) => ({
+                label: user.userName,
+                value: user.srNo,
+              }))}
+            value={selectedUser}
+            onChange={setSelectedUser}
+            placeholder="Select User"
+          />
+          <AnimatedDropdown
+            id="rechargeType"
+            name="rechargeType"
+            label="Recharge Type"
+            tooltipContent="Select recharge type"
+            tooltipPlacement="right"
+            options={[
+              { value: "1", label: "Recharge" },
+              { value: "3", label: "Credit" },
+              { value: "4", label: "Debit" },
+            ]}
+            value={selectedRechargeType}
+            onChange={setSelectedRechargeType}
+            placeholder="Category"
+          />
+          <div className="flex items-end gap-2 w-90">
             <div className="cursor-pointer px-2 py-2 shadow border rounded-lg bg-white">
               <div className="flex items-center gap-2">
                 <RadioButton
@@ -639,7 +627,7 @@ const Recharge = () => {
             </div> */}
           </div>
         </div>
-        <div className="flex w-full gap-3">
+        <div className="flex w-full gap-3 md:flex-nowrap flex-wrap">
           <InputField
             label="Amount"
             tooltipContent="Enter your amount of recharge"
@@ -657,7 +645,7 @@ const Recharge = () => {
           />
         </div>
 
-        <div className="flex w-full gap-3 ">
+        <div className="flex w-full gap-3 md:flex-nowrap flex-wrap">
           <InputField
             label="GST Amount"
             tooltipContent="Auto-calculated GST Amount"

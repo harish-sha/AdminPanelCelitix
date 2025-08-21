@@ -28,7 +28,7 @@ export const EditCallback = () => {
         customHeader: {},
     });
 
-    const [authorization, setAuthorization] = useState("");
+    const [authorization, setAuthorization] = useState("0");
     const [customHeader, setCustomHeader] = useState({
         isSelect: false,
         data: [{ key: "", value: "" }],
@@ -76,7 +76,9 @@ export const EditCallback = () => {
             userId: userId || "",
             password: password || "",
         }));
-        if (authorizationType) {
+
+        if (Number(authorizationType)) {
+            console.log("if tuns");
             setAuthorization("1");
         }
     }, [data]);
@@ -149,7 +151,7 @@ export const EditCallback = () => {
     }
 
     return (
-         <div className="flex md:flex-row flex-col gap-2 h-auto">
+        <div className="flex md:flex-row flex-col gap-2 h-auto">
             <div className="flex flex-col gap-2 md:w-2/3 w-full p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                     <InputField
@@ -250,7 +252,11 @@ export const EditCallback = () => {
                                         value="1"
                                         checked={authorization === "1"}
                                         onChange={(e) => {
-                                            setAuthorization(e.target.value);
+                                            setAuthorization("1");
+                                            setDetails((prev) => ({
+                                                ...prev,
+                                                authorizationType: "1",
+                                            }));
                                         }}
                                     />
                                     <label className="text-gray-600 font-semibold">Yes</label>
@@ -260,7 +266,11 @@ export const EditCallback = () => {
                                         value="0"
                                         checked={authorization === "0"}
                                         onChange={(e) => {
-                                            setAuthorization(e.target.value);
+                                            setAuthorization("0");
+                                            setDetails((prev) => ({
+                                                ...prev,
+                                                authorizationType: "0",
+                                            }));
                                         }}
                                     />
                                     <label className="text-gray-600 font-semibold">NO</label>
@@ -472,8 +482,8 @@ export const EditCallback = () => {
                 </div>
             </div>
             <div className="md:w-1/3 w-full">
-          <Preview />
-        </div>
+                <Preview />
+            </div>
         </div>
     );
 };
