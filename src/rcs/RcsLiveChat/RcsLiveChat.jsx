@@ -361,14 +361,20 @@ const RcsLiveChat = () => {
   }, [chatState?.active]);
 
   useEffect(() => {
+    let interval = null;
+    interval = setInterval(() => {
+      handleFetchAllConvo();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [btnOption, agentState]);
+
+  useEffect(() => {
     handleFetchTemplates();
   }, [isTemplateMessage]);
 
   useEffect(() => {
     handleFetchTemplateDetails();
   }, [templateState?.selected]);
-
-
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
@@ -392,8 +398,10 @@ const RcsLiveChat = () => {
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
       <div
-        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${chatState?.active ? "hidden md:block" : "block"
-          }`}>
+        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${
+          chatState?.active ? "hidden md:block" : "block"
+        }`}
+      >
         <InputData
           agentState={agentState}
           setAgentState={setAgentState}
@@ -521,7 +529,7 @@ const RcsLiveChat = () => {
               isSpeedDialOpen={isSpeedDialOpen}
               isTemplateMessage={isTemplateMessage}
               setIsTemplateMessage={setIsTemplateMessage}
-            // specificConversation={specificConversation}
+              // specificConversation={specificConversation}
             />
           </motion.div>
         )}
