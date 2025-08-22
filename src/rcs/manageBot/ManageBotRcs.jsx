@@ -286,6 +286,7 @@ const ManageBotRcs = () => {
             name="suggestionreport"
             data={displayedBots}
             onEdit={handleEdit}
+            fetchAllBotsData={fetchAllBotsData}
           />
         </div>
       </div>

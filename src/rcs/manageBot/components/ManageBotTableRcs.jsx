@@ -18,7 +18,7 @@ import { Dialog } from "primereact/dialog";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import UniversalButton from "@/components/common/UniversalButton";
 import toast from "react-hot-toast";
-import { deleteRcsBot } from "@/apis/admin/admin";
+import { deleteRcsBot, updateRcsBotStatus } from "@/apis/admin/admin";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -80,7 +80,7 @@ const CustomPagination = ({
   );
 };
 
-const ManageBotTableRcs = ({ id, name, data = [], onEdit }) => {
+const ManageBotTableRcs = ({ id, name, data = [], onEdit,fetchAllBotsData }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -90,6 +90,25 @@ const ManageBotTableRcs = ({ id, name, data = [], onEdit }) => {
     isOpen: false,
     id: null,
   });
+
+  async function handleUpdateStatus(row) {
+    console.log("row", row);
+    const payload = {
+      srno: row.srno,
+      status: row.status === "Active" ? "0" : "1",
+    };
+    try {
+      const res = await updateRcsBotStatus(payload);
+      console.log("res", res);
+      if(!res?.status){
+        return toast.error("Something went wrong");
+      }
+      toast.success("Status Updated Successfully");
+      fetchAllBotsData();
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
+  }
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -111,7 +130,24 @@ const ManageBotTableRcs = ({ id, name, data = [], onEdit }) => {
     //   flex: 1,
     //   minWidth: 120,
     // },
-    { field: "active", headerName: "Status", flex: 1, minWidth: 120 },
+    {
+      field: "active",
+      headerName: "Status",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => (
+        <button
+          className={`border rounded-md p-2 text-white ${
+            params.row.active ? "bg-green-500" : "bg-red-500"
+          }`}
+          onClick={() => {
+            handleUpdateStatus(params.row);
+          }}
+        >
+          {params.row.active ? "Active" : "Inactive"}
+        </button>
+      ),
+    },
     {
       field: "action",
       headerName: "Action",

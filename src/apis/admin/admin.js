@@ -364,3 +364,8 @@ export const getPincodeData = async (pincode) => {
     method: "GET",
   });
 };
+export const updateRcsBotStatus = async (data) => {
+  return await fetchWithAuth(`/rcs/updateActiveInactiveStatus?agentSrno=${data.agentSrno}&active=${data.active}`, {
+    method: "POST",
+  });
+};
