@@ -372,6 +372,15 @@ const SmsDLTtemplate = () => {
   const handleRemoveFile = () => {
     setUploadedFile(null);
     setIsUploaded(false);
+    setUploadedFile(null);
+    setContactData({
+      filePath: "",
+      fileHeaders: "",
+      totalRecords: "",
+      selectedCountryCode: "",
+      selectedMobileColumn: "",
+      sampleRecords: "",
+    });
     fileInputRef.current.value = "";
   };
 
