@@ -507,6 +507,8 @@ export default function WhatsappLiveChat() {
     const type = files?.type?.split("/")[0];
     const fileName = files?.name;
     const size = `${files?.size / 1024}MB`;
+    if (Number(files?.size) > 5)
+      return toast.error("File size should be less than 5MB");
     setSelectedImage({ files, type, fileName, size });
     // setSelectedImage(files);
     setIsSpeedDialOpen(false);
