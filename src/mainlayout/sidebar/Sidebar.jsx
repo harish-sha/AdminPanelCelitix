@@ -4,7 +4,7 @@ import { MdExpandLess, MdExpandMore, MdOutlineEmail } from "react-icons/md";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import BlockOutlinedIcon from "@mui/icons-material/BlockOutlined";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
-import UnsubscribeOutlinedIcon from '@mui/icons-material/UnsubscribeOutlined';
+import UnsubscribeOutlinedIcon from "@mui/icons-material/UnsubscribeOutlined";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaHome, FaSignOutAlt, FaWhatsapp } from "react-icons/fa";
 import { IoPersonOutline } from "react-icons/io5";
@@ -18,9 +18,8 @@ import toast from "react-hot-toast";
 import { LiaTagsSolid } from "react-icons/lia";
 import { motion } from "framer-motion";
 import AssuredWorkloadOutlinedIcon from "@mui/icons-material/AssuredWorkloadOutlined";
-import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
-import QuickreplyOutlinedIcon from '@mui/icons-material/QuickreplyOutlined';
-
+import LeaderboardOutlinedIcon from "@mui/icons-material/LeaderboardOutlined";
+import QuickreplyOutlinedIcon from "@mui/icons-material/QuickreplyOutlined";
 
 import { LuWorkflow } from "react-icons/lu";
 import rcsicon from "../../assets/icons/RCS02.svg";
@@ -156,6 +155,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
           label: "Sms Details Logs",
           isHide: true,
         },
+        { to: "/smscampaigndetailsreport", label: "Create Bot", isHide: true },
       ],
       roles: ["ADMIN", "DIRECTUSER"],
     },
@@ -227,7 +227,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         // { to: "/wmmlite", label: "MM Lite" },
         { to: "/createwhatsappbot", label: "Create Bot", isHide: true },
         { to: "/wcampaigndetailsreport", label: "Create Bot", isHide: true },
-        { to: "/smscampaigndetailsreport", label: "Create Bot", isHide: true },
         { to: "/createtemplate", label: "Create Bot", isHide: true },
         { to: "/wflowcreation", label: "Create Whatsapp Flow", isHide: true },
       ],
@@ -236,7 +235,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     {
       id: "",
       name: "chatManagement",
-      icon: <QuickreplyOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
+      icon: (
+        <QuickreplyOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />
+      ),
       label: "Live Chat",
       type: "dropdown",
       links: [
@@ -409,7 +410,12 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     {
       id: "",
       name: "recharge",
-      icon: <AssuredWorkloadOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
+      icon: (
+        <AssuredWorkloadOutlinedIcon
+          fontSize="20"
+          style={{ fontSize: "17px" }}
+        />
+      ),
       label: "Recharge",
       type: "single",
       to: "/selfrecharge",
@@ -570,23 +576,26 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
           >
             <motion.div
               onClick={() => handleDropdownClick(item.name)}
-              className={`flex items-center py-2 w-full cursor-pointer hover:bg-[#e6f4ff] text-left text-gray-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(`/${item.name}`) ? "bg-[#6b728075]" : ""
-                }`}
+              className={`flex items-center py-2 w-full cursor-pointer hover:bg-[#e6f4ff] text-left text-gray-800 transition-all duration-300 ${collapsedClass} ${
+                isActiveRoute(`/${item.name}`) ? "bg-[#6b728075]" : ""
+              }`}
             >
               <span className="text-black flex-shrink-0">{item.icon}</span>
               <motion.span
                 animate={{ opacity: isCollapsed ? 0 : 1 }}
                 transition={{ duration: 0.15 }}
-                className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${isCollapsed ? "w-0" : "w-auto"
-                  }`}
+                className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${
+                  isCollapsed ? "w-0" : "w-auto"
+                }`}
               >
                 {item.label}
               </motion.span>
 
               {!isCollapsed && (
                 <div
-                  className={`ml-auto transition-transform duration-300 ${openDropdown === item.name ? "rotate-180" : "rotate-0"
-                    }`}
+                  className={`ml-auto transition-transform duration-300 ${
+                    openDropdown === item.name ? "rotate-180" : "rotate-0"
+                  }`}
                 >
                   {openDropdown === item.name ? (
                     <MdExpandLess />
@@ -633,8 +642,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
                         }}
                       />
                       <span
-                        className={`font-[600] ${isActive ? "text-blue-800" : "text-gray-800"
-                          }`}
+                        className={`font-[600] ${
+                          isActive ? "text-blue-800" : "text-gray-800"
+                        }`}
                       >
                         {link.label}
                       </span>
@@ -664,8 +674,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
                   item.onClick();
                   handleSingleRouteClick();
                 }}
-                className={`flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${isCollapsed ? "justify-center" : ""
-                  }`}
+                className={`flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${
+                  isCollapsed ? "justify-center" : ""
+                }`}
               >
                 <span className="flex-shrink-0">{item.icon}</span>
                 <span className={`${isCollapsed ? "hidden" : ""} font-[600]`}>
@@ -676,15 +687,17 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
               <Link
                 to={item.to}
                 onClick={handleSingleRouteClick}
-                className={`flex items-center gap-0  py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800 " : ""
-                  }`}
+                className={`flex items-center gap-0  py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${
+                  isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800 " : ""
+                }`}
               >
                 <span className="flex-shrink-0 text-lg">{item.icon}</span>
                 <motion.span
                   animate={{ opacity: isCollapsed ? 0 : 1 }}
                   transition={{ duration: 0.15 }}
-                  className={`whitespace-nowrap font-semibold ${isCollapsed ? "w-0 overflow-hidden" : "w-auto ml-2"
-                    }`}
+                  className={`whitespace-nowrap font-semibold ${
+                    isCollapsed ? "w-0 overflow-hidden" : "w-auto ml-2"
+                  }`}
                 >
                   {item.label}
                 </motion.span>
