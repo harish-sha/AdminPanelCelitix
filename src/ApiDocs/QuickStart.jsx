@@ -14,6 +14,7 @@ import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 import SyncAltOutlinedIcon from "@mui/icons-material/SyncAltOutlined";
 import { motion, useReducedMotion } from "framer-motion";
+import toast from "react-hot-toast";
 
 const ModelCard = ({ title, desc, Icon, gradient, delay = 0, isDarkMode }) => {
   const prefersReduced = useReducedMotion();
@@ -42,8 +43,8 @@ const ModelCard = ({ title, desc, Icon, gradient, delay = 0, isDarkMode }) => {
       <div
         className={[
           "p-[1.25px] rounded-2xl",
-          "bg-gradient-to-tr", 
-          gradient,            
+          "bg-gradient-to-tr",
+          gradient,
           "shadow-sm",
         ].join(" ")}
       >
@@ -68,7 +69,7 @@ const ModelCard = ({ title, desc, Icon, gradient, delay = 0, isDarkMode }) => {
               className={[
                 "h-14 w-25 rounded-xl grid place-items-center text-white shadow-lg ring-1 ring-black/5",
                 "bg-gradient-to-tr",
-                gradient.replace("/70", ""), 
+                gradient.replace("/70", ""),
               ].join(" ")}
             >
               <Icon fontSize="small" />
@@ -95,45 +96,20 @@ const ModelCard = ({ title, desc, Icon, gradient, delay = 0, isDarkMode }) => {
 
 const Quickstart = () => {
   const { isDarkMode } = useTheme();
+
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard
-      .writeText(baseUrl)
-      .then(() => {
-        // Show check icon
-        setIsCopied(true);
+    const textToCopy = document.getElementById("base-url-text").innerText;
 
-        // Show toast notification
-        toast.success("URL copied to clipboard!", {
-          duration: 2000,
-          position: "top-center",
-          style: {
-            backgroundColor: "#fff",
-            color: "#000",
-          },
-          iconTheme: {
-            primary: "#10B981", // green
-            secondary: "#fff",
-          },
-        });
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      setIsCopied(true);
+      toast.success("URL copied to clipboard!");
 
-        // Reset icon after 2 seconds
-        setTimeout(() => {
-          setIsCopied(false);
-        }, 2000);
-      })
-      .catch((err) => {
-        toast.error("Failed to copy text", {
-          duration: 2000,
-          position: "top-center",
-          style: {
-            backgroundColor: "#fff",
-            color: "#000",
-          },
-        });
-        console.error("Could not copy text: ", err);
-      });
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 1000);
+    });
   };
 
 
@@ -144,13 +120,13 @@ const Quickstart = () => {
     >
       <div className="max-w-4xl mx-auto">
         <div className="">
-          <h1 className="text-center text-3xl font-bold mt-5">
+          <h1 className="text-center text-3xl font-semibold mt-5">
             Developer platform
           </h1>
 
           <div
             className={`${isDarkMode ? "bg-gray-800" : "bg-white"
-              } rounded-lg shadow-md p-4 mb-12 mt-3`}
+              } rounded-lg shadow-md p-4 mb-12 mt-5 text-center`}
           >
             <div>
               <h2 className="text-2xl font-semibold mb-2 ">
@@ -198,20 +174,20 @@ const Quickstart = () => {
             </div> */}
 
             <section id="base-url" className="mb-16">
-              <h2 className="text-xl md:text-3xl lg:text-3xl font-medium text-center mb-3">
+              <h2 className="text-xl md:text-2xl font-medium text-center mb-3">
                 Base URL
               </h2>
               <div className="lg:w-3xl md:w-2xl w-[320px] mx-auto ">
                 <div className="bg-gray-700 text-white p-4 rounded-lg shadow-md">
                   <div className="flex justify-between items-end mb-2 ">
                     <div className="font-mono text-sm break-all">
-                      <span className="text-[#50b930] text-xl">https://api.celitix.com</span>
+                      <span className="text-[#50b930] text-xl" id="base-url-text">https://api.celitix.com</span>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 ">
                       <button
                         onClick={handleCopy}
-                        className="p-1 rounded hover:bg-gray-700 transition-colors"
+                        className="p-1 rounded hover:bg-gray-700 transition-colors cursor-pointer"
                         aria-label="Copy to clipboard"
                       >
                         {isCopied ? (
@@ -228,97 +204,97 @@ const Quickstart = () => {
           </div>
         </div>
 
-   
-<div className="mb-12">
-  <h2 className="text-2xl md:text-3xl font-semibold text-center mb-2">
-    Meet the models
-  </h2>
-  <p className="text-center text-sm md:text-base text-gray-600 dark:text-slate-300/90">
-    Powerful channels with modern delivery and reliability.
-  </p>
-</div>
 
-{/* staggered grid entrance */}
-<motion.div
-  initial="hidden"
-  whileInView="show"
-  viewport={{ once: true, amount: 0.2 }}
-  transition={{ staggerChildren: 0.06 }}
-  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 max-w-6xl mx-auto mb-20 px-2"
->
-  <ModelCard
-    title="WhatsApp"
-    desc="Our high intelligence flagship model for complex, multi-step tasks."
-    Icon={WhatsAppIcon}
-    gradient="from-emerald-500/70 to-emerald-700/70"
-    delay={0.02}
-    isDarkMode={isDarkMode}
-  />
-  <ModelCard
-    title="SMS"
-    desc="Affordable model for basic, lightweight tasks."
-    Icon={SmsIcon}
-    gradient="from-sky-500/70 to-blue-600/70"
-    delay={0.04}
-    isDarkMode={isDarkMode}
-  />
-  <ModelCard
-    title="RCS"
-    desc="A modern channel with advanced capabilities."
-    Icon={ChatOutlinedIcon}
-    gradient="from-fuchsia-500/70 to-purple-600/70"
-    delay={0.06}
-    isDarkMode={isDarkMode}
-  />
-  <ModelCard
-    title="Click 2 Call"
-    desc="Trigger calls from apps and handle flows easily."
-    Icon={CallOutlinedIcon}
-    gradient="from-amber-500/70 to-orange-600/70"
-    delay={0.08}
-    isDarkMode={isDarkMode}
-  />
-  <ModelCard
-    title="OBD"
-    desc="Automated outbound dialer for campaigns."
-    Icon={CallMadeOutlinedIcon}
-    gradient="from-rose-500/70 to-red-600/70"
-    delay={0.10}
-    isDarkMode={isDarkMode}
-  />
-  <ModelCard
-    title="IBD"
-    desc="Track inbound communication in real time."
-    Icon={CallReceivedOutlinedIcon}
-    gradient="from-teal-500/70 to-emerald-600/70"
-    delay={0.12}
-    isDarkMode={isDarkMode}
-  />
-  <ModelCard
-    title="EMAIL"
-    desc="Send campaign and transactional emails."
-    Icon={MailOutlineIcon}
-    gradient="from-indigo-500/70 to-sky-600/70"
-    delay={0.14}
-    isDarkMode={isDarkMode}
-  />
-  <ModelCard
-    title="App Authenticator"
-    desc="Secure 2FA login solutions for your users."
-    Icon={VerifiedUserOutlinedIcon}
-    gradient="from-cyan-500/70 to-blue-600/70"
-    delay={0.16}
-    isDarkMode={isDarkMode}
-  />
-  <ModelCard
-    title="Two-Way SMS"
-    desc="Bi-directional messaging with threads."
-    Icon={SyncAltOutlinedIcon}
-    gradient="from-lime-500/70 to-green-600/70"
-    delay={0.18}
-    isDarkMode={isDarkMode}
-  />
-</motion.div>
+        <div className="mb-12">
+          <h2 className="text-2xl md:text-3xl font-semibold text-center mb-2">
+            Meet the models
+          </h2>
+          <p className="text-center text-sm md:text-base text-gray-600 dark:text-slate-300/90">
+            Powerful channels with modern delivery and reliability.
+          </p>
+        </div>
+
+        {/* staggered grid entrance */}
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ staggerChildren: 0.06 }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 max-w-6xl mx-auto mb-20 px-2"
+        >
+          <ModelCard
+            title="WhatsApp"
+            desc="Our high intelligence flagship model for complex, multi-step tasks."
+            Icon={WhatsAppIcon}
+            gradient="from-emerald-500/70 to-emerald-700/70"
+            delay={0.02}
+            isDarkMode={isDarkMode}
+          />
+          <ModelCard
+            title="SMS"
+            desc="Affordable model for basic, lightweight tasks."
+            Icon={SmsIcon}
+            gradient="from-sky-500/70 to-blue-600/70"
+            delay={0.04}
+            isDarkMode={isDarkMode}
+          />
+          <ModelCard
+            title="RCS"
+            desc="A modern channel with advanced capabilities."
+            Icon={ChatOutlinedIcon}
+            gradient="from-fuchsia-500/70 to-purple-600/70"
+            delay={0.06}
+            isDarkMode={isDarkMode}
+          />
+          <ModelCard
+            title="Click 2 Call"
+            desc="Trigger calls from apps and handle flows easily."
+            Icon={CallOutlinedIcon}
+            gradient="from-amber-500/70 to-orange-600/70"
+            delay={0.08}
+            isDarkMode={isDarkMode}
+          />
+          <ModelCard
+            title="OBD"
+            desc="Automated outbound dialer for campaigns."
+            Icon={CallMadeOutlinedIcon}
+            gradient="from-rose-500/70 to-red-600/70"
+            delay={0.10}
+            isDarkMode={isDarkMode}
+          />
+          <ModelCard
+            title="IBD"
+            desc="Track inbound communication in real time."
+            Icon={CallReceivedOutlinedIcon}
+            gradient="from-teal-500/70 to-emerald-600/70"
+            delay={0.12}
+            isDarkMode={isDarkMode}
+          />
+          <ModelCard
+            title="EMAIL"
+            desc="Send campaign and transactional emails."
+            Icon={MailOutlineIcon}
+            gradient="from-indigo-500/70 to-sky-600/70"
+            delay={0.14}
+            isDarkMode={isDarkMode}
+          />
+          <ModelCard
+            title="App Authenticator"
+            desc="Secure 2FA login solutions for your users."
+            Icon={VerifiedUserOutlinedIcon}
+            gradient="from-cyan-500/70 to-blue-600/70"
+            delay={0.16}
+            isDarkMode={isDarkMode}
+          />
+          <ModelCard
+            title="Two-Way SMS"
+            desc="Bi-directional messaging with threads."
+            Icon={SyncAltOutlinedIcon}
+            gradient="from-lime-500/70 to-green-600/70"
+            delay={0.18}
+            isDarkMode={isDarkMode}
+          />
+        </motion.div>
 
 
 

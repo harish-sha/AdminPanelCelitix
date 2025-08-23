@@ -198,8 +198,8 @@ const Introduction = () => {
                     <a
                       href={`#${s.id}`}
                       className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm hover:bg-slate-50 focus:outline-none focus:ring-2 ring-emerald-400 ${active === s.id
-                          ? "bg-emerald-50 text-emerald-700 font-semibold"
-                          : ""
+                        ? "bg-emerald-50 text-emerald-700 font-semibold"
+                        : ""
                         }`}
                     >
                       <span
@@ -602,8 +602,8 @@ function CodeTabs({ tabs }) {
             key={t.label}
             onClick={() => setIdx(i)}
             className={`px-3 py-1.5 rounded-xl text-sm border-b-2 -mb-[1px] ${idx === i
-                ? "border-emerald-600 text-emerald-700 bg-emerald-50"
-                : "border-transparent hover:bg-slate-50"
+              ? "border-emerald-600 text-emerald-700 bg-emerald-50"
+              : "border-transparent hover:bg-slate-50"
               }`}
           >
             {t.label}

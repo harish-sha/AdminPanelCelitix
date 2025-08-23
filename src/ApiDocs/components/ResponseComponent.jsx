@@ -48,7 +48,7 @@ const ResponseComponent = ({ jsonData, headers }) => {
         {responseActiveTab === "body" ? (
           <div className="overflow-auto text-sm relative  mt-2">
             {/* Copy Button */}
-            <div className="absolute right-0 top-0 p-2 ">
+            {/* <div className="absolute right-0 top-0 p-2 ">
               <button
                 onClick={() => handleCopy(jsonData)}
                 className="text-gray-300 "
@@ -56,18 +56,18 @@ const ResponseComponent = ({ jsonData, headers }) => {
               >
                 {copied ? <CheckIcon fontSize="small"/> : <CopyIcon fontSize="small"/>}
               </button>
-            </div>
+            </div> */}
 
             <div className=" mt-4">
             <ReactJsonPretty data={jsonData} className="react-json-pretty" />
             </div>
           </div>
         ) : (
-          <table className="min-w-full table-auto border-collapse text-sm border-none ">
+          <table className="min-w-full table-auto border-collapse text-sm border-none rounded-lg overflow-hidden">
             <thead>
-              <tr className="bg-gray-100 dark:bg-gray-800">
-                <th className="text-left text-white p-2">Key</th>
-                <th className="text-left text-white p-2">Value</th>
+              <tr className="bg-gray-700 dark:bg-gray-800 border-b-2 border-gray-600">
+                <th className="text-left text-white p-2 font-medium">Key</th>
+                <th className="text-left text-white p-2 font-medium">Value</th>
               </tr>
             </thead>
             <tbody>

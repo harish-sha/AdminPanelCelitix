@@ -149,9 +149,8 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
 
   return (
     <div
-      className={`flex w-[100%]   ${
-        isDarkMode ? "bg-slate-800 text-white" : "bg-[#eeeeee] text-gray-800"
-      }`}
+      className={`flex w-[100%]   ${isDarkMode ? "bg-slate-800 text-white" : "bg-[#eeeeee] text-gray-800"
+        }`}
     >
       <div className=" p-4 lg:p-6 overflow-y-auto w-4xl mx-auto ">
         <section id="session-text-message" className="mb-16">
@@ -379,10 +378,10 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
               Example Response
             </h2>
             <div className="w-full">
-            <ResponseComponent
-              jsonData={MediaMessageResponseData}
-              headers={MediaMessageResponseheaders}
-            />
+              <ResponseComponent
+                jsonData={MediaMessageResponseData}
+                headers={MediaMessageResponseheaders}
+              />
             </div>
           </div>
         </section>
@@ -390,17 +389,15 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
 
       {/* Mini Map Navigation  */}
       <div
-        className={`${
-          isDarkMode ? "bg-gray-500 text-white" : "bg-[#cecece] text-black"
-        } hidden lg:block  h-fit sticky  top-4 p-2 shrink-0 rounded-2xl  mr-4 w-66`}
+        className={`${isDarkMode ? "bg-gray-500 text-white" : "bg-[#cecece] text-black"
+          } hidden lg:block  h-fit sticky  top-4 p-2 shrink-0 rounded-2xl  mr-4 w-66`}
       >
         <div className="rounded-lg h-full flex flex-row">
           <div className="relative">
             {/* Track line */}
             <div
-              className={`${
-                isDarkMode ? "bg-gray-600" : "bg-gray-200"
-              } w-1 h-auto top-5  rounded absolute left-3`}
+              className={`${isDarkMode ? "bg-gray-600" : "bg-gray-200"
+                } w-1 h-auto top-5  rounded absolute left-3`}
               style={{
                 height: `${(sections.length - 1) * 40}px`,
                 top: "20px",
@@ -408,9 +405,8 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
             >
               {/* Moving indicator */}
               <div
-                className={`${
-                  isDarkMode ? "bg-white" : "bg-black"
-                } w-1 bg-black rounded absolute transition-all duration-300`}
+                className={`${isDarkMode ? "bg-white" : "bg-black"
+                  } w-1 bg-black rounded absolute transition-all duration-300`}
                 style={{
                   height: "20px",
                   top: `${scrollerPosition}%`,
@@ -424,15 +420,13 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
                 <div
                   key={section.id}
                   onClick={() => scrollToSection(section.id)}
-                  className={`p-2 mb-1 rounded cursor-pointer text-sm transition-colors ${
-                    activeSection === section.id
-                      ? `${
-                          isDarkMode
-                            ? "text-white font-semibold"
-                            : "text-black font-semibold"
-                        }`
-                      : `${isDarkMode ? "text-gray-900" : "text-gray-600"}`
-                  }`}
+                  className={`p-2 mb-1 rounded cursor-pointer text-sm transition-colors ${activeSection === section.id
+                    ? `${isDarkMode
+                      ? "text-white font-semibold"
+                      : "text-black font-semibold"
+                    }`
+                    : `${isDarkMode ? "text-gray-900" : "text-gray-600"}`
+                    }`}
                 >
                   {section.title}
                 </div>

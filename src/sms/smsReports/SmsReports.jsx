@@ -1309,7 +1309,7 @@ const SmsReports = () => {
     }
   };
 
-  const handlePreviosDayDetailDisplay = async (col) => {
+  const handlePreviosDayDetailDisplay = async (col) => {          
     if (!col) return;
     const data = {
       summaryType: col || selectedCol,

@@ -107,6 +107,7 @@ import SubmitTemplateClickTwoCall from "../../ApiDocs/clicktwocall/SubmitTemplat
 import UpdateTemplateClickTwoCall from "../../ApiDocs/clicktwocall/UpdateTemplate/UpdateTemplateClickTwoCall"
 import DeleteTemplateClickTwoCall from "../../ApiDocs/clicktwocall/DeleteTemplate/DeleteTemplateClickTwoCall"
 import SendMessageNew from "@/ApiDocs/whatsapp/SendMessage/SendMessageNew";
+import GsmErrorCode from "@/ApiDocs/ErrorCode/Gsmerrorcode";
 
 const Apiroutes = () => {
   return (
@@ -171,6 +172,9 @@ const Apiroutes = () => {
         <Route path="/submit-template-clicktwocall" element={<SubmitTemplateClickTwoCall />} />
         <Route path="/update-template-clicktwocall" element={<UpdateTemplateClickTwoCall />} />
         <Route path="/delete-template-clicktwocall" element={<DeleteTemplateClickTwoCall />} />
+
+        {/* Error Codes */}
+        <Route path="/gsmerrorcode" element={<GsmErrorCode />} />
       </Route>
 
 

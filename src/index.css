@@ -29,6 +29,13 @@
   display: none; /* Chrome, Safari, Opera */
 }
 
+.json-pretty-wrap pre {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow-x: hidden !important;
+}
+
+
 .popf {
   font-family: "Poppins", sans-serif !important;
 }

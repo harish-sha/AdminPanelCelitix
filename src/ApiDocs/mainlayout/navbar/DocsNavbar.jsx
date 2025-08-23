@@ -9,6 +9,10 @@ import SearchOffIcon from "@mui/icons-material/SearchOff";
 import { Dialog } from "primereact/dialog";
 import { useMediaQuery, Menu, MenuItem, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
+import { BookOpen, ExternalLink } from "lucide-react";
+import dash3 from "@/assets/icons/layout.png";
+
+
 
 
 
@@ -22,6 +26,7 @@ import { themeColors } from "../../themeColors";
 
 import { useTheme } from "../../context/ThemeContext";
 import ThemeToggle from "@/ApiDocs/components/ThemeToggle";
+import { Link } from "react-router-dom";
 
 // const handleDocsLoginBtn = () => {};
 
@@ -87,7 +92,7 @@ const DocsNavbar = ({ isCollapsed, setIsCollapsed }) => {
             className={`text-lg font-medium tracking-wider lg:block ${isDarkMode ? "text-white" : "text-gray-800"
               } `}
           >
-            Api Documentation
+            API Documentation
           </span>
           {/* <img src={celitixLogo} width={120} height={80} alt="Celitix Logo" /> */}
         </div>
@@ -103,7 +108,7 @@ const DocsNavbar = ({ isCollapsed, setIsCollapsed }) => {
                 onClick={handleShowSearch}
               />
             </button> */}
-            <button className="py-2 px-2 cursor-pointer" onClick={toggleDarkMode}>
+            {/* <button className="py-2 px-2 cursor-pointer" onClick={toggleDarkMode}>
               {isDarkMode ? (
                 <LightModeOutlinedIcon
                   sx={{
@@ -119,7 +124,56 @@ const DocsNavbar = ({ isCollapsed, setIsCollapsed }) => {
                   className={`text-xl ${colors.textPrimary}`}
                 />
               )}
-            </button>
+            </button> */}
+            <div className="flex items-center gap-3">
+
+              {/* API Docs animated card/button */}
+              <motion.div
+                whileHover={{ y: -1, scale: 1.01 }}
+                whileTap={{ scale: 0.985 }}
+                transition={{ type: "spring", stiffness: 300, damping: 22 }}
+                className="group rounded-lg p-[1px] bg-gradient-to-r from-emerald-400/70 via-sky-400/70 to-fuchsia-400/70
+               hover:from-emerald-500 via-sky-500 hover:to-fuchsia-500 transition-colors"
+              >
+                <Link
+                  to="/" // change to your route, e.g. "/api-docs" or external link
+                  className="flex items-center gap-2 rounded-[10px] bg-white/90 px-3 py-1.5 text-sm
+                 backdrop-blur dark:bg-gray-900/80 dark:text-gray-100"
+                  aria-label="Open API Documentation"
+                >
+                  {/* Icon bubble */}
+                  <motion.div
+                    className="flex h-7 w-7 items-center justify-center rounded-md text-white
+                   dark:bg-white dark:text-gray-900"
+                    initial={false}
+                    animate={{ rotate: 0 }}
+                    whileHover={{ rotate: 8 }}
+                    transition={{ type: "spring", stiffness: 240, damping: 16 }}
+                  >
+                    {/* <BookOpen className="h-4 w-4 text-green-500" aria-hidden="true" /> */}
+                    <img src={dash3} className="w-4 h-4" />
+                  </motion.div>
+
+                  {/* Texts */}
+                  <div className="flex min-w-0 flex-col">
+                    <span className="font-medium leading-tight text-[13px]">Dashboard</span>
+                    {/* <span className="text-[11px] text-gray-500 dark:text-gray-400 leading-none">
+                    REST, Webhooks & Guides
+                  </span> */}
+                  </div>
+
+                  {/* Chevron/External icon */}
+                  <motion.div
+                    className="ml-1"
+                    initial={{ x: 0, opacity: 0.7 }}
+                    whileHover={{ x: 3, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 250, damping: 18 }}
+                  >
+                    <ExternalLink className="h-3 w-3 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200" />
+                  </motion.div>
+                </Link>
+              </motion.div>
+            </div>
 
             <ThemeToggle
               isDarkMode={isDarkMode}
@@ -185,7 +239,12 @@ const DocsNavbar = ({ isCollapsed, setIsCollapsed }) => {
           </div>
         </div>
 
-        <div className="md:hidden flex ml-auto">
+        <div className="md:hidden flex ml-auto items-center gap-2">
+          <ThemeToggle
+            isDarkMode={isDarkMode}
+            toggleDarkMode={toggleDarkMode}
+            className="text-xl"
+          />
           <label className="hamburger">
             <input
               type="checkbox"
@@ -203,6 +262,7 @@ const DocsNavbar = ({ isCollapsed, setIsCollapsed }) => {
               <path className="line" d="M7 16 27 16"></path>
             </svg>
           </label>
+
         </div>
 
 
@@ -217,8 +277,60 @@ const DocsNavbar = ({ isCollapsed, setIsCollapsed }) => {
                 className={`md:hidden absolute -right-3 top-8 rounded w-48 shadow-lg z-50 ${isDarkMode ? "bg-gray-500" : "bg-[#cecece]"
                   }`}
               >
-                <div className="flex flex-col my-6">
-                  <div className="flex flex-row items-center justify-center  ">
+                <div className="flex flex-col my-2">
+
+                  <div className="relative flex items-center justify-center cursor-pointer group">
+                    <div className="flex items-center gap-3">
+
+                      {/* API Docs animated card/button */}
+                      <motion.div
+                        whileHover={{ y: -1, scale: 1.01 }}
+                        whileTap={{ scale: 0.985 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 22 }}
+                        className="group rounded-lg p-[1px] bg-gradient-to-r from-emerald-400/70 via-sky-400/70 to-fuchsia-400/70
+               hover:from-emerald-500 via-sky-500 hover:to-fuchsia-500 transition-colors"
+                      >
+                        <Link
+                          to="/" // change to your route, e.g. "/api-docs" or external link
+                          className="flex items-center gap-2 rounded-[10px] bg-white/90 px-3 py-1.5 text-sm
+                 backdrop-blur dark:bg-gray-900/80 dark:text-gray-100"
+                          aria-label="Open API Documentation"
+                        >
+                          {/* Icon bubble */}
+                          <motion.div
+                            className="flex h-7 w-7 items-center justify-center rounded-md text-white
+                   dark:bg-white dark:text-gray-900"
+                            initial={false}
+                            animate={{ rotate: 0 }}
+                            whileHover={{ rotate: 8 }}
+                            transition={{ type: "spring", stiffness: 240, damping: 16 }}
+                          >
+                            {/* <BookOpen className="h-4 w-4 text-green-500" aria-hidden="true" /> */}
+                            <img src={dash3} className="w-4 h-4" />
+                          </motion.div>
+
+                          {/* Texts */}
+                          <div className="flex min-w-0 flex-col">
+                            <span className="font-medium leading-tight text-[13px]">Dashboard</span>
+                            {/* <span className="text-[11px] text-gray-500 dark:text-gray-400 leading-none">
+                    REST, Webhooks & Guides
+                  </span> */}
+                          </div>
+
+                          {/* Chevron/External icon */}
+                          <motion.div
+                            className="ml-1"
+                            initial={{ x: 0, opacity: 0.7 }}
+                            whileHover={{ x: 3, opacity: 1 }}
+                            transition={{ type: "spring", stiffness: 250, damping: 18 }}
+                          >
+                            <ExternalLink className="h-3 w-3 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200" />
+                          </motion.div>
+                        </Link>
+                      </motion.div>
+                    </div>
+                  </div>
+                  {/* <div className="flex flex-row items-center justify-center  ">
                     <button className="py-2 px-3 ">
                       <SearchOutlinedIcon
                         className={`text-xl cursor-pointer ${colors.textPrimary}`}
@@ -237,17 +349,17 @@ const DocsNavbar = ({ isCollapsed, setIsCollapsed }) => {
                         className={`text-xl cursor-pointer ${colors.textPrimary}`}
                       />
                     </button>
-                  </div>
+                  </div> */}
 
                   {/* <div className="relative flex justify-center items-center cursor-pointer group my-3">
             <span className={`${colors.textPrimary}`}>Docs</span>
           </div> */}
 
-                  <div className="relative flex items-center justify-center cursor-pointer group my-3">
+                  {/* <div className="relative flex items-center justify-center cursor-pointer group my-3">
                     <span className={`w-[130px] rounded-xl ${colors.textPrimary} border-1 p-2 `}>
                       API reference
                     </span>
-                  </div>
+                  </div> */}
 
                   {/* <div className="flex items-center justify-center my-3">
             <button

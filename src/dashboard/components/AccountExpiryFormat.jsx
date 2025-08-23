@@ -21,7 +21,7 @@ const AccountExpiryFormat = () => {
                 const data = await getaccountInfo();
                 // const data =
                 // {
-                //     "expiryDate": "2025-08-03",
+                //     "expiryDate": "2025-08-02",
                 // };
                 const expiry = new Date(data.expiryDate);
                 setExpiryDate(expiry);

@@ -6,15 +6,14 @@ import toast, { Toaster } from "react-hot-toast";
 
 import { useTheme } from "../context/ThemeContext";
 
-import Table from "../components/Table";
-import { themeColors } from "../themeColors";
+import Table from "../components/Tablenew";
 
+import { themeColors } from "../themeColors";
 
 const Introduction = () => {
   const [activeSection, setActiveSection] = useState("introduction");
   const { isDarkMode } = useTheme();
-    const colors = themeColors(isDarkMode);
-  
+  const colors = themeColors(isDarkMode);
 
   const [isCopied, setIsCopied] = useState(false);
 
@@ -67,7 +66,6 @@ const Introduction = () => {
   const activeIndex = sections.findIndex((s) => s.id === activeSection);
   const scrollerPosition = (activeIndex / (sections.length - 1)) * 100;
 
-
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -114,8 +112,6 @@ const Introduction = () => {
         console.error("Could not copy text: ", err);
       });
   };
-
-
 
   return (
     <div
@@ -211,107 +207,184 @@ const Introduction = () => {
             </p>
           </div>
           <div className="mt-5 flex justify-center items-center ">
-           
-              <Table columns={authenticationTableColoumn}>
-              <tr
-                    className={` ${
-                      colors.tableBorder
-                    } border-b`}
-                  >                  <td className="px-4 py-4  font-normal">Header</td>
-                  <td className="px-4 py-4 font-normal">content-type</td>
-                  <td className="px-4 py-4 text-orange-400 font-normal">
-                    application/json
-                  </td>
-                </tr>
-                <tr
-                    className={` ${
-                      colors.tableBorder
-                    } border-b`}
-                  >                  <td className="px-4 py-4 font-normal">Header</td>
-                  <td className="px-4 py-4 font-normal"> api_key</td>
-                  <td className="px-4 py-4 text-orange-400 font-normal">
-                    string
-                  </td>
-                </tr>
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  {authenticationTableColoumn.map((col, index) => (
+                    <Table.HeaderCell
+                      key={index}
+                      align="center"
+                      className="font-semibold"
+                    >
+                      {col}
+                    </Table.HeaderCell>
+                  ))}
+                </Table.Row>
+              </Table.Head>
 
-                <tr className="">
-                  <td className="px-4 py-4 font-normal ">Header</td>
-                  <td className="px-4 py-4 font-normal">botid</td>
-                  <td className="px-4 py-4 font-normal text-orange-400">
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="px-4 py-4 font-normal">
+                    Header
+                  </Table.Cell>
+                  <Table.Cell align="center" className="px-4 py-4 font-normal">
+                    content-type
+                  </Table.Cell>
+                  <Table.Cell
+                    align="center"
+                    className="px-4 py-4 text-orange-400 font-normal"
+                  >
+                    application/json
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="px-4 py-4 font-normal">
+                    Header
+                  </Table.Cell>
+                  <Table.Cell align="center" className="px-4 py-4 font-normal">
+                    api_key
+                  </Table.Cell>
+                  <Table.Cell
+                    align="center"
+                    className="px-4 py-4 text-orange-400 font-normal"
+                  >
                     string
-                  </td>
-                </tr>
-              </Table>
-            
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="px-4 py-4 font-normal">
+                    Header
+                  </Table.Cell>
+                  <Table.Cell align="center" className="px-4 py-4 font-normal">
+                    botid
+                  </Table.Cell>
+                  <Table.Cell
+                    align="center"
+                    className="px-4 py-4 text-orange-400 font-normal"
+                  >
+                    string
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
           </div>
         </section>
 
-        <section id="http-response-codes" >
-        <div className="flex flex-col justify-center items-center gap-2 popins sm:flex ">
+        <section id="http-response-codes">
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex ">
             <h2 className="text-xl md:text-3xl lg:text-3xl font-medium text-center">
               Common HTTP Response Codes
             </h2>
           </div>
-          <div className="mt-5 flex justify-center items-center ">
-            
-              <Table columns={httpTableColoumn}>
-              <tr
-                    className={` ${
-                      colors.tableBorder
-                    } border-b`}
-                  >                  <td className="px-4 py-4  font-normal">400</td>
-                  <td className="px-4 py-4 font-normal text-red-500">
-                    Bad Request
-                  </td>
-                </tr>
-                <tr
-                    className={` ${
-                      colors.tableBorder
-                    } border-b`}
-                  >                  <td className="px-4 py-4 font-normal">403</td>
-                  <td className="px-4 py-4 font-normal"> Forbidden</td>
-                </tr>
+          <div className="mt-5 flex justify-center items-center">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="text-center">
+                    Code
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="text-center">
+                    
+                    Description
+                   
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
 
-                <tr
-                    className={` ${
-                      colors.tableBorder
-                    } border-b`}
-                  >                  <td className="px-4 py-4 font-normal ">500</td>
-                  <td className="px-4 py-4 font-normal">
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell
+                    align="center"
+                    className="px-4 py-4 text-orange-500 text-sm popins"
+                  >
+                    403
+                  </Table.Cell>
+                  <Table.Cell
+                    align="center"
+                    className="px-4 py-4 text-sm popins"
+                  >
+                    Forbidden
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell
+                    align="center"
+                    className="px-4 py-4 text-orange-500 text-sm popins"
+                  >
+                    500
+                  </Table.Cell>
+                  <Table.Cell
+                    align="center"
+                    className="px-4 py-4 text-sm popins"
+                  >
                     Internal server error
-                  </td>
-                </tr>
+                  </Table.Cell>
+                </Table.Row>
 
-                <tr
-                    className={` ${
-                      colors.tableBorder
-                    } border-b`}
-                  >                  <td className="px-4 py-4 font-normal ">200 or 202</td>
-                  <td className="px-4 py-4 font-normal text-green-600">OK</td>
-                </tr>
+                <Table.Row>
+                  <Table.Cell
+                    align="center"
+                    className="px-4 py-4 text-orange-500 text-sm popins"
+                  >
+                    200 or 202
+                  </Table.Cell>
+                  <Table.Cell
+                    align="center"
+                    className="px-4 py-4 text-sm popins text-green-600"
+                  >
+                    OK
+                  </Table.Cell>
+                </Table.Row>
 
-                <tr
-                    className={` ${
-                      colors.tableBorder
-                    } border-b`}
-                  >                  <td className="px-4 py-4 font-normal ">405</td>
-                  <td className="px-4 py-4 font-normal">Method not allowed</td>
-                </tr>
+                <Table.Row>
+                  <Table.Cell
+                    align="center"
+                    className="px-4 py-4 text-orange-500 text-sm popins"
+                  >
+                    405
+                  </Table.Cell>
+                  <Table.Cell
+                    align="center"
+                    className="px-4 py-4 text-sm popins"
+                  >
+                    Method not allowed
+                  </Table.Cell>
+                </Table.Row>
 
-                <tr
-                    className={` ${
-                      colors.tableBorder
-                    } border-b`}
-                  >                  <td className="px-4 py-4 font-normal ">401</td>
-                  <td className="px-4 py-4 font-normal">Unauthorized</td>
-                </tr>
+                <Table.Row>
+                  <Table.Cell
+                    align="center"
+                    className="px-4 py-4 text-orange-500 text-sm popins"
+                  >
+                    401
+                  </Table.Cell>
+                  <Table.Cell
+                    align="center"
+                    className="px-4 py-4 text-sm popins"
+                  >
+                    Unauthorized
+                  </Table.Cell>
+                </Table.Row>
 
-                <tr className="">
-                  <td className="px-4 py-4 font-normal ">429</td>
-                  <td className="px-4 py-4 font-normal">Too many requests</td>
-                </tr>
-              </Table>
-            
+                <Table.Row>
+                  <Table.Cell
+                    align="center"
+                    className="px-4 py-4 text-orange-500 text-sm popins"
+                  >
+                    429
+                  </Table.Cell>
+                  <Table.Cell
+                    align="center"
+                    className="px-4 py-4 text-sm popins"
+                  >
+                    Too many requests
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
           </div>
         </section>
       </div>

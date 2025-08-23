@@ -18,7 +18,6 @@ import Loader from "../../whatsapp/components/Loader";
 import { getCountryList } from "../../apis/common/common";
 import { ProgressSpinner } from "primereact/progressspinner";
 import InputField from "@/components/layout/InputField";
-import { fetchIpDetails } from "@/apis/settings/setting";
 
 const CustomPagination = ({
   totalPages,
@@ -93,7 +92,6 @@ function AccountInfoModal({ show, handleClose }) {
   const [accountInfo, setAccountInfo] = useState([]);
   const [countryList, setCountryList] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
-  const [ipDetails, setIpDetails] = useState([]);
 
   useEffect(() => {
     async function getRcsRateData() {
@@ -124,13 +122,8 @@ function AccountInfoModal({ show, handleClose }) {
     getWhatsAppRateDate();
     getaccountInfoData();
     getCountryListData();
-    IpDetails();
   }, []);
 
-  const IpDetails = async () => {
-    const response = await fetchIpDetails();
-    setIpDetails(response[0]);
-  };
 
   const accountrows = [
     {
@@ -269,6 +262,12 @@ function AccountInfoModal({ show, handleClose }) {
       flex: 1,
       minWidth: 150,
     },
+    {
+      field: "authentication",
+      headerName: "Authentication (INR/Credit)",
+      flex: 1,
+      minWidth: 150,
+    },
   ];
 
   const Rcscolumns = [
@@ -286,6 +285,7 @@ function AccountInfoModal({ show, handleClose }) {
       countryCode: `+ ${item.ISO_code}` ?? "-",
       transactional: item.transactional,
       promotional: item.promotional,
+      authentication: item.authentication,
     }))
     : [];
 
@@ -379,11 +379,7 @@ function AccountInfoModal({ show, handleClose }) {
         ) : (
           <>
             <div className="flex justify-between mb-3">
-              {ipDetails?.ip && (
-                <span className="px-3 py-1 font-sm text-gray-700 rounded-md tracking-wide">
-                  Last Login: {ipDetails?.ip || "-"}({ipDetails?.insert_time})
-                </span>
-              )}
+              <div></div>
               <span className="px-3 py-1 font-medium text-blue-700 bg-blue-100 rounded-md">
                 Account Expiry: {accountInfo[0]?.expiryDate}
               </span>

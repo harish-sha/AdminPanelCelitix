@@ -131,11 +131,11 @@ const SmsCampaignDetailedLogsTable = ({
       headerName: "S.No",
       flex: 0,
       width: 80,
-      // renderCell: (params) => (
-      //   <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
-      //     {params.value}
-      //   </div>
-      // ),
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          {params.value}
+        </div>
+      ),
     },
     {
       field: "mobile_no",
@@ -170,6 +170,7 @@ const SmsCampaignDetailedLogsTable = ({
             whiteSpace: "normal",
             wordWrap: "break-word",
             overflowWrap: "break-word",
+            padding: "5px 0px",
           }}
         >
           {params.value}
@@ -267,7 +268,7 @@ const SmsCampaignDetailedLogsTable = ({
             onClose={closeDropdown}
           >
             {data[params.row.id] ? (
-              <div className="w-[290px] max-w-full px-2">
+              <div className="w-[320px] max-w-full mx-2 px-1">
                 <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
                   {[
                     { label: "Queue Time", key: "que_time" },

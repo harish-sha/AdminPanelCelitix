@@ -131,16 +131,15 @@ const DocsSidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       to: "quickstart",
     },
     {
-      name: "RCS",
-      icon: <FaRegMessage />,
-      label: "RCS",
+      name: "Sms",
+      icon: <LuMessageSquareMore />,
+      label: "SMS",
       type: "dropdown",
       links: [
-        { to: "rcs", label: "Introduction" },
-        { to: "submit-template-rcs", label: "Submit Template" },
-        // { to: "update-template-rcs", label: "Update Template" },
-        // { to: "manage-template-rcs", label: "Manage Template" },
-        // { to: "delete-template-rcs", label: "Delete Template" },
+        // { to: "sms", label: "Introduction" },
+        { to: "submit-template-sms", label: "Submit Template" },
+        // { to: "update-template-sms", label: "Update Template" },
+        // { to: "delete-template-sms", label: "Delete Template" },
       ],
     },
     {
@@ -149,29 +148,30 @@ const DocsSidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "Whatsapp",
       type: "dropdown",
       links: [
-        { to: "whatsapp", label: "Introduction" },
+        // { to: "whatsapp", label: "Introduction" },
         { to: "send-messages-whatsapp", label: "Send Message" },
-        { to: "submit-template-whatsapp", label: "Submit Template old" },
+        // { to: "submit-template-whatsapp", label: "Submit Template old" },
         // { to: "send-template-whatsapp", label: "Send Template old" },
         // { to: "send-message-whatsapp", label: "Send Message" },
       ],
     },
     {
-      name: "Sms",
-      icon: <LuMessageSquareMore />,
-      label: "Sms",
+      name: "RCS",
+      icon: <FaRegMessage />,
+      label: "RCS",
       type: "dropdown",
       links: [
-        { to: "sms", label: "Introduction" },
-        { to: "submit-template-sms", label: "Submit Template" },
-        // { to: "update-template-sms", label: "Update Template" },
-        // { to: "delete-template-sms", label: "Delete Template" },
+        // { to: "rcs", label: "Introduction" },
+        // { to: "submit-template-rcs", label: "Submit Template" },
+        // { to: "update-template-rcs", label: "Update Template" },
+        // { to: "manage-template-rcs", label: "Manage Template" },
+        // { to: "delete-template-rcs", label: "Delete Template" },
       ],
     },
     {
       name: "Twowaysms",
       icon: <TbMessages />,
-      label: "Two Way Sms",
+      label: "Two Way SMS",
       type: "dropdown",
       links: [
         // { to: "twowaysms", label: "Introduction" },
@@ -181,24 +181,12 @@ const DocsSidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
     },
     {
-      name: "Authentication",
-      icon: <SiGoogleauthenticator />,
-      label: "Authentication",
-      type: "dropdown",
-      links: [
-        // { to: "authentication", label: "Introduction" },
-        // { to: "submit-template-authentication", label: "Submit Template" },
-        // { to: "update-template-authentication", label: "Update Template" },
-        // { to: "delete-template-authentication", label: "Delete Template" },
-      ],
-    },
-    {
       name: "Outbound",
       icon: <VscCallOutgoing />,
-      label: "Outbound",
+      label: "OBD",
       type: "dropdown",
       links: [
-        { to: "outbound", label: "Introduction" },
+        // { to: "outbound", label: "Introduction" },
         { to: "submit-template-outbound", label: "Submit Template" },
         // { to: "update-template-outbound", label: "Update Template" },
         // { to: "delete-template-outbound", label: "Delete Template" },
@@ -231,13 +219,25 @@ const DocsSidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     {
       name: "Clicktwocall",
       icon: <MdOutlineTouchApp />,
-      label: "Click-2-call",
+      label: "Click 2 Call",
       type: "dropdown",
       links: [
         // { to: "clicktwocall", label: "Introduction" },
         // { to: "submit-template-clicktwocall", label: "Submit Template" },
         // { to: "update-template-clicktwocall", label: "Update Template" },
         // { to: "delete-template-clicktwocall", label: "Delete Template" },
+      ],
+    },
+    {
+      name: "Authentication",
+      icon: <SiGoogleauthenticator />,
+      label: "OTP Generator",
+      type: "dropdown",
+      links: [
+        // { to: "authentication", label: "Introduction" },
+        // { to: "submit-template-authentication", label: "Submit Template" },
+        // { to: "update-template-authentication", label: "Update Template" },
+        // { to: "delete-template-authentication", label: "Delete Template" },
       ],
     },
     // {
@@ -261,12 +261,20 @@ const DocsSidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     //   type: "single",
     //   to: "help",
     // },
-    {
-      name: "Back2Home",
-      icon: <FaHome />,
-      label: "Dashboard",
+    // {
+    //   name: "Back2Home",
+    //   icon: <FaHome />,
+    //   label: "Dashboard",
+    //   type: "single",
+    //   to: "/",
+    // },
+
+     {
+      name: "gsmerrorcode",
+      icon: <MdOutlineRocketLaunch />,
+      label: "GSM Error Code",
       type: "single",
-      to: "/",
+      to: "gsmerrorcode",
     },
   ];
 
@@ -406,7 +414,7 @@ const DocsSidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       onAnimationComplete={() => {
         setCollapseAnimationDone(!isCollapsed);
       }}
-      className={`mainsidebar ${isDarkMode ? "bg-gray-500 text-white" : "bg-[#cecece] text-gray-800"
+      className={`mainsidebar h-full ${isDarkMode ? "bg-gray-500 text-white" : "bg-[#cecece] text-gray-800"
         }h-screen text-white  popf px-0 pt-3 flex flex-col fixed  left-0 overflow-y-auto overflow-x-hidden z-9  {isCollapsed ? "items-center" : "space-y-0"
         }`}
       style={{ maxHeight: "calc(100vh - 4rem)" }}

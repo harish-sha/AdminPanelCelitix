@@ -1342,11 +1342,11 @@ const WhatsappLiveChatSettings = () => {
     },
     {
       id: 2,
-      name: "Off Hours Message",
+      name: "Agent Inactive Timings",
       button: ["Configure", "Configure Time"],
       desc: "Sends a reply to the user’s first message received outside business hours. Useful for informing users about support timing.",
       message: "",
-      type: "off_hour_msg",
+      type: "inactive_agent_timing",
       tooltip: (
         <>
           <div><b>What it does:</b> Sends a one-time auto-reply to the user’s first message after business hours.</div>
@@ -1366,11 +1366,11 @@ const WhatsappLiveChatSettings = () => {
     },
     {
       id: 4,
-      name: "Inactive-Agent-Timings",
+      name: "Off Hours Message",
       button: ["Configure"],
       desc: "Activates auto-replies during agent off-shift times. Ensures customers receive a response even when no one is online.",
       message: "",
-      type: "inactive_agent_timing",
+      type: "off_hour_msg",
       tooltip: (
         <>
           <div><b>What it does:</b> Auto-replies when no agent is online based on shift time settings.</div>

@@ -25,6 +25,7 @@ import UniversalButton from "@/components/common/UniversalButton.jsx";
 import UniversalSkeleton from "@/components/common/UniversalSkeleton.jsx";
 import { fetchCampaignDetailReport } from "@/apis/rcs/rcs";
 import moment from "moment";
+import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 
 const PaginationList = styled("ul")({
     listStyle: "none",

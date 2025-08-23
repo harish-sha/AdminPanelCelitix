@@ -187,6 +187,10 @@ const Approutes = () => {
         <Route path="managekeywords" element={<TwowayMangeKeyword />} />
         <Route path="twowayreports" element={<TwowayReports />} />
         <Route path="twowayintegration" element={<TwowayIntegration />} />
+        <Route
+          path="smscampaigndetailsreport"
+          element={<DetailedLogsInsidersDetails />}
+        />
 
         {/* whatsapp */}
         <Route path="managetemplate" element={<ManageTemplate />} />

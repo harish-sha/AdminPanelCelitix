@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import Table from "../../components/Table";
+// import Table from "../../components/Table";
 import CircleIcon from "@mui/icons-material/Circle";
 import { useTheme } from "../../context/ThemeContext";
 import { themeColors } from "../../themeColors";
 import RequestComponent from "../../components/RequestComponent";
 import ResponseComponent from "../../components/ResponseComponent";
 import BaseurlComponent from "../../components/BaseurlComponent";
+import Table from "../../components/Tablenew";
 
 import { Link } from "react-router-dom";
 
@@ -58,22 +59,11 @@ const SubmitTemplateWhatsapp = () => {
   //   return () => window.removeEventListener("scroll", handleScroll);
   // }, []);
 
-  // const activeIndex = sections.findIndex((s) => s.id === activeSection);
-  // const scrollerPosition = (activeIndex / (sections.length - 1)) * 100;
-
-  // const scrollToSection = (sectionId) => {
-  //   const element = document.getElementById(sectionId);
-  //   if (element) {
-  //     element.scrollIntoView({ behavior: "smooth" });
-  //     setActiveSection(sectionId);
-  //   }
-  // };
-
-  const [active, setActive] = useState("text-templates");
-  const containerRef = useRef(null);
+  const [active, setActive] = useState(null);
+  const [scroller, setScroller] = useState(0);
 
   useEffect(() => {
-    const container = containerRef.current || document;
+    // IntersectionObserver for highlighting active section
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -91,6 +81,20 @@ const SubmitTemplateWhatsapp = () => {
     });
 
     return () => observer.disconnect();
+  }, [sections]);
+
+  useEffect(() => {
+    // Scroll listener for smooth progress tracking
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      setScroller(progress);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const HeaderTableColumns = ["Name", "Value"];
@@ -1144,33 +1148,52 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_TOKEN <br />{" "}
-                  <span className="text-gray-400">
-                    Enter the access token shared by us
-                  </span>
-                </td>
-              </tr>
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Name
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Value
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
 
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_WABA_ID <br />{" "}
-                  <span className="text-gray-400">
-                    Enter your WhatsApp Business Account ID
-                  </span>
-                </td>
-              </tr>
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    x-access-token
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    YOUR_TOKEN <br />
+                    <span className="text-gray-400">
+                      Enter the access token shared by us
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">Content-type</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  application/json
-                </td>
-              </tr>
+                <Table.Row>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    x-waba-id
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    YOUR_WABA_ID <br />
+                    <span className="text-gray-400">
+                      Enter your WhatsApp Business Account ID
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    Content-type
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    application/json
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
             </Table>
           </div>
 
@@ -1181,119 +1204,147 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
           </div>
 
           <div className="mt-5 flex justify-center items-center">
-            <Table columns={RequestParameterTextTemplateColumn}>
-              <tr className={` ${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-orange-500 text-sm popins">
-                  String
-                </td>
-                <td className="px-4 py-4  text-sm popins">
-                  <span className=" text-black font-semibold">Required. </span>
-                  <br /> <br /> Template name. <br /> <br /> Maximum 512
-                  characters.
-                </td>
-                <td className="px-4 py-4">order_confirmation</td>
-              </tr>
-              <tr className={` ${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-orange-500 text-sm popins">
-                  Enum
-                </td>
-                <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black font-medium">Required. </span>{" "}
-                  <br /> <br /> Template category. See{" "}
-                  <span className="text-blue-500 hover:underline">
-                    <Link
-                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-categories"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Template Categories
-                    </Link>
-                  </span>{" "}
-                  below.
-                </td>
-                <td className="px-4 py-4"> UTILITY </td>
-              </tr>
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Placeholder
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Description
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Sample Value
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
 
-              <tr className={` ${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-orange-500 text-sm popins">
-                  Boolean
-                </td>
-                <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black font-medium">Optional.</span>{" "}
-                  <br /> <br /> Set to true to allow us to{" "}
-                  <span className="text-blue-500 hover:underline">
-                    <Link
-                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#automatic-categorization"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      automatically assign a category.
-                    </Link>
-                  </span>{" "}
-                  If omitted, the template may be rejected due to
-                  miscategorization.
-                </td>
-                <td className="px-4 py-4  text-sm popins "> true </td>
-              </tr>
+              <Table.Body>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black font-semibold">Required. </span>
+                    <br />
+                    <br />
+                    Template name. <br />
+                    <br />
+                    Maximum 512 characters.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">
+                    order_confirmation
+                  </Table.Cell>
+                </Table.Row>
 
-              <tr className={` ${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-orange-500 text-sm popins">
-                  Enum
-                </td>
-                <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black font-medium">Required. </span>{" "}
-                  <br />
-                  <br /> Template{" "}
-                  <span className="text-blue-500 hover:underline">
-                    <Link
-                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/supported-languages"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      language and locale code.
-                    </Link>
-                  </span>
-                </td>
-                <td className="px-4 py-4  text-sm popins ">en_US</td>
-              </tr>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    Enum
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black font-medium">Required. </span>
+                    <br />
+                    <br />
+                    Template category. See{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-categories"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Template Categories
+                      </Link>
+                    </span>{" "}
+                    below.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">UTILITY</Table.Cell>
+                </Table.Row>
 
-              <tr className="">
-                <td className="px-4 py-4 text-orange-500 text-sm popins">
-                  Array of objects
-                </td>
-                <td className="px-4 py-4  text-sm popins">
-                  {" "}
-                  <span className="text-black font-medium">
-                    Required.{" "}
-                  </span>{" "}
-                  <br />
-                  <br /> Components that make up the template. See{" "}
-                  <span className="text-blue-500 hover:underline">
-                    <Link
-                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-components"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {" "}
-                      Template Components{" "}
-                    </Link>
-                  </span>
-                  below.{" "}
-                </td>
-                <td className="px-4 py-4  text-sm popins">
-                  See{" "}
-                  <span className="text-blue-500 hover:underline">
-                    <Link
-                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-components"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Template Components{" "}
-                    </Link>
-                  </span>
-                  below.
-                </td>
-              </tr>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    Boolean
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black font-medium">Optional. </span>
+                    <br />
+                    <br />
+                    Set to true to allow us to{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#automatic-categorization"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        automatically assign a category.
+                      </Link>
+                    </span>{" "}
+                    If omitted, the template may be rejected due to
+                    miscategorization.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    true
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    Enum
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black font-medium">Required. </span>
+                    <br />
+                    <br />
+                    Template{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/supported-languages"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        language and locale code.
+                      </Link>
+                    </span>
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    en_US
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    Array of objects
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black font-medium">Required. </span>
+                    <br />
+                    <br />
+                    Components that make up the template. See{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-components"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Template Components
+                      </Link>
+                    </span>{" "}
+                    below.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    See{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-components"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Template Components
+                      </Link>
+                    </span>{" "}
+                    below.
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
             </Table>
           </div>
 
@@ -1379,33 +1430,52 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_TOKEN <br />{" "}
-                  <span className="text-gray-400">
-                    Enter the access token shared by us
-                  </span>
-                </td>
-              </tr>
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Name
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Value
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
 
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_WABA_ID <br />{" "}
-                  <span className="text-gray-400">
-                    Enter your WhatsApp Business Account ID
-                  </span>
-                </td>
-              </tr>
+              <Table.Body>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    x-access-token
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    YOUR_TOKEN <br />
+                    <span className="text-gray-400">
+                      Enter the access token shared by us
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">Content-type</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  application/json
-                </td>
-              </tr>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    x-waba-id
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    YOUR_WABA_ID <br />
+                    <span className="text-gray-400">
+                      Enter your WhatsApp Business Account ID
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    Content-type
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    application/json
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
             </Table>
           </div>
 
@@ -1416,31 +1486,53 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
           </div>
 
           <div className="mt-5 flex justify-center items-center">
-            <Table columns={RequestParameterMediaTemplateColumn}>
-              <tr className={` ${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-orange-500 text-sm popins"></td>
-                <td className="px-4 py-4  text-sm popins">
-                  Indicates media asset type. Set to IMAGE, VIDEO, or DOCUMENT.
-                </td>
-                <td className="px-4 py-4">IMAGE</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-4 text-orange-500 text-sm popins"></td>
-                <td className="px-4 py-4  text-sm popins">
-                  Uploaded media asset handle. Use the{" "}
-                  <span className="text-blue-500 hover:underline">
-                    <Link
-                      to="https://developers.facebook.com/docs/graph-api/guides/upload"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Resumable Upload API
-                    </Link>
-                  </span>{" "}
-                  to generate an asset handle.
-                </td>
-                <td className="px-4 py-4"> 4::aW...</td>
-              </tr>
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Placeholder
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Description
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Example Value
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins"></Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    Indicates media asset type. Set to IMAGE, VIDEO, or
+                    DOCUMENT.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    IMAGE
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins"></Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    Uploaded media asset handle. Use the{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/graph-api/guides/upload"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Resumable Upload API
+                      </Link>
+                    </span>{" "}
+                    to generate an asset handle.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    4::aW...
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
             </Table>
           </div>
 
@@ -1494,33 +1586,52 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_TOKEN <br />{" "}
-                  <span className="text-gray-400">
-                    Enter the access token shared by us
-                  </span>
-                </td>
-              </tr>
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Name
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Value
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
 
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_WABA_ID <br />{" "}
-                  <span className="text-gray-400">
-                    Enter your WhatsApp Business Account ID
-                  </span>
-                </td>
-              </tr>
+              <Table.Body>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    x-access-token
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    YOUR_TOKEN <br />
+                    <span className="text-gray-400">
+                      Enter the access token shared by us
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">Content-type</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  application/json
-                </td>
-              </tr>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    x-waba-id
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    YOUR_WABA_ID <br />
+                    <span className="text-gray-400">
+                      Enter your WhatsApp Business Account ID
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    Content-type
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    application/json
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
             </Table>
           </div>
 
@@ -1634,33 +1745,52 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_TOKEN <br />{" "}
-                  <span className="text-gray-400">
-                    Enter the access token shared by us
-                  </span>
-                </td>
-              </tr>
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Name
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Value
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
 
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_WABA_ID <br />{" "}
-                  <span className="text-gray-400">
-                    Enter your WhatsApp Business Account ID
-                  </span>
-                </td>
-              </tr>
+              <Table.Body>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    x-access-token
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    YOUR_TOKEN <br />
+                    <span className="text-gray-400">
+                      Enter the access token shared by us
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">Content-type</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  application/json
-                </td>
-              </tr>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    x-waba-id
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    YOUR_WABA_ID <br />
+                    <span className="text-gray-400">
+                      Enter your WhatsApp Business Account ID
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    Content-type
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    application/json
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
             </Table>
           </div>
 
@@ -1671,7 +1801,7 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
           </div>
 
           <div className="mt-5 flex justify-center items-center">
-            <Table columns={RequestParameterCarouselTemplateColumn}>
+            {/* <Table columns={RequestParameterCarouselTemplateColumn}>
               <tr className={` ${colors.tableBorder} border-b`}>
                 <td className="px-4 py-4 text-orange-500 text-sm popins">
                   String
@@ -1974,6 +2104,329 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                   https://www.luckyshrub.com/shop?promo=summer_lemons_2023
                 </td>
               </tr>
+            </Table> */}
+
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Name
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Value
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Example
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black font-medium">Required</span>
+                    <br />
+                    <br />
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/media-card-carousel-templates#message-bubble"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Message bubble
+                      </Link>
+                    </span>{" "}
+                    text string. Supports variables.
+                    <br />
+                    <br /> Maximum 1024 characters.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">
+                    Summer is here, and we've got the freshest produce around!
+                    Use code <span>{"{{1}}"}</span> to get{" "}
+                    <span>{"{{2}}"}</span> off your next order.
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    Array of strings
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black font-medium">
+                      Required if the message bubble text string uses variables.
+                    </span>
+                    <br />
+                    <br />
+                    Array of example variable strings. Number of strings must
+                    match the number of variables included in the string.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">"15OFF", "15%"</Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black font-medium">Required.</span>
+                    <br />
+                    <br />
+                    Card body text. Support variables.
+                    <br />
+                    <br /> Maximum 160 characters.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">
+                    Rare lemons for unique cocktails. Use code{" "}
+                    <span>{"{{1}}"}</span> to get <span>{"{{2}}"}</span> off all
+                    produce.
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    Array of strings
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="font-medium text-black">
+                      Required if using card body text with variables.
+                    </span>
+                    <br />
+                    <br />
+                    Card body text example variables.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">"15OFF","15%"</Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    Enum
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black font-medium">Required</span>
+                    <br />
+                    <br />
+                    Card
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/components#media-headers"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        media header
+                      </Link>
+                    </span>{" "}
+                    format. Must be IMAGE or VIDEO.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">IMAGE</Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    Media asset handle
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="font-medium text-black">Required</span>
+                    <br />
+                    <br />
+                    Uploaded media asset handle. Use the{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/graph-api/guides/upload"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Resumable Upload API
+                      </Link>
+                    </span>{" "}
+                    to generate an asset handle.
+                    <br />
+                    <br />
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/carousel-templates#carousel-cards"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        See Carousel
+                      </Link>
+                    </span>{" "}
+                    Cards for media asset requirements.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">4::aW...</Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="font-medium text-black">
+                      Required if using a quick reply button.
+                    </span>
+                    <br />
+                    <br />
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/components#quick-reply-buttons"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Quick reply button
+                      </Link>
+                    </span>{" "}
+                    label text.
+                    <br />
+                    <br />
+                    Maximum 25 characters.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">
+                    Send more like this
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    Enum
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="font-medium text-black">Required.</span>
+                    <br />
+                    <br /> Must be MARKETING or UTILITY.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">MARKETING</Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    Enum
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    Template{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/supported-languages"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        language and locale code.
+                      </Link>
+                    </span>
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">en_US</Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="font-medium text-black">Required.</span>
+                    <br />
+                    <br />
+                    Template name.
+                    <br />
+                    <br /> Maximum 512 characters.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">
+                    summer_carousel_promo_2023
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="font-medium text-black">
+                      Required if using a URL button.
+                    </span>
+                    <br />
+                    <br />
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/components#url-buttons"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        URL button
+                      </Link>
+                    </span>{" "}
+                    label text. Supports 1 variable.
+                    <br />
+                    <br /> 25 characters maximum.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">Buy now</Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="font-medium text-black">
+                      Required if using a URL button.
+                    </span>
+                    <br />
+                    <br />
+                    URL of website that loads in the device's default mobile web
+                    browser when the{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/components#url-buttons"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        URL button
+                      </Link>
+                    </span>{" "}
+                    is tapped by the app user.
+                    <br />
+                    <br />
+                    Supports 1 variable, appended to the end of the URL string.
+                    <br />
+                    <br /> Maximum 2000 characters.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">
+                    https://www.luckyshrub.com/shop?promo=<p>{"{{1}}"}</p>
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="font-medium text-black">
+                      Required if using a URL button.
+                    </span>
+                    <br />
+                    <br />
+                    URL of website. Supports 1 variable.
+                    <br />
+                    <br />
+                    If using a variable, add sample variable property to the end
+                    of the URL string. The URL loads in the device's default
+                    mobile web browser when the customer taps the{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/components#url-buttons"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        URL button
+                      </Link>
+                    </span>{" "}
+                    <br />
+                    <br /> Maximum 2000 characters.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">
+                    https://www.luckyshrub.com/shop?promo=summer_lemons_2023
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
             </Table>
           </div>
 
@@ -2072,7 +2525,7 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
+            {/* <Table columns={HeaderTableColumns}>
               <tr className={`${colors.tableBorder} border-b`}>
                 <td className="px-4 py-4 text-sm popins">x-access-token</td>
                 <td className="px-4 py-4 text-sm popins text-orange-500">
@@ -2099,6 +2552,53 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                   application/json
                 </td>
               </tr>
+            </Table> */}
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Name
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Value
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    x-access-token
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    YOUR_TOKEN <br />
+                    <span className="text-gray-400">
+                      Enter the access token shared by us
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    x-waba-id
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    YOUR_WABA_ID <br />
+                    <span className="text-gray-400">
+                      Enter your WhatsApp Business Account ID
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    Content-type
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    application/json
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
             </Table>
           </div>
 
@@ -2109,7 +2609,7 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
           </div>
 
           <div className="mt-5 flex justify-center items-center">
-            <Table columns={RequestParameterCarouselTemplateColumn}>
+            {/* <Table columns={RequestParameterCarouselTemplateColumn}>
               <tr className={` ${colors.tableBorder} border-b`}>
                 <td className="px-4 py-4 text-orange-500 text-sm popins">
                   String
@@ -2350,6 +2850,286 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                   https://awesomedestinations.com/offers?ref=n3mtql
                 </td>
               </tr>
+            </Table> */}
+
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Name
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Value
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Example
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black font-medium">Required</span>
+                    <br />
+                    <br />
+                    Body component text. Supports variables.
+                    <br />
+                    <br />
+                    Maximum 600 characters.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">
+                    Good news,<span>{"{{1}}"}</span>! Use code{" "}
+                    <span>{"{{2}}"}</span> to get 25% off all Caribbean
+                    Destination packages!
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    Array of strings
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black font-medium">
+                      Required if body component text uses variables.
+                    </span>
+                    <br />
+                    <br />
+                    Array of example variable strings.
+                    <br />
+                    <br />
+                    Must supply examples for all placeholders in string.
+                    <br />
+                    <br />
+                    No maximum, but counts against maximum.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">
+                    ["Harsh","HOTS25"]
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    Boolean
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black font-medium">Optional.</span>
+                    <br />
+                    <br />
+                    Set to true to have the{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/limited-time-offer-templates#offer-expiration-details"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        offer expiration details
+                      </Link>
+                    </span>{" "}
+                    appear in the delivered message.
+                    <br />
+                    <br />
+                    If set to true, the copy code button component must be
+                    included in the buttons array, and must appear first in the
+                    array.
+                    <br />
+                    <br />
+                    If set to false, offer expiration details will not appear in
+                    the delivered message and the copy code button component is
+                    optional. If including the copy code button, it must appear
+                    first in the buttons array.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">true</Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    Media asset handle
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="font-medium text-black">
+                      Required if using an image or video header.
+                    </span>
+                    <br />
+                    <br />
+                    Uploaded media asset handle. Use the{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link to="" target="_blank" rel="noopener noreferrer">
+                        Resumable Upload API
+                      </Link>
+                    </span>{" "}
+                    to generate an asset handle.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">4::aW...</Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    Enum
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black font-medium">
+                      Required if using a header.
+                    </span>
+                    <br />
+                    <br />
+                    Can be IMAGE, or VIDEO.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">IMAGE</Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="font-medium text-black">Required</span>
+                    <br />
+                    <br />
+                    Offer details text.
+                    <br />
+                    <br />
+                    Maximum 16 characters.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">Expiring offer!</Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="font-medium text-black">Required</span>
+                    <br />
+                    <br />
+                    Example offer code.
+                    <br />
+                    <br />
+                    Maximum 15 characters.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">HOTS25</Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    Enum
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="font-medium text-black">Required.</span>
+                    <br />
+                    <br /> Template{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/supported-languages"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        language and locale code.
+                      </Link>
+                    </span>
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">en</Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black">Required.</span>
+                    <br />
+                    <br />
+                    Template name.
+                    <br />
+                    <br />
+                    Maximum 512 characters.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">
+                    limited_time_offer
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="font-medium text-black">Required.</span>
+                    <br />
+                    <br />
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/components#url-buttons"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        URL button
+                      </Link>
+                    </span>{" "}
+                    label text. Supports 1 variable.
+                    <br />
+                    <br />
+                    25 characters maximum.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">Book now!</Table.Cell>
+                </Table.Row>
+
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="font-medium text-black">Required</span>
+                    <br />
+                    <br />
+                    URL of website that loads in the device's default mobile web
+                    browser when the{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/components#url-buttons"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        URL button
+                      </Link>
+                    </span>{" "}
+                    is tapped by the WhatsApp user.
+                    <br />
+                    <br />
+                    Supports 1 variable appended to the end of the URL string.
+                    <br />
+                    <br />
+                    Maximum 2000 characters.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">
+                    https://awesomedestinations.com/offers?code=
+                    <span>{"{{1}}"}</span>
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="font-medium text-black">
+                      Required if URL uses a variable.
+                    </span>
+                    <br />
+                    <br />
+                    Example URL with example variable appended to the end.
+                    <br />
+                    <br />
+                    No maximum, but value counts against maximum.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">
+                    https://awesomedestinations.com/offers?ref=n3mtql
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
             </Table>
           </div>
 
@@ -2455,33 +3235,52 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_TOKEN <br />{" "}
-                  <span className="text-gray-400">
-                    Enter the access token shared by us
-                  </span>
-                </td>
-              </tr>
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Name
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Value
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
 
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_WABA_ID <br />{" "}
-                  <span className="text-gray-400">
-                    Enter your WhatsApp Business Account ID
-                  </span>
-                </td>
-              </tr>
+              <Table.Body>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    x-access-token
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    YOUR_TOKEN <br />
+                    <span className="text-gray-400">
+                      Enter the access token shared by us
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">Content-type</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  application/json
-                </td>
-              </tr>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    x-waba-id
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    YOUR_WABA_ID <br />
+                    <span className="text-gray-400">
+                      Enter your WhatsApp Business Account ID
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    Content-type
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+                    application/json
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
             </Table>
           </div>
 
@@ -2492,53 +3291,76 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
           </div>
 
           <div className="mt-5 flex justify-center items-center">
-            <Table columns={RequestParameterMediaTemplateColumn}>
-              <tr className={` ${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-orange-500 text-sm popins">
-                  String
-                </td>
-                <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black font-medium">Required</span>{" "}
-                  <br /> <br />
-                  Template name. <br /> <br />
-                  Maximum 512 characters.
-                </td>
-                <td className="px-4 py-4">fall2023_promotion</td>
-              </tr>
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Type
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Description
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="left" className="min-w-52">
+                    Example
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
 
-              <tr className={` ${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-orange-500 text-sm popins">
-                  Enum
-                </td>
-                <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black font-medium">Required</span>{" "}
-                  <br /> <br />
-                  Template{" "}
-                  <span className="text-blue-500 hover:underline">
-                    <Link
-                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/supported-languages"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      language and locale code.
-                    </Link>
-                  </span>
-                </td>
-                <td className="px-4 py-4">en_US</td>
-              </tr>
+              <Table.Body>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black font-medium">Required</span>
+                    <br />
+                    <br />
+                    Template name. <br />
+                    <br />
+                    Maximum 512 characters.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">
+                    fall2023_promotion
+                  </Table.Cell>
+                </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-orange-500 text-sm popins">
-                  String
-                </td>
-                <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black font-medium">Required</span>{" "}
-                  <br /> <br />
-                  Coupon code to be copied when tapped. <br /> <br />
-                  Maximum 15 characters.
-                </td>
-                <td className="px-4 py-4">25OFF</td>
-              </tr>
+                <Table.Row className={`${colors.tableBorder} border-b`}>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    Enum
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black font-medium">Required</span>
+                    <br />
+                    <br />
+                    Template{" "}
+                    <span className="text-blue-500 hover:underline">
+                      <Link
+                        to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/supported-languages"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        language and locale code.
+                      </Link>
+                    </span>
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">en_US</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+                    String
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
+                    <span className="text-black font-medium">Required</span>
+                    <br />
+                    <br />
+                    Coupon code to be copied when tapped. <br />
+                    <br />
+                    Maximum 15 characters.
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4">25OFF</Table.Cell>
+                </Table.Row>
+              </Table.Body>
             </Table>
           </div>
 
@@ -2626,32 +3448,44 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
           </div>
 
           <div className="mt-5 flex justify-center items-center">
-            <Table columns={RequestParameterMediaTemplateColumn}>
-              <tr className={` ${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-orange-500 text-sm popins"></td>
-                <td className="px-4 py-4  text-sm popins">
-                  Indicates media asset type. Set to IMAGE, VIDEO, or DOCUMENT.
-                </td>
-                <td className="px-4 py-4">IMAGE</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-4 text-orange-500 text-sm popins"></td>
-                <td className="px-4 py-4  text-sm popins">
-                  Uploaded media asset handle. Use the{" "}
-                  <span className="text-blue-500 hover:underline">
-                    <Link
-                      to="https://developers.facebook.com/docs/graph-api/guides/upload"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Resumable Upload API
-                    </Link>
-                  </span>{" "}
-                  to generate an asset handle.
-                </td>
-                <td className="px-4 py-4"> 4::aW...</td>
-              </tr>
-            </Table>
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">Name</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Description</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Example</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
+
+  <Table.Body>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins"></Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins">
+        Indicates media asset type. Set to IMAGE, VIDEO, or DOCUMENT.
+      </Table.Cell>
+      <Table.Cell className="px-4 py-4">IMAGE</Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins"></Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins">
+        Uploaded media asset handle. Use the{" "}
+        <span className="text-blue-500 hover:underline">
+          <Link
+            to="https://developers.facebook.com/docs/graph-api/guides/upload"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Resumable Upload API
+          </Link>
+        </span>{" "}
+        to generate an asset handle.
+      </Table.Cell>
+      <Table.Cell className="px-4 py-4">4::aW...</Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
@@ -2660,34 +3494,48 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_TOKEN <br />{" "}
-                  <span className="text-gray-400">
-                    Enter the access token shared by us
-                  </span>
-                </td>
-              </tr>
+           <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">
+        Name
+      </Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">
+        Value
+      </Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
 
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_WABA_ID <br />{" "}
-                  <span className="text-gray-400">
-                    Enter your WhatsApp Business Account ID
-                  </span>
-                </td>
-              </tr>
+  <Table.Body>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-access-token</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_TOKEN <br />
+        <span className="text-gray-400">
+          Enter the access token shared by us
+        </span>
+      </Table.Cell>
+    </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">Content-type</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  application/json
-                </td>
-              </tr>
-            </Table>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-waba-id</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_WABA_ID <br />
+        <span className="text-gray-400">
+          Enter your WhatsApp Business Account ID
+        </span>
+      </Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-sm popins">Content-type</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        application/json
+      </Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
           </div>
 
           <div className="flex flex-col items-center justify-center mt-4">
@@ -2740,28 +3588,38 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  TOKEN
-                </td>
-              </tr>
+           <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">Name</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Value</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
 
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_WABA_ID
-                </td>
-              </tr>
+  <Table.Body>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-access-token</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        TOKEN
+      </Table.Cell>
+    </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">Content-Type</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  application/json
-                </td>
-              </tr>
-            </Table>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-waba-id</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_WABA_ID
+      </Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-sm popins">Content-Type</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        application/json
+      </Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
           </div>
 
           <div className="flex flex-col items-center justify-center mt-4">
@@ -2802,34 +3660,54 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_TOKEN <br />{" "}
-                  <span className="text-gray-400">
-                    Enter the access token shared by us
-                  </span>
-                </td>
-              </tr>
+           <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">
+        Name
+      </Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">
+        Value
+      </Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
 
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_WABA_ID <br />{" "}
-                  <span className="text-gray-400">
-                    Enter your WhatsApp Business Account ID
-                  </span>
-                </td>
-              </tr>
+  <Table.Body>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">
+        x-access-token
+      </Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_TOKEN <br />
+        <span className="text-gray-400">
+          Enter the access token shared by us
+        </span>
+      </Table.Cell>
+    </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">Content-type</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  application/json
-                </td>
-              </tr>
-            </Table>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">
+        x-waba-id
+      </Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_WABA_ID <br />
+        <span className="text-gray-400">
+          Enter your WhatsApp Business Account ID
+        </span>
+      </Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-sm popins">
+        Content-type
+      </Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        application/json
+      </Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
           </div>
 
           <div className="flex flex-col items-center justify-center mt-4">
@@ -2972,47 +3850,54 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
           </div>
 
           <div className="mt-5 flex flex-col justify-center items-center">
-            <Table columns={EditingTemplateCategoryPropertiesColumn}>
-              <tr className={` ${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-orange-500 text-sm popins">
-                  String
-                </td>
-                <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black font-medium">
-                    Required if components property is omitted.
-                  </span>
-                  <br />
-                  Template category.
-                </td>
-                <td className="px-4 py-4">AUTHENTICATION</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-4 text-orange-500 text-sm popins">
-                  Array
-                </td>
-                <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black font-medium">
-                    Required if category property is omitted.
-                  </span>{" "}
-                  <br />
-                  Array of template components objects.
-                </td>
-                <td className="px-4 py-4">
-                  {" "}
-                  See{" "}
-                  <span className="text-blue-500 underline">
-                    <Link
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#"
-                    >
-                      Example Request (Editing Components){" "}
-                    </Link>
-                  </span>
-                  below.{" "}
-                </td>
-              </tr>
-            </Table>
+          <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">Type</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Description</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Value</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
+
+  <Table.Body>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">String</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins">
+        <span className="text-black font-medium">
+          Required if components property is omitted.
+        </span>
+        <br />
+        Template category.
+      </Table.Cell>
+      <Table.Cell className="px-4 py-4">AUTHENTICATION</Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">Array</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins">
+        <span className="text-black font-medium">
+          Required if category property is omitted.
+        </span>
+        <br />
+        Array of template components objects.
+      </Table.Cell>
+      <Table.Cell className="px-4 py-4">
+        See{" "}
+        <span className="text-blue-500 underline">
+          <Link
+            target="_blank"
+            rel="noopener noreferrer"
+            to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#"
+          >
+            Example Request (Editing Components)
+          </Link>
+        </span>{" "}
+        below.
+      </Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
 
             <p className="mt-4 text-center font-medium ">
               Example request to change template's category from UTILITY to
@@ -3026,34 +3911,44 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_TOKEN <br />{" "}
-                  <span className="text-gray-400">
-                    Enter the access token shared by us
-                  </span>
-                </td>
-              </tr>
+           <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">Name</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Value</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
 
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_WABA_ID <br />{" "}
-                  <span className="text-gray-400">
-                    Enter your WhatsApp Business Account ID
-                  </span>
-                </td>
-              </tr>
+  <Table.Body>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-access-token</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_TOKEN <br />
+        <span className="text-gray-400">
+          Enter the access token shared by us
+        </span>
+      </Table.Cell>
+    </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">Content-type</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  application/json
-                </td>
-              </tr>
-            </Table>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-waba-id</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_WABA_ID <br />
+        <span className="text-gray-400">
+          Enter your WhatsApp Business Account ID
+        </span>
+      </Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-sm popins">Content-type</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        application/json
+      </Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
           </div>
 
           <div className="flex flex-col items-center justify-center mt-4">
@@ -3112,34 +4007,44 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_TOKEN <br />{" "}
-                  <span className="text-gray-400">
-                    Enter the access token shared by us
-                  </span>
-                </td>
-              </tr>
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">Name</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Value</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
 
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_WABA_ID <br />{" "}
-                  <span className="text-gray-400">
-                    Enter your WhatsApp Business Account ID
-                  </span>
-                </td>
-              </tr>
+  <Table.Body>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-access-token</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_TOKEN <br />
+        <span className="text-gray-400">
+          Enter the access token shared by us
+        </span>
+      </Table.Cell>
+    </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">Content-type</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  application/json
-                </td>
-              </tr>
-            </Table>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-waba-id</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_WABA_ID <br />
+        <span className="text-gray-400">
+          Enter your WhatsApp Business Account ID
+        </span>
+      </Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-sm popins">Content-type</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        application/json
+      </Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
           </div>
 
           <div className="flex flex-col items-center justify-center mt-4">
@@ -3216,44 +4121,50 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
           </div>
 
           <div className="mt-5 flex justify-center items-center">
-            <Table columns={QueryStringParameterGetTemplateColumn}>
-              <tr className={` ${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-orange-500 text-sm popins">
-                  Comma-separated list
-                </td>
-                <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black font-medium">Optional</span>{" "}
-                  <br />
-                  <br />
-                  List of{" "}
-                  <span className="text-blue-500 hover:underline">
-                    {" "}
-                    <Link
-                      to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-hsm/#fields"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      template fields{" "}
-                    </Link>
-                  </span>{" "}
-                  you want returned.
-                </td>
-                <td className="px-4 py-4">name,status</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-4 text-orange-500 text-sm popins">
-                  Integer
-                </td>
-                <td className="px-4 py-4  text-sm popins">
-                  <span className="text-black font-medium">Optional</span>{" "}
-                  <br />
-                  <br />
-                  The maximum number of templates you want returned in each page
-                  of results.
-                </td>
-                <td className="px-4 py-4"> 10</td>
-              </tr>
-            </Table>
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">Type</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Description</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Example</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
+
+  <Table.Body>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+        Comma-separated list
+      </Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins">
+        <span className="text-black font-medium">Optional</span> <br /><br />
+        List of{" "}
+        <span className="text-blue-500 hover:underline">
+          <Link
+            to="https://developers.facebook.com/docs/graph-api/reference/whats-app-business-hsm/#fields"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            template fields
+          </Link>
+        </span>{" "}
+        you want returned.
+      </Table.Cell>
+      <Table.Cell className="px-4 py-4">name,status</Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins">
+        Integer
+      </Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins">
+        <span className="text-black font-medium">Optional</span> <br /><br />
+        The maximum number of templates you want returned in each page of results.
+      </Table.Cell>
+      <Table.Cell className="px-4 py-4">10</Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
@@ -3262,34 +4173,44 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_TOKEN <br />{" "}
-                  <span className="text-gray-400">
-                    Enter the access token shared by us
-                  </span>
-                </td>
-              </tr>
+           <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">Name</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Value</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
 
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_WABA_ID <br />{" "}
-                  <span className="text-gray-400">
-                    Enter your WhatsApp Business Account ID
-                  </span>
-                </td>
-              </tr>
+  <Table.Body>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-access-token</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_TOKEN <br />
+        <span className="text-gray-400">
+          Enter the access token shared by us
+        </span>
+      </Table.Cell>
+    </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">Content-type</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  application/json
-                </td>
-              </tr>
-            </Table>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-waba-id</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_WABA_ID <br />
+        <span className="text-gray-400">
+          Enter your WhatsApp Business Account ID
+        </span>
+      </Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-sm popins">Content-type</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        application/json
+      </Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
           </div>
 
           <div className="flex flex-col items-center justify-center mt-4">
@@ -3342,34 +4263,44 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_TOKEN <br />{" "}
-                  <span className="text-gray-400">
-                    Enter the access token shared by us
-                  </span>
-                </td>
-              </tr>
+           <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">Name</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Value</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
 
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_WABA_ID <br />{" "}
-                  <span className="text-gray-400">
-                    Enter your WhatsApp Business Account ID
-                  </span>
-                </td>
-              </tr>
+  <Table.Body>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-access-token</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_TOKEN <br />
+        <span className="text-gray-400">
+          Enter the access token shared by us
+        </span>
+      </Table.Cell>
+    </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">Content-type</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  application/json
-                </td>
-              </tr>
-            </Table>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-waba-id</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_WABA_ID <br />
+        <span className="text-gray-400">
+          Enter your WhatsApp Business Account ID
+        </span>
+      </Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-sm popins">Content-type</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        application/json
+      </Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
           </div>
 
           <div className="flex flex-col items-center justify-center mt-4">
@@ -3548,55 +4479,65 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
           </div>
 
           <div className="mt-5 flex justify-center items-center">
-            <Table columns={QueryParameterColumn}>
-              <tr className={` ${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-orange-500 text-sm popins"></td>
-                <td className="px-4 py-4  text-sm popins">
-                  ID of the WhatsApp Message Template to target.
-                </td>
-              </tr>
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">Name</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Value</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
 
-              <tr className={` ${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-orange-500 text-sm popins"></td>
-                <td className="px-4 py-4  text-sm popins">
-                  ID of the WhatsApp Message Template to compare the target to.
-                </td>
-              </tr>
+  <Table.Body>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins"></Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins">
+        ID of the WhatsApp Message Template to target.
+      </Table.Cell>
+    </Table.Row>
 
-              <tr className={` ${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-orange-500 text-sm popins"></td>
-                <td className="px-4 py-4  text-sm popins">
-                  UNIX timestamp indicating start of timeframe. See{" "}
-                  <span className="text-blue-500 hover:underline">
-                    <Link
-                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/template-comparison/#timeframes"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Timeframes
-                    </Link>
-                  </span>
-                  .
-                </td>
-              </tr>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins"></Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins">
+        ID of the WhatsApp Message Template to compare the target to.
+      </Table.Cell>
+    </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-orange-500 text-sm popins"></td>
-                <td className="px-4 py-4  text-sm popins">
-                  UNIX timestamp indicating end of timeframe. See{" "}
-                  <span className="text-blue-500 hover:underline">
-                    <Link
-                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/template-comparison/#timeframes"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Timeframes
-                    </Link>
-                  </span>
-                  .
-                </td>
-              </tr>
-            </Table>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins"></Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins">
+        UNIX timestamp indicating start of timeframe. See{" "}
+        <span className="text-blue-500 hover:underline">
+          <Link
+            to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/template-comparison/#timeframes"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Timeframes
+          </Link>
+        </span>
+        .
+      </Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-orange-500 text-sm popins"></Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins">
+        UNIX timestamp indicating end of timeframe. See{" "}
+        <span className="text-blue-500 hover:underline">
+          <Link
+            to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/template-comparison/#timeframes"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Timeframes
+          </Link>
+        </span>
+        .
+      </Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
@@ -3605,27 +4546,44 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_TOKEN <br />{" "}
-                  <span className="text-gray-400">
-                    Enter the access token shared by us
-                  </span>
-                </td>
-              </tr>
+           <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">Name</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Value</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_WABA_ID <br />{" "}
-                  <span className="text-gray-400">
-                    Enter your WhatsApp Business Account ID
-                  </span>
-                </td>
-              </tr>
-            </Table>
+  <Table.Body>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-access-token</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_TOKEN <br />
+        <span className="text-gray-400">
+          Enter the access token shared by us
+        </span>
+      </Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-waba-id</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_WABA_ID <br />
+        <span className="text-gray-400">
+          Enter your WhatsApp Business Account ID
+        </span>
+      </Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-sm popins">Content-type</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        application/json
+      </Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
@@ -3634,28 +4592,38 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">template_ids</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  [&lt;TEMPLATE_IDS]
-                </td>
-              </tr>
+          <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">Name</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Value</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
 
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">start</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  &lt;START&gt;
-                </td>
-              </tr>
+  <Table.Body>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">template_ids</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        [&lt;TEMPLATE_IDS]
+      </Table.Cell>
+    </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">end</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  &lt;END&gt;
-                </td>
-              </tr>
-            </Table>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">start</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        &lt;START&gt;
+      </Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-sm popins">end</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        &lt;END&gt;
+      </Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
           </div>
 
           <div className="flex flex-col items-center justify-center mt-4">
@@ -3755,34 +4723,44 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_TOKEN <br />{" "}
-                  <span className="text-gray-400">
-                    Enter the access token shared by us
-                  </span>
-                </td>
-              </tr>
+           <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">Name</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Value</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
 
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_WABA_ID <br />{" "}
-                  <span className="text-gray-400">
-                    Enter your WhatsApp Business Account ID
-                  </span>
-                </td>
-              </tr>
+  <Table.Body>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-access-token</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_TOKEN <br />
+        <span className="text-gray-400">
+          Enter the access token shared by us
+        </span>
+      </Table.Cell>
+    </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">Content-type</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  application/json
-                </td>
-              </tr>
-            </Table>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-waba-id</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_WABA_ID <br />
+        <span className="text-gray-400">
+          Enter your WhatsApp Business Account ID
+        </span>
+      </Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-sm popins">Content-type</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        application/json
+      </Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
@@ -3791,21 +4769,31 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">hsm_id</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  &lt;TEMPLATE/HSM_ID&gt;,
-                </td>
-              </tr>
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">Name</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Value</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">name</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  &lt;TEMPLATE_NAME&gt;,
-                </td>
-              </tr>
-            </Table>
+  <Table.Body>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">hsm_id</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        &lt;TEMPLATE/HSM_ID&gt;,
+      </Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-sm popins">name</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        &lt;TEMPLATE_NAME&gt;,
+      </Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
           </div>
 
           <div className="flex flex-col items-center justify-center mt-4">
@@ -3858,34 +4846,44 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-access-token</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_TOKEN <br />{" "}
-                  <span className="text-gray-400">
-                    Enter the access token shared by us
-                  </span>
-                </td>
-              </tr>
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">Name</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Value</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
 
-              <tr className={`${colors.tableBorder} border-b`}>
-                <td className="px-4 py-4 text-sm popins">x-waba-id</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  YOUR_WABA_ID <br />{" "}
-                  <span className="text-gray-400">
-                    Enter your WhatsApp Business Account ID
-                  </span>
-                </td>
-              </tr>
+  <Table.Body>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-access-token</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_TOKEN <br />
+        <span className="text-gray-400">
+          Enter the access token shared by us
+        </span>
+      </Table.Cell>
+    </Table.Row>
 
-              <tr>
-                <td className="px-4 py-4 text-sm popins">Content-type</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  application/json
-                </td>
-              </tr>
-            </Table>
+    <Table.Row className={`${colors.tableBorder} border-b`}>
+      <Table.Cell className="px-4 py-4 text-sm popins">x-waba-id</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        YOUR_WABA_ID <br />
+        <span className="text-gray-400">
+          Enter your WhatsApp Business Account ID
+        </span>
+      </Table.Cell>
+    </Table.Row>
+
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-sm popins">Content-type</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        application/json
+      </Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
@@ -3894,14 +4892,24 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center mx-auto">
-            <Table columns={HeaderTableColumns}>
-              <tr>
-                <td className="px-4 py-4 text-sm popins">name</td>
-                <td className="px-4 py-4 text-sm popins text-orange-500">
-                  &lt;TEMPLATE_NAME&gt;,
-                </td>
-              </tr>
-            </Table>
+           <Table zebra bordered stickyHeader scrollButtons devVisible>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell align="left" className="min-w-52">Name</Table.HeaderCell>
+      <Table.HeaderCell align="left" className="min-w-52">Value</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
+
+  <Table.Body>
+    <Table.Row>
+      <Table.Cell className="px-4 py-4 text-sm popins">name</Table.Cell>
+      <Table.Cell className="px-4 py-4 text-sm popins text-orange-500">
+        &lt;TEMPLATE_NAME&gt;,
+      </Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
+
           </div>
 
           <div className="flex flex-col items-center justify-center mt-4">
@@ -3976,28 +4984,8 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
                 </div>
               ))}  *
 
-              {/* <nav className="lg:sticky lg:top-[68px] h-max rounded-2xl border bg-white shadow-sm"> */}
-
-      {/* <ul className="p-2"> *
-                  {sections.map((s) => (
-                    <li key={s.id}>
-                      <a
-                        href={`#${s.id}`}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm hover:bg-slate-50 focus:outline-none focus:ring-2 ring-emerald-400 ${active === s.id
-                          ? "bg-emerald-50 text-emerald-700 font-semibold"
-                          : ""
-                          }`}
-                      >
-                        <span
-                          className={`w-1.5 h-1.5 rounded-full ${active === s.id ? "bg-emerald-600" : "bg-gray-800"
-                            }`}
-                        />
-                        {s.title}
-                      </a>
-                    </li>
-                  ))}
-                {/* </ul> */}
-      {/* </nav> *
+           
+    
 
 
             </div>
@@ -4008,14 +4996,14 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
       <div
         className={`${
           isDarkMode ? "bg-gray-500 text-white" : "bg-[#cecece] text-black"
-        } hidden lg:block h-fit sticky top-4 p-2 shrink-0 rounded-2xl mr-4 w-70 relative`}
+        } hidden lg:block h-[95%] sticky top-4 p-2 shrink-0 rounded-2xl mr-4 w-70 `}
       >
         {/* Scroll track */}
         <div
           className={`${isDarkMode ? "bg-gray-600" : "bg-gray-200"} 
-      w-1 rounded absolute left-3 top-5`}
+      w-1 rounded absolute left-3 top-5.5  `}
           style={{
-            height: `${sections.length * 40}px`, // total nav height
+            height: `${sections.length * 36}px`,
           }}
         >
           {/* Moving scroll indicator */}
@@ -4023,11 +5011,11 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             className={`
         ${isDarkMode ? "bg-white" : "bg-black"} 
         w-1 rounded absolute transition-all duration-300
-        ${active ? "bg-emerald-600" : ""}
+        ${active ? "bg-black" : ""}
       `}
             style={{
-              height: "20px", // height of indicator
-              top: `${sections.findIndex((s) => s.id === active) * 40}px`, // position by active index
+              height: "20px",
+              top: `${sections.findIndex((s) => s.id === active) * 37}px`,
             }}
           />
         </div>
@@ -4037,11 +5025,15 @@ curl --location --request DELETE 'https://amped-express.interakt.ai/api/v17.0/YO
             <li key={s.id}>
               <a
                 href={`#${s.id}`}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm hover:bg-slate-50 focus:outline-none focus:ring-2 ring-emerald-400 ${
-                  active === s.id
-                    ? "bg-emerald-50 text-emerald-700 font-semibold"
-                    : ""
-                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .getElementById(s.id)
+                    ?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm 
+          ${active === s.id ? "text-black font-semibold" : ""}
+        `}
               >
                 {s.title}
               </a>

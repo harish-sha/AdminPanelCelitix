@@ -147,31 +147,46 @@ const CampaignDetailsReport = () => {
   };
 
   const infoFieldsToShow = [
-    "del_time",
-    "message",
-    "mobile_no",
-    "sent_time",
+    "que_time",
+    "Delivery Time",
+    "unique_id",
+    "circle_srno",
     "source",
-    "status"
+    "PE_ID",
+    "template_id",
+    "source",
+    "isunicode",
+    "Character Length",
+    "desc",
+    "Service Type",
   ];
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "unique_id", headerName: "Unique ID", flex: 1, minWidth: 150 },
-    { field: "que_time", headerName: "Queue Time", flex: 1, minWidth: 180 },
+    { field: "mobile_no", headerName: "Mobile Number", flex: 1, minWidth: 150 },
+    { field: "sent_time", headerName: "Sent Time", flex: 1, minWidth: 150 },
     {
-      field: "receipt_no_of_duplicate_message",
-      headerName: "Duplicate Msg Count",
+      field: "message",
+      headerName: "Message",
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params) => (
+        <div
+          className="text-sm  text-wrap"
+        >
+          {params.value}
+        </div>
+      ),
+    },
+    { field: "status", headerName: "Status", flex: 1, minWidth: 150 },
+    {
+      field: "actual_status",
+      headerName: "Delivery Status",
       flex: 1,
       minWidth: 150,
     },
-    {
-      field: "account_usage_type_id",
-      headerName: "Usage Type",
-      flex: 1,
-      minWidth: 100,
-    },
-    { field: "smsunit", headerName: "SMS Unit", flex: 1, minWidth: 100 },
+    { field: "smsunit", headerName: "SMS Unit", flex: 1, minWidth: 150 },
+    { field: "senderid", headerName: "Header", flex: 1, minWidth: 150 },
     {
       field: "action",
       headerName: "Action",
@@ -197,7 +212,7 @@ const CampaignDetailsReport = () => {
               onClose={closeDropdown}
             >
               {clicked && Object.keys(clicked).length > 0 ? (
-                <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden">
+                <table className="w-90 text-sm text-left border border-gray-200 rounded-md overflow-hidden">
                   <tbody>
                     {Object.entries(clicked)
                       .filter(([key]) => infoFieldsToShow.includes(key))
@@ -235,30 +250,41 @@ const CampaignDetailsReport = () => {
   const rows = campaignDetailsNew?.map((item, index) => ({
     id: index + 1,
     sn: index + 1,
-    unique_id: item.unique_id || "N/A",
-    que_time: item.que_time || "-",
-    receipt_no_of_duplicate_message:
-      item.receipt_no_of_duplicate_message || "0",
-    account_usage_type_id: item.account_usage_type_id || "-",
-    smsunit: item.smsunit || "-",
-    PE_ID: item.PE_ID,
-    // account_usage_type_id: item.account_usage_type_id,
-    actual_sms_length: item.actual_sms_length,
-    actual_status: item.actual_status,
-    circle_srno: item.circle_srno,
-    del_time: item.del_time,
-    isunicode: item.isunicode,
-    message: item.message,
-    message_type: item.message_type,
-    mobile_no: item.mobile_no,
-    // receipt_no_of_duplicate_message: item.receipt_no_of_duplicate_message,
-    senderid: item.senderid,
-    sent_time: item.sent_time,
-    // smsunit: item.smsunit,
-    source: item.source,
-    status: item.status,
-    template_id: item.template_id,
-    // unique_id: item.unique_id,
+    // unique_id: item.unique_id || "N/A",
+    // que_time: item.que_time || "-",
+    // receipt_no_of_duplicate_message:
+    //   item.receipt_no_of_duplicate_message || "0",
+    // account_usage_type_id: item.account_usage_type_id || "-",
+    // smsunit: item.smsunit || "-",
+    // PE_ID: item.PE_ID,
+    // // account_usage_type_id: item.account_usage_type_id,
+    // actual_sms_length: item.actual_sms_length,
+    // actual_status: item.actual_status,
+    // circle_srno: item.circle_srno,
+    // del_time: item.del_time,
+    // isunicode: item.isunicode,
+    // message: item.message,
+    // message_type: item.message_type,
+    // mobile_no: item.mobile_no,
+    // // receipt_no_of_duplicate_message: item.receipt_no_of_duplicate_message,
+    // senderid: item.senderid,
+    // sent_time: item.sent_time,
+    // // smsunit: item.smsunit,
+    // source: item.source,
+    // status: item.status,
+    // template_id: item.template_id,
+    // // unique_id: item.unique_id,
+    ...item,
+    ["Service Type"]:
+      item.account_usage_type_id === "1"
+        ? "Transactional"
+        : item.account_usage_type_id === "2"
+          ? "Promotional"
+          : item.account_usage_type_id === "3"
+            ? "International"
+            : "Unknown",
+    ["Character Length"]: item.actual_sms_length,
+    ["Delivery Time"]: item.del_time,
   }));
 
   const totalPages = Math.ceil(totalPage / paginationModel.pageSize);

@@ -270,8 +270,8 @@ const TableRow = ({ className, children, _tableCtx }) => {
         s.tr,
         bordered &&
         (isDarkMode
-          ? "border-b border-gray-700"
-          : "border-b border-gray-200"),
+          ? "border-b border-gray-800"
+          : "border-b border-gray-300"),
         isDarkMode ? "bg-[#364153]" : "bg-[#EEEEEE]",
         className
       )}

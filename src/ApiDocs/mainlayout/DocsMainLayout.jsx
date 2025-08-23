@@ -92,7 +92,7 @@ const DocsMainLayout = () => {
           isMobile={isMobile}
         />
         <div
-          className={`flex-1 transition-all duration-300 overflow-auto lg:rounded-tl-3xl   ${isMobile ? "ml-0" : isCollapsed ? "ml-16" : "ml-60"
+          className={`flex-1 transition-all duration-300 overflow-auto lg:rounded-tl-3xl rounded-tr-3xl ${isMobile ? "ml-0" : isCollapsed ? "ml-16" : "ml-60"
             }`}
         >
           <Outlet />
