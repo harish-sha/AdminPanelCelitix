@@ -100,6 +100,7 @@ import Download from "@/profile/pages/Download";
 import TwowayMangeKeyword from "@/twowaysms/twowayMangeKeyword/TwowayMangeKeyword";
 import TwowayReports from "@/twowaysms/twowayReports/TwowayReports";
 import TwowayIntegration from "@/twowaysms/twowayIntegration/TwowayIntegration";
+import DetailedLogsInsidersDetails from "@/sms/smsReports/components/DetailedLogsInsidersDetails";
 
 // Cick To Call
 import ClickToSetting from "@/clicktwocall/clickToSetting/ClickToSetting";
@@ -212,6 +213,10 @@ const Approutes = () => {
         <Route path="managekeywords" element={<TwowayMangeKeyword />} />
         <Route path="twowayreports" element={<TwowayReports />} />
         <Route path="twowayintegration" element={<TwowayIntegration />} />
+        <Route
+          path="smscampaigndetailsreport"
+          element={<DetailedLogsInsidersDetails />}
+        />
 
         {/* whatsapp */}
         <Route path="managetemplate" element={<ManageTemplate />} />

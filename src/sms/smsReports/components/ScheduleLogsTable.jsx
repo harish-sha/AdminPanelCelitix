@@ -9,7 +9,7 @@ import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOffli
 import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-
+import CloseIcon from "@mui/icons-material/Close";
 
 const CustomPagination = ({
   totalPages,
@@ -72,7 +72,7 @@ const CustomPagination = ({
   );
 };
 
-const ScheduleLogsTable = ({ id, name, data }) => {
+const ScheduleLogsTable = ({ id, name, data, onCancel }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -128,7 +128,7 @@ const ScheduleLogsTable = ({ id, name, data }) => {
             <CustomTooltip title="Cancel Campaign" placement="top" arrow>
               <IconButton
                 onClick={() =>
-                  onCancel(params.row.srno, params.row.campaignName)
+                  onCancel(params.row.campaignSrno, params.row.campaign_name)
                 }
               >
                 <CloseIcon sx={{ fontSize: "1.2rem", color: "red" }} />

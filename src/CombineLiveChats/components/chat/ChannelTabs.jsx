@@ -79,10 +79,16 @@ const ChannelTabs = () => {
     activeConvo,
   } = useWabaAgentContext();
 
-
-
-  const { contextAgentList, setContextAgentList, activeRcsChat, setActiveRcsChat, closeRcsChat, setCloseRcsChat, allChats, setAllChats } =
-    useRcsContext();
+  const {
+    contextAgentList,
+    setContextAgentList,
+    activeRcsChat,
+    setActiveRcsChat,
+    closeRcsChat,
+    setCloseRcsChat,
+    allChats,
+    setAllChats,
+  } = useRcsContext();
 
   const [isOpen, setIsOpen] = useState(false);
   const [isAgentOpen, setIsAgentOpen] = useState(false);
@@ -111,8 +117,6 @@ const ChannelTabs = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-
 
   useEffect(() => {
     if (wabaData?.selectedWaba) {
@@ -282,15 +286,19 @@ const ChannelTabs = () => {
       icon: <FaUserCheck className="text-green-500 text-sm" />,
     },
     {
-      label: `${(activeRcsChat?.conversationEntityList?.length || 0) + (closeRcsChat?.conversationEntityList?.length || 0)} Total Chats`,
+      label: `${(activeRcsChat?.conversationEntityList?.length || 0) +
+        (closeRcsChat?.conversationEntityList?.length || 0)
+        } Total Chats`,
       icon: <FaUserClock className="text-yellow-500 text-sm" />,
     },
     {
-      label: `${activeRcsChat?.conversationEntityList?.length || 0} Active Chats`,
+      label: `${activeRcsChat?.conversationEntityList?.length || 0
+        } Active Chats`,
       icon: <FaUserClock className="text-yellow-500 text-sm" />,
     },
     {
-      label: `${closeRcsChat?.conversationEntityList?.length || 0} Inactive Chats`,
+      label: `${closeRcsChat?.conversationEntityList?.length || 0
+        } Inactive Chats`,
       icon: <FaTimesCircle className="text-red-400 text-sm" />,
     },
     // {
@@ -582,7 +590,7 @@ const ChannelTabs = () => {
                                       setIsInstagramOpen(false);
                                     }}
                                     className={`px-3 py-2 cursor-pointer border-b hover:bg-pink-50 hover:text-pink-600 transition-colors
-                        ${instagramData.selectedAccount === acc.accountId
+                                    ${instagramData.selectedAccount === acc.accountId
                                         ? "bg-pink-100 text-pink-700 font-medium"
                                         : ""
                                       }`}
@@ -622,27 +630,65 @@ const ChannelTabs = () => {
                     // Render dropdown for Messenger account selection
                     if (isDropdown) {
                       return (
-                        <select
-                          key={i}
-                          value={messengerData.selectedAccount}
-                          onChange={(e) => {
-                            const selectedAcc = messengerData.accounts.find(
-                              (acc) => acc.accountId === e.target.value
-                            );
-                            setMessengerData((prev) => ({
-                              ...prev,
-                              selectedAccount: selectedAcc?.accountId,
-                            }));
-                          }}
-                          className="px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-600 focus:outline-none mb-1 md:mb-0"
-                        >
-                          <option value="">Select Messenger Account</option>
-                          {messengerData.accounts.map((acc) => (
-                            <option key={acc.accountId} value={acc.accountId}>
-                              {acc.name}
-                            </option>
-                          ))}
-                        </select>
+                        <div key={i}>
+                          <div
+                            className="px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-600 focus:outline-none mb-1 md:mb-0"
+                            onClick={() => setIsMessengerOpen((prev) => !prev)}
+                          >
+                            <span>
+                              {messengerData.selectedAccount
+                                ? messengerData.accounts.find(
+                                  (acc) =>
+                                    acc.accountId ===
+                                    messengerData.selectedAccount
+                                )?.name
+                                : "Select Messenger Account"}
+                            </span>
+                          </div>
+                          {/* dropdown list */}
+                          {isMessengerOpen && (
+                            <div className="absolute top-10 left-0 shadow-xl rounded-xl w-48 bg-white z-50">
+                              <ul className="w-full border border-gray-300 rounded-md text-sm bg-white">
+                                {/* No Selection */}
+                                <li
+                                  className="px-3 py-2 hover:bg-gray-100 cursor-pointer border-b"
+                                  onClick={() => {
+                                    setMessengerData((prev) => ({
+                                      ...prev,
+                                      selectedAccount: "",
+                                    }));
+                                    setIsMessenegrOpen(false);
+                                  }}
+                                >
+                                  -- No Selection --
+                                </li>
+
+                                {/* Loop over Messenger Accounts */}
+                                {messengerData.accounts.map((acc) => (
+                                  <li
+                                    key={acc.accountId}
+                                    onClick={() => {
+                                      setMessengerData((prev) => ({
+                                        ...prev,
+                                        selectedAccount: acc.accountId,
+                                      }));
+                                      setIsMessengerOpen(false);
+                                    }}
+                                    className={`px-3 py-2 cursor-pointer border-b hover:bg-pink-50 hover:text-pink-600 transition-colors
+                                    ${messenger.selectedAccount === acc.accountId
+                                        ? "bg-pink-100 text-pink-700 font-medium"
+                                        : ""
+                                      }`}
+                                  >
+                                    {acc.name}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+
+                          )}
+
+                        </div>
                       );
                     }
 
@@ -651,6 +697,7 @@ const ChannelTabs = () => {
                       <motion.button
                         key={i}
                         onClick={() => setIsMessengerOpen((prev) => !prev)}
+                        // onClick={action?.onClick}
                         className="flex items-center gap-2 whitespace-nowrap text-[0.77rem] font-medium px-3 py-1 rounded-full transition bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-600"
                       >
                         {action.icon}
@@ -853,7 +900,10 @@ const ChannelTabs = () => {
             <li
               key={agent.agent_id}
               onClick={() => {
-                setContextAgentList({ ...contextAgentList, id: agent.agent_id });
+                setContextAgentList({
+                  ...contextAgentList,
+                  id: agent.agent_id,
+                });
                 setIsAgentOpen(false);
                 setAgentSelected(true);
               }}

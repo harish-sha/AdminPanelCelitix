@@ -48,14 +48,14 @@ const SendSms = () => {
 
   useEffect(() => {
     // if (!inputDetails?.templateType) return;
-    async function handleFetchAllTemplates() {
-      try {
-        const res = await getAllTemplates("all");
-        setAllTemplates(res);
-      } catch (e) {
-        // console.log(e);
-      }
-    }
+    // async function handleFetchAllTemplates() {
+    //   try {
+    //     const res = await getAllTemplates("all");
+    //     setAllTemplates(res);
+    //   } catch (e) {
+    //     // console.log(e);
+    //   }
+    // }
 
     async function fetchAllGrps() {
       try {
@@ -77,10 +77,26 @@ const SendSms = () => {
       }
     }
 
-    handleFetchAllTemplates();
+    // handleFetchAllTemplates();
     handlefetchAllCountry();
     fetchAllGrps();
   }, []);
+
+  useEffect(() => {
+    if (!inputDetails?.templateType) return;
+    async function handleFetchAllTemplates() {
+      try {
+        const res = await getAllTemplates("all");
+        const requiredData = res?.filter(
+          (item) => item.type === inputDetails?.templateType
+        );
+        setAllTemplates(requiredData);
+      } catch (e) {
+        toast.error("Something went wrong.");
+      }
+    }
+    handleFetchAllTemplates();
+  }, [inputDetails?.templateType]);
 
   useEffect(() => {
     if (!inputDetails?.templateId) return;

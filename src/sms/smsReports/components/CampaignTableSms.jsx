@@ -90,7 +90,21 @@ const CampaignTableSms = ({ id, name, data, selectedUser }) => {
 
   const dropdownButtonRefs = useRef([]);
 
-  const rows = data || [];
+  // console.log("data in camp table sms", data);
+
+  const rows = data?.map((item, i) => ({
+    id: i + 1,
+    sn: i + 1,
+    ...item,
+    campaign_type:
+      item.account_usage_type_id === 1
+        ? "Transactional"
+        : item.account_usage_type_id === 2
+        ? "Promotional"
+        : item.account_usage_type_id === 3
+        ? "International"
+        : "Unknown",
+  }));
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
@@ -114,7 +128,7 @@ const CampaignTableSms = ({ id, name, data, selectedUser }) => {
       minWidth: 50,
     },
     {
-      field: "overall_status",
+      field: "insert_flag",
       headerName: "Status",
       flex: 1,
       minWidth: 50,

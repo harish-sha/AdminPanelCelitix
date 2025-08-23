@@ -879,7 +879,11 @@ export const ChatScreen = ({
         <div ref={endOfMessagesRef} />
         {/* Image Preview */}
         {selectedImage?.type && selectedImage.files && (
-          <div className="fixed bottom-20">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed left-0 bottom-20 w-full bg-gray-50 border-1 border-gray-300 rounded-md shadow-md px-4 py-2 mb-1">
             <div className="relative">
               {/* <button className="flex items-center gap-1">
               <img
@@ -893,7 +897,7 @@ export const ChatScreen = ({
                   <img
                     src={URL.createObjectURL(selectedImage?.files)}
                     alt=""
-                    className="object-cover w-20 h-20"
+                    className="mb-2 h-20 w-40 object-cover pointer-events-none "
                   />
                 </button>
               )}
@@ -909,7 +913,8 @@ export const ChatScreen = ({
               {selectedImage.type === "application" && (
                 <button className="flex items-center gap-1">
                   <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md flex items-center gap-3">
-                    <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
+                    <div className="bg-white rounded-full shadow-inner text-blue-500"
+                    >
                       {getFileType(selectedImage.fileType)}
                     </div>
                     <div className="flex flex-col">
@@ -924,7 +929,7 @@ export const ChatScreen = ({
                 </button>
               )}
               <span
-                className="absolute text-red-500 cursor-pointer top-1 right-1"
+                className="absolute text-gray-500 cursor-pointer top-0 right-0 bg-gray-200 hover:bg-gray-400 rounded-full p-0.5"
                 onClick={() => deleteImages("4")}
               >
                 <svg
@@ -943,7 +948,7 @@ export const ChatScreen = ({
                 </svg>
               </span>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
 

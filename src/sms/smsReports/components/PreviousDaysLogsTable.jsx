@@ -73,7 +73,7 @@ const CustomPagination = ({
   );
 };
 
-const PreviousDaysLogsTable = ({ id, name, data, selectedUser }) => {
+const PreviousDaysLogsTable = ({ id, name, data, selectedUser, setSelectedCol, handlePreviosDayDetailDisplay }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -89,134 +89,134 @@ const PreviousDaysLogsTable = ({ id, name, data, selectedUser }) => {
   const closeDropdown = () => setDropdownOpenId(null);
 
   const dropdownButtonRefs = useRef([]);
-  
+
   const rows = data || [];
 
   const columns = [
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        // {
-        //   field: "sending_user_id",
-        //   headerName: "User",
-        //   flex: 1,
-        //   minWidth: 120,
-        // },
-        {
-          field: "TOTALSMS",
-          headerName: "Total SMS",
-          flex: 1,
-          minWidth: 120,
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.TotalUnit} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("TOTALSMS");
-                  handlePreviosDayDetailDisplay("TOTALSMS");
-                }}
-              >
-                {params.row.TOTALSMS}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "Pending",
-          headerName: "Pending",
-          flex: 1,
-          minWidth: 90,
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.Pending} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("Pending");
-                  handlePreviosDayDetailDisplay("Pending");
-                }}
-              >
-                {params.row.Pending}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "failed",
-          headerName: "Failed",
-          flex: 1,
-          minWidth: 70,
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.failed} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("failed");
-                  handlePreviosDayDetailDisplay("failed");
-                }}
-              >
-                {params.row.failed}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "Sent",
-          headerName: "Sent",
-          flex: 1,
-          minWidth: 60,
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.Sent} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("Sent");
-                  handlePreviosDayDetailDisplay("Sent");
-                }}
-              >
-                {params.row.Sent}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "delivered",
-          headerName: "Delivered",
-          flex: 1,
-          minWidth: 90,
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.delivered} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("delivered");
-                  handlePreviosDayDetailDisplay("delivered");
-                }}
-              >
-                {params.row.delivered}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "undelivered",
-          headerName: "Undelivered",
-          flex: 1,
-          minWidth: 110,
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+    // {
+    //   field: "sending_user_id",
+    //   headerName: "User",
+    //   flex: 1,
+    //   minWidth: 120,
+    // },
+    {
+      field: "TOTALSMS",
+      headerName: "Total SMS",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => (
+        <CustomTooltip placement="top" arrow>
+          <button
+            onClick={() => {
+              setSelectedCol("TOTALSMS");
+              handlePreviosDayDetailDisplay("TOTALSMS");
+            }}
+          >
+            {params.row.TOTALSMS}
+          </button>
+        </CustomTooltip>
+      ),
+    },
+    {
+      field: "Pending",
+      headerName: "Pending",
+      flex: 1,
+      minWidth: 90,
+      renderCell: (params) => (
+        <CustomTooltip placement="top" arrow>
+          <button
+            onClick={() => {
+              setSelectedCol("Pending");
+              handlePreviosDayDetailDisplay("Pending");
+            }}
+          >
+            {params.row.Pending}
+          </button>
+        </CustomTooltip>
+      ),
+    },
+    {
+      field: "failed",
+      headerName: "Failed",
+      flex: 1,
+      minWidth: 70,
+      renderCell: (params) => (
+        <CustomTooltip placement="top" arrow>
+          <button
+            onClick={() => {
+              setSelectedCol("failed");
+              handlePreviosDayDetailDisplay("failed");
+            }}
+          >
+            {params.row.failed}
+          </button>
+        </CustomTooltip>
+      ),
+    },
+    {
+      field: "Sent",
+      headerName: "Sent",
+      flex: 1,
+      minWidth: 60,
+      renderCell: (params) => (
+        <CustomTooltip placement="top" arrow>
+          <button
+            onClick={() => {
+              setSelectedCol("Sent");
+              handlePreviosDayDetailDisplay("Sent");
+            }}
+          >
+            {params.row.Sent}
+          </button>
+        </CustomTooltip>
+      ),
+    },
+    {
+      field: "delivered",
+      headerName: "Delivered",
+      flex: 1,
+      minWidth: 90,
+      renderCell: (params) => (
+        <CustomTooltip placement="top" arrow>
+          <button
+            onClick={() => {
+              setSelectedCol("delivered");
+              handlePreviosDayDetailDisplay("delivered");
+            }}
+          >
+            {params.row.delivered}
+          </button>
+        </CustomTooltip>
+      ),
+    },
+    {
+      field: "undelivered",
+      headerName: "Undelivered",
+      flex: 1,
+      minWidth: 110,
 
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.undelivered} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("undelivered");
-                  handlePreviosDayDetailDisplay("undelivered");
-                }}
-              >
-                {params.row.undelivered}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "drNotAvailable",
-          headerName: "Pending DR",
-          flex: 1,
-          minWidth: 110,
-        },
-        { field: "NDNCDenied", headerName: "NDNC", flex: 1, minWidth: 70 },
-      ];
+      renderCell: (params) => (
+        <CustomTooltip placement="top" arrow>
+          <button
+            onClick={() => {
+              setSelectedCol("undelivered");
+              handlePreviosDayDetailDisplay("undelivered");
+            }}
+          >
+            {params.row.undelivered}
+          </button>
+        </CustomTooltip>
+      ),
+    },
+    {
+      field: "drNotAvailable",
+      headerName: "Pending DR",
+      flex: 1,
+      minWidth: 110,
+    },
+    { field: "NDNCDenied", headerName: "NDNC", flex: 1, minWidth: 70 },
+  ];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
   const CustomFooter = () => {

@@ -235,7 +235,14 @@ const SmsDLTtemplate = () => {
     },
     // { field: "templateid", headerName: "Template ID", flex: 1, minWidth: 110 },
     // { field: "entityid", headerName: "Entity ID", flex: 1, minWidth: 80 },
-    { field: "message", headerName: "Message", flex: 1, minWidth: 300 },
+    {
+      field: "message", headerName: "Message", flex: 1, minWidth: 300,
+      renderCell: (params) => (
+        <div className="text-sm text-gray-700 text-wrap">
+          {params.value}
+        </div>
+      )
+    },
     { field: "senderid", headerName: "Sender ID", flex: 1, minWidth: 130 },
     { field: "smstype", headerName: "SMS Type", flex: 1, minWidth: 120 },
     // {
@@ -372,6 +379,15 @@ const SmsDLTtemplate = () => {
   const handleRemoveFile = () => {
     setUploadedFile(null);
     setIsUploaded(false);
+    setUploadedFile(null);
+    setContactData({
+      filePath: "",
+      fileHeaders: "",
+      totalRecords: "",
+      selectedCountryCode: "",
+      selectedMobileColumn: "",
+      sampleRecords: "",
+    });
     fileInputRef.current.value = "";
   };
 

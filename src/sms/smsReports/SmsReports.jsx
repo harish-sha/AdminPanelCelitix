@@ -171,8 +171,8 @@ const SmsReports = () => {
     searchUserId: "",
   });
   const [previousTableData, setPreviousTableData] = useState([]);
-  const [previousDayDetailsDialog, setPreviousDayDetailsDialog] =
-    useState(false);
+  // const [previousDayDetailsDialog, setPreviousDayDetailsDialog] =
+  //   useState(false);
   const [selectedColDetails, setSelectedColDetails] = useState("");
   const [previousDayColumn, setPreviousDayColumn] = useState([]);
   const [previousDayRows, setPreviousDayRows] = useState([]);
@@ -1148,11 +1148,21 @@ const SmsReports = () => {
       selectedUserId: selectedUser,
     };
 
-    setPreviousDayDetailsDialog(true);
-    setSelectedColDetails(col);
+    // setPreviousDayDetailsDialog(true);
+  setSelectedColDetails(col);
     try {
       setIsFetching(true);
       const res = await getPreviousCampaignDetails(data);
+
+      navigate("/smscampaigndetailsreport", {
+        state: {
+          campaignDetails: res?.data,
+          total: res?.total || 0,
+          campaignName: col,
+          data: data
+        },
+      });
+
       setTotalPage(res?.pages || 0);
 
       setPreviousDayColumn([
@@ -1295,7 +1305,7 @@ const SmsReports = () => {
           }))
           : []
       );
-      setPreviousDayDetailsDialog(true);
+      // setPreviousDayDetailsDialog(true);
     } catch (e) {
       // console.log(e);
       toast.error("Something went wrong.");
@@ -1309,6 +1319,7 @@ const SmsReports = () => {
   }, [currentPage, selectedCol]);
 
   const handleCancel = (srno, campaignName) => {
+    console.log("Cancelling campaign:", srno, campaignName);
     if (!srno || !campaignName) {
       console.error("SRNO is undefined. Cannot cancel campaign.");
       toast.error("Failed to cancel campaign. SRNO is missing.");
@@ -1718,7 +1729,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="w-full sm:w-42">
+              {/* <div className="w-full sm:w-42">
                 <InputField
                   label="Sender ID"
                   id="previoussenderid"
@@ -1732,8 +1743,8 @@ const SmsReports = () => {
                     }));
                   }}
                 />
-              </div>
-              <div className="w-full sm:w-42">
+              </div> */}
+              {/* <div className="w-full sm:w-42">
                 <InputField
                   label="Content"
                   id="previouscontent"
@@ -1747,7 +1758,7 @@ const SmsReports = () => {
                     }));
                   }}
                 />
-              </div>
+              </div> */}
 
               <div className="w-full sm:w-42">
                 <div className="w-max-content">
@@ -1776,6 +1787,8 @@ const SmsReports = () => {
               name="PreviousDaysTableSms"
               data={rows}
               selectedUser={selectedUser}
+              setSelectedCol={setSelectedCol}
+              handlePreviosDayDetailDisplay={handlePreviosDayDetailDisplay}
             />
           </div>
         </CustomTabPanel>
@@ -2067,7 +2080,7 @@ const SmsReports = () => {
 
       {/* Cancel Dialog Ends */}
 
-      <Dialog
+      {/* <Dialog
         header={selectedColDetails}
         visible={previousDayDetailsDialog}
         onHide={() => {
@@ -2081,7 +2094,7 @@ const SmsReports = () => {
         }}
         className="w-fit "
         draggable={false}
-      >
+      > */}
         {/* {isFetching ? (
           <div className="card flex justify-content-center">
             <ProgressSpinner strokeWidth="2" className="text-blue-500" />
@@ -2104,7 +2117,7 @@ const SmsReports = () => {
             totalPage={totalPage}
           />
         )} */}
-        <PreviousDaysTableSms
+        {/* <PreviousDaysTableSms
           id="previousdaydetailstable"
           name="previousdaydetailstable"
           rows={previousDayRows}
@@ -2115,7 +2128,7 @@ const SmsReports = () => {
           totalPage={totalPage}
           selectedUser={selectedUser}
         />
-      </Dialog>
+      </Dialog> */}
 
       {/* exportDialogStart */}
       {isExportDialogOpen && (

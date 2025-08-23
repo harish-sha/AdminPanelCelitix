@@ -54,6 +54,8 @@ export const resellerItems = [
         isHide: true,
         id: "3",
       },
+      { to: "/smscampaigndetailsreport", label: "Create Bot", isHide: true },
+      { to: "/apicampaigninfo", label: "apicampaigninfo", isHide: true },
     ],
     roles: ["ADMIN"],
   },
@@ -69,6 +71,7 @@ export const resellerItems = [
     ],
     roles: ["ADMIN"],
   },
+
   // {
   //   id: "",
   //   name: "Managecontacts",

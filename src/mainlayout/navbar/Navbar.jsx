@@ -27,7 +27,7 @@ import {
   Logout as LogoutIcon,
   Loop as LoopIcon,
 } from "@mui/icons-material";
-import { fetchBalance } from "../../apis/settings/setting";
+import { fetchBalance, fetchIpDetails } from "../../apis/settings/setting";
 import { collapse } from "@material-tailwind/react";
 import { useDownload } from "@/context/DownloadProvider";
 import { getaccountInfo } from "@/apis/user/user";
@@ -122,6 +122,17 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     // console.log("isCollapsed", isCollapsed);
   }, [isCollapsed]);
 
+  const [ipDetails, setIpDetails] = useState([]);
+
+  useEffect(() => {
+    const IpDetails = async () => {
+      const response = await fetchIpDetails();
+      setIpDetails(response[0]);
+    };
+    IpDetails();
+  }, []);
+
+
 
   return (
     <nav className="flex items-center w-full px-4 bg-white h-14 lg:h-16 md:h-15">
@@ -142,34 +153,42 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
         </label>
 
         {/* </button> */}
-        {/* <span className="text-xl font-medium tracking-wider text-gray-800 lg:block">Celitix</span> */}
         {/* <img src={celitixLogo} width={120} height={80} alt="Celitix Logo" /> */}
       </div>
-
-      {/* {isAccountExpired && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="flex items-center justify-center text-center border px-4 py-1 rounded-2xl shadow-xl bg-red-50 border-red-400 ml-100"
-        >
-          <FiAlertCircle className="text-red-600 text-2xl mr-4" />
-          <div>
-            <p className="text-sm font-semibold text-gray-800">
-              Your account has expired on :&nbsp;
-              <span className="text-red-600" >
-                {expiryDate?.toLocaleDateString()}
-              </span>
-            </p>
-            <p className="text-xs text-gray-600">
-              Please contact the admin to renew or reactivate your account.
-            </p>
-          </div>
-        </motion.div>
-      )} */}
-
       {!isMobile ? (
-        <div className="flex gap-3 ml-auto">
+        <div className="flex gap-3 ml-auto items-center">
+
+          <div className="group relative">
+            <div
+              className="flex items-center gap-2 rounded-md border border-gray-200 bg-blue-50 px-2.5 py-1 text-[11px] leading-none text-gray-700
+               dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 tracking-wide h-10"
+              aria-describedby="last-login-tooltip"
+            >
+              <div className="flex flex-col gap-1">
+                <div>
+                  <span className="text-gray-400 dark:text-gray-500">•</span>&nbsp;
+                  <span className="font-semibold">User&nbsp;ID : </span>
+                  <span className="font-mono tabular-nums">{ipDetails?.user_id || "-"}</span>
+                </div>
+                <div>
+                  <span className="text-gray-400 dark:text-gray-500">•</span>&nbsp;
+                  <span className="font-semibold ">Current&nbsp;Login IP : </span>
+                  <span className="font-mono tabular-nums">{ipDetails?.ip || "-"}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* <div
+              id="last-login-tooltip"
+              role="tooltip"
+              className="pointer-events-none absolute left-1/2 top-full z-50 mt-1 -translate-x-1/2 whitespace-nowrap rounded-md
+               bg-black px-2 py-1 text-[10px] text-white opacity-0 shadow-md transition-opacity duration-150
+               group-hover:opacity-100 tracking-wider"
+            >
+              {ipDetails?.insert_time ? `Last activity: ${ipDetails.insert_time}` : "No timestamp available"}
+              <div className="absolute -top-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-black" />
+            </div> */}
+          </div>
           {[
             // {
             //   title: "Account Info",
