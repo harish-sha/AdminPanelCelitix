@@ -87,8 +87,6 @@ export default function MusicPlayerSlider({ data, isPlaying, onPlay }) {
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  console.log("audioRef", audioRef);
-
   React.useEffect(() => {
     if (isPlaying) {
       setPaused(false);

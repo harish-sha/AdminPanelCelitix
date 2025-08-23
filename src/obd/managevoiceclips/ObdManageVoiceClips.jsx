@@ -1005,7 +1005,7 @@ const ObdManageVoiceClips = () => {
         ) : (
           <>
             <div className="mb-4 w-[260px] border border-gray-300 rounded-xl shadow-lg p-4 hover:shadow-xl hover:border-blue-500 transition duration-300">
-              <MusicPlayerSlider data={selectedRow} />
+              <MusicPlayerSlider data={selectedRow} onPlay={() => {}} isPlaying={false} />
             </div>
           </>
         )}
