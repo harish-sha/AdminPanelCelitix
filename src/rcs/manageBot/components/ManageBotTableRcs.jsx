@@ -98,14 +98,12 @@ const ManageBotTableRcs = ({
   });
 
   async function handleUpdateStatus(row) {
-    console.log("row", row);
     const payload = {
       agentSrno: row.srno,
       active: row.active === "Active" ? 0 : 1,
     };
     try {
       const res = await updateRcsBotStatus(payload);
-      console.log("res", res);
       if (!res?.status) {
         return toast.error("Something went wrong");
       }
@@ -190,7 +188,12 @@ const ManageBotTableRcs = ({
     try {
       if (!deleteDetails.id) return;
       const res = await deleteRcsBot(deleteDetails.id);
-      console.log(res);
+      if (!res?.success) {
+        return toast.error("Something went wrong");
+      }
+      toast.success("Bot Deleted Successfully");
+      setDeleteDetails({ isOpen: false, id: null });
+      fetchAllBotsData();
     } catch (e) {
       toast.error("Something went wrong");
     }
