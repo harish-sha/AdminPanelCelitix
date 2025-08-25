@@ -2364,7 +2364,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
             ]}
             value={petmDetails.petmChainType}
             onChange={(e) => {
-              setPetmDetails({ ...petmDetails, petmChainType: e });
+              setPetmDetails({ petmChainType: e, TMA1: "", TMA2: "", tmd: "" });
             }}
             placeholder="Select PE-TM Chain"
           />
@@ -2676,7 +2676,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       <Dialog
         header="View Balance"
         visible={userBalanceDialogVisible.isOpen}
-        onHide={() => setUserBalanceDialogVisible({ isOpen: false, balance: 0 })}
+        onHide={() =>
+          setUserBalanceDialogVisible({ isOpen: false, balance: 0 })
+        }
         className="w-[48rem] max-w-full"
         draggable={false}
       >
