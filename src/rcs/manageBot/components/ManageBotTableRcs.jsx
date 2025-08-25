@@ -80,7 +80,13 @@ const CustomPagination = ({
   );
 };
 
-const ManageBotTableRcs = ({ id, name, data = [], onEdit,fetchAllBotsData }) => {
+const ManageBotTableRcs = ({
+  id,
+  name,
+  data = [],
+  onEdit,
+  fetchAllBotsData,
+}) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -94,13 +100,13 @@ const ManageBotTableRcs = ({ id, name, data = [], onEdit,fetchAllBotsData }) => 
   async function handleUpdateStatus(row) {
     console.log("row", row);
     const payload = {
-      srno: row.srno,
-      status: row.status === "Active" ? "0" : "1",
+      agentSrno: row.srno,
+      active: row.active === "Active" ? 0 : 1,
     };
     try {
       const res = await updateRcsBotStatus(payload);
       console.log("res", res);
-      if(!res?.status){
+      if (!res?.status) {
         return toast.error("Something went wrong");
       }
       toast.success("Status Updated Successfully");
@@ -138,13 +144,13 @@ const ManageBotTableRcs = ({ id, name, data = [], onEdit,fetchAllBotsData }) => 
       renderCell: (params) => (
         <button
           className={`border rounded-md p-2 text-white ${
-            params.row.active ? "bg-green-500" : "bg-red-500"
+            params.row.active === "Active" ? "bg-green-500" : "bg-red-500"
           }`}
           onClick={() => {
             handleUpdateStatus(params.row);
           }}
         >
-          {params.row.active ? "Active" : "Inactive"}
+          {params.row.active === "Active" ? "Active" : "Inactive"}
         </button>
       ),
     },

@@ -141,8 +141,9 @@ const ManageBotRcs = () => {
     fetchAllBotsData();
   }, []);
 
-  const handleBotSearch = () => {
+  const handleBotSearch = async () => {
     // bot.agent_id === selectedBotId
+    const allBots = await fetchAllBotsList();
     const filterBot = allBots.filter((bot) => {
       const matchAgent = !selectedBotId || bot.agent_id == selectedBotId;
       const matchUser = !selectedUser || bot.user_id == selectedUser;
