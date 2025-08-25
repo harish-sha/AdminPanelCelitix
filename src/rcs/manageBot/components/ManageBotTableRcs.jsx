@@ -141,7 +141,7 @@ const ManageBotTableRcs = ({
       minWidth: 120,
       renderCell: (params) => (
         <button
-          className={`border rounded-md p-2 text-white ${
+          className={`text-white text-xs px-5 py-2 border rounded-md text-center ${
             params.row.active === "Active" ? "bg-green-500" : "bg-red-500"
           }`}
           onClick={() => {
