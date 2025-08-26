@@ -341,7 +341,7 @@ export default function WhatsappLiveChat() {
       },
     },
     {
-      label: "Location",
+      label: "Send Location",
       // icon: <TableChartOutlinedIcon style={{ color: "#009688" }} />, // Teal
       icon: <MdOutlineAddLocationAlt className="text-indigo-500 size-5" />,
       command: () => {
@@ -349,6 +349,14 @@ export default function WhatsappLiveChat() {
           isLocation: true,
         });
         getLocation();
+      },
+    },
+    {
+      label: "Request Location",
+      // icon: <TableChartOutlinedIcon style={{ color: "#009688" }} />, // Teal
+      icon: <MdOutlineAddLocationAlt className="text-indigo-500 size-5" />,
+      command: async () => {
+        await requestLocationData();
       },
     },
   ];
@@ -1032,6 +1040,48 @@ export default function WhatsappLiveChat() {
       toast.error("Error getting location");
     }
   };
+
+  async function requestLocationData() {
+    try {
+      const payload = {
+        mobile: chatState?.active.mobileNo,
+        wabaNumber: wabaState.selectedWaba,
+        srno: chatState?.active.srno,
+        contactName: chatState?.active?.contectName || "",
+        replyType: "text",
+        replyFrom: "user",
+        wabaSrNo: wabaState.wabaSrno,
+      };
+
+      const body = {
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        type: "interactive",
+        to: chatState?.active.mobileNo,
+        interactive: {
+          type: "location_request_message",
+          body: {
+            text: "Do you want to share your location",
+          },
+          action: {
+            name: "send_location",
+          },
+        },
+      };
+
+      const res = await sendInputMessageToUser(payload, body);
+
+      if (res?.status !== "success") {
+        toast.error("Error getting location");
+        return;
+      }
+
+      toast.success("Location request sent successfully");
+      setIsSpeedDialOpen(false);
+    } catch (e) {
+      toast.error("Error getting location");
+    }
+  }
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
       <div
