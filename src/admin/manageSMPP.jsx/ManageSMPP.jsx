@@ -179,6 +179,7 @@ const ManageSMPP = () => {
               id="manageSMPPTable"
               name="manageSMPPTable"
               data={data}
+              handleFetchSmppDetails={handleFetchSmppDetails}
             />
           </div>
         )}

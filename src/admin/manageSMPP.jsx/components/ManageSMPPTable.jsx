@@ -75,7 +75,7 @@ const CustomPagination = ({
     </Box>
   );
 };
-const ManageSMPPTable = ({ id, name, data }) => {
+const ManageSMPPTable = ({ id, name, data,handleFetchSmppDetails }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [addserviceedit, setAddServiceedit] = useState(false);
   const [versioneditStatus, setVersionEditStatus] = useState("disable");
