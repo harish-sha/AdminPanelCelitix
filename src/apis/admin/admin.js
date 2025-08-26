@@ -365,7 +365,48 @@ export const getPincodeData = async (pincode) => {
   });
 };
 export const updateRcsBotStatus = async (data) => {
-  return await fetchWithAuth(`/rcs/updateActiveInactiveStatus?agentSrno=${data.agentSrno}&active=${data.active}`, {
+  return await fetchWithAuth(
+    `/rcs/updateActiveInactiveStatus?agentSrno=${data.agentSrno}&active=${data.active}`,
+    {
+      method: "POST",
+    }
+  );
+};
+export const getErrorMappingData = async (serviceid) => {
+  return await fetchWithAuth(
+    `/smpp/getErrorMappingData?serviceid=${serviceid}`,
+    {
+      method: "POST",
+    }
+  );
+};
+export const deleteErrCode = async (id) => {
+  return await fetchWithAuth(`/smpp/deleteErrCode?Srno=${id}`, {
+    method: "POST",
+  });
+};
+export const getAppErrorReasons = async (id) => {
+  return await fetchWithAuth(`/smpp/getAppErrorReasons`, {
+    method: "GET",
+  });
+};
+export const getServices = async (id) => {
+  return await fetchWithAuth(`/smpp/getServices`, {
+    method: "GET",
+  });
+};
+export const smppServiceWiseSummaryData = async (data) => {
+  return await fetchWithAuth(`/smpp/smppServiceWiseSummaryData?month=${data.month}&year=${data.year}`, {
+    method: "POST",
+  });
+};
+export const getMissingErrorCodeData = async (data) => {
+  return await fetchWithAuth(`/smpp/getMissingErrorCodeData`, {
+    method: "POST",
+  });
+};
+export const insertValuesSMPP = async (data) => {
+  return await fetchWithAuth(`/smpp/insertValues`, {
     method: "POST",
   });
 };
