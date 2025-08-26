@@ -376,7 +376,7 @@ export const getErrorMappingData = async (serviceid) => {
   return await fetchWithAuth(
     `/smpp/getErrorMappingData?serviceid=${serviceid}`,
     {
-      method: "POST",
+      method: "GET",
     }
   );
 };
@@ -396,9 +396,12 @@ export const getServices = async (id) => {
   });
 };
 export const smppServiceWiseSummaryData = async (data) => {
-  return await fetchWithAuth(`/smpp/smppServiceWiseSummaryData?month=${data.month}&year=${data.year}`, {
-    method: "POST",
-  });
+  return await fetchWithAuth(
+    `/smpp/smppServiceWiseSummaryData?month=${data.month}&year=${data.year}`,
+    {
+      method: "POST",
+    }
+  );
 };
 export const getMissingErrorCodeData = async (data) => {
   return await fetchWithAuth(`/smpp/getMissingErrorCodeData`, {
