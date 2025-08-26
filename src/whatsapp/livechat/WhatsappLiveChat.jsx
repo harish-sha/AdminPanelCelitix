@@ -1082,6 +1082,21 @@ export default function WhatsappLiveChat() {
       toast.error("Error getting location");
     }
   }
+
+  async function handleUnread(data) {
+    if (!wabaState.selectedWaba) return;
+    try {
+      const data = {
+        mobile: data.mobileNo,
+        waba: wabaState.selectedWaba,
+        srno: data.srno,
+        unreadFlag: 1,
+      };
+      await readMessage(data);
+    } catch (e) {
+      toast.error("Error viewing message");
+    }
+  }
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
       <div
@@ -1113,6 +1128,7 @@ export default function WhatsappLiveChat() {
           setSelectedGroupList={setSelectedGroupList}
           isLoading={isFetching}
           setChatIndex={setChatIndex}
+          handleUnread={handleUnread}
         />
       </div>
       <AnimatePresence>
