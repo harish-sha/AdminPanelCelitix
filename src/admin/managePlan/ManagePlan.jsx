@@ -34,13 +34,13 @@ const ManagePlan = () => {
   const [createData, setCreateData] = useState({
     planName: "",
     planType: "",
-    characterLimit: "",
-    orderQueueSize: "",
-    initialQueueSize: "",
-    triggerQueueSize: "",
+    characterLimit: "800",
+    orderQueueSize: "3000",
+    initialQueueSize: "3000",
+    triggerQueueSize: "1800",
     isPlanTimeout: "",
-    fromTime: "",
-    toTime: "",
+    fromTime: "00:00",
+    toTime: "00:00",
   });
 
   const plancreateOptions = [
@@ -328,46 +328,44 @@ const ManagePlan = () => {
               </div>
             </div>
 
-            {isCheckedcreate && (
-              <>
-                <div className="grid grid-cols-2 gap-4">
-                  <InputField
-                    label="From Time"
-                    id="createplanfromtimecreate"
-                    name="createplanfromtimecreate"
-                    placeholder="Enter From Time"
-                    onChange={(e) =>
-                      setCreateData({
-                        ...createData,
-                        fromTime: e.target.value,
-                      })
-                    }
-                    value={createData.fromTime}
-                  />
-                  <InputField
-                    label="To Time"
-                    id="createplantotimecreate"
-                    name="createplantotimecreate"
-                    placeholder="Enter To Time"
-                    onChange={(e) =>
-                      setCreateData({
-                        ...createData,
-                        toTime: e.target.value,
-                      })
-                    }
-                    value={createData.toTime}
-                  />
-                </div>
-                <div className="flex items-center justify-center">
-                  <UniversalButton
-                    label="Save"
-                    id="createplansavecreatebtn"
-                    name="createplansavecreatebtn"
-                    onClick={handleCreatePlanSave}
-                  />
-                </div>
-              </>
-            )}
+            <div className="grid grid-cols-2 gap-4">
+              <InputField
+                label="From Time"
+                id="createplanfromtimecreate"
+                name="createplanfromtimecreate"
+                tooltipContent="Enter From Time in 24 hours format (HH:MM)"
+                placeholder="Enter From Time"
+                onChange={(e) =>
+                  setCreateData({
+                    ...createData,
+                    fromTime: e.target.value,
+                  })
+                }
+                value={createData.fromTime}
+              />
+              <InputField
+                label="To Time"
+                id="createplantotimecreate"
+                name="createplantotimecreate"
+                placeholder="Enter To Time"
+                tooltipContent="Enter To Time in 24 hours format (HH:MM)"
+                onChange={(e) =>
+                  setCreateData({
+                    ...createData,
+                    toTime: e.target.value,
+                  })
+                }
+                value={createData.toTime}
+              />
+            </div>
+          </div>
+          <div className="flex items-center justify-center mt-2">
+            <UniversalButton
+              label="Save"
+              id="createplansavecreatebtn"
+              name="createplansavecreatebtn"
+              onClick={handleCreatePlanSave}
+            />
           </div>
         </Dialog>
       </div>
