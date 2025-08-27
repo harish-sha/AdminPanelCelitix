@@ -12,8 +12,11 @@ import { RCS } from "../components/rcs";
 import { Email } from "../components/email";
 import { SMS } from "../components/sms";
 import { saveNotification } from "@/apis/admin/admin";
+import { useLocation } from "react-router-dom";
 
 export const AddNotification = () => {
+  const { state } = useLocation();
+
   const [value, setValue] = React.useState(0);
 
   async function handleSaveRcsNotification(data) {
@@ -131,16 +134,19 @@ export const AddNotification = () => {
       </Tabs>
 
       <CustomTabPanel value={value} index={0}>
-        <Whatsapp />
+        <Whatsapp state={state} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <RCS handleSaveRcsNotification={handleSaveRcsNotification} />
+        <RCS
+          state={state}
+          handleSaveRcsNotification={handleSaveRcsNotification}
+        />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        <Email />
+        <Email state={state} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
-        <SMS />
+        <SMS state={state} />
       </CustomTabPanel>
     </Box>
   );

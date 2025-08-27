@@ -22,7 +22,10 @@ import UniversalButton from "@/components/common/UniversalButton.jsx";
 import Loader from "@/whatsapp/components/Loader.jsx";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch.jsx";
 import { RadioButton } from "primereact/radiobutton";
-import { saveNotification } from "@/apis/admin/admin.js";
+import {
+  getSpeicificNotification,
+  saveNotification,
+} from "@/apis/admin/admin.js";
 
 const extractVariablesFromText = (text) => {
   const regex = /{{(\d+)}}/g;
@@ -36,7 +39,7 @@ const extractVariablesFromText = (text) => {
   return variables;
 };
 
-export const Whatsapp = () => {
+export const Whatsapp = ({ state }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const [selectedWaba, setSelectedWaba] = useState("");
@@ -249,14 +252,12 @@ export const Whatsapp = () => {
       mediaPath: imageFile || "",
       variableList: contentValues || "",
       urlVariable: "",
-      reminderSrno: "2",
+      reminderSrno: state,
       srno: "0",
       templateType: selectedTemplateData?.type,
       templateName: selectedTemplateData?.templateName,
       templateLanguage: selectedLanguage,
       notificationStatus: "on",
-      remarks: "arihant-whatsapp",
-      emailFor: "arihant-whatsapp-for",
     };
 
     try {
@@ -416,7 +417,7 @@ export const Whatsapp = () => {
         //   setTemplateDataNew(response.data[0]);
         //   setSelectedLanguage(response.data[0]?.language);
         if (response) {
-          setTemplateDataNew(response);
+          setTemplateDataNew(response || []);
           setSelectedLanguage(response?.language);
         } else {
           toast.error("Failed to load template data!");
@@ -445,6 +446,47 @@ export const Whatsapp = () => {
     setSelectedCountryCode(countryCode);
     setIsCountryCodeChecked(addCountryCode);
   };
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const payload = {
+          srno: state,
+          type: "whatsapp",
+        };
+        const res = await getSpeicificNotification(payload);
+        console.log(res);
+        if (!res?.success) {
+          return;
+        }
+        //  options={templateOptions.map((template) => ({
+        //                   value: template.vendorTemplateId,
+        //                   label: template.templateName,
+        //                 }))}
+        const waba = wabaList?.find(
+          (waba) => waba.wabaSrno == res?.data[0]?.wabaSrno
+        );
+
+        const template = templateOptions.find(
+          (template) => template.value == res?.data[0]?.templateId
+        );
+
+        console.log("template", templateOptions);
+
+        const parsedJson = JSON.parse(res?.data[0]?.requestJson || "{}");
+        setSelectedWaba(waba?.mobileNo);
+        setSelectedWabaMobileNo([waba?.mobileNo]);
+        // setWabaAccountId(waba?.wabaAccountId || "");
+        setSelectedTemplate(res?.data[0]?.templateId);
+        // setTemplateDataNew(parsedJson);
+        setImageFile(res?.data[0]?.setImageFile);
+      } catch (e) {
+        console.log(e);
+        toast.error("Something Went Wrong!");
+      }
+    }
+    fetchData();
+  }, [state, wabaList, templateOptions]);
 
   return (
     <div className="max-w-full">
