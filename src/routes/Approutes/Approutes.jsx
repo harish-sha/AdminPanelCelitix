@@ -228,12 +228,7 @@ const Approutes = () => {
         <Route path="wflowcreation" element={<FlowCreationPage />} />
         <Route path="wblockuser" element={<BlockUser />} />
         <Route path="wmmlite" element={<MmLite />} />
-
-        <Route path="/notification">
-          <Route index element={<ManageNotifications />} />
-          {/* <Route path=":id" element={<NotificationDetail />} /> */}
-          <Route path="add" element={<AddNotification />} />
-        </Route>
+        <Route path="manage-notification" element={<AddNotification />} />
 
         {/* RCS */}
         <Route path="sendrcs" element={<SendRcs />} />

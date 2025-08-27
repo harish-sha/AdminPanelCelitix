@@ -34,10 +34,8 @@ const App = () => {
         />
 
         <Route element={<PrivateRoute />}>
-          <Route element={<PermissionRoute />}>
-            <Route path="/*" element={<Approutes />} />
-            <Route path="/docs/*" element={<Apiroutes />} />
-          </Route>
+          <Route path="/*" element={<Approutes />} />
+          <Route path="/docs/*" element={<Apiroutes />} />
         </Route>
 
         <Route path="*" element={<PageNotFound />} />
