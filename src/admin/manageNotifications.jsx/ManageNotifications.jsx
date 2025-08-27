@@ -235,7 +235,12 @@ const ManageNotifications = () => {
   }
 
   async function handleDelete(row, type) {
+
     if (!row?.sr_no) return;
+
+    const notificationType = `${type}_notification`;
+    if(row[notificationType] === "off") return
+    
     const payload = {
       reminderSrno: row?.sr_no,
       status: "off",
