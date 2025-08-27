@@ -413,3 +413,11 @@ export const insertValuesSMPP = async (data) => {
     method: "POST",
   });
 };
+export const getSpeicificNotification = async (data) => {
+  return await fetchWithAuth(
+    `/notification/get-notification?reminderSrno=${data.srno}&type=${data.type}`,
+    {
+      method: "GET",
+    }
+  );
+};
