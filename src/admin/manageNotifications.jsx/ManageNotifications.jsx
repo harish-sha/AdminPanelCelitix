@@ -9,6 +9,7 @@ import CustomTooltip from "../components/CustomTooltip";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { ImInfo } from "react-icons/im";
 import InfoPopover from "@/components/common/InfoPopover";
+import EditNoteIcon from "@mui/icons-material/EditNote";
 
 const ManageNotifications = () => {
   const navigate = useNavigate();
@@ -61,7 +62,9 @@ const ManageNotifications = () => {
         <CustomTooltip arrow placement="top" title="On/Off">
           <Switch
             checked={params.row.whatsapp_notification === "on" ? true : false}
-            onChange={() => {}}
+            onChange={() => {
+              handleDelete(params.row, "whatsapp");
+            }}
             sx={{
               "& .MuiSwitch-switchBase.Mui-checked": {
                 color: "#34C759",
@@ -84,7 +87,9 @@ const ManageNotifications = () => {
         <CustomTooltip arrow placement="top" title="On/Off">
           <Switch
             checked={params.row.rcs_notification === "on" ? true : false}
-            onChange={() => {}}
+            onChange={() => {
+              handleDelete(params.row, "rcs");
+            }}
             sx={{
               "& .MuiSwitch-switchBase.Mui-checked": {
                 color: "#34C759",
@@ -107,7 +112,9 @@ const ManageNotifications = () => {
         <CustomTooltip arrow placement="top" title="On/Off">
           <Switch
             checked={params.row.sms_notification === "on" ? true : false}
-            onChange={() => {}}
+            onChange={() => {
+              handleDelete(params.row, "sms");
+            }}
             sx={{
               "& .MuiSwitch-switchBase.Mui-checked": {
                 color: "#34C759",
@@ -130,7 +137,9 @@ const ManageNotifications = () => {
         <CustomTooltip arrow placement="top" title="On/Off">
           <Switch
             checked={params.row.email_notification === "on" ? true : false}
-            onChange={() => {}}
+            onChange={() => {
+              handleDelete(params.row, "email");
+            }}
             sx={{
               "& .MuiSwitch-switchBase.Mui-checked": {
                 color: "#34C759",
@@ -188,7 +197,17 @@ const ManageNotifications = () => {
               </InfoPopover>
             </span>
           </CustomTooltip>
-          <CustomTooltip title="Delete Notification" placement="top" arrow>
+          <CustomTooltip title="Edit Notification" placement="top" arrow>
+            <IconButton onClick={() => handleEdit(params.row)}>
+              <EditNoteIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "gray",
+                }}
+              />
+            </IconButton>
+          </CustomTooltip>
+          {/* <CustomTooltip title="Delete Notification" placement="top" arrow>
             <IconButton
               className="no-xs"
               onClick={() => handleDelete(params.row)}
@@ -198,7 +217,7 @@ const ManageNotifications = () => {
                 size={20}
               />
             </IconButton>
-          </CustomTooltip>
+          </CustomTooltip> */}
         </>
       ),
     },
@@ -210,19 +229,27 @@ const ManageNotifications = () => {
     setClicked(row.remarks);
   }
 
-  async function handleDelete(row) {
+  function handleEdit(row) {
+    if (!row.sr_no) return;
+    navigate("/manage-notification", { state: row.sr_no });
+  }
+
+  async function handleDelete(row, type) {
     if (!row?.sr_no) return;
-    console.log(row);
     const payload = {
       reminderSrno: row?.sr_no,
-      status: "",
-      type: "",
+      status: "off",
+      type,
     };
 
-    return;
     try {
       const res = await deleteNotification(payload);
-      console.log("res", res);
+
+      if (!res?.success) {
+        return toast.error(res?.message);
+      }
+      toast.success(res?.message);
+      fetchNotifications();
     } catch (e) {
       toast.error("Error deleting notification.");
     }
