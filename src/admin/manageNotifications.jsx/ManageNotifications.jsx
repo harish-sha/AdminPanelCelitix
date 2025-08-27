@@ -1,16 +1,25 @@
 import { deleteNotification, getNotificationList } from "@/apis/admin/admin";
 import UniversalButton from "@/components/common/UniversalButton";
 import { DataTable } from "@/components/layout/DataTable";
-import { Box, IconButton } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { Box, IconButton, Switch } from "@mui/material";
+import React, { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import CustomTooltip from "../components/CustomTooltip";
 import { MdOutlineDeleteForever } from "react-icons/md";
+import { ImInfo } from "react-icons/im";
+import InfoPopover from "@/components/common/InfoPopover";
 
 const ManageNotifications = () => {
   const navigate = useNavigate();
   const [list, setList] = useState([]);
+  const dropdownButtonRefs = useRef({});
+  const [clicked, setClicked] = useState([]);
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+
+  const additionalInfoLabels = {
+    remarks: "remarks",
+  };
 
   async function fetchNotifications() {
     try {
@@ -38,17 +47,111 @@ const ManageNotifications = () => {
   const cols = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     {
-      field: "remarks",
-      headerName: "Remarks",
+      field: "emailfor",
+      headerName: "Type",
       flex: 1,
       minWidth: 120,
     },
     {
-      field: "emailfor",
-      headerName: "emailfor",
+      field: "whatsapp_notification",
+      headerName: "Whatsapp Notification",
       flex: 1,
       minWidth: 120,
+      renderCell: (params) => (
+        <CustomTooltip arrow placement="top" title="On/Off">
+          <Switch
+            checked={params.row.whatsapp_notification === "on" ? true : false}
+            onChange={() => {}}
+            sx={{
+              "& .MuiSwitch-switchBase.Mui-checked": {
+                color: "#34C759",
+              },
+              "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+                {
+                  backgroundColor: "#34C759",
+                },
+            }}
+          />
+        </CustomTooltip>
+      ),
     },
+    {
+      field: "rcs_notification",
+      headerName: "RCS Notification",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => (
+        <CustomTooltip arrow placement="top" title="On/Off">
+          <Switch
+            checked={params.row.rcs_notification === "on" ? true : false}
+            onChange={() => {}}
+            sx={{
+              "& .MuiSwitch-switchBase.Mui-checked": {
+                color: "#34C759",
+              },
+              "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+                {
+                  backgroundColor: "#34C759",
+                },
+            }}
+          />
+        </CustomTooltip>
+      ),
+    },
+    {
+      field: "sms_notification",
+      headerName: "SMS Notification",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => (
+        <CustomTooltip arrow placement="top" title="On/Off">
+          <Switch
+            checked={params.row.sms_notification === "on" ? true : false}
+            onChange={() => {}}
+            sx={{
+              "& .MuiSwitch-switchBase.Mui-checked": {
+                color: "#34C759",
+              },
+              "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+                {
+                  backgroundColor: "#34C759",
+                },
+            }}
+          />
+        </CustomTooltip>
+      ),
+    },
+    {
+      field: "email_notification",
+      headerName: "Email Notification",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => (
+        <CustomTooltip arrow placement="top" title="On/Off">
+          <Switch
+            checked={params.row.email_notification === "on" ? true : false}
+            onChange={() => {}}
+            sx={{
+              "& .MuiSwitch-switchBase.Mui-checked": {
+                color: "#34C759",
+              },
+              "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+                {
+                  backgroundColor: "#34C759",
+                },
+            }}
+          />
+        </CustomTooltip>
+      ),
+    },
+    // in EYE button (Action field)
+    // {
+    //   field: "remarks",
+    //   headerName: "Remarks",
+    //   flex: 1,
+    //   minWidth: 120,
+    // },
+
     {
       field: "action",
       headerName: "Action",
@@ -56,6 +159,35 @@ const ManageNotifications = () => {
       minWidth: 100,
       renderCell: (params) => (
         <>
+          <CustomTooltip title="Info" placement="top" arrow>
+            <span>
+              <IconButton
+                type="button"
+                ref={(el) => {
+                  if (el) dropdownButtonRefs.current[params.row.id] = el;
+                }}
+                onClick={() => handleInfo(params.row)}
+                className="no-xs relative"
+              >
+                <ImInfo size={18} className="text-green-500 " />
+              </IconButton>
+              <InfoPopover
+                anchorEl={dropdownButtonRefs.current[params.row.id]}
+                open={dropdownOpenId === params.row.id}
+                onClose={() => {}}
+              >
+                <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden">
+                  <tbody>
+                    <tr className="hover:bg-gray-50 transition-colors border-b last:border-none">
+                      <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3 text-nowrap">
+                        Remarks: {clicked}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </InfoPopover>
+            </span>
+          </CustomTooltip>
           <CustomTooltip title="Delete Notification" placement="top" arrow>
             <IconButton
               className="no-xs"
@@ -71,6 +203,12 @@ const ManageNotifications = () => {
       ),
     },
   ];
+
+  function handleInfo(row) {
+    const id = row.id;
+    setDropdownOpenId((prevId) => (prevId === id ? null : id));
+    setClicked(row.remarks);
+  }
 
   async function handleDelete(row) {
     if (!row?.sr_no) return;
