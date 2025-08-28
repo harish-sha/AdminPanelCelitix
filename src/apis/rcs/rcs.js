@@ -217,17 +217,18 @@ export const fetchSpecificConvo = (data) => {
     }
   );
 };
-export const sendRCSMessage = (data) => {
+export const sendRCSMessage = (data, body) => {
   return fetchWithAuth(
     `/rcs/sendRcsMessage?agentId=${data.agentId}&mobile=${data.mobileNo}&message=${data.message}&replyFrom=user&replyType=${data.replyType}`,
     {
       method: "POST",
+      body: JSON.stringify(body),
     }
   );
 };
 
 export const sendRCSTemplateMessage = (data) => {
-  return fetchWithAuth(`/wrapper/rcs/sendRCS`, {
+  return fetchWithAuth(`/rcs/sendRcsMessage`, {
     method: "POST",
     body: JSON.stringify(data),
   });

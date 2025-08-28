@@ -18,6 +18,7 @@ export const ChatInput = ({
   sendMessage,
   inputRef,
   fileInputRef,
+  documentInputRef,
   isSpeedDialOpen,
   setIsSpeedDialOpen,
   isTemplateMessage,
@@ -38,7 +39,7 @@ export const ChatInput = ({
       label: "Document",
       icon: <FilePresentOutlinedIcon />,
       command: () => {
-        fileInputRef.current.click();
+        documentInputRef.current.click();
       },
     },
     {
@@ -157,7 +158,7 @@ export const ChatInput = ({
                 /> */}
       </div>
 
-      {/* <div className="relative ml-4">
+      <div className="relative ml-4">
         <button
           onClick={() => setIsSpeedDialOpen(!isSpeedDialOpen)}
           className={`flex items-center justify-center w-8 h-8 cursor-pointer bg-[#22577E] text-white rounded-full shadow-md transition-transform ${
@@ -185,7 +186,7 @@ export const ChatInput = ({
             ))}
           </motion.div>
         )}
-      </div> */}
+      </div>
     </motion.div>
   );
 };
