@@ -310,7 +310,6 @@ export const Whatsapp = ({ state }) => {
       // fileRef.current.value = "";
       fileRef.current && (fileRef.current.value = "");
     } catch (e) {
-      console.log(e);
       toast.error("Something Went Wrong!");
     }
   };
@@ -455,7 +454,7 @@ export const Whatsapp = ({ state }) => {
           type: "whatsapp",
         };
         const res = await getSpeicificNotification(payload);
-        console.log(res);
+
         if (!res?.success) {
           return;
         }
@@ -471,22 +470,20 @@ export const Whatsapp = ({ state }) => {
           (template) => template.value == res?.data[0]?.templateId
         );
 
-        console.log("template", templateOptions);
-
         const parsedJson = JSON.parse(res?.data[0]?.requestJson || "{}");
         setSelectedWaba(waba?.mobileNo);
         setSelectedWabaMobileNo([waba?.mobileNo]);
         // setWabaAccountId(waba?.wabaAccountId || "");
         setSelectedTemplate(res?.data[0]?.templateId);
         // setTemplateDataNew(parsedJson);
+        fetchTemplateDetails(waba?.mobileNo);
         setImageFile(res?.data[0]?.setImageFile);
       } catch (e) {
-        console.log(e);
         toast.error("Something Went Wrong!");
       }
     }
     fetchData();
-  }, [state, wabaList, templateOptions]);
+  }, [state, wabaList]);
 
   return (
     <div className="max-w-full">
