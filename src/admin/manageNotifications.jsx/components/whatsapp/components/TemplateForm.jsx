@@ -78,7 +78,6 @@ const TemplateForm = ({
 }) => {
   const [inputValues, setInputValues] = useState({});
 
-
   const templateType =
     templateOptions?.find(
       (option) => option.vendorTemplateId === selectedTemplate
@@ -145,7 +144,6 @@ const TemplateForm = ({
     setInputValues(defaultValues);
   }, [templateDataNew, selectedOption]);
 
-
   const handleInputChange = (e, variable, type = "body") => {
     const { value } = e.target;
     setInputValues((prev) => ({
@@ -158,7 +156,7 @@ const TemplateForm = ({
 
   const handleSelectVariable = (variable, inputKey, type = "body") => {
     setInputValues((prev) => {
-      const updatedValue = `{{${variable}}}`;
+      const updatedValue = variable;
 
       const newState = { ...prev, [`${type}${inputKey}`]: updatedValue };
 
@@ -512,10 +510,11 @@ const TemplateForm = ({
                         disabled={
                           imageState.uploading || !imageState.validFileSelected
                         }
-                        className={`px-2 py-[0.3rem] ${imageState.uploading || !imageState.validFileSelected
-                          ? "bg-gray-400 cursor-not-allowed"
-                          : "bg-green-400 cursor-pointer hover:bg-green-500"
-                          } text-white text-sm rounded-md shadow-md focus:outline-none`}
+                        className={`px-2 py-[0.3rem] ${
+                          imageState.uploading || !imageState.validFileSelected
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : "bg-green-400 cursor-pointer hover:bg-green-500"
+                        } text-white text-sm rounded-md shadow-md focus:outline-none`}
                       >
                         {imageState.uploading ? (
                           <DoNotDisturbOutlinedIcon

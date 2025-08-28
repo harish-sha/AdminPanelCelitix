@@ -22,7 +22,7 @@ export const Variable = ({ setInputDetails, inputDetails, headers }) => {
     const input = inputRef.current;
     const start = input.selectionStart;
     const end = input.selectionEnd;
-    const newTag = `{#${e}#}`;
+    const newTag = e;
 
     if (inputDetails?.length + newTag.length > 1000) return;
 

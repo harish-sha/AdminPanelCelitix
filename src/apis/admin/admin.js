@@ -421,3 +421,9 @@ export const getSpeicificNotification = async (data) => {
     }
   );
 };
+
+export const getNotificationVariable = async (data) => {
+  return await fetchWithAuth(`/notification/get-variable-list`, {
+    method: "GET",
+  });
+};

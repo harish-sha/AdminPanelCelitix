@@ -12,7 +12,7 @@ import { isEnglish } from "./helper/isEnglish";
 import { Preview } from "./components/Preview";
 import { getSpeicificNotification, saveNotification } from "@/apis/admin/admin";
 
-export const SMS = ({ state }) => {
+export const SMS = ({ state, allVar }) => {
   const [inputDetails, setInputDetails] = useState({
     campaingName: "",
     templateId: "",
@@ -166,6 +166,7 @@ export const SMS = ({ state }) => {
           setInputDetails={setInputDetails}
           inputDetails={inputDetails}
           allTemplates={allTemplates}
+          headers={allVar}
         />
 
         {/* <div className="flex"> */}

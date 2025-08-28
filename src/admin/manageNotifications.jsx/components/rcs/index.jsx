@@ -22,7 +22,7 @@ import CustomTooltip from "@/components/common/CustomTooltip";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { getSpeicificNotification, saveNotification } from "@/apis/admin/admin";
 
-export const RCS = ({ state }) => {
+export const RCS = ({ state, allVar }) => {
   const [allAgents, setAllAgents] = useState([]);
   const [allTemplates, setAllTemplates] = useState([]);
   const [campaignDetails, setCampaignDetails] = useState({
@@ -266,6 +266,7 @@ export const RCS = ({ state }) => {
             btnvarList={btnvarList}
             setBtnInputVariables={setBtnInputVariables}
             btninputVariables={btninputVariables}
+            allVar={allVar}
           />
         </div>
 

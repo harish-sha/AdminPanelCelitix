@@ -26,6 +26,7 @@ export const VariableManager = ({
   btnvarList,
   setBtnInputVariables,
   btninputVariables,
+  allVar,
 }) => {
   const [isCarousal, setIsCarousal] = useState(false);
   const textBoxRef = useRef(null);
@@ -118,11 +119,10 @@ export const VariableManager = ({
   );
 
   const insertVariable = (variable, index) => {
-    console.log(variable);
     const input = textBoxRef.current;
     if (!input) return;
 
-    const tag = `{#${variable}#}`;
+    const tag = `${variable}`;
     const start = input.selectionStart;
     const end = input.selectionEnd;
 
@@ -193,7 +193,7 @@ export const VariableManager = ({
         </div>
         <div className="absolute top-[0.58rem] right-2 h-10">
           <InputVariable
-            variables={headers}
+            variables={allVar}
             onSelect={(e) => insertVariable(e, index)}
           />
         </div>

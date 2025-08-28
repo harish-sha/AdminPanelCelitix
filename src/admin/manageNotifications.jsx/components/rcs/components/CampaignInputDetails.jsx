@@ -12,6 +12,7 @@ export const HandleCampaignDetails = ({
   setInputVariables,
   setVarLength,
   setCarVar,
+  allVar
 }) => {
   return (
     <div>

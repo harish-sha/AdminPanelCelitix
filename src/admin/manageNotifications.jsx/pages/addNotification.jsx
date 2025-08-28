@@ -1,5 +1,5 @@
 import { Box, Tab, Tabs } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import { CustomTabPanel, a11yProps } from "@/components/common/CustomTabPanel";
 import toast from "react-hot-toast";
@@ -11,35 +11,32 @@ import { Whatsapp } from "../components/whatsapp";
 import { RCS } from "../components/rcs";
 import { Email } from "../components/email";
 import { SMS } from "../components/sms";
-import { saveNotification } from "@/apis/admin/admin";
+import { getNotificationVariable, saveNotification } from "@/apis/admin/admin";
 import { useLocation } from "react-router-dom";
 
 export const AddNotification = () => {
   const { state } = useLocation();
 
   const [value, setValue] = React.useState(0);
+  const [allVar, setAllVar] = React.useState([]);
 
-  async function handleSaveRcsNotification(data) {
-    //     const samplePayload = {
-    //   "agent": "pnjtocmS6NQypLFa",
-    //   "templateSrno": "204",
-    //   "variableList": [],
-    //   "variables": {},
-    //   "reminderSrno": "23",
-    //   "rcsReminderSrno": "0",//for save pass it as 0 or skip  // for update get value
-    //   "notificationStatus": "on"
-    // }
-    try {
-      const res = await saveNotification("rcs", data);
-      if (!res?.success) {
-        return toast.error(res?.message);
+  React.useEffect(() => {
+    async function handleFetchAllVar() {
+      try {
+        const res = await getNotificationVariable();
+        if (!res?.success) {
+          return toast.error("Error fetching all variables.");
+        }
+        const variable = res?.data?.map((obj) => Object.values(obj));
+        console.log("variable", variable);
+        setAllVar(variable[0]);
+      } catch (e) {
+        console.log("e", e);
+        toast.error("Error fetching all variables.");
       }
-      toast.success(res?.message);
-    } catch (e) {
-      console.log(e);
-      toast.error("Something Went Wrong!");
     }
-  }
+    handleFetchAllVar();
+  }, []);
 
   return (
     <Box
@@ -134,19 +131,16 @@ export const AddNotification = () => {
       </Tabs>
 
       <CustomTabPanel value={value} index={0}>
-        <Whatsapp state={state} />
+        <Whatsapp state={state} allVar={allVar} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <RCS
-          state={state}
-          handleSaveRcsNotification={handleSaveRcsNotification}
-        />
+        <RCS state={state} allVar={allVar} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        <Email state={state} />
+        <Email state={state} allVar={allVar} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
-        <SMS state={state} />
+        <SMS state={state} allVar={allVar} />
       </CustomTabPanel>
     </Box>
   );

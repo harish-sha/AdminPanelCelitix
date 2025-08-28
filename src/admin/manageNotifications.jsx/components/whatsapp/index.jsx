@@ -39,7 +39,7 @@ const extractVariablesFromText = (text) => {
   return variables;
 };
 
-export const Whatsapp = ({ state }) => {
+export const Whatsapp = ({ state, allVar }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const [selectedWaba, setSelectedWaba] = useState("");
@@ -629,7 +629,7 @@ export const Whatsapp = ({ state }) => {
                           }
                           onImageUpload={handleImageUpload}
                           selectedOption={selectedOption}
-                          fileHeaders={fileHeaders}
+                          fileHeaders={allVar}
                           selectedTemplateData={selectedTemplateData}
                           onUrlIndexChange={setUrlIndex}
                           setVarLength={setVarLength}
