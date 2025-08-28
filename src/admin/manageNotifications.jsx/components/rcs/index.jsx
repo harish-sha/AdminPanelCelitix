@@ -20,9 +20,9 @@ import { Checkbox } from "@mui/material";
 import moment from "moment";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import { AiOutlineInfoCircle } from "react-icons/ai";
-import { saveNotification } from "@/apis/admin/admin";
+import { getSpeicificNotification, saveNotification } from "@/apis/admin/admin";
 
-export const RCS = () => {
+export const RCS = ({ state }) => {
   const [allAgents, setAllAgents] = useState([]);
   const [allTemplates, setAllTemplates] = useState([]);
   const [campaignDetails, setCampaignDetails] = useState({
@@ -189,7 +189,7 @@ export const RCS = () => {
 
     const payload = {
       agent: campaignDetails?.agent,
-      templateId : campaignDetails?.templateSrno,
+      templateId: campaignDetails?.templateSrno,
       variableList: allVar,
       variables: variables,
       reminderSrno: "23",
@@ -207,6 +207,33 @@ export const RCS = () => {
       toast.error("Something Went Wrong!");
     }
   }
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const payload = {
+          srno: state,
+          type: "rcs",
+        };
+        const res = await getSpeicificNotification(payload);
+        console.log(res);
+        if (!res?.success) {
+          return;
+        }
+        console.log("res", res);
+        const agentId = res?.data[0]?.agentId;
+        setCampaignDetails((prev) => ({
+          ...prev,
+          agent: agentId,
+          templateSrno: res?.data[0]?.templateId,
+        }));
+      } catch (e) {
+        console.log(e);
+        toast.error("Something Went Wrong!");
+      }
+    }
+    fetchData();
+  }, [state, allAgents]);
   return (
     <>
       <div className="grid grid-cols-1 gap-2 md:grid-cols-2 mt-5">
