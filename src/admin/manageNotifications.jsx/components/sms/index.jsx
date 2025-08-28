@@ -10,9 +10,9 @@ import { Checkbox } from "@material-tailwind/react";
 import moment from "moment";
 import { isEnglish } from "./helper/isEnglish";
 import { Preview } from "./components/Preview";
-import { saveNotification } from "@/apis/admin/admin";
+import { getSpeicificNotification, saveNotification } from "@/apis/admin/admin";
 
-export const SMS = () => {
+export const SMS = ({ state }) => {
   const [inputDetails, setInputDetails] = useState({
     campaingName: "",
     templateId: "",
@@ -82,7 +82,6 @@ export const SMS = () => {
   async function handleSave() {
     let isError = false;
 
-
     if (inputDetails?.templateType === 1 && !inputDetails?.templateId) {
       return toast.error("Please select a template.");
     }
@@ -112,11 +111,11 @@ export const SMS = () => {
     const payload = {
       entityId: inputDetails?.entityId,
       senderid: inputDetails?.senderId,
-      templateId : inputDetails?.templateId,
+      templateId: inputDetails?.templateId,
       smsMessage: messages,
       isUnicode: inputDetails?.unicode,
       reminderSrno: "0",
-      srno: "0", 
+      srno: "0",
       notificationStatus: "on",
     };
     try {
@@ -130,6 +129,35 @@ export const SMS = () => {
       toast.error("Something Went Wrong!");
     }
   }
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const payload = {
+          srno: state,
+          type: "sms",
+        };
+        const res = await getSpeicificNotification(payload);
+        console.log(res);
+        if (!res?.success) {
+          return;
+        }
+
+        setInputDetails((prev) => ({
+          ...prev,
+          templateId: res?.data?.templateId,
+          entityId: res?.data?.entityId,
+          unicode: res?.data?.isUnicode,
+          message: res?.data?.messageFormat,
+          // templateType: res?.data?.templateType,
+          senderId: res?.data?.senderId,
+        }));
+      } catch (e) {
+        toast.error("Something Went Wrong!");
+      }
+    }
+    fetchData();
+  }, [state, allTemplates]);
 
   return (
     <>
