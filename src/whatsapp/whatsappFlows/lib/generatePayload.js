@@ -712,17 +712,65 @@ export const generatePayload = (data) => {
         };
       }
 
+      // if (type === "footerbutton") {
+      //   const footerData = pay.footer?.footer_1 || {};
+      //   const onClickActionName = footerData.on_click_action || "complete";
+
+      //   const nextScreenId = data[index + 1]?.id || null;
+
+      //   component = {
+      //     type: "Footer",
+      //     label: footerData.label || "Submit",
+      //     "on-click-action": {
+      //       payload: {
+      //         name,
+      //         type: "TextInput",
+      //       },
+      //       name: onClickActionName,
+      //       ...(index !== data.length - 1 && {
+      //         next: {
+      //           type: "screen",
+      //           name: nextScreenId,
+      //         },
+      //       }),
+      //     },
+      //   };
+      // }
+
       if (type === "footerbutton") {
         const footerData = pay.footer?.footer_1 || {};
         const onClickActionName = footerData.on_click_action || "complete";
-
-        // Find the next screen ID if it exists
         const nextScreenId = data[index + 1]?.id || null;
+
+        // 🔹 Collect all form fields from this screen
+        const formPayload = {};
+        layout.children.forEach((child) => {
+          // Include all input/selection components
+          if (
+            [
+              "TextInput",
+              "TextArea",
+              "Dropdown",
+              "CheckboxGroup",
+              "RadioButtonsGroup",
+              "PhotoPicker",
+              "DatePicker",
+              "CalendarPicker",
+              "ChipsSelector",
+              "DocumentPicker",
+            ].includes(child.type)
+          ) {
+            if (child.name) {
+              formPayload[child.name] = `\${form.${child.name}}`;
+            }
+          }
+        });
 
         component = {
           type: "Footer",
           label: footerData.label || "Submit",
           "on-click-action": {
+            payload: formPayload,
             name: onClickActionName,
             ...(index !== data.length - 1 && {
               next: {

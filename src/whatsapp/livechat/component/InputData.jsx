@@ -38,12 +38,13 @@ export const InputData = ({
   selectedAgent,
   agentList,
   chatState,
+  handleFetchAllConvo,
 }) => {
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [agentInfoSummary, setAgentInfoSummary] = useState("");
-  const [chatSwitched, setChatSwitched] = useState("read");
+  const [chatSwitched, setChatSwitched] = useState("");
 
   const [showFilter, setShowFilter] = useState(false);
   const panelRef = useRef(null);
@@ -57,6 +58,22 @@ export const InputData = ({
     switchChat,
     setSwitchChat,
   } = useWabaAgentContext();
+
+  // console.log(
+  //   "convoDetailssssssssssssssssssssssssssssssssssssssssss",
+  //   convoDetails
+  // );
+  // console.log("activeConvooooooooooooooooooooooo", activeConvo);
+  // console.log("inactiveConvooooooooooooooooooooo", inactiveConvo);
+  // console.log(
+  //   "convoooooooooooooooooooooo",
+  //   convoDetails?.conversationEntityList?.filter(
+  //     (chat) =>
+  //       !convoDetails?.unreadCounts?.some(
+  //         (unread) => unread.mobile === chat.mobileNo
+  //       )
+  //   )
+  // );
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -76,24 +93,21 @@ export const InputData = ({
   const [selected, setSelected] = useState("");
   const [isRead, setIsRead] = useState(false);
 
-
-
   useEffect(() => {
-    setSwitchChat(convoDetails?.conversationEntityList)
-  }, [convoDetails])
+    setSwitchChat(convoDetails?.conversationEntityList);
+  }, [convoDetails]);
 
   const handleSelect = (agent) => {
-
     setAgentInfoSummary(agent.label);
     setSelected(agent);
     setSelectedAgent(agent.value);
-    console.log("agent full object:", agent);
+    // console.log("agent full object:", agent);
 
     setReadStatus((prev) => ({
       ...prev,
       [agent.value]: true,
     }));
-    console.log("agentSrno:", agent.value);
+    // console.log("agentSrno:", agent.value);
   };
 
   const handleChipClick = () => {
@@ -386,8 +400,8 @@ export const InputData = ({
                           <div
                             key={item.sr_no}
                             className={`flex items-center gap-2 p-1 border-2 hover:bg-[#5584AC] hover:text-white transition-all duration-200 cursor-pointer rounded-md overflow-y-auto  ${selectedAgent === item.sr_no
-                                ? "bg-[#5584AC] border-[#5584AC] text-white"
-                                : "bg-gray-100 border-[#5584AC]"
+                              ? "bg-[#5584AC] border-[#5584AC] text-white"
+                              : "bg-gray-100 border-[#5584AC]"
                               }
                                `}
                             onClick={() =>
@@ -412,6 +426,13 @@ export const InputData = ({
                       </div>
 
                       <div className="flex flex-col gap-3 w-full">
+                        <button className="flex justify-end cursor-pointer" onClick={() => {
+                          setSwitchChat(convoDetails?.conversationEntityList)
+                          setChatSwitched("")
+                        }}>
+                          <TbFilterX className="" />
+                        </button>
+
                         <div
                           className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold text-gray-800 rounded-xl shadow-sm
       ${chatSwitched === "read"
@@ -421,23 +442,36 @@ export const InputData = ({
       hover:bg-green-50 hover:shadow-md transition-all duration-200 ease-in-out cursor-pointer`}
                           onClick={() => {
                             setSwitchChat(
-                              btnOption === "active"
-                                ? convoDetails?.conversationEntityList
-                                : []
+                              // btnOption === "active"
+                              //   ? 
+                              // ? convoDetails?.conversationEntityList
+                              convoDetails?.conversationEntityList?.filter(
+                                (chat) =>
+                                  !convoDetails?.unreadCounts?.some(
+                                    (unread) =>
+                                      unread.mobile === chat.mobileNo
+                                  )
+                              )
+                              // : []
                             );
 
                             setChatSwitched("read");
                           }}
                         >
                           <DoneAllIcon
-                            className="text-green-300 text-xs"
+                            className={`${chatSwitched === "read" ? "text-green-300" : "text-gray-300"} text-xs`}
                             sx={{ fontSize: "18px" }}
                           />
                           Read Count:{" "}
                           <span className="font-medium">
-                            {btnOption === "active"
+                            {/* {btnOption === "active" &&
                               ? activeConvo?.length || 0
-                              : inactiveConvo?.length || 0}
+                              : inactiveConvo?.length || 0
+                              (convoDetails?.conversationEntityList?.length || 0) -
+                                (convoDetails?.unreadCounts?.length || 0)
+                                } */}
+                            {(convoDetails?.conversationEntityList?.length ||
+                              0) - (convoDetails?.unreadCounts?.length || 0)}
                           </span>{" "}
                         </div>
                         <div
@@ -454,7 +488,7 @@ export const InputData = ({
                           }}
                         >
                           <DoneAllIcon
-                            className="text-gray-400"
+                            className={`${chatSwitched === "unread" ? "text-green-300" : "text-gray-300"} text-xs`}
                             sx={{ fontSize: "18px" }}
                           />
                           Unread Count:{" "}
@@ -554,11 +588,12 @@ export const InputData = ({
             <button
               onClick={() => {
                 setBtnOption("active");
-                setIsSubscribed(false);
+                // setIsSubscribed(false);
+                // handleFetchAllConvo()
               }}
               className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "active"
-                  ? "text-white font-semibold"
-                  : "text-gray-700"
+                ? "text-white font-semibold"
+                : "text-gray-700"
                 }`}
             >
               Active
@@ -566,11 +601,12 @@ export const InputData = ({
             <button
               onClick={() => {
                 setBtnOption("close");
-                setIsSubscribed(false);
+                // setIsSubscribed(false);
+                // handleFetchAllConvo()
               }}
               className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "close"
-                  ? "text-white font-semibold"
-                  : "text-gray-700"
+                ? "text-white font-semibold"
+                : "text-gray-700"
                 }`}
             >
               Close

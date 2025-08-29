@@ -127,6 +127,12 @@ export default function WhatsappLiveChat() {
   const [chatIndex, setChatIndex] = useState(1);
   const [chatLoading, setChatLoading] = useState(false);
 
+  const [locationPreview, setLocationPreview] = useState(false);
+  const [locationPreviewText, setLocationPreviewText] = useState(
+    "Do you want to share your location"
+  );
+
+
   const [locationData, setLocationData] = useState({
     isLocation: false,
     latitude: "",
@@ -148,7 +154,7 @@ export default function WhatsappLiveChat() {
     initialChatState,
     setInititialChatState,
     agentInfo,
-    setAgentInfo
+    setAgentInfo,
   } = useWabaAgentContext();
 
   function handleNextCard() {
@@ -160,7 +166,6 @@ export default function WhatsappLiveChat() {
     setCardIndex(cardIndex - 1);
   }
 
-  console.log("agentInfo", agentInfo);
   //merge related States
   const [chatState, setChatState] = useState({
     active: null,
@@ -207,7 +212,6 @@ export default function WhatsappLiveChat() {
   useEffect(() => {
     setWabaState(wabaData);
   }, [selectedContextWaba]);
-
 
   const insertEmoji = (emoji) => {
     if (inputRef.current) {
@@ -308,8 +312,6 @@ export default function WhatsappLiveChat() {
       };
     }
 
-    // console.log(body, data);
-
     try {
       setInput("");
       setSelectedImage(null);
@@ -330,6 +332,7 @@ export default function WhatsappLiveChat() {
         replyData: "",
         input: "",
       }));
+
       await handleFetchSpecificConversation();
     } catch (e) {
       // console.log(e);
@@ -373,16 +376,25 @@ export default function WhatsappLiveChat() {
         fileInputRef.current.click();
       },
     },
+    // {
+    //   label: "Send Location",
+    //   // icon: <TableChartOutlinedIcon style={{ color: "#009688" }} />, // Teal
+    //   icon: <MdOutlineAddLocationAlt className="text-indigo-500 size-5" />,
+    //   command: () => {
+    //     setLocationData({
+    //       isLocation: true,
+    //     });
+    //     getLocation();
+    //   },
+    // },
     {
-      label: "Location",
+      label: "Request Location",
       // icon: <TableChartOutlinedIcon style={{ color: "#009688" }} />, // Teal
       icon: <MdOutlineAddLocationAlt className="text-indigo-500 size-5" />,
-      command: () => {
-        setLocationData({
-          isLocation: true,
-        });
-        getLocation();
-      },
+      // command: async () => {
+      //   await requestLocationData();
+      // },
+      command: () => setLocationPreview(true),
     },
   ];
 
@@ -474,7 +486,6 @@ export default function WhatsappLiveChat() {
           };
         });
 
-
         // setChatState((prev) => ({
         //   ...prev,
         //   allConversations: mappedConversations,
@@ -489,7 +500,6 @@ export default function WhatsappLiveChat() {
     fetchConversations();
   }, [wabaState?.selectedWaba]);
 
-
   async function handleFetchAllConvo() {
     if (!wabaState?.selectedWaba) return;
     if (!btnOption) return;
@@ -503,12 +513,12 @@ export default function WhatsappLiveChat() {
         agentSrno: selectedAgent || "",
       };
 
-      console.log("selectedAgent", selectedAgent);
       setIsFetching(true);
       const res = await fetchAllConversations(data);
-      console.log("resssssssss", res);
+
+      // console.log("res", res)
       if (data.agentSrno) {
-        setAgentInfo(res)
+        setAgentInfo(res);
       }
       setConvoDetails(res);
 
@@ -542,8 +552,6 @@ export default function WhatsappLiveChat() {
         allConversations: mappedConversations,
         // allConversations: [],
       }));
-
-
     } catch (e) {
       // console.log(e);
       return toast.error("Error fetching all conversations");
@@ -587,31 +595,49 @@ export default function WhatsappLiveChat() {
   //   };
   // }, [wabaState.selectedWaba, btnOption]);
 
+  // useEffect(() => {
+  //   if (!wabaState?.selectedWaba) return;
+  //   let intervalId = null;
+
+  //   if (isSubscribe) {
+  //     // handleFetchAllConvo();
+  //     intervalId = setInterval(() => {
+  //       handleFetchAllConvo();
+  //     }, 5000);
+  //   } else {
+  //     handleFetchAllConvo();
+  //     setIsSubscribe(true);
+  //   }
+
+  //   return () => {
+  //     if (intervalId) clearInterval(intervalId);
+  //   };
+  //   // setIsSubscribe(true);
+  // }, [
+  //   wabaState?.selectedWaba,
+  //   btnOption,
+  //   isSubscribe,
+  //   selectedAgent,
+  //   convoDetails,
+  // ]);
+
+
   useEffect(() => {
     if (!wabaState?.selectedWaba) return;
-    let intervalId = null;
+    handleFetchAllConvo();
+  }, [wabaState?.selectedWaba, btnOption, selectedAgent]);
 
-    if (isSubscribe) {
-      // handleFetchAllConvo();
-      intervalId = setInterval(() => {
-        handleFetchAllConvo();
-      }, 5000);
-    } else {
+
+  useEffect(() => {
+    if (!wabaState?.selectedWaba) return;
+
+    const intervalId = setInterval(() => {
       handleFetchAllConvo();
-      setIsSubscribe(true);
-    }
+    }, 5000);
 
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-    // setIsSubscribe(true);
-  }, [
-    wabaState?.selectedWaba,
-    btnOption,
-    isSubscribe,
-    selectedAgent,
-    convoDetails,
-  ]);
+    return () => clearInterval(intervalId);
+  }, [wabaState?.selectedWaba, btnOption, selectedAgent, convoDetails]);
+
 
   useEffect(() => {
     setChatState((prev) => ({ ...prev, active: null, allConversations: [] }));
@@ -763,6 +789,7 @@ export default function WhatsappLiveChat() {
       toast.error("Error fetching specific conversation");
     } finally {
       setChatLoading(false);
+
     }
   }
 
@@ -1079,6 +1106,7 @@ export default function WhatsappLiveChat() {
           mobile: chatState?.active.mobileNo,
           waba: wabaState.selectedWaba,
           srno: latestMessageData.srno,
+          unreadFlag: 0
         };
         await readMessage(data);
       } catch (e) {
@@ -1191,6 +1219,66 @@ export default function WhatsappLiveChat() {
     }
   };
 
+  async function requestLocationData() {
+    try {
+      const payload = {
+        mobile: chatState?.active.mobileNo,
+        wabaNumber: wabaState.selectedWaba,
+        srno: chatState?.active.srno,
+        contactName: chatState?.active?.contectName || "",
+        replyType: "location_request_message",
+        replyFrom: "user",
+        wabaSrNo: wabaState.wabaSrno,
+      };
+
+      const body = {
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        type: "interactive",
+        to: chatState?.active.mobileNo,
+        interactive: {
+          type: "location_request_message",
+          body: {
+            text: locationPreviewText,
+          },
+          action: {
+            name: "send_location",
+          },
+        },
+      };
+
+      const res = await sendInputMessageToUser(payload, body);
+
+      if (res?.status !== "success") {
+        toast.error("Error getting location");
+        return;
+      }
+
+      toast.success("Location request sent successfully");
+      setLocationPreview(false)
+      setLocationPreviewText("Do you want to share your location")
+    } catch (e) {
+      toast.error("Error getting location");
+    }
+  }
+
+  async function handleUnread(data) {
+
+    if (!wabaState.selectedWaba) return;
+    try {
+      const payload = {
+        mobile: data?.mobileNo,
+        waba: wabaState.selectedWaba,
+        srno: data?.srno,
+        unreadFlag: data?.srno,
+      };
+      await readMessage(payload);
+      toast.success("Chat Unread");
+    } catch (e) {
+      toast.error("Error viewing message");
+    }
+  }
+
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
       <div
@@ -1211,17 +1299,20 @@ export default function WhatsappLiveChat() {
           selectedAgent={selectedAgent}
           agentList={agentList}
           chatState={chatState}
+          handleFetchAllConvo={handleFetchAllConvo}
         />
 
         <ChatSidebar
           formatDate={formatDate}
           chatState={chatState}
+          handleFetchSpecificConversation={handleFetchSpecificConversation}
           setChatState={setChatState}
           setSelectedAgentList={setSelectedAgentList}
           selectedWaba={selectedWaba}
           setSelectedGroupList={setSelectedGroupList}
           isLoading={isFetching}
           setChatIndex={setChatIndex}
+          handleUnread={handleUnread}
         />
       </div>
       <AnimatePresence>
@@ -1339,7 +1430,12 @@ export default function WhatsappLiveChat() {
               chatLoading={chatLoading}
               isSpeedDialOpen={isSpeedDialOpen}
               setIsSpeedDialOpen={setIsSpeedDialOpen}
-            // specificConversation={specificConversation}
+              // specificConversation={specificConversation}
+              locationPreview={locationPreview}
+              setLocationPreview={setLocationPreview}
+              locationPreviewText={locationPreviewText}
+              setLocationPreviewText={setLocationPreviewText}
+              requestLocationData={requestLocationData}
             />
           </motion.div>
         )}

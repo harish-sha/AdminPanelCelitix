@@ -60,11 +60,24 @@ import {
     Legend,
     ResponsiveContainer,
 } from "recharts";
-import { fetchBalance } from "@/apis/settings/setting";
+import { fetchBalance, getOldApiKey } from "@/apis/settings/setting";
 import { useUser } from "@/context/auth";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import ClockCard from "./components/ClockCard";
 import AccountExpiryFormat from "./components/AccountExpiryFormat";
+
+import integration from "@/assets/animation/integration.json";
+import zohoicon from "@/assets/icons/zoho.svg";
+import zapier from "@/assets/icons/zapier.svg";
+import wordpress from "@/assets/icons/wordpress.svg";
+import woocommerce from "@/assets/icons/woocommerce.svg";
+import telegram from "@/assets/icons/telegram.svg";
+import slack from "@/assets/icons/slack.svg";
+import shopify from "@/assets/icons/shopify.svg";
+import instagram from "@/assets/icons/instagram.svg";
+import freshdesk from "@/assets/icons/freshdesk.svg";
+import facebookmessenger from "@/assets/icons/facebookmessenger.svg";
+import { Dialog } from "primereact/dialog";
 
 const revenueData = [
     { name: "Mon", online: 14000, offline: 11000 },
@@ -409,6 +422,35 @@ const ResellerDashboard = () => {
         },
     ];
 
+
+    //==================================== Add Integrations start=============================================
+    const [oldApiKey, setOldApiKey] = useState("");
+    const [visible, setVisible] = useState(false);
+    const openDialog = () => setVisible(true);
+    const closeDialog = () => setVisible(false);
+
+    useEffect(() => {
+        const handlegetOldApiKey = async () => {
+            try {
+                const res = await getOldApiKey();
+                if (res.status === 200) {
+                    setOldApiKey(res.oldkey);
+                } else {
+                    toast.error("Error fetching old API Key else");
+                }
+            } catch (e) {
+                // console.log(e);
+                toast.error("Error fetching old API Key");
+            }
+        };
+        handlegetOldApiKey();
+    }, []);
+
+    const integrationUrl = `https://int.celitix.com/?user_id=${oldApiKey}&api_key=AIzaSyBqlfMk-_yK_3ICUUYej_nVUDXz0cP327Y`;
+    // console.log("final integration url", integrationUrl);
+
+    const iconSize = 48;
+
     return (
         <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-[calc(100vh-6rem)]">
             {/* Logged In User Card */}
@@ -530,6 +572,94 @@ const ResellerDashboard = () => {
                     );
                 })}
             </Grid>
+
+            {/* Add Integrations Start  */}
+            <div className="w-full">
+                {/* Add Integrations Start */}
+                {user.role === "RESELLERUSER" && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                        onClick={openDialog}
+                        className="cursor-pointer group relative p-6 rounded-2xl shadow-md bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 hover:shadow-xl transition-all overflow-hidden h-full"
+                    >
+                        <div className="relative  flex-col md:flex-row items-center justify-around space-y-2">
+                            <div className="flex flex-col items-center">
+                                <Lottie
+                                    animationData={integration}
+                                    loop
+                                    autoplay
+                                    className="w-35 h-auto"
+                                />
+                                <h2 className="text-4xl font-extrabold text-gray-800 playf bluetxt">
+                                    Add Integrations
+                                </h2>
+                                <p className="text-gray-500 text-center text-sm">
+                                    Connect Freshdesk, Zoho, Shopify, and more from a single
+                                    dashboard.
+                                </p>
+                            </div>
+
+                            <motion.div
+                                layout
+                                className="flex justify-center items-center flex-wrap mt-4 transition-all duration-500 gap-12 group-hover:gap-13"
+                            >
+                                {[
+                                    { icon: <img src={zohoicon} alt="" className="w-22" /> },
+                                    { icon: <img src={zapier} alt="" className="w-12" /> },
+                                    { icon: <img src={wordpress} alt="" className="w-12" /> },
+                                    { icon: <img src={woocommerce} alt="" className="w-14" /> },
+                                    { icon: <img src={slack} alt="" className="w-12" /> },
+                                    { icon: <img src={telegram} alt="" className="w-12" /> },
+                                    { icon: <img src={shopify} alt="" className="w-12" /> },
+                                    { icon: <img src={instagram} alt="" className="w-12" /> },
+                                    { icon: <img src={freshdesk} alt="" className="w-25" /> },
+                                    {
+                                        icon: (
+                                            <img src={facebookmessenger} alt="" className="w-10" />
+                                        ),
+                                    },
+                                ].map((item, idx) => (
+                                    <motion.div
+                                        key={idx}
+                                        className={`transition-all duration-300`}
+                                        whileHover={{ scale: 1.25 }}
+                                        animate={{ scale: 1 }}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        {item.icon}
+                                    </motion.div>
+                                ))}
+                            </motion.div>
+                        </div>
+                        <p className="relative text-xs text-gray-400 mt-5 text-center">
+                            Click to configure integrations
+                        </p>
+                    </motion.div>
+                )}
+
+                <Dialog
+                    header="CPaaS Integrations Panel"
+                    visible={visible}
+                    style={{ width: "70vw", maxWidth: "75vw", height: "70vh" }}
+                    onHide={() => setVisible(false)}
+                    draggable={false}
+                    maximizable
+                >
+                    {/* <div>
+          <button onClick={() => window.open(integrationUrl, "_blank")}>Open</button>
+        </div> */}
+                    <iframe
+                        src={integrationUrl}
+                        width="100%"
+                        height="100%"
+                        frameBorder="0"
+                        className="rounded-md"
+                    ></iframe>
+                </Dialog>
+            </div>
+            {/* Add Integrations End */}
 
             {/* Account expiry format start */}
             <AccountExpiryFormat />

@@ -43,6 +43,8 @@ const ResellerLogin = () => {
   const [captchaSolution, setCaptchaSolution] = useState(null);
 
   const [basicDetails, setBasicDetails] = useState({});
+  const [loading, setLoading] = useState(false);
+
 
   // const [basicDetails, setBasicDetails] = useState({});
 
@@ -105,8 +107,11 @@ const ResellerLogin = () => {
 
   async function handleLogin() {
     // Basic validation
-    if (!username || !password) {
-      return toast.error("All fields are required. Please fill them out.");
+    if (!username) {
+      return toast.error("Please enter username");
+    }
+    if (!password) {
+      return toast.error("Please enter password");
     }
 
     if (!captcha) {
@@ -116,13 +121,12 @@ const ResellerLogin = () => {
     if (parseInt(captcha) !== captchaSolution) {
       return toast.error("Invalid CAPTCHA");
     }
-
+    setLoading(true);
     try {
       // const ipResponse = await axios.get("https://ipapi.co/json/");
       const ipResponse = await getIpAddress();
       const domain = window.location.hostname.replace(/^www\./, '');
       // const domain = "reseller.alertsnow.in";
-      // const domain = "app.celitix.com";
 
       setBasicDetails({
         systemInfo: uaResult.browser.name,
@@ -174,6 +178,8 @@ const ResellerLogin = () => {
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Error while logging in");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -201,48 +207,56 @@ const ResellerLogin = () => {
   }
 
   async function handleVerifyNumberRequest() {
-    const phoneRegex = /^\d{10}$/;
+    setLoading(true);
+    try {
+      const phoneRegex = /^\d{10}$/;
+      if (!verifyNumber) {
+        toast.error("Mobile number is required.");
+        return;
+      }
 
-    if (!verifyNumber) {
-      toast.error("Mobile number is required.");
-      return;
-    }
+      // if (!phoneRegex.test(verifyNumber)) {
+      //   toast.error("Invalid mobile number. Please enter a 10-digit number.");
+      //   return;
+      // }
 
-    // if (!phoneRegex.test(verifyNumber)) {
-    //   toast.error("Invalid mobile number. Please enter a 10-digit number.");
-    //   return;
-    // }
-
-    let payload = {
-      userId: username,
-      // password: password,
-      mobileNo: verifyNumber,
-      // domain: window.location.hostname,
-      domain: basicDetails.domain,
-    };
-
-    // const res = await requestOtp(payload);
-
-    if (!isForgotPassword) {
-      payload = {
-        ...payload,
-        password: password,
+      let payload = {
+        userId: username,
+        // password: password,
+        mobileNo: verifyNumber,
+        // domain: window.location.hostname,
+        domain: basicDetails.domain,
       };
-    }
 
-    const res = isForgotPassword
-      ? await forgotPassword(payload)
-      : await requestOtp(payload);
+      // const res = await requestOtp(payload);
 
-    if (!res?.data?.status) {
-      return toast.error(res?.msg || "Unable to send OTP");
+      if (!isForgotPassword) {
+        payload = {
+          ...payload,
+          password: password,
+        };
+      }
+
+      const res = isForgotPassword
+        ? await forgotPassword(payload)
+        : await requestOtp(payload);
+
+      if (!res?.data?.status) {
+        return toast.error(res?.msg || "Unable to send OTP");
+      }
+      toast.success("OTP Sent to your mobile number");
+      setStep("verifynumberotp");
+    } catch (error) {
+      console.error("Error in handleVerifyNumberRequest:", error);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    toast.success("OTP Sent to your mobile number");
-    setStep("verifynumberotp");
   }
 
 
   async function handleVerifyNumberOTP() {
+    setLoading(true);
     try {
       const payload = {
         userId: username,
@@ -284,6 +298,8 @@ const ResellerLogin = () => {
       navigate("/");
     } catch (e) {
       toast.error("Unable to Verify OTP");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -350,23 +366,19 @@ const ResellerLogin = () => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-red-200 via-slate-50 to-slate-50">
+    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-[#EAF7FF] via-slate-50 to-slate-50">
       <div className="bg-white flex rounded-2xl shadow-2xl h-[90%] w-[95%]">
         <div className="relative w-1/2 p-6 hidden lg:block rounded-2xl">
           <img
-            className="rounded-xl w-[100%] h-[100%] "
+            className="rounded-xl w-[100%] h-[100%]"
             src={loginBanner}
             alt="Login"
           />
 
           {step === "login" && (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <h1 className="text-cyan-600 text-5xl font-medium">Simplified</h1>
               <h1 className="text-cyan-600 text-5xl font-medium">
-                Communication,
-              </h1>
-              <h1 className="text-cyan-600 text-5xl font-medium">
-                Empowered results
+                Simplified Communication, <br /> Empowered results
               </h1>
               <p className="text-cyan-800 font- normal mt-6">
                 Welcome to the Future of Customer Communication
@@ -376,23 +388,41 @@ const ResellerLogin = () => {
               </p>
             </div>
           )}
+
           {step === "verifyNumber" && (
+            <>
+              {isForgotPassword ?
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                  <h1 className="text-cyan-600 text-5xl font-medium">
+                    Reset Password!
+                  </h1>
+                  <p className="text-cyan-600 font-medium mt-2">
+                    Follow the prompts to reset your password & regain access
+                  </p>
+                </div>
+                :
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                  <h1 className="text-cyan-600 text-4xl font-medium">
+                    Provide your registered <br /> mobile number
+                  </h1>
+                  <p className="text-cyan-800 font- normal mt-4">
+                    Enter your registered mobile number
+                    and <br /> verify number for secure access
+                  </p>
+                </div>
+              }
+            </>
+          )}
+          {/* {step === "verifyNumber" && (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <h1 className="text-cyan-600 text-5xl font-medium">Simplified</h1>
-              <h1 className="text-cyan-600 text-5xl font-medium">
-                Communication,
+              <h1 className="text-cyan-600 text-4xl font-medium">
+                Provide your mobile number <br /> for secure access.
               </h1>
-              <h1 className="text-cyan-600 text-5xl font-medium">
-                Empowered results
-              </h1>
-              <p className="text-cyan-800 font- normal mt-6">
-                Welcome to the Future of Customer Communication
-              </p>
-              <p className="text-cyan-800 font-normal">
-                "Your Engagement Journey Begins Here"
+              <p className="text-cyan-800 font- normal mt-4">
+                Welcome to the Future of Customer Communication <br /> "Your Engagement Journey Begins Here"
               </p>
             </div>
-          )}
+          )} */}
           {step === "verifynumberotp" && (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
               <h1 className="text-cyan-600 text-5xl font-medium">Simplified</h1>
@@ -410,7 +440,7 @@ const ResellerLogin = () => {
               </p>
             </div>
           )}
-          {step === "forgotPassword" && (
+          {/* {step === "forgotPassword" && (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
               <h1 className="text-cyan-600 text-5xl font-medium">
                 Reset Password!
@@ -419,7 +449,7 @@ const ResellerLogin = () => {
                 Follow the prompts to reset your password & regain access
               </p>
             </div>
-          )}
+          )} */}
           {step === "verifyOTP" && (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
               <h1 className="text-cyan-600 text-5xl font-medium">
@@ -502,16 +532,6 @@ const ResellerLogin = () => {
                       )}
                     </button>
                   </div>
-
-                  {/* <div className="flex items-center justify-end">
-                    <button
-                      className="text-black mt-2 cursor-pointer text-right "
-                      onClick={() => setStep("forgotPassword")}
-                    >
-                      Forgot Password?
-                    </button>
-                  </div> */}
-
                   <div className="flex justify-between my-3">
                     <h2 className="text-md">Solve Captcha</h2>
                     <button
@@ -540,12 +560,27 @@ const ResellerLogin = () => {
                     />
                   </div>
 
-                  <button
+                  {/* <button
                     className="w-full bg-black text-white p-2 rounded-lg mt-6"
                     onClick={handleLogin}
                   >
                     Sign In
-                  </button>
+                  </button> */}
+                  <div className="flex items-center justify-center mt-6">
+                    <button
+                      className={`custom-signin-btn w-full ${loading ? "loading" : ""
+                        }`}
+                      disabled={loading}
+                      onClick={handleLogin}
+                    >
+                      <div className="back"></div>
+                      {!loading ? (
+                        <span className="text">Sign In</span>
+                      ) : (
+                        <div className="circle-spinner" />
+                      )}
+                    </button>
+                  </div>
                 </motion.div>
               </>
             )}
@@ -562,14 +597,17 @@ const ResellerLogin = () => {
                   {/* Verify Number */}
                   {isForgotPassword ? "Forgot Password" : "Verify Number"}
                 </h1>
-                {!isForgotPassword && (
-                  <p className="text-center font-medium sm:text-lg playf">
-                    Provide your mobile number for secure access.{" "}
-                  </p>
-                )}
-                <p className="text-center font-medium sm:text-lg playf">
-                  Provide your mobile number & userId for <br /> secure access.{" "}
-                </p>
+                <div className="my-2" >
+                  {!isForgotPassword ?
+                    <p className="text-center font-medium sm:text-lg playf">
+                      Provide your mobile number for secure access.{" "}
+                    </p>
+                    :
+                    <p className="text-center font-medium sm:text-lg playf">
+                      Provide your mobile number & userId for <br /> secure access.
+                    </p>
+                  }
+                </div>
                 <div lassName="space-y-2">
                   {isForgotPassword && (
                     // <InputField
@@ -597,15 +635,30 @@ const ResellerLogin = () => {
                   />
                 </div>
 
-                <button
-                  className="w-full text-white bg-black p-2 rounded-lg mt-2"
+                {/* <button
+                  className="w-full text-white bg-black p-2 rounded-lg mt-3 cursor-pointer"
                   onClick={handleVerifyNumberRequest}
                 >
                   Request OTP
-                </button>
+                </button> */}
+                <div className="flex items-center justify-center mt-6">
+                  <button
+                    className={`custom-signin-btn w-full ${loading ? "loading" : ""
+                      }`}
+                    disabled={loading}
+                    onClick={handleVerifyNumberRequest}
+                  >
+                    <div className="back"></div>
+                    {!loading ? (
+                      <span className="text">Request OTP</span>
+                    ) : (
+                      <div className="circle-spinner" />
+                    )}
+                  </button>
+                </div>
                 <div className="flex items-center justify-center">
                   <button
-                    className=" text-black underline p-2 rounded-lg mt-4 text-centre cursor-pointer"
+                    className=" text-black hover:underline p-2 rounded-lg mt-4 text-centre cursor-pointer"
                     onClick={handleBackToLogin}
                   >
                     ← Back to Login
@@ -622,10 +675,10 @@ const ResellerLogin = () => {
                   exit={{ opacity: 0, x: -100 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <h2 className="text-4xl font-bold mb-4 text-center playf">
+                  <h2 className="text-4xl font-semibold text-center my-2 playf">
                     Enter OTP
                   </h2>
-                  <p className="text-center mb-4">
+                  <p className="text-center font-medium sm:text-lg playf mb-4">
                     We've sent a 6-digit code to your mobile. Enter it below
                   </p>
 
@@ -640,35 +693,61 @@ const ResellerLogin = () => {
                   </div>
 
                   <div className="flex items-center justify-center gap-4 mt-6">
-                    <button
+                    {/* <button
                       className="w-full bg-black text-white p-2 rounded-lg"
                       onClick={handleVerifyNumberOTP}
                     >
                       Verify OTP
+                    </button> */}
+                    <button
+                      className={`custom-signin-btn w-full ${loading ? "loading" : ""
+                        }`}
+                      disabled={loading}
+                      onClick={handleVerifyNumberOTP}
+                    >
+                      <div className="back"></div>
+                      {!loading ? (
+                        <span className="text">Verify OTP</span>
+                      ) : (
+                        <div className="circle-spinner" />
+                      )}
                     </button>
                     {!isResendDisabled && (
+                      // <button
+                      //   className="w-full bg-black text-white p-2 rounded-lg"
+                      //   onClick={handleVerifyNumberRequest}
+                      // >
+                      //   Resend OTP
+                      // </button>
+                      <button
+                        className={`custom-signin-btn w-full ${loading ? "loading" : ""
+                          }`}
+                        disabled={loading}
+                        onClick={handleVerifyNumberRequest}
+                      >
+                        <div className="back"></div>
+                        {!loading ? (
+                          <span className="text">Resend OTP</span>
+                        ) : (
+                          <div className="circle-spinner" />
+                        )}
+                      </button>
+                    )}
+                    {/* {!isResendDisabled && (
                       <button
                         className="w-full bg-black text-white p-2 rounded-lg"
                         onClick={handleVerifyNumberRequest}
                       >
                         Resend OTP
                       </button>
-                    )}
-                    {!isResendDisabled && (
-                      <button
-                        className="w-full bg-black text-white p-2 rounded-lg"
-                        onClick={handleVerifyNumberRequest}
-                      >
-                        Resend OTP
-                      </button>
-                    )}
+                    )} */}
                   </div>
                   <p className="text-center mt-3 text-gray-500">
                     {isResendDisabled ? `Resend OTP in ${timer} seconds` : ""}
                   </p>
-                  <p className="text-center mt-3 text-gray-500">
+                  {/* <p className="text-center mt-3 text-gray-500">
                     {isResendDisabled ? `Resend OTP in ${timer} seconds` : ""}
-                  </p>
+                  </p> */}
 
                   <div className="flex items-center justify-center">
                     <button
@@ -821,41 +900,9 @@ const ResellerLogin = () => {
                         className="absolute inset-y-0 right-3 flex items-center"
                       >
                         {showNewPassword ? (
-                          <svg
-                            className="w-5 h-5 text-black"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-6-10-6a16.57 16.57 0 014.609-4.845m2.608-1.45A9.988 9.988 0 0112 5c5.523 0 10 6 10 6a16.536 16.536 0 01-1.986 2.12M3 3l18 18"
-                            />
-                          </svg>
+                          <AiOutlineEyeInvisible size={20} />
                         ) : (
-                          <svg
-                            className="w-5 h-5 text-black"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                            />
-                          </svg>
+                          <AiOutlineEye size={20} />
                         )}
                       </button>
                     </div>
@@ -883,43 +930,9 @@ const ResellerLogin = () => {
                         className="absolute inset-y-0 right-3 flex items-center"
                       >
                         {showConfirmPassword ? (
-                          // Eye Slash (Hide password)
-                          <svg
-                            className="w-5 h-5 text-black hover:text-gray-700"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-6-10-6a16.57 16.57 0 014.609-4.845m2.608-1.45A9.988 9.988 0 0112 5c5.523 0 10 6 10 6a16.536 16.536 0 01-1.986 2.12M3 3l18 18"
-                            />
-                          </svg>
+                          <AiOutlineEyeInvisible size={20} />
                         ) : (
-                          // Eye Open (Show password)
-                          <svg
-                            className="w-5 h-5 text-black hover:text-gray-700"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                            />
-                          </svg>
+                          <AiOutlineEye size={20} />
                         )}
                       </button>
                     </div>

@@ -151,7 +151,7 @@ const TransactionsUser = () => {
     },
     {
       field: "amount",
-      headerName: "Amount Recharged",
+      headerName: "Total Amount",
       flex: 1,
       minWidth: 120,
     },
@@ -175,7 +175,7 @@ const TransactionsUser = () => {
     },
     {
       field: "balance",
-      headerName: "Total Amount",
+      headerName: "Amount Recharged",
       flex: 1,
       minWidth: 120,
     },

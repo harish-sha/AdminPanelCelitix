@@ -106,6 +106,8 @@ const ManageContacts = () => {
   const [idtoDelete, setIdToDelete] = useState([]);
   const [confirmMultiDeleteVisible, setConfirmMultiDeleteVisible] =
     useState(false);
+
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const currentGroup = grpList?.find(
     (g) => g.groupCode === selectedMultiGroupContact?.value
   );
@@ -318,7 +320,7 @@ const ManageContacts = () => {
     try {
       // Call the API
       const response = await addContact(payload);
-      console.log("add contact resposne", response)
+      console.log("add contact resposne", response);
 
       if (response.flag == true) {
         // Success
@@ -449,7 +451,9 @@ const ManageContacts = () => {
           minWidth: 120,
           renderCell: (params) => {
             return (
-              <CustomTooltip arrow placement="top"
+              <CustomTooltip
+                arrow
+                placement="top"
                 // title="Allow/ Disallow"
                 title={params.row.status === 1 ? "Active" : "Inactive"}
               >
@@ -655,11 +659,15 @@ const ManageContacts = () => {
       emailId: updateContactDetails.email || "",
       uniqueId: updateContactDetails.uniqueId || "",
       gender: updateContactDetails.gender || "",
-      // 
+      //
       activeStatus: updateContactDetails.status,
       // key should check
-      birthDate: moment(updateContactDetails.birthDate).format("YYYY-MM-DD") || "1800-01-01",
-      anniversaryDate: moment(updateContactDetails.mariageDate).format("YYYY-MM-DD") || "1800-01-01",
+      birthDate:
+        moment(updateContactDetails.birthDate).format("YYYY-MM-DD") ||
+        "1800-01-01",
+      anniversaryDate:
+        moment(updateContactDetails.mariageDate).format("YYYY-MM-DD") ||
+        "1800-01-01",
       // allowishes: updatedContactDetails.allowishes || "",
       allowishes: updateContactDetails.allowishes,
     };
@@ -671,7 +679,7 @@ const ManageContacts = () => {
     await getContactListByGrpId({
       groupSrNo: selectedMultiGroup,
       status: selectedStatus,
-    })
+    });
     await handleSearchGroup();
     toast.success(res?.message);
     setUpdateContactVisible(false);
@@ -761,8 +769,10 @@ const ManageContacts = () => {
 
   const handleGrpDelete = async () => {
     if (!deleteGrpId) return;
+    setDeleteLoading(true)
     const res = await deleteGrp(deleteGrpId.groupName, deleteGrpId.id);
     toast.success(res.message);
+    setDeleteLoading(false)
     setDeleteDialogVisible(false);
     setaddGroupVisible(false);
     await getGrpListData();
@@ -982,7 +992,7 @@ const ManageContacts = () => {
     let data = "";
 
     selectedRows.map((row) => (data += `addSrnoList=${row}&`));
-
+    setDeleteLoading(true);
     try {
       const res = await deleteMultipleContact(data);
 
@@ -990,6 +1000,7 @@ const ManageContacts = () => {
         return toast.error(res.message);
       }
       toast.success("Contact deleted successfully");
+      setDeleteLoading(false);
       getGrpListData();
       // setDeleteContactDialogVisible(false);
       setConfirmMultiDeleteVisible(false);
@@ -1013,7 +1024,9 @@ const ManageContacts = () => {
   return (
     <div>
       <div className="flex flex-wrap items-end w-full gap-2 mb-4 md:justify-between justify-center">
-        <h1 className="text-xl font-semibold text-gray-700 text-center">Manage Contacts</h1>
+        <h1 className="text-xl font-semibold text-gray-700 text-center">
+          Manage Contacts
+        </h1>
         <div className="flex items-center gap-2 flex-wrap">
           <div className="w-max-content">
             <UniversalButton
@@ -1911,20 +1924,22 @@ const ManageContacts = () => {
         </div>
 
         <div className="flex justify-center gap-4 mt-2">
-          <UniversalButton
+          {!deleteLoading && <UniversalButton
             label="Cancel"
             style={{
               backgroundColor: "#090909",
             }}
             onClick={() => setDeleteDialogVisible(false)}
-          />
+          />}
+
           <UniversalButton
-            label="Delete"
+            label={deleteLoading ? "Deleting" : "Delete"}
             style={
               {
                 // backgroundColor: "red",
               }
             }
+            disabled={deleteLoading}
             onClick={handleGrpDelete}
           />
         </div>
@@ -2116,7 +2131,6 @@ const ManageContacts = () => {
                 required={true}
               /> */}
 
-
               <div className="w-full">
                 <UniversalLabel
                   text="Allow wishes"
@@ -2139,7 +2153,9 @@ const ManageContacts = () => {
                             allowishes: e.value,
                           })
                         }
-                        checked={String(updateContactDetails.allowishes) === "1"}
+                        checked={
+                          String(updateContactDetails.allowishes) === "1"
+                        }
                       />
                       <label
                         htmlFor="AllowishesOption1"
@@ -2163,7 +2179,9 @@ const ManageContacts = () => {
                             allowishes: e.value,
                           })
                         }
-                        checked={String(updateContactDetails.allowishes) === "0"}
+                        checked={
+                          String(updateContactDetails.allowishes) === "0"
+                        }
                       />
                       <label
                         htmlFor="AllowishesOption2"
@@ -2175,7 +2193,6 @@ const ManageContacts = () => {
                   </div>
                 </div>
               </div>
-
 
               {/* <RadioGroupField
                 label={"Gender?"}
@@ -2371,16 +2388,20 @@ const ManageContacts = () => {
         </div>
 
         <div className="flex justify-center gap-4 mt-2">
+          {!deleteLoading && (
+            <UniversalButton
+              label="Cancel"
+              style={{
+                backgroundColor: "#090909",
+              }}
+              onClick={() => setConfirmMultiDeleteVisible(false)}
+            />
+          )}
+
           <UniversalButton
-            label="Cancel"
-            style={{
-              backgroundColor: "#090909",
-            }}
-            onClick={() => setConfirmMultiDeleteVisible(false)}
-          />
-          <UniversalButton
-            label="Delete"
+            label={deleteLoading ? "Deleting" : "Delete"}
             onClick={handleMultipleContactDelete}
+            disabled={deleteLoading}
           />
         </div>
       </Dialog>

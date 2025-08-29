@@ -2241,6 +2241,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
             value={petmDetails.petmChainType}
             onChange={(e) => {
               setPetmDetails({ ...petmDetails, petmChainType: e });
+              // setPetmDetails({ petmChainType: e, TMA1: "", TMA2: "", tmd: "" });
             }}
             placeholder="Select PE-TM Chain"
           />

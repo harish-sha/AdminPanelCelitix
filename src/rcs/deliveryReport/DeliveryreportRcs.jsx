@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Loader from "../../whatsapp/components/Loader";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
@@ -156,6 +156,12 @@ const DeliveryreportRcs = () => {
   const [visibledialog, setVisibledialog] = useState(false);
   const [visible, setVisible] = useState(false);
   const [currentRow, setCurrentRow] = useState(null);
+
+  const [childFn, setChildFn] = useState(null);
+
+  const handleSetChildFunction = useCallback((fn) => {
+    setChildFn(() => fn);
+  }, []);
 
   useEffect(() => {
     async function handleFetchAllCampaign() {
@@ -809,14 +815,26 @@ const DeliveryreportRcs = () => {
                 </>
               )}
 
-              <div className="w-full sm:w-56">
+              <div className="flex items-end gap-4" >
                 <UniversalButton
-                  label={isFetching ? "Showing..." : "Show"}
+                  label={isFetching ? "Searching..." : "Search"}
                   id="show"
                   name="show"
                   variant="primary"
                   disabled={isFetching}
                   onClick={handleSummarySearch}
+                />
+                <UniversalButton
+                  icon={
+                    <IosShareOutlinedIcon
+                      sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
+                    />
+                  }
+                  label="Export"
+                  id="export"
+                  name="export"
+                  variant="primary"
+                  onClick={() => childFn()}
                 />
               </div>
             </div>
@@ -824,6 +842,7 @@ const DeliveryreportRcs = () => {
               <DayWiseSummarytableRcs
                 data={summaryTableData}
                 isMonthWise={summaryData.isMonthWise}
+                exportFunction={handleSetChildFunction}
               />
             </div>
           </CustomTabPanel>

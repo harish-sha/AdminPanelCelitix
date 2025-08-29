@@ -25,6 +25,7 @@ export const ChatScreen = ({
   fileInputRef,
   isSpeedDialOpen,
   setIsSpeedDialOpen,
+  documentInputRef,
   isTemplateMessage,
   setIsTemplateMessage,
   handleSendTemplateMessage,
@@ -488,6 +489,7 @@ export const ChatScreen = ({
           sendMessage={sendMessage}
           inputRef={inputRef}
           fileInputRef={fileInputRef}
+          documentInputRef={documentInputRef}
           setIsSpeedDialOpen={setIsSpeedDialOpen}
           isSpeedDialOpen={isSpeedDialOpen}
           isTemplateMessage={isTemplateMessage}
