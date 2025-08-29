@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect, useCallback, useRef } from "react";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
@@ -15,6 +16,8 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Paper, Typography, Box, Button } from "@mui/material";
 import { render } from "timeago.js";
 import moment from "moment";
+import toast from "react-hot-toast";
+import { exportToExcel } from "@/utils/utills";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -77,7 +80,13 @@ const CustomPagination = ({
   );
 };
 
-const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
+const DayWiseSummarytableRcs = ({
+  id,
+  name,
+  isMonthWise,
+  data = [],
+  exportFunction,
+}) => {
   const [selectedRows, setSelectedRows] = React.useState([]);
 
   // const paginationModel = { page: 0, pageSize: 10 };
@@ -157,7 +166,7 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
         drnotAvailable: item.dr_not_available,
         readCount: item.readCount,
         others: item.others,
-        chargedUnits: item.chargedUnits
+        chargedUnits: item.chargedUnits,
       }))
       : [];
   } else {
@@ -177,10 +186,30 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
         drnotAvailable: item.dr_not_available,
         readCount: item.readCount,
         others: item.others,
-        chargedUnits: item.chargedUnits
+        chargedUnits: item.chargedUnits,
       }))
       : [];
   }
+
+  const rowsRef = useRef(rows);
+  useEffect(() => {
+    rowsRef.current = rows;
+  }, [rows]);
+
+  const handleFileToExport = useCallback(() => {
+    const col = columns.map((col) => col.field);
+    const row = rowsRef.current.map((row) =>
+      col.map((field) => row[field] ?? "")
+    );
+    exportToExcel(col, row, "Delivery Report");
+    toast.success("File Downloaded Successfully");
+  }, [columns]);
+
+  useEffect(() => {
+    if (rows.length) {
+      exportFunction(handleFileToExport);
+    }
+  }, [rows.length, exportFunction]);
 
   // isMonthWise
   //   ? { field: "month", headerName: "Month", flex: 1, minWidth: 120 }

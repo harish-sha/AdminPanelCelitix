@@ -77,6 +77,7 @@
 //   );
 // };
 
+import { useState, useEffect, useRef } from "react";
 import { getAgentList } from "@/apis/Agent/Agent";
 import { getUserAgent } from "@/apis/whatsapp/whatsapp";
 import { motion } from "framer-motion";
@@ -87,6 +88,8 @@ import pointingAnimation from "@/assets/animation/pointing.json";
 import { getAllGroups } from "@/apis/common/common";
 import toast from "react-hot-toast";
 import { useWabaAgentContext } from "@/context/WabaAndAgent.jsx";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
 
 export const ChatSidebar = ({
   formatDate,
@@ -96,33 +99,77 @@ export const ChatSidebar = ({
   selectedWaba,
   setSelectedGroupList,
   setChatIndex,
+  handleUnread,
+  handleFetchSpecificConversation,
   // isLoading
 }) => {
-  const isLoading =
-    selectedWaba &&
-    (!chatState?.allConversations || chatState.allConversations.length === 0);
+  // const isLoading =
+  //   Boolean(selectedWaba) &&
+  //   (!chatState?.allConversations);
+  const [isLoading, setIsLoading] = useState(false)
+  useEffect(() => {
+    if (Boolean(selectedWaba) &&
+      (!chatState?.allConversations) || (chatState.allConversations.length === 0)) {
+      setIsLoading(true)
+    } else {
+      setIsLoading(false)
+    }
+  }, [chatState?.allConversations])
+  // const isLoading =
+  //   Boolean(selectedWaba) &&
+  //   (!chatState?.allConversations) || (chatState.allConversations.length === 0);
+
+  // console.log("isLoading", isLoading);
+  // console.log("chatState?.allConversations", chatState?.allConversations);
+  // console.log(
+  //   "chatState.allConversations.length ",
+  //   chatState.allConversations.length
+  // );
 
   const { convoDetails, activeConvo, inactiveConvo, switchChat } =
     useWabaAgentContext();
 
-  console.log("switchChataaaaaaaaaaaaaaaa", switchChat);
-  console.log("activeConvo", activeConvo);
-  console.log("chatState?.allConversations", chatState?.allConversations);
+  const [openChatOption, setOpenChatOption] = useState({
+    sttus: false,
+    srno: "",
+  });
+
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpenChatOption({ status: false, srno: "" });
+      }
+    }
+
+    if (openChatOption.status) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openChatOption]);
 
   // const filteredConvos = chatState?.allConversations?.filter(
   //   (convo) =>
   //     Array.isArray(switchChat) && switchChat.some((sw) => sw.id === convo.id)
   // );
 
-  const filteredConvos = chatState?.allConversations?.filter(
-    (convo) =>
-      Array.isArray(switchChat) &&
-      switchChat.some((sw) => sw.mobile === convo.mobileNo || sw.mobileNo === convo.mobileNo)
-  ) || [];
+  const filteredConvos =
+    chatState?.allConversations?.filter(
+      (convo) =>
+        Array.isArray(switchChat) &&
+        switchChat.some(
+          (sw) => sw.mobile === convo.mobileNo || sw.mobileNo === convo.mobileNo
+        )
+    ) || [];
+  // const filteredConvos = [];
 
-
-
-  console.log("filteredConvos", filteredConvos);
+  // console.log("filteredConvos", filteredConvos);
 
   // const isLoading = selectedWaba && !chatState?.allConversations;
 
@@ -211,7 +258,7 @@ export const ChatSidebar = ({
         </motion.div>
       )}
       {/* Skeleton Loader */}
-      {isLoading &&
+      {isLoading && selectedWaba &&
         Array.from({ length: 8 }).map((_, index) => (
           <div key={index} className="p-3 border-b rounded-md shadow-sm mb-2">
             <div className="flex items-center gap-3">
@@ -224,11 +271,10 @@ export const ChatSidebar = ({
           </div>
         ))}
 
-
       {!isLoading && (
         <>
-          {filteredConvos && filteredConvos.length > 0 && (
-            filteredConvos
+          {filteredConvos && filteredConvos.length > 0
+            ? filteredConvos
               .slice()
               .sort((a, b) => new Date(b.insertTime) - new Date(a.insertTime))
               .map((chat, index) => (
@@ -241,24 +287,28 @@ export const ChatSidebar = ({
                     ? "bg-gradient-to-br from-[#5584AC] to-[#5584AC] border-l-6 border-[#22577E] text-white"
                     : "bg-gradient-to-br from-gray-100 to-blue-100 hover:from-gray-200 hover:to-blue-200 text-gray-800"
                     }`}
-                  onClick={async () => {
-                    const agentName = await getUserAgent(chat?.mobileNo);
-                    const grpSrno = await fetchGrpList(agentName?.groupName);
-
-                    setChatState((prev) => ({
-                      ...prev,
-                      active: chat,
-                      replyData: "",
-                      isReply: false,
-                      agentName: agentName,
-                    }));
-                    setChatIndex(1);
-                    setSelectedAgentList(chat?.agentSrno);
-                    setSelectedGroupList(grpSrno);
-                  }}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                    <div
+                      className="flex items-center gap-2"
+                      onClick={async () => {
+                        const agentName = await getUserAgent(chat?.mobileNo);
+                        const grpSrno = await fetchGrpList(
+                          agentName?.groupName
+                        );
+
+                        setChatState((prev) => ({
+                          ...prev,
+                          active: chat,
+                          replyData: "",
+                          isReply: false,
+                          agentName: agentName,
+                        }));
+                        setChatIndex(1);
+                        setSelectedAgentList(chat?.agentSrno);
+                        setSelectedGroupList(grpSrno);
+                      }}
+                    >
                       <div className="relative">
                         {chat.image ? (
                           <img
@@ -273,7 +323,8 @@ export const ChatSidebar = ({
                               : "bg-gray-300 text-gray-900"
                               }`}
                           >
-                            {chat.contectName?.charAt(0)?.toUpperCase() || "?"}
+                            {chat.contectName?.charAt(0)?.toUpperCase() ||
+                              "?"}
                           </div>
                         )}
                         <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 border border-white rounded-full"></div>
@@ -286,23 +337,78 @@ export const ChatSidebar = ({
                       </div>
                     </div>
                     <div className="flex flex-col items-end justify-end">
-                      <p className="text-xs">{formatDate(chat.insertTime)}</p>
+                      <p className="text-xs transition-all">
+                        {formatDate(chat.insertTime)}
+                      </p>
                       {chat.unreadCount > 0 && (
-                        <div className="flex items-center justify-center w-5 h-5 text-xs mt-1 text-white bg-green-500 rounded-full">
+                        <motion.div
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.1 }}
+                          className="flex items-center justify-center w-5 h-5 text-xs mt-1 text-gray-900 border-1 border-green-900 bg-green-400 rounded-full font-medium"
+                        >
                           {chat.unreadCount}
-                        </div>
+                        </motion.div>
                       )}
+                    </div>
+                    <div className="relative">
+                      <button
+                        className="hover:bg-gray-100 p-1 rounded-full transition-all cursor-pointer hover:text-[#22577E]"
+                        onClick={() =>
+                          // setOpenChatOption(
+                          //   openChatOption === chat?.srno ? null : chat?.srno
+                          // )
+                          setOpenChatOption((prev) =>
+                            prev.status && prev.srno === chat?.srno
+                              ? { status: false, srno: "" }
+                              : { status: true, srno: chat?.srno }
+                          )
+                        }
+                      >
+                        <BsThreeDotsVertical />
+                      </button>
+
+                      {openChatOption.srno === chat.srno &&
+                        openChatOption.status === true && (
+                          <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.1 }}
+                            className="absolute right-5 -bottom-1 w-35 bg-white text-black border  rounded-md shadow-2xl z-50 cursor-pointer text-xs py-2 px-2 border-gray-200 hover:bg-gray-100 transition-all duration-200 "
+                          >
+                            <button
+                              onClick={() => {
+                                handleUnread(chat);
+                                setOpenChatOption({
+                                  status: false,
+                                  srno: "",
+                                });
+                              }}
+                              ref={menuRef}
+                              className="block cursor-pointer"
+                            >
+                              <DoneAllIcon
+                                className="text-gray-400 text-xs mr-2"
+                                sx={{ fontSize: "18px" }}
+                              />
+                              Unread Chat
+                            </button>
+                          </motion.div>
+                        )}
                     </div>
                   </div>
                 </motion.div>
               ))
-          ) 
-          // : (
-          //   <div className="flex flex-col items-center justify-center h-[50vh] text-gray-500 text-sm font-medium">
-          //     <p>No chats found</p>
-          //   </div>
-          // )
-          }
+            : selectedWaba && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="text-md font-normal text-gray-900 mb-2 flex items-center justify-center h-[90%]"
+              >
+                No conversation found
+              </motion.div>
+            )}
         </>
       )}
 

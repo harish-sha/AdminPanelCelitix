@@ -9,6 +9,8 @@ import ResponseComponent from "../../components/ResponseComponent";
 import CircleIcon from "@mui/icons-material/Circle";
 import CodeComponent from "../../components/CodeComponent";
 import BaseurlComponent from "../../components/BaseurlComponent";
+import RequestSample from "../../components/RequestSample";
+
 
 const SendTemplateWhatsapp = () => {
   const [activeSection, setActiveSection] = useState("interactive-template");
@@ -58,6 +60,8 @@ const SendTemplateWhatsapp = () => {
 
   const requestDataInteractiveTemplate = [
     {
+      id:0,
+      title:"Without Variable",
       requestPrefix: `{
   "messaging_product": "whatsapp",
   "recipient_type": "individual",
@@ -130,6 +134,11 @@ const SendTemplateWhatsapp = () => {
 }
 `,
     },
+    {
+      id:1,
+      title:"With variable",
+      requestPrefix: `{}`
+    }
   ];
 
   const InteractiveTemplatecURL = `
@@ -166,8 +175,10 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
     },
   ];
 
-  const requestDataTemplateWithVariable = [
+  const requestDataTemplate = [
     {
+      id:0,
+      title:"Without Variable",
       requestPrefix: `{
     "messaging_product": "whatsapp",
     "recipient_type": "individual",
@@ -193,6 +204,12 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
 }
 `,
     },
+    {
+      id:1,
+      title:"With Varibale",
+      requestPrefix: `{
+      }`
+    }
   ];
 
   const TemplateWithVariabelcURL = `
@@ -231,6 +248,8 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
 
   const requestDataTemplateCtaButton = [
     {
+      id:0,
+      title:"Without Variable",
       requestPrefix: `{
     "messaging_product": "whatsapp",
     "recipient_type": "individual",
@@ -254,6 +273,12 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
 }
 `,
     },
+    {
+      id:1,
+      title:"With Variable",
+      requestPrefix: `{
+      }`
+    }
   ];
 
   const TemplateCtaButtoncURL = `
@@ -304,6 +329,8 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
 
   const requestDataAuthenticationTemplates = [
     {
+      id:0,
+      title:"Without Variable",
       requestPrefix: `{
     "messaging_product": "whatsapp",
     "recipient_type": "individual",
@@ -327,6 +354,12 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
 }
 `,
     },
+    {
+      id:1,
+      title:"With Variable",
+      requestPrefix: `{
+      }`
+    }
   ];
 
   const AuthenticationTemplatescURL = `
@@ -390,6 +423,8 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_PHONE_NUMBER_I
 
   const requestDataCarouselTemplate = [
     {
+      id:0,
+      title:"Without Variable",
       requestPrefix: `{
   "messaging_product": "whatsapp",
   "recipient_type": "individual",
@@ -515,6 +550,11 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_PHONE_NUMBER_I
 }
 `,
     },
+    {
+      id:1,
+      title:"With Variable",
+      requestPrefix: `{}`
+    }
   ];
 
   const CarouselTemplatecURL = `
@@ -553,6 +593,8 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
 
   const requestDataLimitedTimeOfferTemplate = [
     {
+      id:0,
+      title: "Without Variable",
       requestPrefix: `{
   "messaging_product": "whatsapp",
   "recipient_type": "individual",
@@ -626,6 +668,11 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/phone_no_id/message
 }
 `,
     },
+    {
+      id:1,
+      title:"With Variable",
+      requestPrefix: `{}`
+    }
   ];
 
   const LimitedTimeOfferTemplatecURL = `
@@ -788,9 +835,13 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/249189624947841/mes
               Example Request
             </h2>
             <div className="w-full">
-              <RequestComponent
-                requestData={requestDataInteractiveTemplate}
+              {/* <RequestComponent
+                requestData={equestDataInrteractiveTemplate}
                 curlBase={InteractiveTemplatecURL}
+              /> */}
+              <RequestSample 
+              tabsContent={requestDataInteractiveTemplate}
+              curlBase={InteractiveTemplatecURL}
               />
             </div>
           </div>
@@ -884,9 +935,13 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/249189624947841/mes
               Example Request
             </h2>
             <div className="w-full">
-              <RequestComponent
+              {/* <RequestComponent
                 requestData={requestDataTemplateWithVariable}
                 curlBase={TemplateWithVariabelcURL}
+              /> */}
+              <RequestSample 
+              tabsContent={requestDataTemplate}
+               curlBase={TemplateWithVariabelcURL}
               />
             </div>
           </div>
@@ -963,8 +1018,8 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/249189624947841/mes
               Example Request
             </h2>
             <div className="w-full">
-              <RequestComponent
-                requestData={requestDataTemplateCtaButton}
+              <RequestSample
+                tabsContent={requestDataTemplateCtaButton}
                 curlBase={TemplateCtaButtoncURL}
               />
             </div>
@@ -1197,8 +1252,8 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/249189624947841/mes
               Sample request using image with link:
             </p>
             <div className="w-full">
-              <RequestComponent
-                requestData={requestDataAuthenticationTemplates}
+              <RequestSample
+                tabsContent={requestDataAuthenticationTemplates}
                 curlBase={AuthenticationTemplatescURL}
               />
             </div>
@@ -1494,8 +1549,8 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/249189624947841/mes
               Example Request
             </h2>
             <div className="w-full">
-              <RequestComponent
-                requestData={requestDataCarouselTemplate}
+              <RequestSample
+                tabsContent={requestDataCarouselTemplate}
                 curlBase={CarouselTemplatecURL}
               />
             </div>
@@ -1573,8 +1628,8 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/249189624947841/mes
               Example Request
             </h2>
             <div className="w-full">
-              <RequestComponent
-                requestData={requestDataLimitedTimeOfferTemplate}
+              <RequestSample
+               tabsContent={requestDataLimitedTimeOfferTemplate}
                 curlBase={LimitedTimeOfferTemplatecURL}
               />
             </div>

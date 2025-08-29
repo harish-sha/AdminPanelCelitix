@@ -235,9 +235,8 @@ const ChannelTabs = () => {
     //   onClick: handleSelectAgent,
     // },
     {
-      label: `${
-        convoDetails ? convoDetails?.unreadCounts?.length : ""
-      } Unread Messages`,
+      label: `${convoDetails ? convoDetails?.unreadCounts?.length : ""
+        } Unread Messages`,
       icon: <FaUserCheck className="text-green-500 text-sm" />,
     },
     // {
@@ -249,9 +248,8 @@ const ChannelTabs = () => {
     //   icon: <FaUserClock className="text-yellow-500 text-sm" />,
     // },
     {
-      label: `${
-        (activeConvo?.length || 0) + (inactiveConvo?.length || 0)
-      } Total Chats`,
+      label: `${(activeConvo?.length || 0) + (inactiveConvo?.length || 0)
+        } Total Chats`,
       icon: <FaUserClock className="text-yellow-500 text-sm" />,
     },
     {
@@ -288,22 +286,19 @@ const ChannelTabs = () => {
       icon: <FaUserCheck className="text-green-500 text-sm" />,
     },
     {
-      label: `${
-        (activeRcsChat?.conversationEntityList?.length || 0) +
+      label: `${(activeRcsChat?.conversationEntityList?.length || 0) +
         (closeRcsChat?.conversationEntityList?.length || 0)
-      } Total Chats`,
+        } Total Chats`,
       icon: <FaUserClock className="text-yellow-500 text-sm" />,
     },
     {
-      label: `${
-        activeRcsChat?.conversationEntityList?.length || 0
-      } Active Chats`,
+      label: `${activeRcsChat?.conversationEntityList?.length || 0
+        } Active Chats`,
       icon: <FaUserClock className="text-yellow-500 text-sm" />,
     },
     {
-      label: `${
-        closeRcsChat?.conversationEntityList?.length || 0
-      } Inactive Chats`,
+      label: `${closeRcsChat?.conversationEntityList?.length || 0
+        } Inactive Chats`,
       icon: <FaTimesCircle className="text-red-400 text-sm" />,
     },
     // {
@@ -498,11 +493,10 @@ const ChannelTabs = () => {
                       key={i}
                       onClick={action?.onClick}
                       className={`flex flex-nowrap whitespace-nowrap items-center justify-center gap-2 tracking-wide text-[0.77rem] font-medium px-3 py-1 rounded-full transition mb-1 md:mb-0
-                          ${
-                            isWabaAction && displayWabaName
-                              ? "bg-blue-100 text-blue-600"
-                              : "bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-600"
-                          }`}
+                          ${isWabaAction && displayWabaName
+                          ? "bg-blue-100 text-blue-600"
+                          : "bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-600"
+                        }`}
                     >
                       {action.icon}
                       {isWabaAction && displayWabaName
@@ -523,10 +517,9 @@ const ChannelTabs = () => {
                         key={i}
                         onClick={action?.onClick}
                         className={`flex items-center gap-2 whitespace-nowrap text-[0.77rem] font-medium px-3 py-1 rounded-full transition mb-1 md:mb-0
-                          ${
-                            isAgentAction && displayAgentName
-                              ? "bg-blue-100 text-blue-600"
-                              : "bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-600"
+                          ${isAgentAction && displayAgentName
+                            ? "bg-blue-100 text-blue-600"
+                            : "bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-600"
                           }`}
                       >
                         {action.icon}
@@ -559,10 +552,10 @@ const ChannelTabs = () => {
                             <span>
                               {instagramData.selectedAccount
                                 ? instagramData.accounts.find(
-                                    (acc) =>
-                                      acc.accountId ===
-                                      instagramData.selectedAccount
-                                  )?.name
+                                  (acc) =>
+                                    acc.accountId ===
+                                    instagramData.selectedAccount
+                                )?.name
                                 : "Select Instagram Account"}
                             </span>
                           </div>
@@ -597,11 +590,10 @@ const ChannelTabs = () => {
                                       setIsInstagramOpen(false);
                                     }}
                                     className={`px-3 py-2 cursor-pointer border-b hover:bg-pink-50 hover:text-pink-600 transition-colors
-                                    ${
-                                       instagramData.selectedAccount === acc.accountId
-                                         ? "bg-pink-100 text-pink-700 font-medium"
-                                         : ""
-                                     }`}
+                                    ${instagramData.selectedAccount === acc.accountId
+                                        ? "bg-pink-100 text-pink-700 font-medium"
+                                        : ""
+                                      }`}
                                   >
                                     {acc.name}
                                   </li>
@@ -646,21 +638,21 @@ const ChannelTabs = () => {
                             <span>
                               {messengerData.selectedAccount
                                 ? messengerData.accounts.find(
-                                    (acc) =>
-                                      acc.accountId ===
-                                      messengerData.selectedAccount
-                                  )?.name
+                                  (acc) =>
+                                    acc.accountId ===
+                                    messengerData.selectedAccount
+                                )?.name
                                 : "Select Messenger Account"}
                             </span>
-                            </div>
+                          </div>
                           {/* dropdown list */}
-                           {isMessengerOpen && (
-                             <div className="absolute top-10 left-0 shadow-xl rounded-xl w-48 bg-white z-50">
+                          {isMessengerOpen && (
+                            <div className="absolute top-10 left-0 shadow-xl rounded-xl w-48 bg-white z-50">
                               <ul className="w-full border border-gray-300 rounded-md text-sm bg-white">
                                 {/* No Selection */}
                                 <li
                                   className="px-3 py-2 hover:bg-gray-100 cursor-pointer border-b"
-                                   onClick={() => {
+                                  onClick={() => {
                                     setMessengerData((prev) => ({
                                       ...prev,
                                       selectedAccount: "",
@@ -671,8 +663,8 @@ const ChannelTabs = () => {
                                   -- No Selection --
                                 </li>
 
-                                 {/* Loop over Messenger Accounts */}
-                                 {messengerData.accounts.map((acc) => (
+                                {/* Loop over Messenger Accounts */}
+                                {messengerData.accounts.map((acc) => (
                                   <li
                                     key={acc.accountId}
                                     onClick={() => {
@@ -683,20 +675,19 @@ const ChannelTabs = () => {
                                       setIsMessengerOpen(false);
                                     }}
                                     className={`px-3 py-2 cursor-pointer border-b hover:bg-pink-50 hover:text-pink-600 transition-colors
-                                    ${
-                                       messenger.selectedAccount === acc.accountId
-                                         ? "bg-pink-100 text-pink-700 font-medium"
-                                         : ""
-                                     }`}
+                                    ${messenger.selectedAccount === acc.accountId
+                                        ? "bg-pink-100 text-pink-700 font-medium"
+                                        : ""
+                                      }`}
                                   >
                                     {acc.name}
                                   </li>
                                 ))}
-                                </ul>
-                                </div>
+                              </ul>
+                            </div>
 
-                              )}
-                          
+                          )}
+
                         </div>
                       );
                     }
@@ -705,7 +696,7 @@ const ChannelTabs = () => {
                     return (
                       <motion.button
                         key={i}
-                      onClick={() => setIsMessengerOpen((prev) => !prev)}
+                        onClick={() => setIsMessengerOpen((prev) => !prev)}
                         // onClick={action?.onClick}
                         className="flex items-center gap-2 whitespace-nowrap text-[0.77rem] font-medium px-3 py-1 rounded-full transition bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-600"
                       >
@@ -723,9 +714,8 @@ const ChannelTabs = () => {
 
       <div
         ref={dropdownRef}
-        className={`absolute top-22 left-4 md:left-2 shadow-xl rounded-xl z-[9999] transition-transform duration-300 ${
-          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        } `}
+        className={`absolute top-22 left-4 md:left-2 shadow-xl rounded-xl z-[9999] transition-transform duration-300 ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          } `}
       >
         <ul className="w-40 border border-gray-300 rounded-md text-sm bg-white z-999">
           <li
@@ -765,11 +755,10 @@ const ChannelTabs = () => {
                 setIsOpen(false);
               }}
               className={`px-3 py-2 cursor-pointer border-b hover:bg-blue-50 hover:text-blue-600 transition-colors
-        ${
-          wabaData?.selectedWaba === waba.mobileNo
-            ? "bg-blue-100 text-blue-700 font-medium"
-            : ""
-        }`}
+        ${wabaData?.selectedWaba === waba.mobileNo
+                  ? "bg-blue-100 text-blue-700 font-medium"
+                  : ""
+                }`}
             >
               {waba.name}
             </li>
@@ -782,9 +771,8 @@ const ChannelTabs = () => {
         {/* Dropdown */}
         <div
           ref={instagramRef}
-          className={`absolute left-4 md:left-2 shadow-xl rounded-xl z-[9999] transition-transform duration-300 ${
-            isInstagramOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
+          className={`absolute left-4 md:left-2 shadow-xl rounded-xl z-[9999] transition-transform duration-300 ${isInstagramOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
         >
           <ul className="w-40 border border-gray-300 rounded-md text-sm bg-white">
             {/* No Selection Option */}
@@ -801,11 +789,10 @@ const ChannelTabs = () => {
                 key={acc.accountId}
                 onClick={() => handleSelect(acc)}
                 className={`px-3 py-2 cursor-pointer border-b hover:bg-pink-50 hover:text-pink-600 transition-colors
-          ${
-            instagramData.selectedAccount === acc.accountId
-              ? "bg-pink-100 text-pink-700 font-medium"
-              : ""
-          }`}
+          ${instagramData.selectedAccount === acc.accountId
+                    ? "bg-pink-100 text-pink-700 font-medium"
+                    : ""
+                  }`}
               >
                 {acc.name}
               </li>
@@ -819,9 +806,8 @@ const ChannelTabs = () => {
         {/* Dropdown */}
         <div
           ref={messengerRef}
-          className={`absolute  left-4 md:left-2 shadow-xl rounded-xl z-[9999] transition-transform duration-300 ${
-            isMessengerOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
+          className={`absolute  left-4 md:left-2 shadow-xl rounded-xl z-[9999] transition-transform duration-300 ${isMessengerOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
         >
           <ul className="w-40 border border-gray-300 rounded-md text-sm bg-white">
             {/* No Selection Option */}
@@ -838,11 +824,10 @@ const ChannelTabs = () => {
                 key={acc.accountId}
                 onClick={() => handleMessengerSelect(acc)}
                 className={`px-3 py-2 cursor-pointer border-b hover:bg-blue-50 hover:text-blue-600 transition-colors
-            ${
-              messengerData.selectedAccount === acc.accountId
-                ? "bg-blue-100 text-blue-700 font-medium"
-                : ""
-            }`}
+            ${messengerData.selectedAccount === acc.accountId
+                    ? "bg-blue-100 text-blue-700 font-medium"
+                    : ""
+                  }`}
               >
                 {acc.name}
               </li>
@@ -887,9 +872,8 @@ const ChannelTabs = () => {
 
       <div
         ref={rcsdropdownRef}
-        className={`absolute top-22 left-4 md:left-2 shadow-xl rounded-xl z-[9999] transition-transform duration-300 ${
-          isAgentOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        className={`absolute top-22 left-4 md:left-2 shadow-xl rounded-xl z-[9999] transition-transform duration-300 ${isAgentOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
       >
         <ul className="w-40 border border-gray-300 rounded-md text-sm bg-white z-999">
           {/* Default option */}
@@ -924,11 +908,10 @@ const ChannelTabs = () => {
                 setAgentSelected(true);
               }}
               className={`px-3 py-2 cursor-pointer border-b hover:bg-blue-50 hover:text-blue-600 transition-colors
-            ${
-              agentData?.id === agent.agent_id
-                ? "bg-blue-100 text-blue-700 font-medium"
-                : ""
-            }`}
+            ${agentData?.id === agent.agent_id
+                  ? "bg-blue-100 text-blue-700 font-medium"
+                  : ""
+                }`}
             >
               {agent.agent_name}
             </li>

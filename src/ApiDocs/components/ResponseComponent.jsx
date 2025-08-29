@@ -22,21 +22,19 @@ const ResponseComponent = ({ jsonData, headers }) => {
       {/* Buttons */}
       <div className="flex gap-4 mb-4">
         <button
-          className={`px-4 py-2 rounded ${
-            responseActiveTab === "body"
+          className={`px-4 py-2 rounded ${responseActiveTab === "body"
               ? "border-b-2 border-orange-400 text-white"
               : "text-gray-200"
-          }`}
+            }`}
           onClick={() => setResponseActiveTab("body")}
         >
           Body
         </button>
         <button
-          className={`px-4 py-2 rounded ${
-            responseActiveTab === "header"
+          className={`px-4 py-2 rounded ${responseActiveTab === "header"
               ? "border-b-2 border-orange-400 text-white"
               : "text-gray-200"
-          }`}
+            }`}
           onClick={() => setResponseActiveTab("header")}
         >
           Header
@@ -59,7 +57,7 @@ const ResponseComponent = ({ jsonData, headers }) => {
             </div> */}
 
             <div className=" mt-4">
-            <ReactJsonPretty data={jsonData} className="react-json-pretty" />
+              <ReactJsonPretty data={jsonData} className="react-json-pretty" />
             </div>
           </div>
         ) : (

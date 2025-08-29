@@ -6,71 +6,71 @@ import ReactJsonPretty from "react-json-pretty";
 import "./jsonTheme.css"
 
 
-const ResponseSample = ({tabsContentResponseSample}) => {
-    // const [activeTab, setActiveTab] = useState(1);
-      const [activeTab, setActiveTab] = useState(tabsContentResponseSample?.[0]?.id ?? 0);
-    const [isCopied, setIsCopied] = useState(false);
-  
-
-    const tabs = Array.isArray(tabsContentResponseSample) ? tabsContentResponseSample : [];
-
-    const activeTabObj = tabs.find((tab) => tab.id === activeTab);
+const ResponseSample = ({ tabsContentResponseSample }) => {
+  // const [activeTab, setActiveTab] = useState(1);
+  const [activeTab, setActiveTab] = useState(tabsContentResponseSample?.[0]?.id ?? 0);
+  const [isCopied, setIsCopied] = useState(false);
 
 
+  const tabs = Array.isArray(tabsContentResponseSample) ? tabsContentResponseSample : [];
+
+  const activeTabObj = tabs.find((tab) => tab.id === activeTab);
 
 
-    const handleCopy = () => {
-        navigator.clipboard
-          .writeText(activeTabObj?.requestPrefix || "")
-          .then(() => {
-            // Show check icon
-            setIsCopied(true);
-    
-            // Show toast notification
-            toast.success("JSON copied to clipboard!", {
-              duration: 2000,
-              position: "top-center",
-              style: {
-                backgroundColor: "#fff",
-                color: "#000",
-              },
-              iconTheme: {
-                primary: "#10B981", // green
-                secondary: "#fff",
-              },
-            });
-    
-            // Reset icon after 2 seconds
-            setTimeout(() => {
-              setIsCopied(false);
-            }, 2000);
-          })
-          .catch((err) => {
-            toast.error("Failed to copy text", {
-              duration: 2000,
-              position: "top-center",
-              style: {
-                backgroundColor: "#fff",
-                color: "#000",
-              },
-            });
-            console.error("Could not copy text: ", err);
-          });
-      };
 
 
-      const formatJson = (jsonString) => {
-        try {
-          const cleaned = jsonString?.trim().replace(/(\r\n|\n|\r)/gm, " ");
-          const parsed = JSON.parse(cleaned);
-          return JSON.stringify(parsed, null, 2);
-        } catch (err) {
-          return jsonString;
-        }
-      };
-      
+  const handleCopy = () => {
+    navigator.clipboard
+      .writeText(activeTabObj?.requestPrefix || "")
+      .then(() => {
+        // Show check icon
+        setIsCopied(true);
+
+        // Show toast notification
+        toast.success("JSON copied to clipboard!", {
+          duration: 2000,
+          position: "top-center",
+          style: {
+            backgroundColor: "#fff",
+            color: "#000",
+          },
+          iconTheme: {
+            primary: "#10B981", // green
+            secondary: "#fff",
+          },
+        });
+
+        // Reset icon after 2 seconds
+        setTimeout(() => {
+          setIsCopied(false);
+        }, 2000);
+      })
+      .catch((err) => {
+        toast.error("Failed to copy text", {
+          duration: 2000,
+          position: "top-center",
+          style: {
+            backgroundColor: "#fff",
+            color: "#000",
+          },
+        });
+        console.error("Could not copy text: ", err);
+      });
+  };
+
+
+  const formatJson = (jsonString) => {
+    try {
+      const cleaned = jsonString?.trim().replace(/(\r\n|\n|\r)/gm, " ");
+      const parsed = JSON.parse(cleaned);
+      return JSON.stringify(parsed, null, 2);
+    } catch (err) {
+      return jsonString;
+    }
+  };
+
   return (
-    <div className="bg-gray-500 text-white p-4 md:p-5 lg:p-6 rounded-lg lg:w-3xl md:w-2xl mx-auto ">
+    <div className="bg-gray-500 text-white p-4 md:p-5 lg:p-6 rounded-lg w-full ">
       {/* Toast container */}
       <Toaster />
 
@@ -106,9 +106,8 @@ const ResponseSample = ({tabsContentResponseSample}) => {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              className={`flex-1 py-2 rounded-full relative z-10 transition-colors duration-300 ${
-                activeTab === tab.id ? "text-white" : "text-gray-400"
-              }`}
+              className={`flex-1 py-2 rounded-full relative z-10 transition-colors duration-300 ${activeTab === tab.id ? "text-white" : "text-gray-400"
+                }`}
               onClick={() => setActiveTab(tab.id)}
             >
               {tab.title}
@@ -117,29 +116,28 @@ const ResponseSample = ({tabsContentResponseSample}) => {
         </div>
       </div>
 
-     
 
-<div className="bg-gray-700 rounded-md p-4 relative overflow-x-auto max-w-full w-[280px] md:w-[620px] lg:w-full break-words whitespace-pre-wrap">
 
-<button
-  onClick={handleCopy}
-  className={`absolute top-2 right-2 transition-colors px-2 py-1 rounded-md hover:bg-gray-600 ${
-    isCopied ? "text-white bg-gray-600" : "text-gray-300"
-  }`}
-  aria-label={isCopied ? "Copied to clipboard" : "Copy to clipboard"}
->
-  {isCopied ? (
-    <CheckOutlinedIcon fontSize="small" sx={{ color: "white" }} />
-  ) : (
-    <ContentCopyOutlinedIcon fontSize="small" sx={{ color: "white" }} />
-  )}
-</button>
+      <div className="bg-gray-700 rounded-md p-4 relative overflow-x-auto max-w-full w-[280px] md:w-[620px] lg:w-full break-words whitespace-pre-wrap">
 
-<ReactJsonPretty
-  data={formatJson(activeTabObj?.requestPrefix)}
-  className="react-json-pretty"
-/>
-</div>
+        <button
+          onClick={handleCopy}
+          className={`absolute top-2 right-2 transition-colors px-2 py-1 rounded-md hover:bg-gray-600 ${isCopied ? "text-white bg-gray-600" : "text-gray-300"
+            }`}
+          aria-label={isCopied ? "Copied to clipboard" : "Copy to clipboard"}
+        >
+          {isCopied ? (
+            <CheckOutlinedIcon fontSize="small" sx={{ color: "white" }} />
+          ) : (
+            <ContentCopyOutlinedIcon fontSize="small" sx={{ color: "white" }} />
+          )}
+        </button>
+
+        <ReactJsonPretty
+          data={formatJson(activeTabObj?.requestPrefix)}
+          className="react-json-pretty"
+        />
+      </div>
     </div>
   );
 };

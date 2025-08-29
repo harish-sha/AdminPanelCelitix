@@ -18,6 +18,7 @@ export const ChatInput = ({
   sendMessage,
   inputRef,
   fileInputRef,
+  documentInputRef,
   isSpeedDialOpen,
   setIsSpeedDialOpen,
   isTemplateMessage,
@@ -38,7 +39,7 @@ export const ChatInput = ({
       label: "Document",
       icon: <FilePresentOutlinedIcon />,
       command: () => {
-        fileInputRef.current.click();
+        documentInputRef.current.click();
       },
     },
     {

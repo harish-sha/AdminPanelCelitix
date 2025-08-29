@@ -17,6 +17,7 @@ import moment from "moment";
 import { TemplateDialog } from "./components/templateDialog";
 import { useWabaAgentContext } from "@/context/WabaAndAgent.jsx";
 import { useRcsContext } from "@/context/RcsContext";
+import { uploadImageFile } from "@/apis/whatsapp/whatsapp";
 
 const RcsLiveChat = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -52,6 +53,7 @@ const RcsLiveChat = () => {
   const [input, setInput] = useState("");
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
+  const documentInputRef = useRef(null);
 
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
 
@@ -81,6 +83,14 @@ const RcsLiveChat = () => {
   const [carVarInput, setCarVarInput] = useState([]);
 
   const [finalVarList, setFinalVarList] = useState([]);
+
+  const [selectedMedia, setSelectedMedia] = useState({
+    name: "",
+    size: "0MB",
+    mimeType: "text",
+    file: null,
+    fileUrl: null,
+  });
 
   const { agentData, setAgentData, selectedContextWaba, agentSelected } =
     useWabaAgentContext();
@@ -315,9 +325,31 @@ const RcsLiveChat = () => {
     }
   }
 
+  async function handleFileInput(e) {
+    const files = e.target.files[0];
+    const name = files.name;
+    const size = files.size / 1024;
+    const mimeType = files.type.split("/")[0];
+
+    const fileurl = await uploadImageFile(files);
+
+    if (!fileurl?.fileUrl)
+      return toast.error(fileurl?.msg || "Failed to upload file");
+
+    setSelectedMedia({
+      name,
+      size: `${Number(size).toFixed(2)}MB`,
+      mimeType,
+      file: files,
+      fileUrl: fileurl?.fileUrl,
+    });
+    setIsSpeedDialOpen(false);
+  }
+
   async function sendMessage() {
     if (!chatState.active) return;
-    if (!input) return;
+    // if (!input) return;
+    if (!selectedMedia.fileUrl && !input.trim()) return;
 
     // const mobileNo = chatState.active.mobileNo.includes("+91")
     //   ? chatState.active.mobileNo
@@ -327,11 +359,30 @@ const RcsLiveChat = () => {
         agentId: chatState.active.agentId,
         mobileNo: chatState.active.mobileNo,
         message: input.trim(),
-        replyType: "text",
+        // replyType: "text",
+        replyType:
+          selectedMedia.mimeType === "application"
+            ? "document"
+            : selectedMedia.mimeType,
         // chatNo: chatState.active.srno,
       };
 
-      const res = await sendRCSMessage(payload);
+      let body = {};
+
+      if (selectedMedia.fileUrl) {
+        body = {
+          contentMessage: {
+            contentInfo: {
+              fileUrl: selectedMedia.fileUrl,
+            },
+
+            mobileno: chatState.active.mobileNo,
+            botId: chatState.active.agentId,
+          },
+        };
+      }
+
+      const res = await sendRCSMessage(payload, body);
       if (res?.status === "error") {
         toast.error(res?.msg);
         return;
@@ -607,6 +658,7 @@ const RcsLiveChat = () => {
               // visibleRight={visibleRight}
               input={input}
               setInput={setInput}
+              documentInputRef={documentInputRef}
               // setSendMessageDialogVisible={setSendMessageDialogVisible}
               setChatState={setChatState}
               chatState={chatState}
@@ -646,6 +698,23 @@ const RcsLiveChat = () => {
           btninputVariables={btninputVariables}
         />
       )}
+
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        onChange={handleFileInput}
+        accept="image/* video/*"
+      // multiple
+      />
+      <input
+        type="file"
+        ref={documentInputRef}
+        style={{ display: "none" }}
+        onChange={handleFileInput}
+        accept="application/*"
+      // multiple
+      />
     </div>
   );
 };

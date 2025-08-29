@@ -289,8 +289,10 @@ import {
   rechargeCreateOrderCashFree,
   verifyRechargeStatus,
 } from "@/apis/recharge/recharge";
+import { useNavigate } from "react-router-dom";
 
 export default function RechargeFullWidth() {
+  const navigate = useNavigate();
   const [cashfree, setCashfree] = useState(null);
   const [amount, setAmount] = useState("");
   const [addedGstAmount, setAddedGstAmount] = useState("");
@@ -352,6 +354,7 @@ export default function RechargeFullWidth() {
       const domain = "https://app.celitix.com";
       try {
         const payload = {
+          order_id: orderId,
           order_amount: addedGstAmount,
           order_currency: "INR",
           customer_details: {
@@ -380,7 +383,7 @@ export default function RechargeFullWidth() {
         //   toast.error("Failed to create payment session.");
         //   return;
         // }
-        setNewOrderId(res.orderId);
+        // setNewOrderId(res.orderId);
 
         if (res?.cashfree_error?.code) {
           const message =
@@ -399,31 +402,44 @@ export default function RechargeFullWidth() {
           return;
         }
 
-        const { error } = await cashfree.checkout({
-          paymentSessionId,
-          redirectTarget: "_modal",
-        });
+        cashfree
+          .checkout({
+            paymentSessionId,
+            redirectTarget: "_modal",
+          })
+          .then((result) => {
+            if (result.error) {
+              return toast.error("Something went wrong. Please try again.");
+            }
+            if (result.redirect) {
+              return toast.error("Payment will be redirected");
+            }
+            if (result.paymentDetails) {
+              toast.success(
+                "Payment has been completed, Check for Payment Status"
+              );
+            }
+          });
         // console.log("error", result);
         if (error) {
           return toast.error("Either Payment was aborted or something went wrong");
         }
 
 
-        const rechargeStatus = await verifyRechargeStatus({
-          order_id: newOrderId,
+        await verifyRechargeStatus({
+          order_id: orderId,
         });
 
-        if (rechargeStatus?.status !== "received") {
-          return toast.error("Payment Failed!");
-        }
-        toast.success("Payment successful!");
+        // if (rechargeStatus?.status !== "received") {
+        //   return toast.error("Payment Failed!");
+        // }
+        // toast.success("Payment successful!");
 
         setAmount("");
         setPhone("");
         setEmail("");
         setName("");
-        // if (rechargeStatus?.status === "received") {
-        // }
+        navigate("/transactions");
       } catch (err) {
         console.error(err);
         toast.error("Error creating payment session.");

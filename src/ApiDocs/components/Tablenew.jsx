@@ -361,12 +361,20 @@ const TableCell = ({
 };
 
 // Public API
-export const Table = Object.assign(TableRoot, {
+// export const Table = Object.assign(TableRoot, {
+//   Head: TableHead,
+//   Body: TableBody,
+//   Row: TableRow,
+//   HeaderCell: TableHeaderCell,
+//   Cell: TableCell,
+// });
+
+// export default Table;
+
+export default Object.assign(TableRoot, {
   Head: TableHead,
   Body: TableBody,
   Row: TableRow,
   HeaderCell: TableHeaderCell,
   Cell: TableCell,
 });
-
-export default Table;

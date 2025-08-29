@@ -78,6 +78,7 @@ export const Preview = ({
       btnData: buttonSuggestions,
       replacedContent,
       pdfUrl: url,
+      ...templateDetails[0],
     });
   }, [templateDetails, inputVariables]);
 
@@ -168,6 +169,9 @@ export const Preview = ({
                   />
                 )}
               </div>
+            )}
+            {data.contentTitle && (
+              <p className="font-semibold ml-1">{data.contentTitle}</p>
             )}
             <div className="overflow-y-scroll max-h-[250px] text-sm font-medium break-words whitespace-pre-wrap px-1 py-2">
               <p>{data?.replacedContent}</p>

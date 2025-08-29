@@ -38,12 +38,13 @@ export const InputData = ({
   selectedAgent,
   agentList,
   chatState,
+  handleFetchAllConvo,
 }) => {
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [agentInfoSummary, setAgentInfoSummary] = useState("");
-  const [chatSwitched, setChatSwitched] = useState("read");
+  const [chatSwitched, setChatSwitched] = useState("");
 
   const [showFilter, setShowFilter] = useState(false);
   const panelRef = useRef(null);
@@ -57,6 +58,22 @@ export const InputData = ({
     switchChat,
     setSwitchChat,
   } = useWabaAgentContext();
+
+  // console.log(
+  //   "convoDetailssssssssssssssssssssssssssssssssssssssssss",
+  //   convoDetails
+  // );
+  // console.log("activeConvooooooooooooooooooooooo", activeConvo);
+  // console.log("inactiveConvooooooooooooooooooooo", inactiveConvo);
+  // console.log(
+  //   "convoooooooooooooooooooooo",
+  //   convoDetails?.conversationEntityList?.filter(
+  //     (chat) =>
+  //       !convoDetails?.unreadCounts?.some(
+  //         (unread) => unread.mobile === chat.mobileNo
+  //       )
+  //   )
+  // );
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -76,24 +93,21 @@ export const InputData = ({
   const [selected, setSelected] = useState("");
   const [isRead, setIsRead] = useState(false);
 
-
-
-  useEffect(()=>{
-    setSwitchChat(convoDetails?.conversationEntityList)
-  }, [convoDetails])
+  useEffect(() => {
+    setSwitchChat(convoDetails?.conversationEntityList);
+  }, [convoDetails]);
 
   const handleSelect = (agent) => {
-
     setAgentInfoSummary(agent.label);
     setSelected(agent);
     setSelectedAgent(agent.value);
-    console.log("agent full object:", agent);
+    // console.log("agent full object:", agent);
 
     setReadStatus((prev) => ({
       ...prev,
       [agent.value]: true,
     }));
-    console.log("agentSrno:", agent.value);
+    // console.log("agentSrno:", agent.value);
   };
 
   const handleChipClick = () => {
@@ -213,9 +227,8 @@ export const InputData = ({
           )}
           {/* Sliding Panel */}
           <div
-            className={`absolute top-0 -left-8 w-full md:w-88 shadow-lg z-40 transform transition-transform duration-300 md:ml-4 ${
-              isOpen ? "translate-x-0 left-0" : "-translate-x-full"
-            }`}
+            className={`absolute top-0 -left-8 w-full md:w-88 shadow-lg z-40 transform transition-transform duration-300 md:ml-4 ${isOpen ? "translate-x-0 left-0" : "-translate-x-full"
+              }`}
           >
             <AnimatedDropdown
               id="createSelectWaba"
@@ -386,11 +399,10 @@ export const InputData = ({
                         {agentList?.data?.map((item) => (
                           <div
                             key={item.sr_no}
-                            className={`flex items-center gap-2 p-1 border-2 hover:bg-[#5584AC] hover:text-white transition-all duration-200 cursor-pointer rounded-md overflow-y-auto  ${
-                              selectedAgent === item.sr_no
+                            className={`flex items-center gap-2 p-1 border-2 hover:bg-[#5584AC] hover:text-white transition-all duration-200 cursor-pointer rounded-md overflow-y-auto  ${selectedAgent === item.sr_no
                                 ? "bg-[#5584AC] border-[#5584AC] text-white"
                                 : "bg-gray-100 border-[#5584AC]"
-                            }
+                              }
                                `}
                             onClick={() =>
                               handleSelect({
@@ -401,11 +413,10 @@ export const InputData = ({
                           >
                             <div
                               className={`w-7 h-7 flex items-center justify-center rounded-full border-2 bg-white text-md font-semibold  text-[#22577E] 
-                               ${
-                                 item.isRead
-                                   ? "border-green-500"
-                                   : "border-[#5584AC]"
-                               }`}
+                               ${item.isRead
+                                  ? "border-green-500"
+                                  : "border-[#5584AC]"
+                                }`}
                             >
                               {item.name?.charAt(0).toUpperCase()}
                             </div>
@@ -415,42 +426,60 @@ export const InputData = ({
                       </div>
 
                       <div className="flex flex-col gap-3 w-full">
+                        <button className="flex justify-end cursor-pointer" onClick={() => {
+                          setSwitchChat(convoDetails?.conversationEntityList)
+                          setChatSwitched("")
+                        }}>
+                          <TbFilterX className="" />
+                        </button>
+
                         <div
                           className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold text-gray-800 rounded-xl shadow-sm
-      ${
-        chatSwitched === "read"
-          ? "bg-green-50 border border-green-400 focus:outline-none focus:ring-2 focus:ring-green-400"
-          : "bg-gray-50 border-gray-400"
-      }
+      ${chatSwitched === "read"
+                              ? "bg-green-50 border border-green-400 focus:outline-none focus:ring-2 focus:ring-green-400"
+                              : "bg-gray-50 border-gray-400"
+                            }
       hover:bg-green-50 hover:shadow-md transition-all duration-200 ease-in-out cursor-pointer`}
                           onClick={() => {
                             setSwitchChat(
-                              btnOption === "active"
-                                ? convoDetails?.conversationEntityList
-                                : []
+                              // btnOption === "active"
+                              //   ? 
+                              // ? convoDetails?.conversationEntityList
+                              convoDetails?.conversationEntityList?.filter(
+                                (chat) =>
+                                  !convoDetails?.unreadCounts?.some(
+                                    (unread) =>
+                                      unread.mobile === chat.mobileNo
+                                  )
+                              )
+                              // : []
                             );
-                            
+
                             setChatSwitched("read");
                           }}
                         >
                           <DoneAllIcon
-                            className="text-green-300 text-xs"
+                            className={`${chatSwitched === "read" ? "text-green-300" : "text-gray-300"} text-xs`}
                             sx={{ fontSize: "18px" }}
                           />
                           Read Count:{" "}
                           <span className="font-medium">
-                            {btnOption === "active"
+                            {/* {btnOption === "active" &&
                               ? activeConvo?.length || 0
-                              : inactiveConvo?.length || 0}
+                              : inactiveConvo?.length || 0
+                              (convoDetails?.conversationEntityList?.length || 0) -
+                                (convoDetails?.unreadCounts?.length || 0)
+                                } */}
+                            {(convoDetails?.conversationEntityList?.length ||
+                              0) - (convoDetails?.unreadCounts?.length || 0)}
                           </span>{" "}
                         </div>
                         <div
                           className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold text-gray-800 
-                             rounded-xl shadow-sm ${
-                               chatSwitched === "unread"
-                                 ? "bg-green-50 border border-green-400 focus:outline-none focus:ring-2 focus:ring-green-400"
-                                 : "bg-gray-50 border-gray-400"
-                             } 
+                             rounded-xl shadow-sm ${chatSwitched === "unread"
+                              ? "bg-green-50 border border-green-400 focus:outline-none focus:ring-2 focus:ring-green-400"
+                              : "bg-gray-50 border-gray-400"
+                            } 
                               hover:bg-gray-50 hover:shadow-md transition-all duration-200 ease-in-out 
                                focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer`}
                           onClick={() => {
@@ -459,7 +488,7 @@ export const InputData = ({
                           }}
                         >
                           <DoneAllIcon
-                            className="text-gray-400"
+                            className={`${chatSwitched === "unread" ? "text-green-300" : "text-gray-300"} text-xs`}
                             sx={{ fontSize: "18px" }}
                           />
                           Unread Count:{" "}
@@ -559,26 +588,26 @@ export const InputData = ({
             <button
               onClick={() => {
                 setBtnOption("active");
-                setIsSubscribed(false);
+                // setIsSubscribed(false);
+                // handleFetchAllConvo()
               }}
-              className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${
-                btnOption === "active"
+              className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "active"
                   ? "text-white font-semibold"
                   : "text-gray-700"
-              }`}
+                }`}
             >
               Active
             </button>
             <button
               onClick={() => {
                 setBtnOption("close");
-                setIsSubscribed(false);
+                // setIsSubscribed(false);
+                // handleFetchAllConvo()
               }}
-              className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${
-                btnOption === "close"
+              className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "close"
                   ? "text-white font-semibold"
                   : "text-gray-700"
-              }`}
+                }`}
             >
               Close
             </button>

@@ -11,6 +11,7 @@ import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import CannedMessageDropdown from "../../../../cannedmessage/components/CannedMessageDropdown";
 import cannedCategories from "../../../../cannedmessage/components/CannedMessageDropdown";
+import { useEffect, useRef } from "react";
 
 export const ChatInput = ({
   inputRef,
@@ -22,10 +23,30 @@ export const ChatInput = ({
   insertEmoji,
   isSpeedDialOpen,
   setIsSpeedDialOpen,
+  locationPreviewText,
+  requestLocationData
 }) => {
   // const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
   const [showCannedDropdown, setShowCannedDropdown] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ top: 0, left: 0 });
+  const isSpeedDialOpenRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        isSpeedDialOpenRef.current &&
+        !isSpeedDialOpenRef.current.contains(event.target)
+      ) {
+         setIsSpeedDialOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
 
   function addBtn(formatType) {
     if (!inputRef.current) return;
@@ -166,7 +187,7 @@ export const ChatInput = ({
       </div>
 
       {/* Custom SpeedDial */}
-      <div className="relative ml-4">
+      <div className="relative ml-4"  ref={isSpeedDialOpenRef}>
         <button
           onClick={() => setIsSpeedDialOpen(!isSpeedDialOpen)}
           className={`flex items-center justify-center w-8 h-8 cursor-pointer bg-[#22577E] text-white rounded-full shadow-md transition-transform ${isSpeedDialOpen ? "rotate-45" : ""

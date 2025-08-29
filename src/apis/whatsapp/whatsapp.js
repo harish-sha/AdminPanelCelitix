@@ -418,9 +418,17 @@ export const downloadAttachment = async (data) => {
 };
 
 // read message (live chat)
+// export const readMessage = async (data) => {
+//   return await fetchWithAuth(
+//     `/LiveChat/isviewChat?srno=${data.srno}&wabaNumber=${data.waba}&mobile=${data.mobile}`,
+//     {
+//       method: "POST",
+//     }
+//   );
+// };
 export const readMessage = async (data) => {
   return await fetchWithAuth(
-    `/LiveChat/isviewChat?srno=${data.srno}&wabaNumber=${data.waba}&mobile=${data.mobile}`,
+    `/LiveChat/isviewChat?srno=${data.srno}&wabaNumber=${data.waba}&mobile=${data.mobile}&unreadFlag=${data.unreadFlag}`,
     {
       method: "POST",
     }

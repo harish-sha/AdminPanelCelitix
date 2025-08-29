@@ -231,7 +231,7 @@ const BotPreview = ({ template }) => {
                               {/* Radio indicator on the right */}
                               <span
                                 className={`absolute top-1/2 -translate-y-1/2 right-3 inline-flex items-center justify-center h-4 w-4 rounded-full border 
-                    ${isActive ? "border-blue-600" : "border-gray-400"}`}
+                                  ${isActive ? "border-blue-600" : "border-gray-400"}`}
                                 aria-hidden
                               >
                                 {isActive && (

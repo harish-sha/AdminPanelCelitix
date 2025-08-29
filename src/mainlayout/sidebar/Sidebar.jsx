@@ -360,7 +360,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "Manage Funds",
       type: "dropdown",
       links: [
-        // { to: "/selfrecharge", label: "Recharge" },
+        { to: "/selfrecharge", label: "Recharge" },
         { to: "/transactions", label: "Transaction History" }
 
       ],

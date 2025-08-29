@@ -241,35 +241,13 @@ const DocsSidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
     },
     // {
-    //   name: "Cookbook",
-    //   //   icon: <FaCode />,
-    //   label: "Cookbook",
-    //   type: "single",
-    //   to: "cookbook",
-    // },
-    // {
-    //   name: "Forum",
-    //   //   icon: <FaUsers />,
-    //   label: "Forum",
-    //   type: "single",
-    //   to: "forum",
-    // },
-    // {
     //   name: "Help",
     //   icon: <IoHelpCircleOutline />,
     //   label: "Help",
     //   type: "single",
     //   to: "help",
     // },
-    // {
-    //   name: "Back2Home",
-    //   icon: <FaHome />,
-    //   label: "Dashboard",
-    //   type: "single",
-    //   to: "/",
-    // },
-
-     {
+    {
       name: "gsmerrorcode",
       icon: <MdOutlineRocketLaunch />,
       label: "GSM Error Code",

@@ -149,7 +149,8 @@ export const InputData = ({
                     srno: "",
                     replayTime: "",
                   },
-                }));
+                })
+              );
               }}
               className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "active"
                   ? "text-white font-semibold"

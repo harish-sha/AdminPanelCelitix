@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Loader from "../../whatsapp/components/Loader";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
@@ -38,6 +38,7 @@ import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 const DeliveryreportRcs = () => {
   const [value, setValue] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
+  // const [isExporting, setIsExporting] = useState(false);
 
   //campaignState
   const [campaignData, setCampaignData] = useState({
@@ -55,7 +56,6 @@ const DeliveryreportRcs = () => {
     isMonthWise: 0,
   });
   const [selectedMonth, setSelectedMonth] = useState(new Date());
-  console.log("selectedMonth", selectedMonth);
   const [summaryTableData, setSummaryTableData] = useState([]);
   // scheduleState
   const [scheduleData, setScheduleData] = useState({
@@ -68,6 +68,11 @@ const DeliveryreportRcs = () => {
 
   const [visible, setVisible] = useState(false);
   const [currentRow, setCurrentRow] = useState(null);
+  const [childFn, setChildFn] = useState(null);
+
+  const handleSetChildFunction = useCallback((fn) => {
+    setChildFn(() => fn);
+  }, []);
 
   const [allCampaigns, setAllCampaigns] = useState([]);
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
@@ -205,9 +210,7 @@ const DeliveryreportRcs = () => {
       FinalFromDate = moment(summaryData.fromDate).format("YYYY-MM-DD");
       FinalToDate = moment(summaryData.toDate).format("YYYY-MM-DD");
       setSelectedMonth(null);
-    }
-
-    else {
+    } else {
       toast.error("Please select a valid date range or month.");
       return;
     }
@@ -230,6 +233,7 @@ const DeliveryreportRcs = () => {
       setIsFetching(false);
     }
   };
+
 
   // fetchscheduleData
   // const handleScheduleSearch = async () => {
@@ -760,14 +764,27 @@ const DeliveryreportRcs = () => {
                 </label>
               </div> */}
 
-              <div className="w-full sm:w-56">
+              <div className="flex items-end gap-4">
                 <UniversalButton
-                  label={isFetching ? "Showing..." : "Show"}
+
+                  label={isFetching ? "Searching..." : "Search"}
                   id="show"
                   name="show"
                   variant="primary"
                   disabled={isFetching}
                   onClick={handleSummarySearch}
+                />
+                <UniversalButton
+                  icon={
+                    <IosShareOutlinedIcon
+                      sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
+                    />
+                  }
+                  label="Export"
+                  id="export"
+                  name="export"
+                  variant="primary"
+                  onClick={() => childFn()}
                 />
               </div>
             </div>
@@ -775,6 +792,7 @@ const DeliveryreportRcs = () => {
               <DayWiseSummarytableRcs
                 data={summaryTableData}
                 isMonthWise={summaryData.isMonthWise}
+                exportFunction={handleSetChildFunction}
               />
             </div>
           </CustomTabPanel>

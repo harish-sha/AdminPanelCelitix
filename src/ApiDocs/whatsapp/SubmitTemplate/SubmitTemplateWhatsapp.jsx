@@ -11,7 +11,6 @@ import Table from "../../components/Tablenew";
 import { Link } from "react-router-dom";
 
 const SubmitTemplateWhatsapp = () => {
-  // const [activeSection, setActiveSection] = useState("text-templates");
 
   const { isDarkMode } = useTheme();
   const colors = themeColors(isDarkMode);
@@ -40,24 +39,6 @@ const SubmitTemplateWhatsapp = () => {
     { id: "deleting-tempaltes-by-id", title: "Deleting Templates (by ID)" },
     { id: "deleting-tempalte-by-name", title: "Deleting Template (by NAME)" },
   ];
-
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     const scrollPosition = window.scrollY;
-
-  //     // Find which section is currently in view
-  //     for (let i = sections.length - 1; i >= 0; i--) {
-  //       const section = document.getElementById(sections[i].id);
-  //       if (section && section.offsetTop <= scrollPosition + 200) {
-  //         setActiveSection(sections[i].id);
-  //         break;
-  //       }
-  //     }
-  //   };
-
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // }, []);
 
   const [active, setActive] = useState(null);
   const [scroller, setScroller] = useState(0);
@@ -97,13 +78,7 @@ const SubmitTemplateWhatsapp = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const HeaderTableColumns = ["Name", "Value"];
-
-  const RequestParameterTextTemplateColumn = [
-    "Placeholder",
-    "Description",
-    "Sample Value",
-  ];
+  
 
   const requestDataTextTemplate = [
     {
@@ -153,11 +128,7 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/messag
     },
   ];
 
-  const RequestParameterMediaTemplateColumn = [
-    "Placeholder",
-    "Description",
-    "Example Value",
-  ];
+  
 
   const requestDataMediaTemplate = [
     {
@@ -269,11 +240,7 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/messag
     },
   ];
 
-  const RequestParameterCarouselTemplateColumn = [
-    "Placeholder",
-    "Description",
-    "Example Value",
-  ];
+
 
   const requestDataCarouselTemplate = [
     {
@@ -744,11 +711,7 @@ curl --location 'https://amped-express.interakt.ai/api/v17.0/YOUR_WABA_ID/messag
     },
   ];
 
-  const EditingTemplateCategoryPropertiesColumn = [
-    "Placeholder",
-    "Description",
-    "Sample Value",
-  ];
+
 
   const requestDataEditingTemplateCategory = [
     {

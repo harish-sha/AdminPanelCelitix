@@ -22,6 +22,8 @@ const RequestComponent = ({ requestData = [], curlBase = "" }) => {
   const [selectedLang, setSelectedLang] = useState("cURL");
   const [expanded, setExpanded] = useState(false);
 
+  console.log("requestData", requestData)
+
   // ----- data: safe JSON parse for the pretty viewer + code templates -----
   const raw = requestData[0]?.requestPrefix || "{}";
   let jsonData = {};
@@ -42,6 +44,7 @@ const RequestComponent = ({ requestData = [], curlBase = "" }) => {
 
   // ----- code templates by language -----
   const renderCodeBlock = () => {
+    console.log("IIIIIIIIIIIIIIIIIIIIII")
     switch (selectedLang) {
       case "cURL":
         // Uses provided curlBase + body
@@ -115,9 +118,95 @@ echo $code . "\\n" . $resp;`;
     }
   };
 
+  const renderWithoutDataCodeBlock = () => {
+    console.log("I am rendered")
+    switch (selectedLang) {
+      case "cURL":
+        return `${curlBase}`;
+
+      case "Node.js (fetch)":
+        return `// Fill your actual URL, method and headers as needed
+fetch("<<your-url>>", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+})
+  .then(r => r.json())
+  .then(console.log)
+  .catch(console.error);`;
+
+      case "Python (requests)":
+        return `# Fill your actual URL and headers as needed
+import requests
+
+resp = requests.post(
+  "<<your-url>>",
+  headers={"Content-Type": "application/json"}
+)
+print(resp.status_code)
+print(resp.text)`;
+
+      case "Go (native)":
+        return `// Fill your actual URL and headers as needed
+package main
+
+import (
+  "bytes"
+  "encoding/json"
+  "fmt"
+  "io"
+  "net/http"
+)
+
+func main() {
+  resp, err := http.Post("<<your-url>>", "application/json", bytes.NewReader(body))
+  if err != nil {
+    panic(err)
+  }
+  defer resp.Body.Close()
+  b, _ := io.ReadAll(resp.Body)
+  fmt.Println(resp.StatusCode)
+  fmt.Println(string(b))
+}`;
+
+      case "PHP (cURL)":
+        return `<?php
+// Fill your actual URL and headers as needed
+$ch = curl_init("<<your-url>>");
+curl_setopt_array($ch, [
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_POST => true,
+  CURLOPT_HTTPHEADER => ["Content-Type: application/json"],
+]);
+$resp = curl_exec($ch);
+$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+echo $code . "\\n" . $resp;`;
+
+      default:
+        return "";
+    }
+  };
+
   // ----- copy: current code in drawer (matches selectedLang) -----
+  // const handleCopyCode = () => {
+  //   const code = renderCodeBlock();
+  //   navigator.clipboard.writeText(code).then(() => {
+  //     toast.success(`${selectedLang} code copied!`);
+  //   });
+  // };
+
+  console.log("Object.keys(raw).length", Object.keys(raw).length)
+  console.log("Object.keys(raw)", Object.keys(raw))
+  console.log("raw === '{}' ? ",raw === "{}" )
+  console.log("raw", raw)
+
+
   const handleCopyCode = () => {
-    const code = renderCodeBlock();
+    const code =
+      raw !== "{}" ? 
+      renderCodeBlock()
+        : renderWithoutDataCodeBlock();
+
     navigator.clipboard.writeText(code).then(() => {
       toast.success(`${selectedLang} code copied!`);
     });
@@ -127,8 +216,9 @@ echo $code . "\\n" . $resp;`;
     <>
       <div className="w-full mx-auto mt-4">
         <div
-          className={`bg-gray-700 text-white p-4 rounded-lg shadow-md flex flex-col relative transition-all duration-300 ${expanded ? "max-h-full" : "h-full overflow-hidden"
-            }`}
+          className={`bg-gray-700 text-white p-4 rounded-lg shadow-md flex flex-col relative transition-all duration-300 ${
+            expanded ? "max-h-full" : "h-full overflow-hidden"
+          }`}
         >
           {/* top-right actions */}
           <div className="flex justify-end absolute right-2 top-2 space-x-4">
@@ -140,8 +230,9 @@ echo $code . "\\n" . $resp;`;
             </button>
 
             <button
-              className={`rounded-md hover:bg-gray-700 ${isCopied ? "text-white bg-gray-700" : "text-gray-400"
-                }`}
+              className={`rounded-md hover:bg-gray-700 ${
+                isCopied ? "text-white bg-gray-700" : "text-gray-400"
+              }`}
               onClick={handleCopyJson}
               aria-label="Copy JSON"
               title="Copy JSON"
@@ -213,7 +304,14 @@ echo $code . "\\n" . $resp;`;
           </div>
 
           <pre className="bg-[#364153] text-green-500 p-4 rounded overflow-y-auto text-sm h-auto">
-            <ReactJsonPretty data={renderCodeBlock()} className="json-pretty-wrap whitespace-pre-wrap break-words text-wrap" />
+            <ReactJsonPretty
+              data={
+                raw !== "{}" 
+                  ? renderCodeBlock()
+                  : renderWithoutDataCodeBlock()
+              }
+              className="json-pretty-wrap whitespace-pre-wrap break-words text-wrap"
+            />
           </pre>
         </div>
       </Drawer>

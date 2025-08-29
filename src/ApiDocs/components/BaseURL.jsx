@@ -45,7 +45,7 @@ const BaseURL = ({ urlPrefix, requestType: initialRequestType, param = '' }) => 
   };
 
   return (
-    <div className="lg:w-3xl md:w-2xl w-[320px] mx-auto">
+    <div className="w-full">
       <div className="bg-gray-700 text-white p-4 rounded-lg shadow-md flex items-center flex-col h-32 relative overflow-hidden">
         <Toaster />
         <div className="flex justify-between items-center absolute right-2.5">

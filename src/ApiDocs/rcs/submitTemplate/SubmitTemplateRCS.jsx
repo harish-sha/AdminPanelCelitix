@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import BaseURL from "../../components/BaseURL";
 import RequestSample from "../../components/RequestSample";
-import Table from "../../components/Table";
+// import Table from "../../components/Table";
+import Table from "@/ApiDocs/components/Tablenew";
 import ResponseSample from "../../components/ResponseSample";
 
 import { useTheme } from "../../context/ThemeContext";
@@ -10,8 +11,6 @@ import { themeColors } from "../../themeColors";
 
 const SubmitTemplateRCS = () => {
   const [activeSection, setActiveSection] = useState("text-message");
- 
-
 
   const { isDarkMode } = useTheme();
   const colors = themeColors(isDarkMode);
@@ -22,9 +21,6 @@ const SubmitTemplateRCS = () => {
     { id: "rich-card", title: "Rich Card Standalone" },
     { id: "rich-carousel", title: "Rich Card Carousel" },
   ];
-
- 
-  
 
   const RequestParameterTextMessageTemplateTableColumns = [
     "Field Name",
@@ -273,12 +269,11 @@ home because it's India VS Australia FINALS!",
     },
   ];
 
-
-const textmsgTempRes = [
-  {
-    id:0,
-    title:"202 Accepted",
-    requestPrefix: `
+  const textmsgTempRes = [
+    {
+      id: 0,
+      title: "202 Accepted",
+      requestPrefix: `
     {
 "name": "wtcfinaleng",
 "type": "text_message_with_pdf",
@@ -308,12 +303,12 @@ const textmsgTempRes = [
 }
 ]
 }
-    `
-  },
-  {
-    id:1,
-    title:"404 Bad Request",
-    requestPrefix: `
+    `,
+    },
+    {
+      id: 1,
+      title: "404 Bad Request",
+      requestPrefix: `
     {
 "error": {
 "code": 400,
@@ -322,16 +317,15 @@ const textmsgTempRes = [
 }
 }
 
-    `
-  }
-]
+    `,
+    },
+  ];
 
-const richcardStndReq = [
-
-  {
-    id:0,
-    title:"Without Varibles",
-    requestPrefix: `
+  const richcardStndReq = [
+    {
+      id: 0,
+      title: "Without Varibles",
+      requestPrefix: `
     {
 "name": "wtcfinaleng",
 "type": "rich_card",
@@ -352,12 +346,12 @@ because it's India VS Australia FINALS!",
 }
  }
 
-    `
-  },
-  {
-    id:1,
-    title:"With Varibles",
-    requestPrefix: `
+    `,
+    },
+    {
+      id: 1,
+      title: "With Varibles",
+      requestPrefix: `
     {
 "name": "wtcfinaleng",
 "type": "rich_card",
@@ -378,12 +372,12 @@ FINALS!",
 ]
 }
   }
-    `
-  },
-  {
-    id:2,
-    title:" Upload Multimedia ",
-    requestPrefix: `
+    `,
+    },
+    {
+      id: 2,
+      title: " Upload Multimedia ",
+      requestPrefix: `
    {
   "name": "wtcfinaleng",
   "type": "rich_card",
@@ -403,12 +397,12 @@ FINALS!",
       }
     ]
   }
-} `
-  },
-  {
-    id:3,
-    title:"With Template",
-    requestPrefix: `
+} `,
+    },
+    {
+      id: 3,
+      title: "With Template",
+      requestPrefix: `
     {
 "name": "wtcfinaleng",
 "type": "rich_card",
@@ -430,15 +424,15 @@ FINALS!",
   }
  }
 
-    `
-  }
-]
+    `,
+    },
+  ];
 
-const richcardStndRes = [
-  {
-    id:0,
-    title:"202 Accepted",
-    requestPrefix: `
+  const richcardStndRes = [
+    {
+      id: 0,
+      title: "202 Accepted",
+      requestPrefix: `
   {
     "name": "wtcfinaleng",
     "type": "rich_card",
@@ -460,13 +454,13 @@ const richcardStndRes = [
         ]
     }
 }
-    `
-  },
+    `,
+    },
 
-  {
-    id:1,
-    title:"404 Bad Request",
-    requestPrefix: ` 
+    {
+      id: 1,
+      title: "404 Bad Request",
+      requestPrefix: ` 
     {
 "error":
 {
@@ -476,16 +470,15 @@ d",
 "status": "Bad Request"
 }
  }
-    `
-  }
-]
+    `,
+    },
+  ];
 
-
-const richcardcarouselReq = [
-  {
-    id:0,
-    title:"Without Varibles",
-    requestPrefix: `
+  const richcardcarouselReq = [
+    {
+      id: 0,
+      title: "Without Varibles",
+      requestPrefix: `
  {
   "name": "brandXcar1",
   "type": "carousel",
@@ -522,12 +515,12 @@ const richcardcarouselReq = [
   ]
 }
 
-    `
-  },
-  {
-    id:1,
-    title:"With Varibles",
-    requestPrefix: `
+    `,
+    },
+    {
+      id: 1,
+      title: "With Varibles",
+      requestPrefix: `
    {
   "name": "brandXcar1",
   "type": "carousel",
@@ -564,12 +557,12 @@ const richcardcarouselReq = [
   ]
 }
 
-    `
-  },
-  {
-    id:2,
-    title:" Upload Multimedia",
-    requestPrefix: `
+    `,
+    },
+    {
+      id: 2,
+      title: " Upload Multimedia",
+      requestPrefix: `
    {
   "name": "brandXcar1",
   "type": "carousel",
@@ -606,12 +599,12 @@ const richcardcarouselReq = [
   ]
 }
 
-    `
-  },
-  {
-    id:3,
-    title:"With Template",
-    requestPrefix:`
+    `,
+    },
+    {
+      id: 3,
+      title: "With Template",
+      requestPrefix: `
    {
   "name": "brandXcar1",
   "type": "carousel",
@@ -635,11 +628,9 @@ const richcardcarouselReq = [
   ]
 }
 
-    `
-  },
-]
-
-
+    `,
+    },
+  ];
 
   const tabsContentResponseSample = [
     {
@@ -671,7 +662,7 @@ const richcardcarouselReq = [
         "postback": "call_now"
         }
         ]
-    }`
+    }`,
     },
 
     {
@@ -690,8 +681,8 @@ const richcardcarouselReq = [
 
   const richcardcarouselRes = [
     {
-      id:0,
-      title:"202 Accepted",
+      id: 0,
+      title: "202 Accepted",
       requestPrefix: `
       {
  "name": "brandXcar1",
@@ -744,12 +735,12 @@ S4XH0GTUUY14.jpeg",
  ]
 }
 
-      `
+      `,
     },
 
     {
-      id:1,
-      title:"404 Bad Request",
+      id: 1,
+      title: "404 Bad Request",
       requestPrefix: `
       {
 "error":
@@ -761,10 +752,9 @@ d",
 }
  }
 
-      `
-    }
-  ]
-
+      `,
+    },
+  ];
 
   // useEffect(() => {
   //   window.scrollTo(0, 0);
@@ -772,8 +762,6 @@ d",
   // setActiveSection("text-message");
   //   // window.scrollTo({ top: 0, behavior: "auto" });
   // }, []);
-  
-
 
   // useEffect(() => {
   //   window.screenTop()
@@ -791,231 +779,236 @@ d",
   //   return () => clearTimeout(timer); // Cleanup timer
   // }, []);
 
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     const scrollPosition = window.scrollY;
+
+  //     // Find which section is currently in view
+  //     for (let i = sections.length - 1; i >= 0; i--) {
+  //       const section = document.getElementById(sections[i].id);
+  //       if (section && section.offsetTop <= scrollPosition + 200) {
+  //         setActiveSection(sections[i].id);
+  //         break;
+  //       }
+  //     }
+  //   };
+
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, []);
+
+  // const activeIndex = sections.findIndex((s) => s.id === activeSection);
+  // const scrollerPosition = (activeIndex / (sections.length - 1)) * 100;
+
+  // const scrollToSection = (sectionId) => {
+  //   const element = document.getElementById(sectionId);
+  //   if (element) {
+  //     element.scrollIntoView({ behavior: "smooth" });
+  //     setActiveSection(sectionId);
+  //   }
+  // };
+
+  const [active, setActive] = useState(null);
+  const [scroller, setScroller] = useState(0);
 
   useEffect(() => {
-   
-    
+    // IntersectionObserver for highlighting active section
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-40% 0px -55% 0px", threshold: [0, 1] }
+    );
+
+    sections.forEach((s) => {
+      const el = document.getElementById(s.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [sections]);
+
+  useEffect(() => {
+    // Scroll listener for smooth progress tracking
     const handleScroll = () => {
-
-      const scrollPosition = window.scrollY;
-
-      // Find which section is currently in view
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = document.getElementById(sections[i].id);
-        if (section && section.offsetTop <= scrollPosition + 200) {
-          setActiveSection(sections[i].id);
-          break;
-        }
-      }
+      const scrollTop = window.scrollY;
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      setScroller(progress);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const activeIndex = sections.findIndex((s) => s.id === activeSection);
-  const scrollerPosition = (activeIndex / (sections.length - 1)) * 100;
-
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-      setActiveSection(sectionId);
-    }
-  };
-
-
-  
-
   return (
     <div
-      className={`flex w-[100%]   ${
-        isDarkMode ? "bg-slate-800 text-white" : "bg-[#eeeeee] text-gray-800"
-      }`}
+      className={`flex w-[100%]   ${isDarkMode ? "bg-slate-800 text-white" : "bg-[#eeeeee] text-gray-800"
+        }`}
     >
       {/* Main Content */}
-      <div className=" p-4 lg:p-6 overflow-y-auto w-full ">
+      <div className=" p-4 lg:p-6 overflow-y-auto w-4xl mx-auto ">
         <section id="text-message" className="mb-16">
           <div className="flex flex-col justify-center items-center gap-2 popins  ">
-            <h2 className="text-xl md:text-3xl lg:text-3xl font-medium ">
+            <h2 className="text-xl md:text-4xl font-medium mb-5 pb-2">
               TEXT MESSAGE TEMPLATE
             </h2>
             <div className=" flex flex-col  justify-center md:text-start w-xs md:w-2xl lg:w-3xl mx-auto sm:text-center mt-2">
-            <p className="text-sm text-center lg:text-start">
-              This API is used to submit a Text Message template for approval.
-            </p>
-           </div>
+              <p className="mt-4 text-md flex justify-center items-center">
+                This API is used to submit a Text Message template for approval.
+              </p>
+            </div>
           </div>
-          <div className="mt-5 flex justify-center ">
+          <div className="mt-5 flex flex-col justify-center ">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
+              ENDPOINT
+            </h2>
             <BaseURL urlPrefix="baseURL" requestType="POST" param="/" />
           </div>
 
-          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
-            <h2 className="text-xl md:text-3xl lg:text-3xl font-medium popins ">
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Request Parameter
             </h2>
+          </div>
+          <div className="mt-5 flex justify-center items-center ">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Field Name</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Validation</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Description</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Remarks</div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
 
-            <div className="mt-5 flex justify-center items-center ">
-              <div className="w-full">
-                <Table
-                  columns={RequestParameterTextMessageTemplateTableColumns}
-                >
-                  <tr
-                    className={` ${
-                     colors.tableBorder
-                    } border-b`}
-                  >
-                    <td className="px-2 py-2 text-orange-400 text-sm popins">
-                      name *
-                    </td>
-                    <td className="px-2 py-2 text-sm popins"> Max length 20 and should contain only alphanumeric chars, underscore and hyphen.
-                    </td>
-                    <td className="px-2 py-2 text-sm popins">Template name</td>
-                    <td className="px-2 py-2 text-sm popins">
-                      {" "}
-                      e.g.”wtcfinaleng”
-                    </td>
-                  </tr>
-                  <tr
-                    className={` ${
-                      colors.tableBorder
-                    } border-b`}
-                  >
-                    <td className="px-2 py-2  text-orange-400 text-sm popins">
-                      Type *
-                    </td>
-                    <td className="px-2 py-2 text-sm popins">
-                      {" "}
-                      Type is predefined
-                    </td>
-                    <td className="px-2 py-2">
-                      {" "}
-                      Template type{" "}
-                      <span className="text-green-600">
-                        [text_message]
-                      </span>{" "}
-                    </td>
-                    <td className="px-2 py-2 text-sm popins">-</td>
-                  </tr>
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    name *
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Max length 20 and should contain only alphanumeric chars,
+                    underscore and hyphen.
+                  </Table.Cell>
+                  <Table.Cell align="center">Template name</Table.Cell>
+                  <Table.Cell align="center">e.g. “wtcfinaleng”</Table.Cell>
+                </Table.Row>
 
-                  <tr
-                    className={` ${
-                      colors.tableBorder
-                    } border-b`}
-                  >
-                    <td className="px-2 py-2 text-orange-400 text-sm popins">
-                      Text Message Content *
-                    </td>
-                    <td className="px-2 py-2 text-sm popins ">
-                      Max length is 2500 (including variables if any)
-                    </td>
-                    <td className="px-2 py-2 text-sm popins">
-                      Template Text message with custom variables. Variables
-                      should be in square brackets
-                      <span className="text-green-600">[variable_name]</span>
-                    </td>
-                    <td className="px-2 py-2 text-sm popins">
-                      {" "}
-                      e.g.”[Name], Time to go big or go home because it's India
-                      VS Australia FINALS!”
-                    </td>
-                  </tr>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    Type *
+                  </Table.Cell>
+                  <Table.Cell align="center">Type is predefined</Table.Cell>
+                  <Table.Cell align="center">
+                    Template type{" "}
+                    <span className="text-green-600">[text_message]</span>
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
 
-                  <tr
-                    className={` ${
-                      colors.tableBorder
-                    } border-b`}
-                  >
-                    <td className="px-2 py-2 text-sm popins text-orange-400">
-                      Suggestion Type
-                    </td>
-                    <td className="px-2 py-2 text-sm popins ">
-                      Suggestion type is predefined. For text message max 11
-                      Suggestions allowed
-                    </td>
-                    <td className="px-2 py-2 text-sm popins">
-                      Suggestion type is either of Suggestion type
-                    </td>
-                    <td className="px-2 py-2 text-sm popins"> e.g.reply</td>
-                  </tr>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    Text Message Content *
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Max length is 2500 (including variables if any)
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Template Text message with custom variables. Variables
+                    should be in square brackets
+                    <span className="text-green-600">[variable_name]</span>
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    e.g. “[Name], Time to go big or go home because it's India
+                    VS Australia FINALS!”
+                  </Table.Cell>
+                </Table.Row>
 
-                  <tr
-                    className={` ${
-                      colors.tableBorder
-                    } border-b`}
-                  >
-                    <td className="px-2 py-2 text-sm popins text-orange-400">
-                      Display Text
-                    </td>
-                    <td className="px-2 py-2 text-sm popins">
-                      Max length is 25 (including variables if any)
-                    </td>
-                    <td className="px-2 py-2 text-sm popins">
-                      Suggestion display text
-                    </td>
-                    <td className="px-2 py-2 text-sm popins "> - </td>
-                  </tr>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    Suggestion Type
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Suggestion type is predefined. For text message max 11
+                    suggestions allowed
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Suggestion type is either of Suggestion type
+                  </Table.Cell>
+                  <Table.Cell align="center">e.g. reply</Table.Cell>
+                </Table.Row>
 
-                  <tr
-                    className={` ${
-                      colors.tableBorder
-                    } border-b`}
-                  >
-                    <td className="px-2 py-2 text-sm popins text-orange-400">
-                      Postback
-                    </td>
-                    <td className="px-2 py-2 text-sm popins ">
-                      Max Length 120 (including variables if any)
-                    </td>
-                    <td className="px-2 py-2 text-sm popins">
-                      Suggestion postback
-                    </td>
-                    <td className="px-2 py-2 text-sm popins"> - </td>
-                  </tr>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    Display Text
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Max length is 25 (including variables if any)
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Suggestion display text
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
 
-                  <tr
-                    className={` ${
-                      colors.tableBorder
-                    } border-b`}
-                  >
-                    <td className="px-2 py-2 text-sm popins text-orange-400">
-                      Phone Number
-                    </td>
-                    <td className="px-2 py-2 text-sm popins">-</td>
-                    <td className="px-2 py-2 text-sm popins">
-                      {" "}
-                      Valid phone number
-                    </td>
-                    <td className="px-2 py-2 text-sm popins">
-                      {" "}
-                      E.g +919876543212
-                    </td>
-                  </tr>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    Postback
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Max Length 120 (including variables if any)
+                  </Table.Cell>
+                  <Table.Cell align="center">Suggestion postback</Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
 
-                  <tr className=" ">
-                    <td className="px-2 py-2 text-orange-400">URL</td>
-                    <td className="px-2 py-2 text-sm popins ">-</td>
-                    <td className="px-2 py-2 text-sm popins">Valid URL</td>
-                    <td className="px-2 py-2 text-sm popins">
-                      {" "}
-                      E.g https://brandx.onelink.me/
-                    </td>
-                  </tr>
-                </Table>
-              </div>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    Phone Number
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                  <Table.Cell align="center">Valid phone number</Table.Cell>
+                  <Table.Cell align="center">e.g. +919876543212</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    URL
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                  <Table.Cell align="center">Valid URL</Table.Cell>
+                  <Table.Cell align="center">
+                    e.g. https://brandx.onelink.me/
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
+
+          <div className="flex flex-col justify-center items-center gap-2  popins sm:flex  text-center  mt-10">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
+              REQUEST SAMPLE - MULTIPART
+            </h2>
+
+            <div className="w-full mt-10">
+              <RequestSample tabsContent={tabsContent} />
             </div>
           </div>
 
-          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10  ">
-            <h2 className="text-xl md:text-3xl lg:text-3xl font-medium ">
-              REQUEST SAMPLE - MULTIPART
-            </h2>
-         
-          <div className="  flex justify-center">
-            <RequestSample tabsContent={tabsContent} />
-          </div>
-          </div>
-        
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-3xl lg:text-3xl font-medium popins ">
               RESPONSE PARAMETERS
@@ -1028,109 +1021,103 @@ d",
           </div>
 
           <div className="mt-5 flex justify-center items-center">
-         
-              <Table columns={ResponseParameterTextMessageTemplateColumn}>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-orange-400 text-sm popins">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Field Name</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-72">
+                    <div className="text-center">Description</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-72">
+                    <div className="text-center">Remarks</div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     error
-                  </td>
-                  <td className="px-4 py-4  text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Error response object that includes code, message and status
-                    below
-                  </td>
-                  <td className="px-4 py-4">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-orange-400 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     code
-                  </td>
-                  <td className="px-4 py-4  text-sm popins">
-                    {" "}
-                    HTTP status code
-                  </td>
-                  <td className="px-4 py-4"> - </td>
-                </tr>
+                  </Table.Cell>
+                  <Table.Cell align="center">HTTP status code</Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
 
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-orange-400 text-sm popins">
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     message
-                  </td>
-                  <td className="px-4 py-4  text-sm popins ">Error message</td>
-                  <td className="px-4 py-4  text-sm popins">
-                    {" "}
-                    Eg., Template with name wtyggff45g is already present{" "}
-                  </td>
-                </tr>
+                  </Table.Cell>
+                  <Table.Cell align="center">Error message</Table.Cell>
+                  <Table.Cell align="center">
+                    e.g. “Template with name wtyggff45g is already present”
+                  </Table.Cell>
+                </Table.Row>
 
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-orange-400 text-sm popins">
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     status
-                  </td>
-                  <td className="px-4 py-4  text-sm popins ">HTTP status</td>
-                  <td className="px-4 py-4  text-sm popins">
-                    E.g, Accepted , Bad request, Forbidden, Internal server
-                    error.
-                  </td>
-                </tr>
+                  </Table.Cell>
+                  <Table.Cell align="center">HTTP status</Table.Cell>
+                  <Table.Cell align="center">
+                    e.g. Accepted, Bad request, Forbidden, Internal server error
+                  </Table.Cell>
+                </Table.Row>
 
-                <tr className="">
-                  <td className="px-4 py-4 text-orange-400 text-sm popins">
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     suggestionId
-                  </td>
-                  <td className="px-4 py-4  text-sm popins">Suggestion id</td>
-                  <td className="px-4 py-4  text-sm popins">
-                    E.g, BxEaKJyi_thur1Bc42oPcg
-                  </td>
-                </tr>
-              </Table>
-           
+                  </Table.Cell>
+                  <Table.Cell align="center">Suggestion id</Table.Cell>
+                  <Table.Cell align="center">
+                    e.g. BxEaKJyi_thur1Bc42oPcg
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
           </div>
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-2xl md:text-3xl lg:text-3xl font-medium ">
-              RESPONSE SAMPLE 
+              RESPONSE SAMPLE
             </h2>
           </div>
-          <div className="flex justify-center mt-4">
+          <div className="w-full mt-10">
             <ResponseSample
               tabsContentResponseSample={tabsContentResponseSample}
             />
           </div>
-
-          {/* </div> */}
         </section>
 
         <section id="text-message-pdf" className="mb-16">
-          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
-            <h2 className="text-xl md:text-3xl lg:text-3xl font-medium popins sm:text-center">
+          <div className="flex flex-col justify-center items-center gap-2 popins  ">
+            <h2 className="text-xl md:text-3xl lg:text-3xl font-medium ">
               TEXT MESSAGE WITH PDF
             </h2>
-             
+
             <div className="flex flex-col  justify-center md:text-start w-xs md:w-2xl lg:w-3xl mx-auto sm:text-center mt-2">
-            <p className="text-sm text-center lg:text-start mx-auto ">
-              This API is used to submit a Text Message with a pdf template for
-              approval. A pdf file should be uploaded as a multipart file. Pdf
-              file size should be less than 100MB.
-            </p>
+              <p className="text-sm text-center lg:text-start mx-auto ">
+                This API is used to submit a Text Message with a pdf template
+                for approval. A pdf file should be uploaded as a multipart file.
+                Pdf file size should be less than 100MB.
+              </p>
             </div>
           </div>
-          <div className="mt-5 flex justify-center">
-            <BaseURL urlPrefix="baseURL" requestType="POST" param="/"/>
+          <div className="mt-5 flex flex-col justify-center ">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
+              ENDPOINT
+            </h2>
+            <BaseURL urlPrefix="baseURL" requestType="POST" param="/" />
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
@@ -1138,207 +1125,215 @@ d",
               Request Parameters
             </h2>
           </div>
-          <div className="mt-5 flex justify-center items-center  ">
-            
-              <Table columns={RequestParameterTextMessageWithPdfColumns}>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b` }
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400 w-1/5">
+          <div className="mt-5 flex justify-center items-center">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Field Name</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Validation</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Description</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-52">
+                    <div className="text-center">Remarks</div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row align="center">
+                  <Table.Cell className="text-orange-400" align="center">
                     multimedia_files
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     A pdf file which has size less than 100MB
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">Pdf File</td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Pdf File
+                  </Table.Cell>
+                  <Table.Cell calign="center">
                     (Media file uploaded name and "documentName" must be same)
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400 w-1/5">
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row align="center">
+                  <Table.Cell className=" text-orange-400" align="center">
                     name *
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-4 text-sm popins">
                     Max length 20 and should contain only alphanumeric chars,
                     underscore.
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
-                    <span className="text-green-600 px-4 py-4 text-sm popins">
-                      Template name
-                    </span>
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    <span className="text-green-600">Template name</span>
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     e.g. “wtfcnfinaleng”
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400 w-1/5">
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row align="center">
+                  <Table.Cell align="center" className=" text-orange-400">
                     type *
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center" >
                     Type is predefined
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Template type{" "}
-                    <span className="text-green-600 px-4 py-4 text-sm popins">
+                    <span className="text-green-600">
                       [text_message_with_pdf]
-                    </span>{" "}
-                  </td>
-                  <td className="px-4 py-4 w-1/5">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400 w-1/5">
+                    </span>
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    -
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row align="center">
+                  <Table.Cell align="center" className=" text-orange-400">
                     templateState *
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     State is predefined
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Template state “Create” or “Submit”
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     E.g. “templateState”:“Create”
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-orange-400 w-1/5">
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row align="center">
+                  <Table.Cell align="center" className=" text-orange-400">
                     textMessageContent *
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Max length is 2500 (including variables if any)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Template Text message with custom variables. Variables
                     should be in square brackets ([[variable_name]])
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     e.g. “[Name], Time to go big or go home because it’s India
                     VS Australia FINALS!”
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400 w-1/5">
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row align="center">
+                  <Table.Cell align="center" className=" text-orange-400">
                     documentFileName
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">-</td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    -
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Document file uploaded name should be same as
                     documentFileName
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">E.g. test.pdf</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400 w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    E.g. test.pdf
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row align="center">
+                  <Table.Cell align="center" className=" text-orange-400">
                     messageOrder
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     It should be either text_message_at_top or pdf_at_top
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">Message order</td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Message order
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     E.g. text_message_at_top OR pdf_at_top
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400 w-1/5">
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row align="center">
+                  <Table.Cell align="center" className=" text-orange-400">
                     suggestionType
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Suggestion type is predefined. For text message max 11
                     Suggestions allowed
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Suggestion type is either of Suggestion type
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">e.g. reply</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400 w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    e.g. reply
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row >
+                  <Table.Cell align="center" className=" text-orange-400">
                     displayText
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Max length is 25 (including variables if any)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Suggestion display text
-                  </td>
-                  <td className="px-4 py-4 w-1/5">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400 w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    -
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row align="center">
+                  <Table.Cell align="center" className=" text-orange-400">
                     Postback
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Max Length 120 (including variables if any)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Suggestion postback
-                  </td>
-                  <td className="px-4 py-4 w-1/5">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400 w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    -
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row align="center">
+                  <Table.Cell align="center" className=" text-orange-400">
                     phoneNumber
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">-</td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">-</td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">-</td>
-                </tr>
-                <tr>
-                  <td className="px-4 py-4 text-sm popins text-orange-400 w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    -
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    -
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    -
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-400">
                     URL
-                  </td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">-</td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">Valid URL</td>
-                  <td className="px-4 py-4 text-sm popins w-1/5">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    -
+                  </Table.Cell>
+                  <Table.Cell >align="center"
+                    Valid URL
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     https://brandx.onelink.me/
-                  </td>
-                </tr>
-              </Table>
-           
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
@@ -1346,8 +1341,8 @@ d",
               REQUEST SAMPLE - MULTIPART
             </h2>
           </div>
-          <div className="mt-5 flex justify-center">
-            <RequestSample tabsContent = {textmsgTempReq } />
+          <div className="w-full mt-10">
+            <RequestSample tabsContent={textmsgTempReq} />
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
@@ -1362,400 +1357,352 @@ d",
           </div>
 
           <div className="mt-5 flex justify-center items-center ">
-           
-              <Table columns={ResponseParameterTextMessageWithPdfColumns}>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Field Name</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-50">
+                    <div className="text-center">Description</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-50">
+                    <div className="text-center">Remarks</div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     error
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Error response object that includes code, message and status
-                    below
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     code
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">HTTP status code</td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">HTTP status code</Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     message
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Error message</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    E.g., Template with name wtyggtf45g is already present
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">Error message</Table.Cell>
+                  <Table.Cell align="center">
+                    e.g. “Template with name wtyggtf45g is already present”
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     status
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">HTTP status</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    E.g, Accepted, Bad request, Forbidden, Internal server
-                    error.
-                  </td>
-                </tr>
-                <tr
-                 
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">HTTP status</Table.Cell>
+                  <Table.Cell align="center">
+                    e.g. Accepted, Bad request, Forbidden, Internal server error
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     suggestionId
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Suggestion id</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    E.g, BxEaKJyi_thur1Bc42oPc9
-                  </td>
-                </tr>
-              </Table>
-            
+                  </Table.Cell>
+                  <Table.Cell align="center">Suggestion id</Table.Cell>
+                  <Table.Cell align="center">
+                    e.g. BxEaKJyi_thur1Bc42oPc9
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-2xl md:text-3xl lg:text-3xl font-medium ">
-              RESPONSE SAMPLE 
+              RESPONSE SAMPLE
             </h2>
           </div>
-          <div className="mt-5 flex justify-center">
-            <ResponseSample tabsContentResponseSample= {textmsgTempRes}/>
+          <div className="w-full mt-10">
+            <ResponseSample tabsContentResponseSample={textmsgTempRes} />
           </div>
         </section>
 
         <section id="rich-card" className="mb-16">
-          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
-            <h2 className="text-xl md:text-3xl lg:text-3xl font-medium popins sm:text-center">
+          <div className="flex flex-col justify-center items-center gap-2 popins  ">
+            <h2 className="text-xl md:text-3xl lg:text-3xl font-medium ">
               RICH CARD STANDALONE
             </h2>
             <div className="flex flex-col  justify-center md:text-start w-xs md:w-2xl lg:w-3xl mx-auto sm:text-center mt-2">
-            <p className="text-sm lg:text-start text-center mx-auto popins">
-              This API is used to submit a Rich Card standalone Message template
-              for approval. Multimedia can be provided either as a url or
-              multipart file upload. Either of one must be provided, if both are
-              provided multipart file upload is considered url will be ignored.
-            </p>
+              <p className="text-sm lg:text-start text-center mx-auto popins">
+                This API is used to submit a Rich Card standalone Message
+                template for approval. Multimedia can be provided either as a
+                url or multipart file upload. Either of one must be provided, if
+                both are provided multipart file upload is considered url will
+                be ignored.
+              </p>
             </div>
           </div>
-          <div className="mt-5 flex justify-center">
-            <BaseURL urlPrefix="baseURL" requestType="POST" param="/"/>
+          <div className="mt-5 flex flex-col justify-center ">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
+              ENDPOINT
+            </h2>
+            <BaseURL urlPrefix="baseURL" requestType="POST" param="/" />
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
-          <h2 className="text-2xl md:text-3xl lg:text-3xl font-medium ">
+            <h2 className="text-2xl md:text-3xl lg:text-3xl font-medium ">
               Request Parameters
             </h2>
           </div>
 
           <div className="mt-5 flex justify-center items-center ">
-           
-              <Table columns={RequestParameterRichCardStandaloneColumns}>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Field Name</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Validation</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Description</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Remarks</div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     multimedia_files
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Media File Recommendations
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     List of multipart files (image/video)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     (Media file uploaded name and "fileName"/"thumbnailFileName"
                     must be same)
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     name *
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Max length 20 and should contain only alphanumeric chars,
-                    underscore and hyphen.
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Template name</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    e.g: "wtcfinaleng"
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                    underscore and hyphen
+                  </Table.Cell>
+                  <Table.Cell align="center">Template name</Table.Cell>
+                  <Table.Cell align="center">e.g. “wtcfinaleng”</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     type *
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Type is predefined
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Template type</td>
-                  <td className="px-4 py-4 text-sm popins">rich_card</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">Type is predefined</Table.Cell>
+                  <Table.Cell align="center">Template type</Table.Cell>
+                  <Table.Cell align="center">rich_card</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     templateState *
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    State is predefined
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">State is predefined</Table.Cell>
+                  <Table.Cell align="center">
                     Template state “Create” or “Submit”
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    E.g: "templateState":"Create"
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    e.g. "templateState":"Create"
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     orientation *
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                  <Table.Cell align="center">
                     Card Orientation (VERTICAL, HORIZONTAL)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Eg., VERTICAL</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
-                    alignment* (Applicable only for HORIZONTAL orientation)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    If the orientation is HORIZONTAL, the alignment should be
-                    specified.
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    In case of HORIZONTAL orientation alignment should be (LEFT,
-                    RIGHT)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Eg., LEFT</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
-                    height* (Applicable only for VERTICAL orientation)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    If the orientation is VERTICAL, the height should be
-                    specified
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">e.g. VERTICAL</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    alignment* (HORIZONTAL only)
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    If orientation is HORIZONTAL, alignment should be specified
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Allowed values: LEFT, RIGHT
+                  </Table.Cell>
+                  <Table.Cell align="center">e.g. LEFT</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    height* (VERTICAL only)
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    If orientation is VERTICAL, height should be specified
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Card Height (SHORT_HEIGHT, MEDIUM_HEIGHT)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Eg., SHORT_HEIGHT
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">e.g. SHORT_HEIGHT</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     cardTitle *
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Max length 200 (including variables if any)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Card Title</td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">Card Title</Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     cardDescription *
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Max length 2000 (including variables if any)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Card Description</td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">Card Description</Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     mediaUrl
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Valid url which can be publicly accessible. (including
-                    variables if any)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Media Url</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    E.g https://brandx.onelink.me/temp.mp4
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Valid publicly accessible URL (including variables if any)
+                  </Table.Cell>
+                  <Table.Cell align="center">Media URL</Table.Cell>
+                  <Table.Cell align="center">
+                    e.g. https://brandx.onelink.me <br/>
+                    /temp.mp4
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     thumbnailUrl
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Valid url which can be publicly accessible.
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">thumbnail Url</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    E.g https://brandx.onelink.me/temp.jpeg
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Valid publicly accessible URL
+                  </Table.Cell>
+                  <Table.Cell align="center">Thumbnail URL</Table.Cell>
+                  <Table.Cell align="center">
+                    e.g. https://brandx.onelink.me <br/>
+                    /temp.jpeg
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     fileName
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Media File Recommendations
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Media File</td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">Media File</Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     thumbnailFileName
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Media File Recommendations
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    If the file type is video then need to give
-                    thumbnailFileName
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Required if file type is video (thumbnailFileName)
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     suggestionType
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Suggestion type is predefined. A max of 4 Suggestions
-                    allowed
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Suggestion type is either of Suggestion type
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">e.g.reply</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Suggestion type is predefined (max 4 allowed)
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Suggestion type must be one of allowed types
+                  </Table.Cell>
+                  <Table.Cell align="center">e.g. reply</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     displayText
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Max length 25 (including variables if any)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Suggestion display text with variables
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     Postback
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Max Length 120 (including variables if any)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Max length 120 (including variables if any)
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Suggestion postback with variables
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     phoneNumber
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Valid phone number
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    E.g +919876543212
-                  </td>
-                </tr>
-                <tr className="">
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                  <Table.Cell align="center">Valid phone number</Table.Cell>
+                  <Table.Cell align="center">e.g. +919876543212</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     URL
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                  <td className="px-4 py-4 text-sm popins">Valid URL</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    E.g https://brandx.onelink.me/
-                  </td>
-                </tr>
-              </Table>
-            
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                  <Table.Cell align="center">Valid URL</Table.Cell>
+                  <Table.Cell align="center">
+                    e.g. https://brandx.onelink.me/
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
@@ -1763,8 +1710,8 @@ d",
               REQUEST SAMPLE - MULTIPART
             </h2>
           </div>
-          <div className="mt-5 flex justify-center">
-            <RequestSample tabsContent={richcardStndReq}/>
+          <div className="w-full mt-10">
+            <RequestSample tabsContent={richcardStndReq} />
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
@@ -1778,422 +1725,511 @@ d",
             </p>
           </div>
           <div className="mt-5 flex justify-center items-center ">
-           
-              <Table columns={ResponseParameterRichCardStandaloneColumns}>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
-                    error
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Error response object that includes code, message and status
-                    below
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
-                    code
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">HTTP status code</td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
-                    message
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Error message</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Eg., Template with name wtyggtf45g is already present
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
-                    status
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">HTTP status</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    E.g, Accepted, Bad request, Forbidden, Internal server
-                    error.
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
-                    cardId
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Card id</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    E.g, 83w0A3tvGXPzqm4v0-ZSQ
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
-                    suggestionId
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Suggestion id</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    E.g., Wco6Fcqz_jaCpVKJMFUdudg
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Field Name</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Validation</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Description</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Remarks</div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    multimedia_files
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Media File Recommendations
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    List of multipart files (image/video)
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    (Uploaded name must match "fileName"/"thumbnailFileName")
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    name *
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Max length 20. Only alphanumeric, underscore, hyphen allowed
+                  </Table.Cell>
+                  <Table.Cell align="center">Template Name</Table.Cell>
+                  <Table.Cell align="center">e.g. “wtcfinaleng”</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    type *
+                  </Table.Cell>
+                  <Table.Cell align="center">Predefined type</Table.Cell>
+                  <Table.Cell align="center">Template type</Table.Cell>
+                  <Table.Cell align="center">rich_card</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    templateState *
+                  </Table.Cell>
+                  <Table.Cell align="center">Predefined state</Table.Cell>
+                  <Table.Cell align="center">
+                    Template state (“Create” / “Submit”)
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    "templateState":"Create"
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    orientation *
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                  <Table.Cell align="center">
+                    Card orientation (VERTICAL / HORIZONTAL)
+                  </Table.Cell>
+                  <Table.Cell align="center">VERTICAL</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    alignment* (HORIZONTAL only)
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Required when orientation = HORIZONTAL
+                  </Table.Cell>
+                  <Table.Cell align="center">Allowed: LEFT / RIGHT</Table.Cell>
+                  <Table.Cell align="center">LEFT</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    height* (VERTICAL only)
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Required when orientation = VERTICAL
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Card height (SHORT_HEIGHT / MEDIUM_HEIGHT)
+                  </Table.Cell>
+                  <Table.Cell align="center">SHORT_HEIGHT</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    cardTitle *
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Max length 200 (including variables)
+                  </Table.Cell>
+                  <Table.Cell align="center">Card title text</Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    cardDescription *
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Max length 2000 (including variables)
+                  </Table.Cell>
+                  <Table.Cell align="center">Card description text</Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     mediaUrl
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Media file URL of the uploaded image/video data. This URL
-                    will belong to the Celtix domain.
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Publicly accessible media URL of the uploaded media. E.g.,
-                    https://app.celitix.com/rcs_message/media/8QX82KPKJAEM05H29PZ0N.mp4
-                  </td>
-                </tr>
-                <tr className="">
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Valid public URL (variables allowed)
+                  </Table.Cell>
+                  <Table.Cell align="center">Media file URL</Table.Cell>
+                  <Table.Cell align="center">
+                    https://brandx.onelink.me/temp.mp4
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     thumbnailUrl
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Thumbnail file URL of the uploaded image data. This URL will
-                    belong to the Celtix domain.
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Publicly accessible media URL of the uploaded media. E.g.,
-                    https://app.celitix.com/rcs_mess
-                    age/media/GUTUAA8XS4XH0GTUUY14.jpeg
-                  </td>
-                </tr>
-              </Table>
-            
+                  </Table.Cell>
+                  <Table.Cell align="center">Valid public URL</Table.Cell>
+                  <Table.Cell align="center">Thumbnail image URL</Table.Cell>
+                  <Table.Cell align="center">
+                    https://brandx.onelink.me/temp.jpeg
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    fileName
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Media File Recommendation
+                  </Table.Cell>
+                  <Table.Cell align="center">Uploaded file name</Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    thumbnailFileName
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Required for video type
+                  </Table.Cell>
+                  <Table.Cell align="center">Thumbnail file name</Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    suggestionType
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Predefined (max 4 allowed)
+                  </Table.Cell>
+                  <Table.Cell align="center">Suggestion type</Table.Cell>
+                  <Table.Cell align="center">reply</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    displayText
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Max length 25 (including variables)
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Suggestion display text
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    postback
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Max length 120 (including variables)
+                  </Table.Cell>
+                  <Table.Cell align="center">Postback value</Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    phoneNumber
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                  <Table.Cell align="center">Valid phone number</Table.Cell>
+                  <Table.Cell align="center">+919876543212</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    url
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                  <Table.Cell align="center">Valid URL</Table.Cell>
+                  <Table.Cell align="center">
+                    https://brandx.onelink.me/
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-2xl md:text-3xl lg:text-3xl font-medium ">
-              RESPONSE SAMPLE 
+              RESPONSE SAMPLE
             </h2>
           </div>
-          <div className="mt-5 flex justify-center">
-            <ResponseSample tabsContentResponseSample={richcardStndRes}/>
+          <div className="w-full mt-10">
+            <ResponseSample tabsContentResponseSample={richcardStndRes} />
           </div>
         </section>
 
-        <section id="rich-carousel" >
+        <section id="rich-carousel" className="mb-16">
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-3xl lg:text-3xl font-medium popins sm:text-center">
               Rich Card Carousel
             </h2>
             <div className="flex flex-col  justify-center md:text-start w-xs md:w-2xl lg:w-3xl mx-auto sm:text-center mt-2">
-            <p className="text-sm text-center lg:text-start mx-auto popins">
-              This API is used to submit a Rich Card Carousel template for
-              approval. Multimedia can be provided either as a url or multipart
-              file upload. Either of one must be provided, if both are provided
-              multipart file upload is considered url will be ignored.
-            </p>
+              <p className="text-sm text-center lg:text-start mx-auto popins">
+                This API is used to submit a Rich Card Carousel template for
+                approval. Multimedia can be provided either as a url or
+                multipart file upload. Either of one must be provided, if both
+                are provided multipart file upload is considered url will be
+                ignored.
+              </p>
             </div>
           </div>
-          <div className="mt-5 flex justify-center">
-            <BaseURL urlPrefix="baseURL" requestType="POST" param="/"/>
+          <div className="mt-5 flex flex-col justify-center">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
+              ENDPOINT
+            </h2>
+            <BaseURL urlPrefix="baseURL" requestType="POST" param="/" />
           </div>
-
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-xl md:text-3xl lg:text-3xl font-medium popins sm:text-center">
               RESPONSE PARAMETERS
             </h2>
           </div>
           <div className="mt-5 flex justify-center items-center">
-            
-              <Table columns={RequestParameterRichCardCarouselColumns}>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Field Name</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Validation</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Description</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Remarks</div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     multimedia_files
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Media File Recommendations
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    List of multipart files(image/video)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    List of multipart files (image/video)
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     (Media file uploaded name and "fileName"/"thumbnailFileName"
                     must be same)
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     name *
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Max length 20 and should contain only alphanumeric chars,
-                    underscore and hyphen.
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Template name</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    e.g.: "brandXcar1"
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                    underscore and hyphen
+                  </Table.Cell>
+                  <Table.Cell align="center">Template name</Table.Cell>
+                  <Table.Cell align="center">e.g. “wtcfinaleng”</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     type *
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Type is predefined
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">Type is predefined</Table.Cell>
+                  <Table.Cell align="center">Template type</Table.Cell>
+                  <Table.Cell align="center">rich_card</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    templateState *
+                  </Table.Cell>
+                  <Table.Cell align="center">State is predefined</Table.Cell>
+                  <Table.Cell align="center">
                     Template state “Create” or “Submit”
-                  </td>
-                  <td className="px-4 py-4">e.g. "templateState":"Create"</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-orange-400">templateState *</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    State is predefined
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Template state “Create” or “Submit”
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     e.g. "templateState":"Create"
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
-                    height *
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    orientation *
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                  <Table.Cell align="center">
+                    Card Orientation (VERTICAL, HORIZONTAL)
+                  </Table.Cell>
+                  <Table.Cell align="center">e.g. VERTICAL</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    alignment* (HORIZONTAL only)
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    If orientation is HORIZONTAL, alignment should be specified
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Allowed values: LEFT, RIGHT
+                  </Table.Cell>
+                  <Table.Cell align="center">e.g. LEFT</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    height* (VERTICAL only)
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    If orientation is VERTICAL, height should be specified
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Card Height (SHORT_HEIGHT, MEDIUM_HEIGHT)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Eg. SHORT</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
-                    width *
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Card width (SHORT_WIDTH, MEDIUM_WIDTH)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Eg., MEDIUM</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">e.g. SHORT_HEIGHT</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     cardTitle *
-                  </td>
-                  <td className="px-4 py-4">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Max length 200 (including variables if any)
-                  </td>
-                  <td className="px-4 py-4">Card Title</td>
-                  <td className="px-4 py-4">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">Card Title</Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     cardDescription *
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Max length 2000 (including variables if any)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Card Description</td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">Card Description</Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     mediaUrl
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Valid URL which can be publicly accessible (including
-                    variables if any)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Media URL</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    E.g. https://brandx.onelink.me
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Valid publicly accessible URL (including variables if any)
+                  </Table.Cell>
+                  <Table.Cell align="center">Media URL</Table.Cell>
+                  <Table.Cell align="center">
+                    e.g. https://brandx.onelink.me <br/>
+                    /temp.mp4
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     thumbnailUrl
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Valid URL which can be publicly accessible
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Thumbnail URL</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    E.g. https://brandx.onelink.me/temp.jpeg
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Valid publicly accessible URL
+                  </Table.Cell>
+                  <Table.Cell align="center">Thumbnail URL</Table.Cell>
+                  <Table.Cell align="center">
+                    e.g. https://brandx.onelink.me <br/>
+                    /temp.jpeg
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     fileName
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Media File Recommendations
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Media File</td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">Media File</Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     thumbnailFileName
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Media File Recommendations
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    If the file type is video then need to give
-                    thumbnailFileName
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Required if file type is video (thumbnailFileName)
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     suggestionType
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Suggestion type is predefined. A max of 4 Suggestions
-                    allowed
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Suggestion type is either of Suggestion type
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">e.g. reply</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Suggestion type is predefined (max 4 allowed)
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Suggestion type must be one of allowed types
+                  </Table.Cell>
+                  <Table.Cell align="center">e.g. reply</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     displayText
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Max length 25 (including variables if any)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Suggestion display text
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Suggestion display text with variables
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     Postback
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Max length 120 (including variables if any)
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Suggestion postback
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Suggestion postback with variables
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
                     phoneNumber
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    Valid phone number
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
-                    E.g. +919876543212
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
-                    url
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                  <td className="px-4 py-4 text-sm popins">Valid URL</td>
-                  <td className="px-4 py-4 text-sm popins">
-                    E.g. https://brandx.onelink.me/
-                  </td>
-                </tr>
-              </Table>
-            
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                  <Table.Cell align="center">Valid phone number</Table.Cell>
+                  <Table.Cell align="center">e.g. +919876543212</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    URL
+                  </Table.Cell>
+                  <Table.Cell align="center">-</Table.Cell>
+                  <Table.Cell align="center">Valid URL</Table.Cell>
+                  <Table.Cell align="center">
+                    e.g. https://brandx.onelink.me/
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
@@ -2201,7 +2237,7 @@ d",
               REQUEST SAMPLE - MULTIPART
             </h2>
           </div>
-          <div className="mt-5 flex justify-center">
+          <div className="w-full mt-10">
             <RequestSample tabsContent={richcardcarouselReq} />
           </div>
 
@@ -2215,143 +2251,151 @@ d",
               back )
             </p>
           </div>
-          <div className="mt-5 flex justify-center items-center ">
-            
-              <Table columns={ResponseParameterRichCardCarouselColumns}>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+          <div className="mt-5 flex justify-center items-center">
+
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="max-w-30">
+                    <div className="text-center">Field Name</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="max-w-40">
+                    <div className="text-center">Description</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="max-w-40">
+                    <div className="text-center">Remarks</div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-400">
                     error
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Error response object that includes code, message and status
                     below
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
-                    code
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">HTTP status code</td>
-                  <td className="px-4 py-4 text-sm popins">-</td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
-                    message
-                  </td>
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    -
+                  </Table.Cell>
+                </Table.Row>
 
-                  <td className="px-4 py-4 text-sm popins">Error message</td>
-                  <td className="px-4 py-4 text-sm popins">
+                <Table.Row>
+                  <Table.Cell className="text-orange-400" align="center">
+                    code
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    HTTP status code
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    -
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="text-orange-400" align="center">
+                    message
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Error message
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Eg., Template with name wtyggf145g is already present
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="text-orange-400" align="center">
                     status
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">HTTP status</td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    HTTP status
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Eg., Accepted , Bad request, Forbidden, Internal server
                     error.
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="text-orange-400" align="center">
                     cardId
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Card id</td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Card id
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Eg.,83w0A3tvGXPzgm4vyO-ZSQ
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="text-orange-400" align="center">
                     suggestionId
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">Suggestion id</td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    Suggestion id
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Eg., Wco6Fqz_jacPvKJjMFUdug
-                  </td>
-                </tr>
-                <tr
-                  className={` ${
-                    colors.tableBorder
-                  } border-b`}
-                >
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="text-orange-400" align="center">
                     mediaUrl
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Media file URL of the uploaded image/video data. This URL
                     will belong to the Celltix domain.
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Publicly accessible media URL of the uploaded media. E.g.,
-                    https://app.celltix.com/rcs_message/media/8QX8ZPKjAEM05H29PZ0N.mp4
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-4 py-4 text-sm popins text-orange-400">
+                    https://app.celltix.com/rcs_message/media <br/>
+                    /8QX8ZPKjAEM05H29PZ0N.mp4
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="text-orange-400" align="center">
                     thumbnailUrl
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Thumbnail file URL of the uploaded image data. This URL will
                     belong to the Celltix domain.
-                  </td>
-                  <td className="px-4 py-4 text-sm popins">
+                  </Table.Cell>
+                  <Table.Cell align="center">
                     Publicly accessible media URL of the uploaded media. E.g.,
-                    https://app.celltix.com/rcs_message/media/GUTUAA8XS4XH0GTUUY14.jpeg
-                  </td>
-                </tr>
-              </Table>
-           
+                    https://app.celltix.com/rcs_message/media <br/>
+                    /GUTUAA8XS4XH0GTUUY14.jpeg
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
           </div>
-
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
             <h2 className="text-2xl md:text-3xl lg:text-3xl font-medium ">
-              RESPONSE SAMPLE 
+              RESPONSE SAMPLE
             </h2>
           </div>
-          <div className="mt-5 flex justify-center">
+          <div className="w-full mt-10">
             <ResponseSample tabsContentResponseSample={richcardcarouselRes} />
           </div>
         </section>
       </div>
 
       {/* Mini Map Navigation - Hidden on small screens */}
-      <div
+      {/* <div
         className={`${
           isDarkMode ? "bg-gray-500 text-white" : "bg-[#cecece] text-black"
         } hidden lg:block w-66 mr-2 h-fit sticky top-4 p-2 shrink-0 rounded-2xl `}
-      >
+        >
         <div className="rounded-lg h-full flex flex-row">
           <div className="relative">
-            {/* Track line */}
+            {/* Track line *
             <div
               className={`${
                 isDarkMode ? "bg-gray-600" : "bg-gray-200"
@@ -2361,7 +2405,7 @@ d",
                 top: "20px",
               }}
             >
-              {/* Moving indicator */}
+              {/* Moving indicator *
               <div
                 className={`${
                   isDarkMode ? "bg-white" : "bg-black"
@@ -2372,7 +2416,6 @@ d",
                   transform: "translateY(-50%)",
                 }}
               ></div>
-
             </div>
 
             <div className="ml-6">
@@ -2396,6 +2439,53 @@ d",
             </div>
           </div>
         </div>
+      </div> */}
+
+      <div
+        className={`${isDarkMode ? "bg-gray-500 text-white" : "bg-[#cecece] text-black"
+          } hidden lg:block h-[95%] sticky top-4 p-2 shrink-0 rounded-2xl mr-4 w-70 `}
+      >
+        {/* Scroll track */}
+        <div
+          className={`${isDarkMode ? "bg-gray-600" : "bg-gray-200"} 
+        w-1 rounded absolute left-3 top-5.5  `}
+          style={{
+            height: `${sections.length * 32}px`,
+          }}
+        >
+          {/* Moving scroll indicator */}
+          <div
+            className={`
+        ${isDarkMode ? "bg-white" : "bg-black"} 
+        w-1 rounded absolute transition-all duration-300
+        ${active ? "bg-black" : ""}
+        `}
+            style={{
+              height: "20px",
+              top: `${sections.findIndex((s) => s.id === active) * 36}px`,
+            }}
+          />
+        </div>
+        <ul className="relative ml-6">
+          {sections.map((s) => (
+            <li key={s.id}>
+              <a
+                href={`#${s.id}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .getElementById(s.id)
+                    ?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm 
+          ${active === s.id ? "text-black font-semibold" : ""}
+        `}
+              >
+                {s.title}
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

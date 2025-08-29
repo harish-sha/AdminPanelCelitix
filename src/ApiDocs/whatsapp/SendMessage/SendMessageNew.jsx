@@ -2,12 +2,14 @@ import { Link } from "react-router-dom";
 import { useTheme } from "@/ApiDocs/context/ThemeContext";
 import { themeColors } from "@/ApiDocs/themeColors";
 import CircleIcon from "@mui/icons-material/Circle";
+import RequestSample from "@/ApiDocs/components/RequestSample";
 
 import React, { useState, useEffect, useRef } from "react";
 import BaseurlComponent from "@/ApiDocs/components/BaseurlComponent";
+// import Table from "@/ApiDocs/components/Tablenew";
 import Table from "@/ApiDocs/components/Tablenew";
-import RequestComponent from "@/ApiDocs/components/RequestComponent";
 import ResponseComponent from "@/ApiDocs/components/ResponseComponent";
+import RequestComponent from "@/ApiDocs/components/RequestComponent";
 
 const SendMessageNew = () => {
   const [activeSection, setActiveSection] = useState("text-templates");
@@ -16,29 +18,16 @@ const SendMessageNew = () => {
   const colors = themeColors(isDarkMode);
 
   const sections = [
-    { id: "text-templates", title: "Text Templates" },
-    { id: "image-templates", title: "Image Templates" },
+    { id: "text-templates", title: "Text Template" },
+    { id: "image-templates", title: "Image Template" },
+    { id: "video-templates", title: "Video Template" },
     { id: "media-templates", title: "Document Template" },
+    { id: "location-template", title: "Location Template" },
     { id: "authentication-template", title: "Authentication Template" },
+    { id: "carousel-template", title: "Carousel Template" },
   ];
 
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     const scrollPosition = window.scrollY;
 
-  //     // Find which section is currently in view
-  //     for (let i = sections.length - 1; i >= 0; i--) {
-  //       const section = document.getElementById(sections[i].id);
-  //       if (section && section.offsetTop <= scrollPosition + 200) {
-  //         setActiveSection(sections[i].id);
-  //         break;
-  //       }
-  //     }
-  //   };
-
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // }, []);
 
   const [active, setActive] = useState(null);
   const [scroller, setScroller] = useState(0);
@@ -78,33 +67,10 @@ const SendMessageNew = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const HeaderTableColumns = ["Name", "Value"];
-
-  const RequestParameterTextTemplateColumn = [
-    "Placeholder",
-    "Description",
-    "Sample Value",
-  ];
-
   const requestDataTextTemplate = [
     {
-      requestPrefix: `{
-              "messaging_product": "whatsapp",
-              "recipient_type": "individual",
-              "to": "91XXXXXXXXXX",
-              "type": "template",
-              "template": {
-                   "name": "your_template_name",
-                   "language": {
-                   "code": "insert_language_code"
-                   }
-               }
-       }  `,
-    },
-  ];
-
-  const requestDataTextwithVarTemplate = [
-    {
+      id: 0,
+      title: "With Variable",
       requestPrefix: `{
       "messaging_product": "whatsapp",
       "recipient_type": "individual",
@@ -135,12 +101,81 @@ const SendMessageNew = () => {
           }
         ]
       }
-    }`,
+      }`,
+    },
+    {
+      id: 1,
+      title: "Without Varibles",
+      requestPrefix: `{
+              "messaging_product": "whatsapp",
+              "recipient_type": "individual",
+              "to": "91XXXXXXXXXX",
+              "type": "template",
+              "template": {
+                   "name": "your_template_name",
+                   "language": {
+                   "code": "insert_language_code"
+                   }
+               }
+       }  `,
     },
   ];
 
-  const requestDataImageWithoutVariableTemplate = [
+
+
+
+
+  const requestDataImageTemplate = [
     {
+      id: 0,
+      title: "With Variable",
+      requestPrefix: `{
+      "messaging_product": "whatsapp",
+      "recipient_type": "individual",
+      "to": "91XXXXXXXXXX",
+      "type": "template",
+      "template": {
+      "name": "your_template_name",
+      "language": {
+         "code": "insert_language_code"
+      },
+      "components": [
+       {
+         "type": "header",
+         "parameters": [
+         {
+          "type": "image",
+          "image": {
+            "link": " https://www.domain.com/yourimage.jpg"
+          }
+        }
+      ]
+     },
+     {
+      "type": "body",
+      "parameters": [
+     {
+       "type": "text",
+       "text": "text-string for 1st variable"
+     },
+     {
+       "type": "text",
+       "text": "text-string for 2nd variable"
+     },
+     {
+       "type": "text",
+       "text": "text-string for 3rd variable"
+     }
+    ]
+   }
+   ]
+   }
+   }
+  `,
+    },
+    {
+      id: 1,
+      title: "Without Variable",
       requestPrefix: `{
       "messaging_product": "whatsapp",
       "recipient_type": "individual",
@@ -166,12 +201,14 @@ const SendMessageNew = () => {
           }
         ]
       }
-    }`,
+     }`,
     },
   ];
 
-const requestDataImageWithVariableTemplate = [
-  {
+  const requestDataVideoTemplate = [
+    {
+      id: 0,
+      title: "With Variable",
       requestPrefix: `{
       "messaging_product": "whatsapp",
       "recipient_type": "individual",
@@ -187,9 +224,9 @@ const requestDataImageWithVariableTemplate = [
          "type": "header",
          "parameters": [
          {
-          "type": "image",
+          "type": "video",
           "image": {
-            "link": " https://www.domain.com/yourimage.jpg"
+            "link": " https://www.domain.com/yourvideo.mp4"
           }
         }
       ]
@@ -213,13 +250,328 @@ const requestDataImageWithVariableTemplate = [
    }
   ]
   }
-}
+   }
   `,
- },
-];
+    },
+    {
+      id: 1,
+      title: "Without Variable",
+      requestPrefix: `{
+      "messaging_product": "whatsapp",
+      "recipient_type": "individual",
+      "to": "91XXXXXXXXXX",
+      "type": "template",
+      "template": {
+        "name": "your_template_name",
+        "language": {
+          "code": "insert_language_code",
+          "policy": "deterministic"
+        },
+        "components": [
+          {
+            "type": "header",
+            "parameters": [
+              {
+                "type": "video",
+                "image": {
+                  "link": "https://www.domain.com/yourvideo.mp4"
+                }
+              }
+            ]
+          }
+        ]
+      }
+     }`,
+    },
+  ];
+
+  const requestLocationdataTemplate = [
+    {
+      id: 0,
+      title: "With Variable",
+      requestPrefix: `{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "91XXXXXXXXXX",
+    "type": "template",
+    "template": {
+      "name": "your_template_name",
+      "language": {
+        "code": "insert_language_code"
+      },
+      "components": [
+        {
+          "type": "header",
+          "parameters": [
+            {
+              "type": "location",
+              "location": {
+                "longitude": -122.425332,
+                "latitude": 37.758056,
+                "name": "Facebook HQ",
+                "address": "1 Hacker Way, Menlo Park, CA 94025"
+              }
+            }
+          ]
+        },
+        {
+          "type": "body",
+          "parameters": [
+            {
+              "type": "text",
+              "text": "text-string for 1st variable"
+            },
+            {
+              "type": "text",
+              "text": "text-string for 2nd variable"
+            },
+            {
+              "type": "text",
+              "text": "text-string for 3rd variable"
+            }
+          ]
+        }
+      ]
+    }
+  }`,
+    },
+    {
+      id: 1,
+      title: "Without Variable",
+      requestPrefix: `{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "91XXXXXXXXXX",
+    "type": "template",
+    "template": {
+      "name": "your_template_name",
+      "language": {
+        "code": "insert_language_code"
+      },
+      "components": [
+        {
+          "type": "header",
+          "parameters": [
+            {
+              "type": "location",
+              "location": {
+                "longitude": -122.425332,
+                "latitude": 37.758056,
+                "name": "Facebook HQ",
+                "address": "1 Hacker Way, Menlo Park, CA 94025"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }`,
+    },
+  ];
+
+  const requestDataCarouselTemplate = [
+    {
+      id: 0,
+      title: "With Variable",
+      requestPrefix: `{
+      "messaging_product": "whatsapp",
+      "recipient_type": "individual",
+      "to": "919833056101",
+      "type": "template",
+      "template": {
+        "name": "test_template",
+        "language": {
+          "code": "en"
+        },
+        "components": [
+          {
+            "type": "body",
+            "parameters": [
+              {
+                "type": "text",
+                "text": "15OFF"
+              },
+              {
+                "type": "text",
+                "text": "15"
+              }
+            ]
+          },
+          {
+            "type": "carousel",
+            "cards": [
+              {
+                "card_index": 0,
+                "components": [
+                  {
+                    "type": "header",
+                    "parameters": [
+                      {
+                        "type": "image",
+                        "image": {
+                          "link": "https://example.com/wa/final.jpg"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "body",
+                    "parameters": [
+                      {
+                        "type": "text",
+                        "text": "15OFF"
+                      },
+                      {
+                        "type": "text",
+                        "text": "15"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "card_index": 1,
+                "components": [
+                  {
+                    "type": "header",
+                    "parameters": [
+                      {
+                        "type": "image",
+                        "image": {
+                          "link": "https://example.com/wa/logo.jpg"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "body",
+                    "parameters": [
+                      {
+                        "type": "text",
+                        "text": "15OFF"
+                      },
+                      {
+                        "type": "text",
+                        "text": "15"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "card_index": 2,
+                "components": [
+                  {
+                    "type": "header",
+                    "parameters": [
+                      {
+                        "type": "image",
+                        "image": {
+                          "link": "https://example.com/wa/greetings.jpg"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "body",
+                    "parameters": [
+                      {
+                        "type": "text",
+                        "text": "15OFF"
+                      },
+                      {
+                        "type": "text",
+                        "text": "15"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }`,
+    },
+    {
+      id: 1,
+      title: "Without Variable",
+      requestPrefix: `{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "919833056101",
+    "type": "template",
+    "template": {
+      "name": "test_template",
+      "language": {
+        "code": "en"
+      },
+      "components": [
+        {
+          "type": "carousel",
+          "cards": [
+            {
+              "card_index": 0,
+              "components": [
+                {
+                  "type": "header",
+                  "parameters": [
+                    {
+                      "type": "image",
+                      "image": {
+                        "link": "https://example.com/wa/final.jpg"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "card_index": 1,
+              "components": [
+                {
+                  "type": "header",
+                  "parameters": [
+                    {
+                      "type": "image",
+                      "image": {
+                        "link": "https://example.com/wa/logo.jpg"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "card_index": 2,
+              "components": [
+                {
+                  "type": "header",
+                  "parameters": [
+                    {
+                      "type": "image",
+                      "image": {
+                        "link": "https://example.com/wa/greetings.jpg"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "body"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }`,
+    },
+  ];
 
   const requestDataAuthenicationTemplate = [
     {
+      id: 0,
       requestPrefix: `{
              "messaging_product": "whatsapp",
              "recipient_type": "individual",
@@ -253,12 +605,14 @@ const requestDataImageWithVariableTemplate = [
                          }
                      ]
                 }
-       }`
+       }`,
     },
   ];
 
   const requestDataMediaTemplate = [
     {
+      id: 0,
+      title: "With Variable",
       requestPrefix: `{
       "messaging_product": "whatsapp",
       "recipient_type": "individual",
@@ -297,7 +651,38 @@ const requestDataImageWithVariableTemplate = [
           }
         ]
       }
-    }`,
+     }`,
+    },
+
+    {
+      id: 1,
+      title: "Without Variable",
+      requestPrefix: `{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "91XXXXXXXXXX",
+    "type": "template",
+    "template": {
+      "name": "your_doc_template_name",
+      "language": {
+        "code": "en"
+      },
+      "components": [
+        {
+          "type": "header",
+          "parameters": [
+            {
+              "type": "document",
+              "document": {
+                "link": "https://samplefilepdf.com/invoicesimple.pdf",
+                "filename": "Invoice_12345.pdf"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }`,
     },
   ];
 
@@ -309,14 +694,14 @@ const requestDataImageWithVariableTemplate = [
     (91XXXXXXXXXX)  ' \
    `;
 
-  const textTemplatewithVarcURL = `
-  curl --location 'Base_URL/wrapper/waba/message' \
-  --header 'Content-Type: application/json' \
-  --header 'key: Enter Your API key (Available in your portal)' \
-  --header 'wabaNumber: Registered_WABA_Number without + sign
-  (91XXXXXXXXXX)' \
+  // const textTemplatewithVarcURL = `
+  // curl --location 'Base_URL/wrapper/waba/message' \
+  // --header 'Content-Type: application/json' \
+  // --header 'key: Enter Your API key (Available in your portal)' \
+  // --header 'wabaNumber: Registered_WABA_Number without + sign
+  // (91XXXXXXXXXX)' \
 
-   `;
+  //  `;
 
   const authenticationTemplatecURL = `
     curl --location 'Base_URL/wrapper/waba/message' \
@@ -331,14 +716,8 @@ const requestDataImageWithVariableTemplate = [
     --header 'key: Your_API_Key' \
     --header 'wabaNumber: Your_WABA_Number(91XXXXXXXXXX)' \
        `;
-  const imageWithoutVarTemplatecURL = `
-  curl --location 'Base_URL/wrapper/waba/message' \
- --header 'Content-Type: application/json' \
- --header 'key: Enter Your API key (Available in your portal)' \
- --header 'wabaNumber: Registered_WABA_Number without + sign
-(91XXXXXXXXXX)' \
-       `;
-  const imageWithVarTemplatecURL = `
+
+  const imageTemplatecURL = `
   curl --location 'Base_URL/wrapper/waba/message' \
 --header 'Content-Type: application/json' \
 --header 'key: Enter Your API key (Available in your portal)' \
@@ -346,11 +725,26 @@ const requestDataImageWithVariableTemplate = [
 (91XXXXXXXXXX)' \
 
        `;
-
   const TextTemplatejsonData = {
     id: "572279198452421",
     status: "PENDING",
     category: "MARKETING",
+  };
+
+  const TextTemplatejsonBodyData = {
+    messaging_product: "whatsapp",
+    contacts: [
+      {
+        input: "91XXXXXXXXXX",
+        wa_id: "91XXXXXXXXXX",
+      },
+    ],
+    messages: [
+      {
+        id: "wamid.HBgMOTE3NDkxMDc5MjA4FQIAERgSOTJBNTYwQzcyMTBCN0JCRjZFAA==",
+        message_status: "accepted",
+      },
+    ],
   };
 
   const AuthenticationTemplatejsonData = {
@@ -359,14 +753,24 @@ const requestDataImageWithVariableTemplate = [
     category: "MARKETING",
   };
 
-  const TextTemplateResponseheaders = [
-    { key: "Content-Type", value: "application/json" },
-    { key: "Date", value: "Mon, 19 Feb 2024 18:06:18 GMT" },
-    { key: "Server", value: "Kestrel" },
-    { key: "Transfer-Encoding", value: "chunked" },
+  const TextTemplateResponseBodyheaders = [
+    { key: "Content-Type", value: "text/plain;charset=UTF-8" },
+    { key: "Content-Encoding", value: "gzip" },
+    { key: "Content-Length", value: "184" },
+    { key: "Date", value: "Mon, 25 Aug 2025 06:46:55 GMT" },
     {
-      key: "Request-Context",
-      value: "appId=cid-v1:3842b663-3342-4b73-804d-2baaedf43f32",
+      key: "Cache-Control",
+      value: "no-cache, no-store, max-age=0, must-revalidate",
+    },
+  ];
+  const TextTemplateResponseheaders = [
+    { key: "Content-Type", value: "text/plain;charset=UTF-8" },
+    { key: "Content-Encoding", value: "gzip" },
+    { key: "Content-Length", value: "184" },
+    { key: "Date", value: "Mon, 25 Aug 2025 06:46:55 GMT" },
+    {
+      key: "Cache-Control",
+      value: "no-cache, no-store, max-age=0, must-revalidate",
     },
   ];
 
@@ -629,16 +1033,16 @@ const requestDataImageWithVariableTemplate = [
 
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
-              A. Without Template Variables
+              Template Variables
             </h2>
           </div>
-          {/* <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Request Parameter
             </h2>
-          </div> */}
+          </div>
 
-          {/* <div className="mt-5 flex justify-center items-center">
+          <div className="mt-5 flex justify-center items-center">
             <Table zebra bordered stickyHeader scrollButtons devVisible>
               <Table.Head>
                 <Table.Row>
@@ -765,197 +1169,33 @@ const requestDataImageWithVariableTemplate = [
                 </Table.Row>
               </Table.Body>
             </Table>
-          </div> */}
+          </div>
 
           <div className="flex flex-col items-center justify-center mt-10">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Request
             </h2>
-            <div className="w-full">
-              <RequestComponent
-                requestData={requestDataTextTemplate}
+            <div className="w-full mt-10">
+              <RequestSample
+                tabsContent={requestDataTextTemplate}
                 curlBase={textTemplatecURL}
               />
             </div>
           </div>
 
-          {/* <div className="mt-10 flex flex-col items-center justify-center">
+          <div className="mt-10 flex flex-col items-center justify-center">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
-            <div className="w-full">
+            <div className="w-full ">
               <ResponseComponent
-                jsonData={TextTemplatejsonData}
-                headers={TextTemplateResponseheaders}
-              />
-            </div>
-          </div> */}
-
-          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
-            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
-              B. With Template Variables
-            </h2>
-          </div>
-          {/* <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
-            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
-              Request Parameter
-            </h2>
-          </div> */}
-
-          {/* <div className="mt-5 flex justify-center items-center">
-            <Table zebra bordered stickyHeader scrollButtons devVisible>
-              <Table.Head>
-                <Table.Row>
-                  <Table.HeaderCell align="center" className="min-w-40">
-                    <div className="text-center">Type</div>
-                  </Table.HeaderCell>
-                  <Table.HeaderCell align="center" className="min-w-96">
-                    <div className="text-center">Description</div>
-                  </Table.HeaderCell>
-                  <Table.HeaderCell align="center" className="min-w-52">
-                    <div className="text-center">Example</div>
-                  </Table.HeaderCell>
-                </Table.Row>
-              </Table.Head>
-
-              <Table.Body>
-                <Table.Row>
-                  <Table.Cell align="center" className=" text-orange-500 ">
-                    String
-                  </Table.Cell>
-                  <Table.Cell align="center">
-                    <span className="text-black font-semibold">Required.</span>
-                    <br />
-                    <br /> Template name.
-                    <br />
-                    <br /> Maximum 512 characters.
-                  </Table.Cell>
-                  <Table.Cell align="center">order_confirmation</Table.Cell>
-                </Table.Row>
-
-                <Table.Row>
-                  <Table.Cell align="center" className="text-orange-500 ">
-                    Enum
-                  </Table.Cell>
-                  <Table.Cell align="center">
-                    <span className="text-black font-medium">Required.</span>
-                    <br />
-                    <br /> Template category. See{" "}
-                    <Link
-                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-categories"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline"
-                    >
-                      Template Categories
-                    </Link>{" "}
-                    below.
-                  </Table.Cell>
-                  <Table.Cell align="center">UTILITY</Table.Cell>
-                </Table.Row>
-
-                <Table.Row>
-                  <Table.Cell align="center" className=" text-orange-500 ">
-                    Boolean
-                  </Table.Cell>
-                  <Table.Cell align="center">
-                    <span className="text-black font-medium">Optional.</span>
-                    <br />
-                    <br /> Set to true to allow us to{" "}
-                    <Link
-                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#automatic-categorization"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline"
-                    >
-                      automatically assign a category
-                    </Link>
-                    . If omitted, the template may be rejected due to
-                    miscategorization.
-                  </Table.Cell>
-                  <Table.Cell align="center">true</Table.Cell>
-                </Table.Row>
-
-                <Table.Row>
-                  <Table.Cell align="center" className=" text-orange-500 ">
-                    Enum
-                  </Table.Cell>
-                  <Table.Cell align="center">
-                    <span className="text-black font-medium">Required.</span>
-                    <br />
-                    <br /> Template{" "}
-                    <Link
-                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/supported-languages"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline"
-                    >
-                      language and locale code
-                    </Link>
-                    .
-                  </Table.Cell>
-                  <Table.Cell align="center">en_US</Table.Cell>
-                </Table.Row>
-
-                <Table.Row>
-                  <Table.Cell align="center" className=" text-orange-500 ">
-                    Array of objects
-                  </Table.Cell>
-                  <Table.Cell align="center">
-                    <span className="text-black font-medium">Required.</span>
-                    <br />
-                    <br /> Components that make up the template. See{" "}
-                    <Link
-                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-components"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline"
-                    >
-                      Template Components
-                    </Link>{" "}
-                    below.
-                  </Table.Cell>
-                  <Table.Cell align="center">
-                    See{" "}
-                    <Link
-                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-components"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline"
-                    >
-                      Template Components
-                    </Link>{" "}
-                    below.
-                  </Table.Cell>
-                </Table.Row>
-              </Table.Body>
-            </Table>
-          </div> */}
-
-          <div className="flex flex-col items-center justify-center mt-10">
-            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
-              Example Request
-            </h2>
-            <div className="w-full">
-              <RequestComponent
-                requestData={requestDataTextwithVarTemplate}
-                curlBase={textTemplatewithVarcURL}
+                jsonData={TextTemplatejsonBodyData}
+                headers={TextTemplateResponseBodyheaders}
               />
             </div>
           </div>
-
-          {/* <div className="mt-10 flex flex-col items-center justify-center">
-            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
-              Example Response
-            </h2>
-            <div className="w-full">
-              <ResponseComponent
-                jsonData={TextTemplatejsonData}
-                headers={TextTemplateResponseheaders}
-              />
-            </div>
-          </div> */}
         </section>
+
         <section id="image-templates" className="mb-16">
           <div className="flex flex-col justify-center items-center gap-2 popins  ">
             <h2 className="text-xl md:text-3xl lg:text-3xl font-medium ">
@@ -964,16 +1204,144 @@ const requestDataImageWithVariableTemplate = [
           </div>
           <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
-              A. Without Template Variables
+              Template Variables
             </h2>
           </div>
-          {/* <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
+          <div className="mt-5 flex flex-col justify-center ">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
+              ENDPOINT
+            </h2>
+            <BaseurlComponent
+              urlPrefix="Base URL"
+              requestType="POST"
+              param="/wrapper/waba/message"
+            />
+          </div>
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center">
+              HEADERS
+            </h2>
+          </div>
+          <div className="mt-5 flex justify-center items-center mx-auto">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-52">
+                    <div className="text-center">Name</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-52">
+                    <div className="text-center"> Value </div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    Content-type
+                  </Table.Cell>
+                  <Table.Cell align="center">application/json</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    key
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    API Key <br />
+                    <span className="text-gray-400">
+                      Enter Your API key (Available in your portal)
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500">
+                    wabaNumber
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    wabaNumber <br />
+                    <span className="text-gray-400">
+                      Registered_WABA_Number without + sign (91XXXXXXXXXX)
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex my-4 mt-10">
+            <h2 className="text-xl md:text-3xl lg:text-3xl font-medium text-center">
+              Common HTTP Response Codes
+            </h2>
+          </div>
+
+          <div className="mt-5 flex justify-center items-center mx-auto">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Code</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-96">
+                    <div className="text-center">Description</div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    403
+                  </Table.Cell>
+                  <Table.Cell align="center">Forbidden</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    500
+                  </Table.Cell>
+                  <Table.Cell align="center">Internal server error</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    200 or 202
+                  </Table.Cell>
+                  <Table.Cell align="center" className=" text-green-600">
+                    OK
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    405
+                  </Table.Cell>
+                  <Table.Cell align="center">Method not allowed</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    401
+                  </Table.Cell>
+                  <Table.Cell align="center">Unauthorized</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    429
+                  </Table.Cell>
+                  <Table.Cell align="center">Too many requests</Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Request Parameter
             </h2>
-          </div> */}
+          </div>
 
-          {/* <div className="mt-5 flex justify-center items-center">
+          <div className="mt-5 flex justify-center items-center">
             <Table zebra bordered stickyHeader scrollButtons devVisible>
               <Table.Head>
                 <Table.Row>
@@ -1101,44 +1469,48 @@ const requestDataImageWithVariableTemplate = [
                 </Table.Row>
               </Table.Body>
             </Table>
-          </div> */}
+          </div>
 
           <div className="flex flex-col items-center justify-center mt-10">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Request
             </h2>
-            <div className="w-full">
-              <RequestComponent
+            <div className="w-full mt-10">
+              {/* <RequestComponent
                 requestData={requestDataImageWithoutVariableTemplate}
                 curlBase={imageWithoutVarTemplatecURL}
+              /> */}
+              <RequestSample
+                tabsContent={requestDataImageTemplate}
+                curlBase={imageTemplatecURL}
               />
             </div>
           </div>
 
-          {/* <div className="mt-10 flex flex-col items-center justify-center">
+          <div className="mt-10 flex flex-col items-center justify-center">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
             <div className="w-full">
               <ResponseComponent
-                jsonData={TextTemplatejsonData}
+                jsonData={TextTemplatejsonBodyData}
                 headers={TextTemplateResponseheaders}
               />
             </div>
-          </div> */}
+          </div>
 
-          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
+          {/* <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               B. With Template Variables
             </h2>
-          </div>
+          </div> */}
           {/* <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Request Parameter
             </h2>
-          </div> */}
+          </div>
 
-          {/* <div className="mt-5 flex justify-center items-center">
+          <div className="mt-5 flex justify-center items-center">
             <Table zebra bordered stickyHeader scrollButtons devVisible>
               <Table.Head>
                 <Table.Row>
@@ -1261,7 +1633,7 @@ const requestDataImageWithVariableTemplate = [
             </Table>
           </div> */}
 
-          <div className="flex flex-col items-center justify-center mt-10">
+          {/* <div className="flex flex-col items-center justify-center mt-10">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Request
             </h2>
@@ -1271,7 +1643,7 @@ const requestDataImageWithVariableTemplate = [
                 curlBase={imageWithVarTemplatecURL}
               />
             </div>
-          </div>
+          </div> */}
 
           {/* <div className="mt-10 flex flex-col items-center justify-center">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
@@ -1285,6 +1657,311 @@ const requestDataImageWithVariableTemplate = [
             </div>
           </div> */}
         </section>
+
+        <section id="video-templates" className="mb-16">
+          <div className="flex flex-col justify-center items-center gap-2 popins  ">
+            <h2 className="text-xl md:text-3xl lg:text-3xl font-medium ">
+              VIDEO TEMPLATES
+            </h2>
+          </div>
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
+              Template Variables
+            </h2>
+          </div>
+          <div className="mt-5 flex flex-col justify-center ">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
+              ENDPOINT
+            </h2>
+            <BaseurlComponent
+              urlPrefix="Base URL"
+              requestType="POST"
+              param="/wrapper/waba/message"
+            />
+          </div>
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center">
+              HEADERS
+            </h2>
+          </div>
+          <div className="mt-5 flex justify-center items-center mx-auto">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-52">
+                    <div className="text-center">Name</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-52">
+                    <div className="text-center"> Value </div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    Content-type
+                  </Table.Cell>
+                  <Table.Cell align="center">application/json</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    key
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    API Key <br />
+                    <span className="text-gray-400">
+                      Enter Your API key (Available in your portal)
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500">
+                    wabaNumber
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    wabaNumber <br />
+                    <span className="text-gray-400">
+                      Registered_WABA_Number without + sign (91XXXXXXXXXX)
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex my-4 mt-10">
+            <h2 className="text-xl md:text-3xl lg:text-3xl font-medium text-center">
+              Common HTTP Response Codes
+            </h2>
+          </div>
+
+          <div className="mt-5 flex justify-center items-center mx-auto">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Code</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-96">
+                    <div className="text-center">Description</div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    403
+                  </Table.Cell>
+                  <Table.Cell align="center">Forbidden</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    500
+                  </Table.Cell>
+                  <Table.Cell align="center">Internal server error</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    200 or 202
+                  </Table.Cell>
+                  <Table.Cell align="center" className=" text-green-600">
+                    OK
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    405
+                  </Table.Cell>
+                  <Table.Cell align="center">Method not allowed</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    401
+                  </Table.Cell>
+                  <Table.Cell align="center">Unauthorized</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    429
+                  </Table.Cell>
+                  <Table.Cell align="center">Too many requests</Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
+              Request Parameter
+            </h2>
+          </div>
+
+          <div className="mt-5 flex justify-center items-center">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Type</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-96">
+                    <div className="text-center">Description</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-52">
+                    <div className="text-center">Example</div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500 ">
+                    String
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    <span className="text-black font-semibold">Required.</span>
+                    <br />
+                    <br /> Template name.
+                    <br />
+                    <br /> Maximum 512 characters.
+                  </Table.Cell>
+                  <Table.Cell align="center">order_confirmation</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className=" text-orange-500 " align="center">
+                    Enum
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    <span className="text-black font-medium">Required.</span>
+                    <br />
+                    <br /> Template category. See{" "}
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-categories"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      Template Categories
+                    </Link>{" "}
+                    below.
+                  </Table.Cell>
+                  <Table.Cell align="center">UTILITY</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className=" text-orange-500 " align="center">
+                    Boolean
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    <span className="text-black font-medium">Optional.</span>
+                    <br />
+                    <br /> Set to true to allow us to{" "}
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#automatic-categorization"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      automatically assign a category
+                    </Link>
+                    . If omitted, the template may be rejected due to
+                    miscategorization.
+                  </Table.Cell>
+                  <Table.Cell align="center">true</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className=" text-orange-500 " align="center">
+                    Enum
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    <span className="text-black font-medium">Required.</span>
+                    <br />
+                    <br /> Template{" "}
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/supported-languages"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      language and locale code
+                    </Link>
+                    .
+                  </Table.Cell>
+                  <Table.Cell align="center">en_US</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className=" text-orange-500 " align="center">
+                    Array of objects
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    <span className="text-black font-medium">Required.</span>
+                    <br />
+                    <br /> Components that make up the template. See{" "}
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-components"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      Template Components
+                    </Link>{" "}
+                    below.
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    See{" "}
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-components"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      Template Components
+                    </Link>{" "}
+                    below.
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
+
+          <div className="flex flex-col items-center justify-center mt-10">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
+              Example Request
+            </h2>
+            <div className="w-full mt-10">
+              {/* <RequestComponent
+                requestData={requestDataImageWithoutVariableTemplate}
+                curlBase={imageWithoutVarTemplatecURL}
+              /> */}
+              <RequestSample
+                tabsContent={requestDataVideoTemplate}
+                curlBase={imageTemplatecURL}
+              />
+            </div>
+          </div>
+
+          <div className="mt-10 flex flex-col items-center justify-center">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
+              Example Response
+            </h2>
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={TextTemplatejsonBodyData}
+                headers={TextTemplateResponseheaders}
+              />
+            </div>
+          </div>
+        </section>
+
         <section id="media-templates" className="mb-16">
           <div className="flex flex-col justify-center items-center gap-2 popins  ">
             <h2 className="text-xl md:text-3xl lg:text-3xl font-medium ">
@@ -1292,13 +1969,144 @@ const requestDataImageWithVariableTemplate = [
             </h2>
           </div>
 
-          {/* <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
+          <div className="mt-5 flex flex-col justify-center ">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
+              ENDPOINT
+            </h2>
+            <BaseurlComponent
+              urlPrefix="Base URL"
+              requestType="POST"
+              param="/wrapper/waba/message"
+            />
+          </div>
+
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center">
+              HEADERS
+            </h2>
+          </div>
+          <div className="mt-5 flex justify-center items-center mx-auto">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-52">
+                    <div className="text-center">Name</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-52">
+                    <div className="text-center"> Value </div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    Content-type
+                  </Table.Cell>
+                  <Table.Cell align="center">application/json</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    key
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    API Key <br />
+                    <span className="text-gray-400">
+                      Enter Your API key (Available in your portal)
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500">
+                    wabaNumber
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    wabaNumber <br />
+                    <span className="text-gray-400">
+                      Registered_WABA_Number without + sign (91XXXXXXXXXX)
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
+
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex my-4 mt-10">
+            <h2 className="text-xl md:text-3xl lg:text-3xl font-medium text-center">
+              Common HTTP Response Codes
+            </h2>
+          </div>
+
+          <div className="mt-5 flex justify-center items-center mx-auto">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Code</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-96">
+                    <div className="text-center">Description</div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    403
+                  </Table.Cell>
+                  <Table.Cell align="center">Forbidden</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    500
+                  </Table.Cell>
+                  <Table.Cell align="center">Internal server error</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    200 or 202
+                  </Table.Cell>
+                  <Table.Cell align="center" className=" text-green-600">
+                    OK
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    405
+                  </Table.Cell>
+                  <Table.Cell align="center">Method not allowed</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    401
+                  </Table.Cell>
+                  <Table.Cell align="center">Unauthorized</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    429
+                  </Table.Cell>
+                  <Table.Cell align="center">Too many requests</Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
+
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Request Parameter
             </h2>
-          </div> */}
+          </div>
 
-          {/* <div className="mt-5 flex justify-center items-center">
+          <div className="mt-5 flex justify-center items-center">
             <Table zebra bordered stickyHeader scrollButtons devVisible>
               <Table.Head>
                 <Table.Row>
@@ -1425,7 +2233,598 @@ const requestDataImageWithVariableTemplate = [
                 </Table.Row>
               </Table.Body>
             </Table>
-          </div> */}
+          </div>
+
+          <div className="flex flex-col items-center justify-center mt-10">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
+              Example Request
+            </h2>
+            <div className="w-full mt-10">
+              {/* <RequestComponent
+                requestData={requestDataMediaTemplate}
+                curlBase={mediaTemplatecURL}
+              /> */}
+              <RequestSample
+                tabsContent={requestDataMediaTemplate}
+                curlBase={mediaTemplatecURL}
+              />
+            </div>
+          </div>
+
+          <div className="mt-10 flex flex-col items-center justify-center">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
+              Example Response
+            </h2>
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={TextTemplatejsonBodyData}
+                headers={TextTemplateResponseheaders}
+              />
+            </div>
+          </div>
+        </section>
+
+        <section id="location-template" className="mb-16">
+          <h2 className="text-xl md:text-3xl lg:text-3xl font-medium text-center mt-10">
+            LOCATION TEMPLATES
+          </h2>
+          <div className="mt-5 flex flex-col justify-center ">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
+              ENDPOINT
+            </h2>
+            <BaseurlComponent
+              urlPrefix="Base URL"
+              requestType="POST"
+              param="/wrapper/waba/message"
+            />
+          </div>
+
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center">
+              HEADERS
+            </h2>
+          </div>
+          <div className="mt-5 flex justify-center items-center mx-auto">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-52">
+                    <div className="text-center">Name</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-52">
+                    <div className="text-center"> Value </div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    Content-type
+                  </Table.Cell>
+                  <Table.Cell align="center">application/json</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    key
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    API Key <br />
+                    <span className="text-gray-400">
+                      Enter Your API key (Available in your portal)
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500">
+                    wabaNumber
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    wabaNumber <br />
+                    <span className="text-gray-400">
+                      Registered_WABA_Number without + sign (91XXXXXXXXXX)
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
+
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex my-4 mt-10">
+            <h2 className="text-xl md:text-3xl lg:text-3xl font-medium text-center">
+              Common HTTP Response Codes
+            </h2>
+          </div>
+
+          <div className="mt-5 flex justify-center items-center mx-auto">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Code</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-96">
+                    <div className="text-center">Description</div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    403
+                  </Table.Cell>
+                  <Table.Cell align="center">Forbidden</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    500
+                  </Table.Cell>
+                  <Table.Cell align="center">Internal server error</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    200 or 202
+                  </Table.Cell>
+                  <Table.Cell align="center" className=" text-green-600">
+                    OK
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    405
+                  </Table.Cell>
+                  <Table.Cell align="center">Method not allowed</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    401
+                  </Table.Cell>
+                  <Table.Cell align="center">Unauthorized</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    429
+                  </Table.Cell>
+                  <Table.Cell align="center">Too many requests</Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
+
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
+              Template Variables
+            </h2>
+          </div>
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
+              Request Parameter
+            </h2>
+          </div>
+
+          <div className="mt-5 flex justify-center items-center">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center"> Type </div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-96">
+                    <div className="text-center"> Description </div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-52">
+                    <div className="text-center"> Example </div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    String
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    <span className="text-black font-semibold">Required.</span>
+                    <br />
+                    <br /> Template name. <br />
+                    <br /> Maximum 512 characters.
+                  </Table.Cell>
+                  <Table.Cell align="center">order_confirmation</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    Enum
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    <span className="text-black font-medium">Required.</span>
+                    <br />
+                    <br /> Template category. See{" "}
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-categories"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      Template Categories
+                    </Link>{" "}
+                    below.
+                  </Table.Cell>
+                  <Table.Cell align="center">UTILITY</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    Boolean
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    <span className="text-black font-medium">Optional.</span>
+                    <br />
+                    <br /> Set to true to allow us to{" "}
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#automatic-categorization"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      automatically assign a category
+                    </Link>
+                    . If omitted, the template may be rejected due to
+                    miscategorization.
+                  </Table.Cell>
+                  <Table.Cell align="center">true</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    Enum
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    <span className="text-black font-medium">Required.</span>
+                    <br />
+                    <br /> Template{" "}
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/supported-languages"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      language and locale code
+                    </Link>
+                    .
+                  </Table.Cell>
+                  <Table.Cell align="center">en_US</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    Array of objects
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    <span className="text-black font-medium">Required.</span>
+                    <br />
+                    <br /> Components that make up the template. See{" "}
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-components"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      Template Components
+                    </Link>{" "}
+                    below.
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    See{" "}
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#template-components"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      Template Components
+                    </Link>{" "}
+                    below.
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
+
+          <div className="flex flex-col items-center justify-center mt-10">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
+              Example Request
+            </h2>
+            <div className="w-full mt-10">
+              <RequestSample
+                tabsContent={requestLocationdataTemplate}
+                curlBase={textTemplatecURL}
+              />
+            </div>
+          </div>
+
+          <div className="mt-10 flex flex-col items-center justify-center">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
+              Example Response
+            </h2>
+            <div className="w-full">
+              <ResponseComponent
+                jsonData={TextTemplatejsonBodyData}
+                headers={TextTemplateResponseBodyheaders}
+              />
+            </div>
+          </div>
+        </section>
+
+        <section id="authentication-template" className="mb-16">
+          <div className="flex flex-col justify-center items-center gap-2 popins  ">
+            <h2 className="text-xl md:text-3xl lg:text-3xl font-medium ">
+              AUTHENTICATION TEMPLATE
+            </h2>
+            <div className=" flex flex-col items-center justify-center md:text-start w-xs md:w-2xl lg:w-3xl mx-auto sm:text-center mt-2">
+              <p className="mt-2">
+                This document explains how to send approved{" "}
+                <span className="text-blue-500 hover:underline">
+                  <Link
+                    to="https://developers.facebook.com/docs/whatsapp/business-management-api/authentication-templates"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {" "}
+                    authentication templates with one-time password buttons
+                  </Link>
+                </span>
+                .
+              </p>
+
+              <div className="mt-4">
+                <h3 className="font-semibold">Template Components</h3>
+                <p className="mt-4">
+                  Use the{" "}
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      WhatsApp Business Phone Number &gt; Messages
+                    </Link>
+                  </span>{" "}
+                  endpoint to send an{" "}
+                  <span className="text-blue-500 hover:underline">
+                    <Link
+                      to="https://developers.facebook.com/docs/whatsapp/business-management-api/authentication-templates"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      authentication template message with a one-time password
+                      button
+                    </Link>
+                  </span>
+                  .
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-5 flex flex-col justify-center ">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
+              ENDPOINT
+            </h2>
+            <BaseurlComponent
+              urlPrefix="Base URL"
+              requestType="POST"
+              param="/wrapper/waba/message"
+            />
+          </div>
+
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center">
+              HEADERS
+            </h2>
+          </div>
+          <div className="mt-5 flex justify-center items-center mx-auto">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-52">
+                    <div className="text-center">Name</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-52">
+                    <div className="text-center"> Value </div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    Content-type
+                  </Table.Cell>
+                  <Table.Cell align="center">application/json</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    key
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    API Key <br />
+                    <span className="text-gray-400">
+                      Enter Your API key (Available in your portal)
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500">
+                    wabaNumber
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    wabaNumber <br />
+                    <span className="text-gray-400">
+                      Registered_WABA_Number without + sign (91XXXXXXXXXX)
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
+
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex my-4 mt-10">
+            <h2 className="text-xl md:text-3xl lg:text-3xl font-medium text-center">
+              Common HTTP Response Codes
+            </h2>
+          </div>
+
+          <div className="mt-5 flex justify-center items-center mx-auto">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Code</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-96">
+                    <div className="text-center">Description</div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    403
+                  </Table.Cell>
+                  <Table.Cell align="center">Forbidden</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    500
+                  </Table.Cell>
+                  <Table.Cell align="center">Internal server error</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    200 or 202
+                  </Table.Cell>
+                  <Table.Cell align="center" className=" text-green-600">
+                    OK
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    405
+                  </Table.Cell>
+                  <Table.Cell align="center">Method not allowed</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    401
+                  </Table.Cell>
+                  <Table.Cell align="center">Unauthorized</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    429
+                  </Table.Cell>
+                  <Table.Cell align="center">Too many requests</Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
+
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
+              Request Parameter
+            </h2>
+          </div>
+
+          <div className="mt-5 flex justify-center items-center">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Type</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-96">
+                    <div className="text-center">Description</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-52">
+                    <div className="text-center">Example</div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell className="text-orange-500 " align="center">
+                    PHONE_NUMBER
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    <span className="text-black font-semibold">Required.</span>
+                    <br />
+                    <br /> The customer's WhatsApp phone number.
+                  </Table.Cell>
+                  <Table.Cell align="center">12015553931</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className=" text-orange-500 " align="center">
+                    ONE-TIME PASSWORD
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    <span className="text-black font-medium">Required.</span>
+                    <br />
+                    <br /> The one-time password or verification code to be
+                    delivered to the customer.
+                    <br />
+                    <br /> Note that this value must appear twice in the
+                    payload.
+                    <br />
+                    <br /> Maximum 15 characters.
+                  </Table.Cell>
+                  <Table.Cell align="center">J$FpnYnP</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className="text-orange-500 " align="center">
+                    TEMPLATE_LANGUAGE_CODE
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    <span className="text-black font-medium">Required.</span>
+                    <br />
+                    <br /> The template's language and locale code.
+                  </Table.Cell>
+                  <Table.Cell align="center">en_US</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell className=" text-orange-500 " align="center">
+                    TEMPLATE_NAME
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    <span className="text-black font-medium">Required.</span>
+                    <br />
+                    <br /> The template's name.
+                  </Table.Cell>
+                  <Table.Cell align="center">verification_code</Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
 
           <div className="flex flex-col items-center justify-center mt-10">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
@@ -1433,39 +2832,173 @@ const requestDataImageWithVariableTemplate = [
             </h2>
             <div className="w-full">
               <RequestComponent
-                requestData={requestDataMediaTemplate}
-                curlBase={mediaTemplatecURL}
+                requestData={requestDataAuthenicationTemplate}
+                curlBase={authenticationTemplatecURL}
               />
+              {/* <RequestSample
+                tabsContent={requestDataAuthenicationTemplate}
+              /> */}
             </div>
           </div>
 
-          {/* <div className="mt-10 flex flex-col items-center justify-center">
+          <div className="mt-10 flex flex-col items-center justify-center">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
             <div className="w-full">
               <ResponseComponent
-                jsonData={TextTemplatejsonData}
-                headers={TextTemplateResponseheaders}
+                jsonData={AuthenticationTemplatejsonData}
+                headers={AuthenticationTemplateResponseheaders}
               />
             </div>
-          </div> */}
+          </div>
         </section>
 
-        <section id="authentication-template" className="mb-16">
+        <section id="carousel-template" className="mb-16">
           <div className="flex flex-col justify-center items-center gap-2 popins  ">
             <h2 className="text-xl md:text-3xl lg:text-3xl font-medium ">
-              Authentication TEMPLATES
+              Carousel TEMPLATES
             </h2>
           </div>
 
-          {/* <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
+          <div className="mt-5 flex flex-col justify-center ">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins text-center mb-4">
+              ENDPOINT
+            </h2>
+            <BaseurlComponent
+              urlPrefix="Base URL"
+              requestType="POST"
+              param="/wrapper/waba/message"
+            />
+          </div>
+
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10 ">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins sm:text-center">
+              HEADERS
+            </h2>
+          </div>
+          <div className="mt-5 flex justify-center items-center mx-auto">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-52">
+                    <div className="text-center">Name</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-52">
+                    <div className="text-center"> Value </div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    Content-type
+                  </Table.Cell>
+                  <Table.Cell align="center">application/json</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    key
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    API Key <br />
+                    <span className="text-gray-400">
+                      Enter Your API key (Available in your portal)
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500">
+                    wabaNumber
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                    wabaNumber <br />
+                    <span className="text-gray-400">
+                      Registered_WABA_Number without + sign (91XXXXXXXXXX)
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
+
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex my-4 mt-10">
+            <h2 className="text-xl md:text-3xl lg:text-3xl font-medium text-center">
+              Common HTTP Response Codes
+            </h2>
+          </div>
+
+          <div className="mt-5 flex justify-center items-center mx-auto">
+            <Table zebra bordered stickyHeader scrollButtons devVisible>
+              <Table.Head>
+                <Table.Row>
+                  <Table.HeaderCell align="center" className="min-w-40">
+                    <div className="text-center">Code</div>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell align="center" className="min-w-96">
+                    <div className="text-center">Description</div>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Head>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell align="center" className="text-orange-500">
+                    403
+                  </Table.Cell>
+                  <Table.Cell align="center">Forbidden</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    500
+                  </Table.Cell>
+                  <Table.Cell align="center">Internal server error</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    200 or 202
+                  </Table.Cell>
+                  <Table.Cell align="center" className=" text-green-600">
+                    OK
+                  </Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    405
+                  </Table.Cell>
+                  <Table.Cell align="center">Method not allowed</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    401
+                  </Table.Cell>
+                  <Table.Cell align="center">Unauthorized</Table.Cell>
+                </Table.Row>
+
+                <Table.Row>
+                  <Table.Cell align="center" className=" text-orange-500 ">
+                    429
+                  </Table.Cell>
+                  <Table.Cell align="center">Too many requests</Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
+
+          <div className="flex flex-col justify-center items-center gap-2 popins sm:flex  text-center  mt-10">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Request Parameter
             </h2>
-          </div> */}
+          </div>
 
-          {/* <div className="mt-5 flex justify-center items-center">
+          <div className="mt-5 flex justify-center items-center">
             <Table zebra bordered stickyHeader scrollButtons devVisible>
               <Table.Head>
                 <Table.Row>
@@ -1593,85 +3126,36 @@ const requestDataImageWithVariableTemplate = [
                 </Table.Row>
               </Table.Body>
             </Table>
-          </div> */}
+          </div>
 
           <div className="flex flex-col items-center justify-center mt-10">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Request
             </h2>
-            <div className="w-full">
-              <RequestComponent
-                requestData={requestDataAuthenicationTemplate}
+            <div className="w-full mt-10">
+              <RequestSample
+                tabsContent={requestDataCarouselTemplate}
                 curlBase={authenticationTemplatecURL}
               />
             </div>
           </div>
 
-          {/* <div className="mt-10 flex flex-col items-center justify-center">
+          <div className="mt-10 flex flex-col items-center justify-center">
             <h2 className="text-xl md:text-2xl lg:text-2xl font-medium popins ">
               Example Response
             </h2>
             <div className="w-full">
               <ResponseComponent
-                jsonData={AuthenticationTemplatejsonData}
-                headers={AuthenticationTemplateResponseheaders}
+                jsonData={TextTemplatejsonBodyData}
+                headers={TextTemplateResponseBodyheaders}
               />
             </div>
-          </div> */}
+          </div>
         </section>
       </div>
 
       {/* Mini Map Navigation - Hidden on small screens */}
-      {/* <div
-        className={`${
-          isDarkMode ? "bg-gray-500 text-white" : "bg-[#cecece] text-black"
-        } hidden lg:block  h-fit sticky  top-4 p-2 shrink-0 rounded-2xl  mr-4 w-70`}
-      >
-        <div className="rounded-lg h-full flex flex-row">
-          <div className="relative">
-            <div
-              className={`${
-                isDarkMode ? "bg-gray-600" : "bg-gray-200"
-              } w-1 h-auto top-5  rounded absolute left-3`}
-              style={{
-                height: `${(sections.length - 1) * 40}px`,
-                top: "20px",
-              }}
-            >
-              <div
-                className={`${
-                  isDarkMode ? "bg-white" : "bg-black"
-                } w-1 bg-black rounded absolute transition-all duration-300`}
-                style={{
-                  height: "20px",
-                  top: `${scrollerPosition}%`,
-                  transform: "translateY(-50%)",
-                }}
-              ></div>
-            </div>
 
-            <div className="ml-6">
-              {sections.map((section) => (
-                <div
-                  key={section.id}
-                  onClick={() => scrollToSection(section.id)}
-                  className={`p-2 mb-1 rounded cursor-pointer text-sm transition-colors ${
-                    activeSection === section.id
-                      ? `${
-                          isDarkMode
-                            ? "text-white font-semibold"
-                            : "text-black font-semibold"
-                        }`
-                      : `${isDarkMode ? "text-gray-900" : "text-gray-600"}`
-                  }`}
-                >
-                  {section.title}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div> */}
 
       <div
         className={`${isDarkMode ? "bg-gray-500 text-white" : "bg-[#cecece] text-black"
@@ -1680,9 +3164,9 @@ const requestDataImageWithVariableTemplate = [
         {/* Scroll track */}
         <div
           className={`${isDarkMode ? "bg-gray-600" : "bg-gray-200"} 
-      w-1 rounded absolute left-3 top-5.5  `}
+        w-1 rounded absolute left-3 top-5.5 `}
           style={{
-            height: `${sections.length * 30}px`,
+            height: `${sections.length * 32}px`,
           }}
         >
           {/* Moving scroll indicator */}
@@ -1691,7 +3175,7 @@ const requestDataImageWithVariableTemplate = [
         ${isDarkMode ? "bg-white" : "bg-black"} 
         w-1 rounded absolute transition-all duration-300
         ${active ? "bg-black" : ""}
-      `}
+        `}
             style={{
               height: "20px",
               top: `${sections.findIndex((s) => s.id === active) * 36}px`,

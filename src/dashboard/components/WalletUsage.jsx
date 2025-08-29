@@ -13,8 +13,6 @@ import { FiFilter, FiDownload, FiAlertCircle } from "react-icons/fi";
 import CountUp from "react-countup";
 import { motion } from "framer-motion";
 
-
-
 const campaignsData = [];
 
 const rowsPerPage = 10;
@@ -24,11 +22,11 @@ const WalletUsage = () => {
   const [walletUsageData, setWalletUsageData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [filterDataWalletUsage, setFilterDataWalletUsage] = useState({
-    // rechargeType: 0,
-    endDate: new Date(),
-    startDate: new Date(),
-  });
+  // const [filterDataWalletUsage, setFilterDataWalletUsage] = useState({
+  //   // rechargeType: 0,
+  //   endDate: new Date(),
+  //   startDate: new Date(),
+  // });
 
   const totalPages = Math.ceil(walletUsageData.length / rowsPerPage);
 
@@ -39,10 +37,22 @@ const WalletUsage = () => {
 
   const goToPage = (page) => setCurrentPage(page);
 
+  const yesterday = moment().subtract(1, "day");
+  const defaultStart = moment(yesterday).subtract(6, "days");
+
+  const [filterDataWalletUsage, setFilterDataWalletUsage] = useState({
+    startDate: defaultStart.toDate(),
+    endDate: yesterday.toDate(),
+  });
+
   const dailyAmountUsage = async () => {
     const payload = {
-      fromDate: moment(filterDataWalletUsage.startDate).format("YYYY-MM-DD"),
-      toDate: moment(filterDataWalletUsage.endDate).format("YYYY-MM-DD"),
+      fromDate: moment(filterDataWalletUsage.startDate)
+        .subtract(1, "day")
+        .format("YYYY-MM-DD"),
+      toDate: moment(filterDataWalletUsage.endDate)
+        .subtract(1, "day")
+        .format("YYYY-MM-DD"),
       // fromDate: "2022-07-30",
       // toDate: "2025-08-03",
     };
@@ -120,9 +130,9 @@ const WalletUsage = () => {
     const dateRangeRow = customDateSelected
       ? [
         "Selected Date Range",
-        `${moment(filterDataWalletUsage.startDate).format("DD MMM YYYY")} to ${moment(
-          filterDataWalletUsage.endDate
-        ).format("DD MMM YYYY")}`,
+        `${moment(filterDataWalletUsage.startDate).format(
+          "DD MMM YYYY"
+        )} to ${moment(filterDataWalletUsage.endDate).format("DD MMM YYYY")}`,
       ]
       : [];
 
@@ -134,7 +144,6 @@ const WalletUsage = () => {
     exportToExcel(exportData[0], exportData.slice(1), filename);
     toast.success("File Downloaded Successfully");
   }
-
 
   useEffect(() => {
     dailyAmountUsage();
@@ -150,10 +159,13 @@ const WalletUsage = () => {
   return (
     <div className="relative bg-white rounded-xl shadow-md p-2 sm:p-6 max-w-full w-full h-full border border-gray-100">
       <div className="w-full flex items-center justify-between mb-2 border-b pb-2">
-        <h2 className="text-md text-gray-800 font-semibold">Daily Wallet Usage</h2>
+        <h2 className="text-[1.02rem] text-gray-800 font-semibold">
+          Wallet Balance Table
+        </h2>
         <div className="flex items-center gap-3">
           <div
-            className="text-blue-600 border border-blue-400 hover:bg-blue-500 hover:text-white rounded-full cursor-pointer h-7 w-7 flex items-center justify-center transition-all" onClick={() => setShowCalendar(!showCalendar)}
+            className="text-blue-600 border border-blue-400 hover:bg-blue-500 hover:text-white rounded-full cursor-pointer h-7 w-7 flex items-center justify-center transition-all"
+            onClick={() => setShowCalendar(!showCalendar)}
           >
             <CiFilter fontSize="14px" />
           </div>
@@ -171,21 +183,23 @@ const WalletUsage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
-          className="absolute right-0 top-0 bg-white p-4 rounded-md shadow-lg z-50 flex gap-2">
+          className="absolute right-0 top-0 bg-white p-4 rounded-md shadow-lg z-50 flex gap-2"
+        >
           <div className="w-54">
             <UniversalDatePicker
               id="walletUsage"
               name="walletUsage"
               label="From Date"
-              defaultValue={new Date()}
+              defaultValue={new Date() - 1}
               placeholder="Pick a start date"
-              value={setFilterDataWalletUsage.startDate}
+              value={filterDataWalletUsage.startDate}
               onChange={(newValue) => {
                 setFilterDataWalletUsage({
                   ...filterDataWalletUsage,
                   startDate: newValue || new Date(),
                 });
               }}
+              maxDate={new Date(new Date().setDate(new Date().getDate() - 1))}
             />
           </div>
           <div className="w-54">
@@ -194,14 +208,15 @@ const WalletUsage = () => {
               name="walletUsage"
               label="To Date"
               placeholder="Pick a start date"
-              defaultValue={new Date()}
-              value={setFilterDataWalletUsage.endDate}
+              defaultValue={new Date() - 1}
+              value={filterDataWalletUsage.endDate}
               onChange={(newValue) => {
                 setFilterDataWalletUsage({
                   ...filterDataWalletUsage,
                   endDate: newValue || new Date(),
                 });
               }}
+              maxDate={new Date(new Date().setDate(new Date().getDate() - 1))}
             />
           </div>
           <div
@@ -221,9 +236,8 @@ const WalletUsage = () => {
               </button> */}
         </motion.div>
       )}
-      <div className="flex items-center justify-between w-full mb-2">
-        <h2 className="text-sm text-gray-700 font-semibold">
-          {/* Total Spend: ₹ {totalSpend.toFixed(2)} */}
+      <div className="flex items-center justify-center my-4 text-center">
+        {/* <h2 className="text-sm text-gray-700 font-semibold">
           Total Spend: ₹
           <CountUp
             start={0}
@@ -232,13 +246,15 @@ const WalletUsage = () => {
             decimals={2}
             duration={1.5}
           />
-        </h2>
+        </h2> */}
         {filterDataWalletUsage.startDate &&
           filterDataWalletUsage.endDate &&
           (filterDataWalletUsage.startDate.toDateString() !== defaultDate ||
             filterDataWalletUsage.endDate.toDateString() !== defaultDate) ? (
-          <h2 className="text-sm text-gray-700 font-semibold">
-            Showing result from: {filterDataWalletUsage.startDate.toDateString()} to: {filterDataWalletUsage.endDate.toDateString()}
+          <h2 className="text-[0.9rem] text-gray-700 font-semibold text-center">
+            Showing result from:{" "}
+            {filterDataWalletUsage.startDate.toDateString()} to:{" "}
+            {filterDataWalletUsage.endDate.toDateString()}
           </h2>
         ) : null}
       </div>
@@ -247,7 +263,7 @@ const WalletUsage = () => {
         <div className="grid grid-cols-3 text-sm font-medium text-gray-600 border-b pb-2 ">
           <div>S.No.</div>
           <div>Date</div>
-          <div>Wallet Usage</div>
+          <div>Closing Balance</div>
         </div>
 
         {/* Table Body */}
@@ -255,8 +271,12 @@ const WalletUsage = () => {
           {currentData.length === 0 && !isLoading && (
             <div className="flex flex-col items-center justify-center text-center text-gray-400 gap-2 h-full">
               <FiAlertCircle size={30} className="text-blue-500" />
-              <p className="font-medium text-gray-600">No wallet usage data found.</p>
-              <p className="text-sm text-gray-500">Try selecting a different date range using the filter above.</p>
+              <p className="font-medium text-gray-600">
+                No wallet usage data found.
+              </p>
+              <p className="text-sm text-gray-500">
+                Try selecting a different date range using the filter above.
+              </p>
             </div>
           )}
 

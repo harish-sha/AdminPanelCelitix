@@ -15,9 +15,11 @@ import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 import SyncAltOutlinedIcon from "@mui/icons-material/SyncAltOutlined";
 import { motion, useReducedMotion } from "framer-motion";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
-const ModelCard = ({ title, desc, Icon, gradient, delay = 0, isDarkMode }) => {
+const ModelCard = ({ title, desc, Icon, gradient, delay = 0, isDarkMode, navigateTo }) => {
   const prefersReduced = useReducedMotion();
+  const navigate = useNavigate();
 
   const variants = {
     hidden: { opacity: 0, y: prefersReduced ? 0 : 18, scale: prefersReduced ? 1 : 0.98 },
@@ -85,6 +87,14 @@ const ModelCard = ({ title, desc, Icon, gradient, delay = 0, isDarkMode }) => {
               </p>
             </div>
           </div>
+
+          {/* Read More */}
+          <span
+            onClick={() => navigate(navigateTo)}
+            className="absolute inset-x-4 bottom-8 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm text-green-700 cursor-pointer"
+          >
+            Read More
+          </span>
 
           {/* bottom glow underline on hover */}
           <div className="pointer-events-none absolute inset-x-4 bottom-3 h-px bg-gradient-to-r from-transparent via-blue-400/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -229,6 +239,7 @@ const Quickstart = () => {
             gradient="from-emerald-500/70 to-emerald-700/70"
             delay={0.02}
             isDarkMode={isDarkMode}
+            navigateTo="/docs/send-messages-whatsapp"
           />
           <ModelCard
             title="SMS"
@@ -237,6 +248,7 @@ const Quickstart = () => {
             gradient="from-sky-500/70 to-blue-600/70"
             delay={0.04}
             isDarkMode={isDarkMode}
+            navigateTo="/docs/submit-template-sms"
           />
           <ModelCard
             title="RCS"
@@ -261,6 +273,7 @@ const Quickstart = () => {
             gradient="from-rose-500/70 to-red-600/70"
             delay={0.10}
             isDarkMode={isDarkMode}
+            navigateTo="/docs/submit-template-outbound"
           />
           <ModelCard
             title="IBD"

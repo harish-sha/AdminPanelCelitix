@@ -61,16 +61,15 @@ const SamplePostData = () => {
 
   return (
     <>
-      <div className="w-3xl mx-auto">
+      <div className="w-full">
         <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md flex items-center flex-col h-66 relative">
           <Toaster />
           <div className="flex justify-between items-center absolute right-2.5">
             <div className="flex-1"></div>
             <div className="flex gap-4">
               <button
-                className={`transition-colors absolute right-4 rounded-md hover:bg-gray-700 ${
-                  isCopied ? "text-white bg-gray-700" : "text-gray-400 hover:text-white"
-                }`}
+                className={`transition-colors absolute right-4 rounded-md hover:bg-gray-700 ${isCopied ? "text-white bg-gray-700" : "text-gray-400 hover:text-white"
+                  }`}
                 onClick={handleCopy}
                 aria-label={isCopied ? "Copied to clipboard" : "Copy to clipboard"}
               >
