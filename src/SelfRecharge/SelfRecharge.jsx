@@ -3,9 +3,14 @@ import { load } from "@cashfreepayments/cashfree-js";
 import toast from "react-hot-toast";
 import Lottie from "lottie-react";
 import rechargeAnim from "../assets/animation/recharge.json";
-import { rechargeCreateOrderCashFree, verifyRechargeStatus } from "@/apis/recharge/recharge";
+import {
+  rechargeCreateOrderCashFree,
+  verifyRechargeStatus,
+} from "@/apis/recharge/recharge";
+import { useNavigate } from "react-router-dom";
 
 export default function RechargeFullWidth() {
+  const navigate = useNavigate();
   const [cashfree, setCashfree] = useState(null);
   const [amount, setAmount] = useState("");
   const [phone, setPhone] = useState("");
@@ -17,7 +22,7 @@ export default function RechargeFullWidth() {
     // load({ mode: "sandbox" }).then((cf) => setCashfree(cf));
     var initializeSDK = async function () {
       const cashfreeInit = await load({
-        mode: "sandbox",
+        mode: "production",
       });
       setCashfree(cashfreeInit);
     };
@@ -68,8 +73,8 @@ export default function RechargeFullWidth() {
             // notify_url:
             //   "https://webhook.site/fe86c8d7-fa74-4ad7-819c-af7b9f612511",
           },
-        }
-        const res = await rechargeCreateOrderCashFree(payload)
+        };
+        const res = await rechargeCreateOrderCashFree(payload);
         // if (res?.status === true && res?.paymentSessionId) {
         //   setPaymentSessionId(res.paymentSessionId);
         //   const result = await cashfree.checkout({
@@ -100,26 +105,34 @@ export default function RechargeFullWidth() {
           return;
         }
 
-        await cashfree.checkout({
-          paymentSessionId,
-          redirectTarget: "_modal",
-        });
-        const rechargeStatus = await verifyRechargeStatus({
+        cashfree
+          .checkout({
+            paymentSessionId,
+            redirectTarget: "_modal",
+          })
+          .then((result) => {
+            if (result.error) {
+              return toast.error("Something went wrong. Please try again.");
+            }
+            if (result.redirect) {
+              return toast.error("Payment will be redirected");
+            }
+            if (result.paymentDetails) {
+              toast.success(
+                "Payment has been completed, Check for Payment Status"
+              );
+            }
+          });
+
+        await verifyRechargeStatus({
           order_id: orderId,
         });
-
-
-        if (rechargeStatus?.status !== "received") {
-          return toast.error("Payment Failed!");
-        }
-        toast.success("Payment successful!");
 
         setAmount("");
         setPhone("");
         setEmail("");
         setName("");
-        // if (rechargeStatus?.status === "received") {
-        // }
+        navigate("/transactions");
       } catch (err) {
         console.error(err);
         toast.error("Error creating payment session.");
