@@ -634,10 +634,10 @@ export default function CannedMessageManager() {
 
     try {
       const response = await axios.post(
-        "https://api.openai.com/v1/chat/completions",
+        "https://api.openai.com/v1/chat/responses",
         {
           model: "gpt-3.5-turbo",
-          messages: [
+          input: [
             // { role: "system", content: "You are a helpful assistant." },
             {
               role: "system",
@@ -651,14 +651,14 @@ export default function CannedMessageManager() {
             },
             { role: "user", content: prompt },
           ],
-          max_tokens: 1024,
-          temperature: 0.7,
+          max_output_tokens: 1024
         },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_REACT_APP_OPENAI_API_KEY
-              }`,
+            Authorization: `Bearer ${
+              import.meta.env.VITE_REACT_APP_OPENAI_API_KEY
+            }`,
           },
         }
       );
