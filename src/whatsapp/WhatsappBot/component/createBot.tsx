@@ -59,7 +59,6 @@ import { TemplateNode } from "./components/template";
 import { AiOutlineApi } from "react-icons/ai";
 import { Api } from "./components/api";
 
-
 const initialNodes = [];
 const initialEdges = [];
 
@@ -777,7 +776,7 @@ const CreateWhatsAppBot = () => {
     setIsVisible(false);
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (isClose = true) => {
     if (!details?.name) {
       return toast.error("Please enter bot name");
     }
@@ -956,17 +955,19 @@ const CreateWhatsAppBot = () => {
         return toast.error("Error Saving Bot");
       }
 
-      setNodes(initialNodes);
-      setEdges(initialEdges);
-      setNodeId(1);
-      setNodesInputData({});
-      setDetails((prev) => ({
-        ...prev,
-        selected: "",
-        name: "",
-      }));
       toast.success("Bot Save Successfully");
-      navigate("/wwhatsappbot");
+      if (isClose) {
+        setNodes(initialNodes);
+        setEdges(initialEdges);
+        setNodeId(1);
+        setNodesInputData({});
+        setDetails((prev) => ({
+          ...prev,
+          selected: "",
+          name: "",
+        }));
+        navigate("/wwhatsappbot");
+      }
     } catch (e) {
       // console.log(e);
       toast.error("Error Saving Bot");
@@ -1249,7 +1250,7 @@ const CreateWhatsAppBot = () => {
               allVariables={allVariables}
               addNode={addNode}
               lastPosition={lastPosition}
-               nodes={nodes}
+              nodes={nodes}
             />
           ) : null}
 

@@ -13,7 +13,7 @@ export const Details = ({
   setDetails: React.Dispatch<React.SetStateAction<any>>;
   setIsSettingBtnDisables: React.Dispatch<React.SetStateAction<any>>;
   details: any;
-  handleSubmit: () => void;
+  handleSubmit: (isClose: Boolean) => void;
   isUpdate: Boolean;
 }) => {
   return (
@@ -62,6 +62,14 @@ export const Details = ({
         id="saveBot"
         name="saveBot"
         label={`${isUpdate ? "Update" : "Save"}`}
+        onClick={() => handleSubmit(false)}
+        style={{}}
+      />
+
+      <UniversalButton
+        id="saveBot"
+        name="saveBot"
+        label={`${isUpdate ? "Update" : "Save"} and Exit`}
         onClick={handleSubmit}
         style={{}}
       />
