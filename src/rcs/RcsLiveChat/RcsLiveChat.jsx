@@ -313,9 +313,9 @@ const RcsLiveChat = () => {
           templateMessage: {
             templateCode: templateState.templateName,
           },
-          mobileno: chatState.active.mobileNo,
-          botId: agentState.id,
         },
+        mobileno: chatState.active.mobileNo,
+        botId: agentState.id,
       };
 
       // const payload = {
