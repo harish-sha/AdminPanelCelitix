@@ -47,7 +47,7 @@ Write the message as a short marketing template message with a clear CTA if appl
     }));
     try {
       const response = await axios.post(
-        "https://api.openai.com/v1/chat/responses",
+        "https://api.openai.com/v1/responses",
         {
           model: "gpt-3.5-turbo",
           input: [

@@ -130,7 +130,6 @@
 //     setGenerationCount(0);
 //   };
 
-
 //   const [messages, setMessages] = useState([]);
 //   const [isFetching, setIsFetching] = useState(false);
 //   const [form, setForm] = useState({
@@ -514,7 +513,6 @@
 //   );
 // }
 
-
 // =================================
 
 import React, { useEffect, useState } from "react";
@@ -563,7 +561,6 @@ export default function CannedMessageManager() {
   const [style, setStyle] = useState("Normal");
   const [optimizeFor, setOptimizeFor] = useState("Click Rate");
   const [language, setLanguage] = useState("English");
-
 
   const TypingText = ({ text, onDone }) => {
     const [displayed, setDisplayed] = useState("");
@@ -634,13 +631,13 @@ export default function CannedMessageManager() {
 
     try {
       const response = await axios.post(
-        "https://api.openai.com/v1/chat/responses",
+        "https://api.openai.com/v1/responses",
         {
-          model: "gpt-3.5-turbo",
+          model: "gpt-4o-mini",
           input: [
             // { role: "system", content: "You are a helpful assistant." },
             {
-              role: "system",
+              role: "developer",
               content: `
           You are an AI assistant for marketing and promotional messages.
           Your only job is to help users write short, engaging marketing and promotional messages for campaigns.
@@ -651,7 +648,7 @@ export default function CannedMessageManager() {
             },
             { role: "user", content: prompt },
           ],
-          max_output_tokens: 1024
+          max_output_tokens: 1024,
         },
         {
           headers: {
@@ -866,7 +863,7 @@ export default function CannedMessageManager() {
       if (response.status === false) {
         toast.error(
           response.message ||
-          "Failed to delete canned message. Please try again."
+            "Failed to delete canned message. Please try again."
         );
         return;
       }
@@ -956,7 +953,7 @@ export default function CannedMessageManager() {
                     <div className="space-y-4 border-2 p-2 border-dashed rounded-2xl border-[#36bae2]">
                       <div className="flex justify-between items-center">
                         <div></div>
-                        <div className="flex items-center gap-2" >
+                        <div className="flex items-center gap-2">
                           <p className="font-semibold my-1 text-lg text-transparent bg-clip-text bg-gradient-to-r from-[#2b40b0] to-[#36bae2]">
                             Ask AI to Generate Content
                           </p>
@@ -1000,28 +997,37 @@ export default function CannedMessageManager() {
                           <p className="w-full font-medium text-[#2b40b0]">
                             Choose your message style :
                           </p>
-                          {["Normal", "Poetic", "Exciting", "Funny", "Grammatical"].map(
-                            (item) => (
-                              <div
-                                key={item}
-                                onClick={() => setStyle(item)}
-                                className={`relative px-3 py-1 rounded-full border overflow-hidden transition-colors duration-300 cursor-pointer ${style === item
+                          {[
+                            "Normal",
+                            "Poetic",
+                            "Exciting",
+                            "Funny",
+                            "Grammatical",
+                          ].map((item) => (
+                            <div
+                              key={item}
+                              onClick={() => setStyle(item)}
+                              className={`relative px-3 py-1 rounded-full border overflow-hidden transition-colors duration-300 cursor-pointer ${
+                                style === item
                                   ? "text-white scale-105"
                                   : "bg-white text-gray-700"
-                                  }`}
-                              >
-                                <span className="relative z-10">{item}</span>
-                                <span
-                                  className={`absolute inset-0 rounded-full transition-transform duration-300 ease-in-out bg-gradient-to-r from-[#2b40b0] to-[#36bae2] z-0
-                                            ${style === item ? "translate-y-0" : "translate-y-full"}
+                              }`}
+                            >
+                              <span className="relative z-10">{item}</span>
+                              <span
+                                className={`absolute inset-0 rounded-full transition-transform duration-300 ease-in-out bg-gradient-to-r from-[#2b40b0] to-[#36bae2] z-0
+                                            ${
+                                              style === item
+                                                ? "translate-y-0"
+                                                : "translate-y-full"
+                                            }
                                            `}
-                                  style={{
-                                    transformOrigin: "bottom",
-                                  }}
-                                ></span>
-                              </div>
-                            )
-                          )}
+                                style={{
+                                  transformOrigin: "bottom",
+                                }}
+                              ></span>
+                            </div>
+                          ))}
                           {/* <div className="mt-4">
                             <label className="block text-sm font-medium text-[#2b40b0] mb-1">
                               Generate in Language:
@@ -1126,7 +1132,8 @@ export default function CannedMessageManager() {
                               setHasInserted(true);
                             }}
                           >
-                            <FileUploadOutlinedIcon /> Insert into Message Content
+                            <FileUploadOutlinedIcon /> Insert into Message
+                            Content
                           </button>
                         </div>
                       )}
@@ -1145,8 +1152,8 @@ export default function CannedMessageManager() {
                       ? "Updating..."
                       : "Adding..."
                     : editSrNo
-                      ? "Update Message"
-                      : "Add Message"
+                    ? "Update Message"
+                    : "Add Message"
                 }
                 variant="primary"
                 disabled={isFetching}

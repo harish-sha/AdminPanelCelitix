@@ -134,11 +134,11 @@ const TemplateTypes = ({
 
     try {
       const response = await axios.post(
-        "https://api.openai.com/v1/chat/responses",
+        "https://api.openai.com/v1/responses",
         {
-          model: "gpt-3.5-turbo",
+          model: "gpt-4o-mini",
           input: [
-            { role: "system", content: "You are a helpful assistant." },
+            { role: "developer", content: "You are a helpful assistant." },
             { role: "user", content: aiPrompt },
           ],
           max_output_tokens: 1024
