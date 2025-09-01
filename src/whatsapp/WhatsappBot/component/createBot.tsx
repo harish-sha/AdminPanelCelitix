@@ -1126,7 +1126,7 @@ const CreateWhatsAppBot = () => {
             <Button
               draggable
               onDragStart={(event) => handleDragStart(event, "flow")}
-              onClick={() => addNode("template")}
+              onClick={() => addNode("flow")}
               className={commonButtonClass}
             >
               <HiOutlineTemplate className="size-6" />
@@ -1186,6 +1186,8 @@ const CreateWhatsAppBot = () => {
               <p className="text-sm">
                 (Make button options for the button node)
               </p>
+            ) : type === "flow" ? (
+              <p className="text-sm">(Make Flow options for the Flow node)</p>
             ) : null}
           </>
         }
