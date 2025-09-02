@@ -32,7 +32,7 @@ const CustomPagination = ({
   totalPages,
   paginationModel,
   setPaginationModel,
-  setCurrentPage
+  setCurrentPage,
 }) => {
   const { items } = usePagination({
     count: totalPages,
@@ -108,28 +108,25 @@ const WhatsappConversationTable = ({
   // const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
   // const BASE_MEDIA_URL = "/image";
 
-
   function handleView(row) {
-    console.log(row);
-
     if (!row.mediaPath || !row.replyType) return;
     const type = row.replyType.toLowerCase();
     let url = row.mediaPath;
-    // let finalUrl = `${BASE_MEDIA_URL}${url}`
-    // console.log(finalUrl)
 
-    const parsed = /^[a-zA-Z]+:\/\/[^\/]+/.test(url);
+    const finalUrl = `https://cb.celitix.com/${url}`;
 
-    if (!parsed) {
-      return toast.error("Invalid URL");
-    }
+    // const parsed = /^[a-zA-Z]+:\/\/[^\/]+/.test(url);
+
+    // if (!parsed) {
+    //   return toast.error("Invalid URL");
+    // }
 
     let mimeType = "";
     if (type === "document") {
       const pathname = new URL(row.mediaPath).pathname;
       mimeType = pathname.split(".").pop();
     }
-    setFileData({ url, type, mimeType });
+    setFileData({ url: finalUrl, type, mimeType });
     setIsDialogOpen(true);
   }
 
@@ -189,12 +186,11 @@ const WhatsappConversationTable = ({
 
   const rows = Array.isArray(data?.data)
     ? data?.data.map((item, index) => ({
-      id: index + 1,
-      sn: index + 1,
-      ...item,
-    }))
+        id: index + 1,
+        sn: index + 1,
+        ...item,
+      }))
     : [];
-
 
   const CustomFooter = () => {
     return (
@@ -227,7 +223,8 @@ const WhatsappConversationTable = ({
           )}
 
           <Typography variant="body2">
-            Total Records: <span className="font-semibold">{data?.total || 0}</span>
+            Total Records:{" "}
+            <span className="font-semibold">{data?.total || 0}</span>
           </Typography>
         </Box>
 
@@ -342,7 +339,6 @@ const WhatsappConversationTable = ({
         </div>
       </Dialog>
     </>
-
   );
 };
 
