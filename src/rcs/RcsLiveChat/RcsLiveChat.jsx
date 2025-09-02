@@ -269,11 +269,11 @@ const RcsLiveChat = () => {
       const payload = {
         agentId: chatState.active.agentId,
         mobileNo: chatState.active.mobileNo,
-        message: input.trim(),
         replyType:
           selectedMedia.mimeType === "application"
             ? "document"
             : selectedMedia.mimeType,
+        ...(selectedMedia?.fileUrl ? {} : { message: input.trim() }),
         // chatNo: chatState.active.srno,
       };
 
@@ -285,10 +285,9 @@ const RcsLiveChat = () => {
             contentInfo: {
               fileUrl: selectedMedia.fileUrl,
             },
-
-            mobileno: chatState.active.mobileNo,
-            botId: chatState.active.agentId,
           },
+          mobileno: chatState.active.mobileNo,
+          botId: chatState.active.agentId,
         };
       }
 
