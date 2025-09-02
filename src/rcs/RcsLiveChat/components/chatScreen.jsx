@@ -30,6 +30,8 @@ export const ChatScreen = ({
   setIsTemplateMessage,
   handleSendTemplateMessage,
   setChatState,
+  selectedMedia,
+  setSelectedMedia,
 }) => {
   const [replyingMessageId, setReplyingMessageId] = useState(null);
   const messageRef = useRef(null);
@@ -175,7 +177,7 @@ export const ChatScreen = ({
         <div
           ref={messageRef}
           className="p-4 space-y-2 flex flex-col relative"
-        // bg-[url(https://static1.srcdn.com/wordpress/wp-content/uploads/2023/04/google.jpg?q=50&fit=crop&w=825&dpr=1.5)]
+          // bg-[url(https://static1.srcdn.com/wordpress/wp-content/uploads/2023/04/google.jpg?q=50&fit=crop&w=825&dpr=1.5)]
         >
           {chatState.specificConversation?.map((group, groupIndex) => (
             <div key={groupIndex}>
@@ -211,7 +213,12 @@ export const ChatScreen = ({
                       animate={{
                         opacity: 1,
                         y: 0,
-                        x: replyingMessageId === msg.id ? (isSent ? -20 : 20) : 0,
+                        x:
+                          replyingMessageId === msg.id
+                            ? isSent
+                              ? -20
+                              : 20
+                            : 0,
                       }}
                       transition={{
                         duration: 0.3,
@@ -219,8 +226,9 @@ export const ChatScreen = ({
                         stiffness: 300,
                         damping: 20,
                       }}
-                      className={`p-2 rounded-lg max-w-[90%] my-1 ${isSent ? "self-end" : "self-start"
-                        }`}
+                      className={`p-2 rounded-lg max-w-[90%] my-1 ${
+                        isSent ? "self-end" : "self-start"
+                      }`}
                     >
                       {isReply && (
                         <div className="text-sm border-b-2 border-black">
@@ -230,28 +238,33 @@ export const ChatScreen = ({
 
                       {(isImage || isVideo || isDocument) && (
                         <div
-                          className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
-                            }`}
+                          className={`flex items-center gap-2 w-full ${
+                            isSent ? "flex-row-reverse" : ""
+                          }`}
                         >
                           <div
-                            className={`${msg?.caption ? "p-2 rounded-md" : ""}`}
+                            className={`${
+                              msg?.caption ? "p-2 rounded-md" : ""
+                            }`}
                           >
                             {msg?.mediaPath ? (
                               <>
                                 {isImage && (
                                   <div
-                                    className={`relative group w-full h-full ${msg?.caption
-                                      ? "border border-gray-200 rounded-md max-w-[200px] bg-white"
-                                      : ""
-                                      }`}
+                                    className={`relative group w-full h-full ${
+                                      msg?.caption
+                                        ? "border border-gray-200 rounded-md max-w-[200px] bg-white"
+                                        : ""
+                                    }`}
                                   >
                                     <img
                                       src={mediaUrl}
                                       alt="Image"
-                                      className={`mb-2 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${msg?.caption
-                                        ? "rounded-t-lg"
-                                        : "rounded-md"
-                                        }`}
+                                      className={`mb-2 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${
+                                        msg?.caption
+                                          ? "rounded-t-lg"
+                                          : "rounded-md"
+                                      }`}
                                     />
                                     {msg?.caption && (
                                       <div className="text-sm text-gray-500 mt-2 ml-2 whitespace-pre-wrap break-words">
@@ -278,10 +291,11 @@ export const ChatScreen = ({
                                 )}
                                 {isVideo && (
                                   <div
-                                    className={`${msg?.caption
-                                      ? "border border-gray-200 rounded-md max-w-[200px] bg-white relative group"
-                                      : "relative group"
-                                      }`}
+                                    className={`${
+                                      msg?.caption
+                                        ? "border border-gray-200 rounded-md max-w-[200px] bg-white relative group"
+                                        : "relative group"
+                                    }`}
                                   >
                                     <video
                                       src={mediaUrl}
@@ -314,10 +328,11 @@ export const ChatScreen = ({
                                 )}
                                 {isDocument && (
                                   <div
-                                    className={`${msg?.caption
-                                      ? "border border-gray-200 rounded-md max-w-[200px]bg-white relative group"
-                                      : "relative group"
-                                      }`}
+                                    className={`${
+                                      msg?.caption
+                                        ? "border border-gray-200 rounded-md max-w-[200px]bg-white relative group"
+                                        : "relative group"
+                                    }`}
                                   >
                                     <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md max-w-xs flex items-center gap-3">
                                       <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
@@ -424,15 +439,17 @@ export const ChatScreen = ({
 
                       {isText && (
                         <div
-                          className={`flex items-center gap-2 max-w-[200px] ${isSent ? "flex-row-reverse" : ""
-                            }`}
+                          className={`flex items-center gap-2 max-w-[200px] ${
+                            isSent ? "flex-row-reverse" : ""
+                          }`}
                         >
                           <div>
                             <p
-                              className={`whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${isSent
-                                ? "bg-[#22577E] text-white rounded-br-none"
-                                : "bg-[#5584AC] text-white rounded-bl-none"
-                                }`}
+                              className={`whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${
+                                isSent
+                                  ? "bg-[#22577E] text-white rounded-br-none"
+                                  : "bg-[#5584AC] text-white rounded-bl-none"
+                              }`}
                             >
                               {msg.messageBody}
                             </p>
@@ -454,12 +471,15 @@ export const ChatScreen = ({
                         </div>
                       )}
 
-                      {templateType && <TemplateMessagePreview template={msg} />}
+                      {templateType && (
+                        <TemplateMessagePreview template={msg} />
+                      )}
                       {isBot && <BotPreview template={msg} />}
 
                       <div
-                        className={`mt-1 text-[0.7rem] ${isSent ? "text-end" : "text-start"
-                          }`}
+                        className={`mt-1 text-[0.7rem] ${
+                          isSent ? "text-end" : "text-start"
+                        }`}
                       >
                         <div className="flex justify-end gap-2 items-center">
                           <p>{formatTime(msg?.insertTime)}</p>
@@ -481,7 +501,6 @@ export const ChatScreen = ({
         </div>
       </div>
 
-
       {btnOption === "active" ? (
         <ChatInput
           input={input}
@@ -494,6 +513,8 @@ export const ChatScreen = ({
           isSpeedDialOpen={isSpeedDialOpen}
           isTemplateMessage={isTemplateMessage}
           setIsTemplateMessage={setIsTemplateMessage}
+          selectedMedia={selectedMedia}
+          setSelectedMedia={setSelectedMedia}
         />
       ) : (
         <motion.div

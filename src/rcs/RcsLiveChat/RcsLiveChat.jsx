@@ -244,8 +244,9 @@ const RcsLiveChat = () => {
   async function handleFileInput(e) {
     const files = e.target.files[0];
     const name = files.name;
-    const size = files.size / 1024;
+    const size = files.size / 1024 / 1024;
     const mimeType = files.type.split("/")[0];
+    const fileType = files.type.split("/")[1];
 
     const fileurl = await uploadImageFile(files);
 
@@ -258,6 +259,7 @@ const RcsLiveChat = () => {
       mimeType,
       file: files,
       fileUrl: fileurl?.fileUrl,
+      fileType,
     });
     setIsSpeedDialOpen(false);
   }
@@ -591,6 +593,8 @@ const RcsLiveChat = () => {
               isSpeedDialOpen={isSpeedDialOpen}
               isTemplateMessage={isTemplateMessage}
               setIsTemplateMessage={setIsTemplateMessage}
+              selectedMedia={selectedMedia}
+              setSelectedMedia={setSelectedMedia}
               // specificConversation={specificConversation}
             />
           </motion.div>
