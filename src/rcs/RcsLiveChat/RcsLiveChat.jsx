@@ -297,6 +297,13 @@ const RcsLiveChat = () => {
         return;
       }
       setInput("");
+      setSelectedMedia({
+        name: "",
+        size: "0MB",
+        mimeType: "text",
+        file: null,
+        fileUrl: null,
+      });
       await handleFetchSpecificConvo();
     } catch (e) {
       toast.error("Error sending message");
