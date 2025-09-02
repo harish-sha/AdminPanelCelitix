@@ -246,7 +246,11 @@ const RcsLiveChat = () => {
     const name = files.name;
     const size = files.size / 1024 / 1024;
     const mimeType = files.type.split("/")[0];
-    const fileType = files.type.split("/")[1];
+    let fileType = files.type.split("/")[1];
+
+    if(fileType.includes("sheet")){
+      fileType = "xlsx"
+    }
 
     const fileurl = await uploadImageFile(files);
 

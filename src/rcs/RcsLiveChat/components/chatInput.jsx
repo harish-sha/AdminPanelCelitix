@@ -114,7 +114,7 @@ export const ChatInput = ({
   }
   function renderDocument(url, type, name) {
     return (
-      <button className="flex items-center gap-1">
+      <button className="flex items-center gap-1" title={name}>
         <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md flex items-center gap-3">
           <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
             {getFileType(type)}
