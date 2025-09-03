@@ -59,6 +59,8 @@ import { TemplateNode } from "./components/template";
 import { AiOutlineApi } from "react-icons/ai";
 import { Api } from "./components/api";
 import { Flow } from "./components/flow";
+import { GoTab } from "react-icons/go";
+import { GoTo } from "./components/goto";
 
 const initialNodes = [];
 const initialEdges = [];
@@ -726,7 +728,7 @@ const CreateWhatsAppBot = () => {
       template: {},
       api: {},
       flow: {},
-      goto:{}
+      goto: {},
     };
     const nodeData = nodesInputData[selectedNodeId];
     const requiredFields = data[type];
@@ -876,7 +878,7 @@ const CreateWhatsAppBot = () => {
       template: {},
       api: {},
       flow: {},
-      goto:{}
+      goto: {},
     };
 
     let name = "";
@@ -1220,7 +1222,7 @@ const CreateWhatsAppBot = () => {
           setSelectedNodeId("");
           setIsVisible(false);
         }}
-        style={{ width: "50vw" }}
+        style={{ width: "50vw", height: "100%" }}
         draggable={false}
       >
         <div className="flex flex-col gap-2">
@@ -1309,6 +1311,13 @@ const CreateWhatsAppBot = () => {
               allVariables={allVariables}
               addNode={addNode}
               lastPosition={lastPosition}
+              nodes={nodes}
+            />
+          ) : type === "goto" ? (
+            <GoTo
+              id={selectedNodeId}
+              nodesInputData={nodesInputData}
+              setNodesInputData={setNodesInputData}
               nodes={nodes}
             />
           ) : null}

@@ -148,6 +148,9 @@ function generateBotPayload(
         (entry["condition_reply"] = true);
         entry["storeVariables"] = [];
     }
+    if (finalType === "goto") {
+      entry["gotoStep"] = nodeInput?.gotoStep;
+    }
     if (finalType === "api") {
       generateApiPayload(entry, nodeInput);
     }
