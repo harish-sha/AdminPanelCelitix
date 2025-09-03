@@ -154,6 +154,7 @@ function NodeComponent({
         {data.type === "template" && <p>Template Node ({id})</p>}
         {data.type === "api" && <p>API Node ({id})</p>}
         {data.type === "flow" && <p>Flow Node ({id})</p>}
+        {data.type === "goto" && <p>GoTo Node ({id})</p>}
       </div>
       {data?.type !== "list" && data?.type !== "button" && (
         <Handle
@@ -627,6 +628,17 @@ const CreateWhatsAppBot = () => {
           setNodesInputData={setNodesInputData}
         />
       ),
+      goto: (node: any) => (
+        <NodeComponent
+          id={node.id}
+          data={node.data}
+          onDelete={deleteNode}
+          isConnecting={isConnecting}
+          setIsVisible={setIsVisible}
+          connectionType={connectionType}
+          setNodesInputData={setNodesInputData}
+        />
+      ),
     }),
     [deleteNode, isConnecting, nodesInputData, isSettingBtnDisables]
   );
@@ -714,6 +726,7 @@ const CreateWhatsAppBot = () => {
       template: {},
       api: {},
       flow: {},
+      goto:{}
     };
     const nodeData = nodesInputData[selectedNodeId];
     const requiredFields = data[type];
@@ -863,6 +876,7 @@ const CreateWhatsAppBot = () => {
       template: {},
       api: {},
       flow: {},
+      goto:{}
     };
 
     let name = "";
@@ -1149,6 +1163,15 @@ const CreateWhatsAppBot = () => {
             >
               <QuestionAnswerOutlinedIcon />
               Answer
+            </Button>
+            <Button
+              draggable
+              onDragStart={(event) => handleDragStart(event, "goto")}
+              onClick={() => addNode("goto")}
+              className={commonButtonClass}
+            >
+              <QuestionAnswerOutlinedIcon />
+              GoTo Node
             </Button>
             <Button onClick={reset} className={commonButtonClass}>
               <RestartAltOutlinedIcon />
