@@ -323,11 +323,7 @@ const RcsLiveChat = () => {
       const payload = {
         agentId: chatState.active.agentId,
         mobileNo: chatState.active.mobileNo,
-        replyType:
-          selectedMedia.mimeType === "application"
-            ? "document"
-            : selectedMedia.mimeType,
-        ...(selectedMedia?.fileUrl ? {} : { message: input.trim() }),
+        replyType: "template",
         // chatNo: chatState.active.srno,
       };
       const body = {
@@ -351,12 +347,30 @@ const RcsLiveChat = () => {
       // const res = await sendRCSMessage(payload);
 
       const res = await sendRCSMessage(payload, body);
-      if (!res?.success) {
+      if (res?.status !== "success") {
         toast.error(res?.message);
         return;
       }
 
       toast.success("Template message sent successfully");
+      setIsTemplateMessage(false);
+      setIsSpeedDialOpen(false);
+      setTemplateState((prev) => ({ ...prev, selected: "" }));
+      setTemplateDetails(null);
+      setVarLength(0);
+      setVarList(0);
+      setInputVariables([]);
+      setBtnVarLength(0);
+      setBtnVarList(0);
+      setBtnInputVariables([]);
+
+      setSelectedIndex(0);
+      setCarVar({
+        length: 0,
+        data: {},
+      });
+      setCarVarInput([]);
+      setFinalVarList([]);
     } catch (e) {
       toast.error("Error sending Template message");
     }
