@@ -190,13 +190,13 @@ export const VariableManager = ({
             sx={{ width: "100%", marginBottom: "1rem" }}
           />
         </div>
-        <div className="absolute top-[0.58rem] right-2 h-10">
+        {/* <div className="absolute top-[0.58rem] right-2 h-10">
           <InputVariable
             variables={headers}
             onSelect={(e) => insertVariable(e, index)}
           />
-        </div>
-        <div className="absolute top-[0.8rem] right-10">
+        </div> */}
+        <div className="absolute top-[0.8rem] right-3">
           <CustomEmojiPicker onSelect={(e) => handleEmojiAdd(e, index)} />
         </div>
       </div>
@@ -294,12 +294,12 @@ export const VariableManager = ({
                 sx={{ width: "100%", marginBottom: "1rem" }}
               />
             </div>
-            <div className="absolute top-[0.1rem] right-0 h-10">
+            {/* <div className="absolute top-[0.1rem] right-0 h-10">
               <InputVariable
                 variables={headers}
                 onSelect={(e) => insertBtnVariable(e, index)}
               />
-            </div>
+            </div> */}
             {/* <div className="absolute top-[0.5rem] right-10">
               <CustomEmojiPicker onSelect={(e) => handleEmojiAdd(e, index)} />
             </div> */}
