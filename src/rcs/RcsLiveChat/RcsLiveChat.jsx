@@ -356,7 +356,7 @@ const RcsLiveChat = () => {
       setIsTemplateMessage(false);
       setIsSpeedDialOpen(false);
       setTemplateState((prev) => ({ ...prev, selected: "" }));
-      setTemplateDetails(null);
+      setTemplateDetails({});
       setVarLength(0);
       setVarList(0);
       setInputVariables([]);
