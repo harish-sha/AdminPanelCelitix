@@ -66,13 +66,15 @@ export const Details = ({
         style={{}}
       />
 
-      <UniversalButton
-        id="saveBot"
-        name="saveBot"
-        label={`${isUpdate ? "Update" : "Save"} and Exit`}
-        onClick={handleSubmit}
-        style={{}}
-      />
+      {isUpdate && (
+        <UniversalButton
+          id="saveBot"
+          name="saveBot"
+          label={`${isUpdate ? "Update" : "Save"} and Exit`}
+          onClick={handleSubmit}
+          style={{}}
+        />
+      )}
     </div>
   );
 };
