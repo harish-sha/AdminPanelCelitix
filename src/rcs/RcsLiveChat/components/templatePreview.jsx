@@ -57,12 +57,29 @@ export const Preview = ({
       (_, key) => variableValueMap[`{#${key}#}`] || `{#${key}#}`
     );
 
+    let url = "";
+    if (
+      templateDetails[0]?.templateType === "text_message_with_pdf" &&
+      templateDetails[0]["pdfBase64 "]
+    ) {
+      const base64PDF = templateDetails[0]["pdfBase64 "] || "";
+      const byteCharacters = atob(base64PDF);
+      const byteNumbers = Array.from(byteCharacters).map((c) =>
+        c.charCodeAt(0)
+      );
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "application/pdf" });
+      url = URL.createObjectURL(blob);
+    }
+
     setData({
       type,
       isCarousal,
       details: templateDetails,
       btnData: buttonSuggestions,
       replacedContent,
+      pdfUrl: url,
+      ...templateDetails[0],
     });
   }, [templateDetails, inputVariables]);
 
@@ -114,18 +131,24 @@ export const Preview = ({
         {!data.isCarousal ? (
           <div className="rounded-md border px-1">
             {data.type !== "text" && (
-              <div className="mb-0 w-full h-35">
+              <div className="mb-2 w-full h-35">
                 {data.type === "image" ? (
                   <img
                     src={data?.details[0]?.imageUrl}
                     alt="Uploaded content"
                     className="h-full w-full"
                   />
+                ) : data?.type === "video" ? (
+                  <video
+                    controls
+                    src={data?.details[0]?.imageUrl}
+                    className="w-full overflow-x-hidden"
+                  />
                 ) : (
                   <embed
-                    src={data?.details[0]?.imageUrl}
-                    type="your-file-type"
-                    className="w-[70%] overflow-x-hidden"
+                    src={data.pdfUrl}
+                    type={"application/pdf"}
+                    className="w-full overflow-x-hidden"
                   />
                 )}
               </div>
