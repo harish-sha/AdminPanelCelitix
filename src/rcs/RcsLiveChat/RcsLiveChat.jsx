@@ -248,8 +248,8 @@ const RcsLiveChat = () => {
     const mimeType = files.type.split("/")[0];
     let fileType = files.type.split("/")[1];
 
-    if(fileType.includes("sheet")){
-      fileType = "xlsx"
+    if (fileType.includes("sheet")) {
+      fileType = "xlsx";
     }
 
     const fileurl = await uploadImageFile(files);
@@ -321,6 +321,16 @@ const RcsLiveChat = () => {
       return;
     try {
       const payload = {
+        agentId: chatState.active.agentId,
+        mobileNo: chatState.active.mobileNo,
+        replyType:
+          selectedMedia.mimeType === "application"
+            ? "document"
+            : selectedMedia.mimeType,
+        ...(selectedMedia?.fileUrl ? {} : { message: input.trim() }),
+        // chatNo: chatState.active.srno,
+      };
+      const body = {
         contentMessage: {
           templateMessage: {
             templateCode: templateState.templateName,
@@ -340,8 +350,8 @@ const RcsLiveChat = () => {
 
       // const res = await sendRCSMessage(payload);
 
-      const res = await sendRCSTemplateMessage(payload);
-      if (!res?.status) {
+      const res = await sendRCSMessage(payload, body);
+      if (!res?.success) {
         toast.error(res?.message);
         return;
       }
