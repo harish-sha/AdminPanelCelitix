@@ -219,7 +219,7 @@ const ObdCampaignTable = ({
                                         // "failed",
                                         // "smsCount",
                                         // "totalChargedUnit",
-                                        // "unDelivered",
+                                        "unDelivered",
                                         // "queTime",
                                     ].map((key) => (
                                         <React.Fragment key={key}>

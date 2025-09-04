@@ -18,6 +18,7 @@ import { render } from "timeago.js";
 import moment from "moment";
 import toast from "react-hot-toast";
 import { exportToExcel } from "@/utils/utills";
+import { useUser } from "@/context/auth";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -89,6 +90,9 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [], exportFuncti
     pageSize: 10,
   });
 
+  const { user } = useUser();
+
+
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     isMonthWise
@@ -137,6 +141,16 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [], exportFuncti
       flex: 1,
       minWidth: 120,
     },
+    ...(user?.role === "RESELLER"
+      ? [
+        {
+          field: "resellerChargeUnit",
+          headerName: "Your Cost",
+          flex: 1,
+          minWidth: 120,
+        },
+      ]
+      : []),
     // { field: "pending", headerName: "Pending", flex: 1, minWidth: 120 },
     // { field: "others", headerName: "Others", flex: 1, minWidth: 120 },
   ];
@@ -160,7 +174,8 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [], exportFuncti
         readCount: item.readCount,
         drnotAvailable: item.dr_not_available,
         others: item.others,
-        chargedUnits: item.chargedUnits
+        chargedUnits: item.chargedUnits,
+        resellerChargeUnit: item.resellerChargeUnit,
       }))
       : [];
   } else {
@@ -180,7 +195,8 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [], exportFuncti
         readCount: item.readCount,
         drnotAvailable: item.dr_not_available,
         others: item.others,
-        chargedUnits: item.chargedUnits
+        chargedUnits: item.chargedUnits,
+        resellerChargeUnit: item.resellerChargeUnit,
       }))
       : [];
   }

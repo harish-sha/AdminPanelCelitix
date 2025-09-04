@@ -98,6 +98,7 @@ const ChannelTabs = () => {
   const dropdownRef = useRef(null);
   const rcsdropdownRef = useRef(null);
 
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -278,7 +279,7 @@ const ChannelTabs = () => {
   const quickRcsActions = [
     {
       label: "Select Agent",
-      icon: <FaWhatsapp className="text-indigo-500 text-sm" />,
+      icon: <FaCommentDots className="text-blue-400 text-sm" />,
       onClick: handleSelectAgent,
     },
     {
@@ -399,6 +400,13 @@ const ChannelTabs = () => {
   //     ch.service_type_id === "1" ||
   //     allowedServiceIds.includes(ch.service_type_id)
   // );
+
+
+  useEffect(() => {
+    if (activeTab !== "rcslivechats") {
+      setDisplayAgentName("")
+    }
+  }, [activeTab])
 
   return (
     <div className="flex flex-col gap-1 relative z-10">
@@ -908,7 +916,7 @@ const ChannelTabs = () => {
                 setAgentSelected(true);
               }}
               className={`px-3 py-2 cursor-pointer border-b hover:bg-blue-50 hover:text-blue-600 transition-colors
-            ${agentData?.id === agent.agent_id
+            ${contextAgentList?.id === agent?.agent_id
                   ? "bg-blue-100 text-blue-700 font-medium"
                   : ""
                 }`}

@@ -224,14 +224,27 @@ export const fetchSpecificConvo = (data) => {
     }
   );
 };
+// export const sendRCSMessage = (data, body) => {
+//   return fetchWithAuth(
+//     `/rcs/sendRcsMessage?agentId=${data.agentId}&mobile=${data.mobileNo}&message=${data.message}&replyFrom=user&replyType=${data.replyType}`,
+//     {
+//       method: "POST",
+//       body: JSON.stringify(body),
+//     }
+//   );
+// };
+
 export const sendRCSMessage = (data, body) => {
-  return fetchWithAuth(
-    `/rcs/sendRcsMessage?agentId=${data.agentId}&mobile=${data.mobileNo}&message=${data.message}&replyFrom=user&replyType=${data.replyType}`,
-    {
-      method: "POST",
-      body: JSON.stringify(body),
-    }
-  );
+  const url = `/rcs/sendRcsMessage?agentId=${data.agentId}&mobile=${
+    data.mobileNo
+  }&replyFrom=user&replyType=${data.replyType}${
+    data.message ? `&message=${encodeURIComponent(data.message)}` : ""
+  }`;
+
+  return fetchWithAuth(url, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
 };
 
 export const sendRCSTemplateMessage = (data) => {

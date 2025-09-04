@@ -634,13 +634,13 @@ export default function CannedMessageManager() {
 
     try {
       const response = await axios.post(
-        "https://api.openai.com/v1/chat/completions",
+        "https://api.openai.com/v1/responses",
         {
-          model: "gpt-3.5-turbo",
-          messages: [
+          model: "gpt-4o-mini",
+          input: [
             // { role: "system", content: "You are a helpful assistant." },
             {
-              role: "system",
+              role: "developer",
               content: `
           You are an AI assistant for marketing and promotional messages.
           Your only job is to help users write short, engaging marketing and promotional messages for campaigns.
@@ -651,8 +651,7 @@ export default function CannedMessageManager() {
             },
             { role: "user", content: prompt },
           ],
-          max_tokens: 1024,
-          temperature: 0.7,
+          max_output_tokens: 1024
         },
         {
           headers: {

@@ -84,13 +84,6 @@ export const TemplateDialog = ({
               />
             </div>
           </div>
-
-          <UniversalButton
-            id="sendTemplateMessage"
-            name="sendTemplateMessage"
-            label="Send Template Message"
-            onClick={handleSendTemplateMessage}
-          />
         </div>
 
         <Preview
@@ -98,6 +91,14 @@ export const TemplateDialog = ({
           selectedIndex={selectedIndex}
           setSelectedIndex={setSelectedIndex}
           inputVariables={inputVariables}
+        />
+      </div>
+      <div className="flex items-center justify-center w-full mt-4">
+        <UniversalButton
+          id="sendTemplateMessage"
+          name="sendTemplateMessage"
+          label="Send Template Message"
+          onClick={handleSendTemplateMessage}
         />
       </div>
     </Dialog>

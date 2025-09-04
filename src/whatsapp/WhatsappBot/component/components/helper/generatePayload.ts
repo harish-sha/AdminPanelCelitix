@@ -137,6 +137,16 @@ function generateBotPayload(
         (entry["urlbuttonUrl"] = nodeInput?.urlbuttonUrl),
         (entry["selectedOption"] = nodeInput?.selectedOption || "");
     }
+    if (finalType === "flow") {
+      (entry["flowSrno"] = nodeInput?.flowSrno),
+        (entry["flowId"] = nodeInput?.flowId),
+        (entry["screenId"] = nodeInput?.screenId),
+        (entry["flowName"] = nodeInput?.flowName),
+        (entry["bodyText"] = nodeInput?.bodyText),
+        (entry["buttonText"] = nodeInput?.buttonText),
+        (entry["condition_reply"] = true);
+      entry["storeVariables"] = [];
+    }
     if (finalType === "api") {
       generateApiPayload(entry, nodeInput);
     }

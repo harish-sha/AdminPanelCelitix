@@ -462,6 +462,17 @@ const ObdManageVoiceClips = () => {
           isError = true;
         }
       });
+      if (isError) return;
+    }
+
+    if (selectedOption === "option2") {
+      dynamicVoice.dynamicList.forEach((item, index) => {
+        if (item.dynamicType === "variable" && !item.variableValue) {
+          toast.error(`Please upload variable for item ${index + 1}`);
+          isError = true;
+        }
+      });
+      if (isError) return;
     }
 
     selectedOption === "option2" &&
@@ -499,11 +510,16 @@ const ObdManageVoiceClips = () => {
           voiceType: typeId[selecteTransactional],
           variableValue: dynamicVoice?.voiceName,
         };
+
         const res = await saveDynamicVoice(payload);
         setIsVisible(false);
         // toast.success(res.msg);
         //  setDynamicVoice({});
-        await handlefetchAllVoiceClips()
+        setDynamicVoice({
+          voiceName: "",
+          dynamicList: []
+        });
+        await handlefetchAllVoiceClips();
       }
     } catch (e) {
       toast.error("Something went wrong");
@@ -528,7 +544,7 @@ const ObdManageVoiceClips = () => {
 
     setDynamicVoice((prev) => ({
       ...prev,
-      dynamicList: [...prev.dynamicList, newItem],
+      dynamicList: [...prev?.dynamicList, newItem],
     }));
   }
 
@@ -863,7 +879,7 @@ const ObdManageVoiceClips = () => {
                 />
               </div>
             </div>
-            {dynamicVoice.dynamicList.length > 0 && (
+            {dynamicVoice?.dynamicList?.length > 0 && (
               <>
                 <div className="space-y-2 max-h-70 overflow-y-auto border border-gray-300 p-2 rounded-md mt-2">
                   {dynamicVoice.dynamicList.map((list, index) => (
@@ -984,10 +1000,12 @@ const ObdManageVoiceClips = () => {
           </div>
         ) : (
           <>
-            <div
-              className="mb-4 w-[260px] border border-gray-300 rounded-xl shadow-lg p-4 hover:shadow-xl hover:border-blue-500 transition duration-300"
-            >
-              <MusicPlayerSlider data={selectedRow} onPlay={() => { }} isPlaying={false} />
+            <div className="mb-4 w-[260px] border border-gray-300 rounded-xl shadow-lg p-4 hover:shadow-xl hover:border-blue-500 transition duration-300">
+              <MusicPlayerSlider
+                data={selectedRow}
+                onPlay={() => { }}
+                isPlaying={false}
+              />
             </div>
           </>
         )}

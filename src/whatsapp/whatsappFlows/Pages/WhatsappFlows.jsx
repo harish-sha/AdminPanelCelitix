@@ -204,7 +204,7 @@ const WhatsappFlows = () => {
     (flow) => {
       const searchText = search.toLowerCase();
       const flowName = (flow?.flowName || "").toLowerCase();
-      const flowId = String(flow?.flowId || "").toLowerCase();
+      const flowId = String(flow?.flowId || "");
 
       return flowName.includes(searchText) || flowId.includes(searchText);
     }

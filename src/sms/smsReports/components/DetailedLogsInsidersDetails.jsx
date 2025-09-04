@@ -107,10 +107,6 @@ const CampaignDetailsReport = () => {
   const [campaignDetailsNew, setCampaignDetailsNew] = useState(campaignDetails);
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
   const [clicked, setClicked] = useState({});
-  const additionalInfoLabels = {
-    // Example mapping: 'queuedate': 'Queue Date'
-  }
-
 
   const fetchData = async () => {
     const body = {
@@ -123,7 +119,7 @@ const CampaignDetailsReport = () => {
       delStatus: deliveryStatus,
     };
     const res = await getPreviousCampaignDetails(body);
-    setTotalPage(res.total)
+    setTotalPage(res.total);
     setCampaignDetailsNew(res.data);
   };
 
@@ -146,55 +142,103 @@ const CampaignDetailsReport = () => {
     setDropdownOpenId(null);
   };
 
-  const infoFieldsToShow = [
-    "que_time",
-    "Delivery Time",
-    "unique_id",
-    "circle_srno",
-    "source",
-    "PE_ID",
-    "template_id",
-    "source",
-    "isunicode",
-    "Character Length",
-    "desc",
-    "Service Type",
-  ];
-
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "mobile_no", headerName: "Mobile Number", flex: 1, minWidth: 150 },
-    { field: "sent_time", headerName: "Sent Time", flex: 1, minWidth: 150 },
     {
-      field: "message",
-      headerName: "Message",
-      flex: 1,
-      minWidth: 150,
+      field: "sn",
+      headerName: "S.No",
+      flex: 0,
+      minWidth: 80,
       renderCell: (params) => (
-        <div
-          className="text-wrap text-sm"
-        >
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
           {params.value}
         </div>
       ),
     },
-    { field: "status", headerName: "Status", flex: 1, minWidth: 150 },
+    {
+      field: "mobile_no",
+      headerName: "Mobile Number",
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          {params.value}
+        </div>
+      ),
+    },
+    {
+      field: "sent_time",
+      headerName: "Sent Time",
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          {params.value}
+        </div>
+      ),
+    },
+    {
+      field: "message",
+      headerName: "Message",
+      flex: 1,
+      minWidth: 220,
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          {params.value}
+        </div>
+      ),
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          {params.value}
+        </div>
+      ),
+    },
     {
       field: "actual_status",
       headerName: "Delivery Status",
       flex: 1,
       minWidth: 150,
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          {params.value}
+        </div>
+      ),
     },
-    { field: "smsunit", headerName: "SMS Unit", flex: 1, minWidth: 150 },
-    { field: "senderid", headerName: "Header", flex: 1, minWidth: 150 },
+    {
+      field: "smsunit",
+      headerName: "SMS Unit",
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          {params.value}
+        </div>
+      ),
+    },
+    {
+      field: "senderid",
+      headerName: "Header",
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          {params.value}
+        </div>
+      ),
+    },
     {
       field: "action",
       headerName: "Action",
       flex: 1,
       minWidth: 120,
       renderCell: (params) => (
-        <CustomTooltip title="Info" placement="top" arrow>
-          <span>
+        <span style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          <CustomTooltip title="Info" placement="top" arrow>
             <IconButton
               type="button"
               ref={(el) => {
@@ -214,25 +258,37 @@ const CampaignDetailsReport = () => {
               {clicked && Object.keys(clicked).length > 0 ? (
                 <table className="w-90 text-sm text-left border border-gray-200 rounded-md overflow-hidden">
                   <tbody>
-                    {Object.entries(clicked)
-                      .filter(([key]) => infoFieldsToShow.includes(key))
-                      .map(([key, value], index) => (
-                        <tr
-                          key={index}
-                          className="hover:bg-gray-50 transition-colors border-b last:border-none"
-                        >
-                          <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3 text-nowrap">
-                            {additionalInfoLabels[key] || key}
-                          </td>
-                          <td className="px-4 py-2 text-gray-800">
-                            {key === "isEnabledForInsights"
-                              ? value === true || value === "true"
-                                ? "True"
-                                : "False"
-                              : value || "N/A"}
-                          </td>
-                        </tr>
-                      ))}
+                    {[
+                      { label: "Queue Time", key: "que_time" },
+                      { label: "Delivery Time", key: "del_time" },
+                      { label: "Unique ID", key: "unique_id" },
+                      { label: "Circle Srno", key: "circle_srno" },
+                      { label: "Source", key: "source" },
+                      { label: "PE ID", key: "PE_ID" },
+                      { label: "Template ID", key: "template_id" },
+                      { label: "Unicode", key: "isunicode" },
+                      { label: "Character Length", key: "actual_sms_length" },
+                      { label: "Country", key: "country" },
+                      // { label: "Actual Status", key: "actual_status" },
+                      // { label: "Service Type", key: "service_type" },
+                      { label: "Description", key: "desc" },
+                    ].map(({ label, key }, index) => (
+                      <tr
+                        key={index}
+                        className="hover:bg-gray-50 transition-colors border-b last:border-none"
+                      >
+                        <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3 text-nowrap">
+                          {label}
+                        </td>
+                        <td className="px-4 py-2 text-gray-800">
+                          {key === "isEnabledForInsights"
+                            ? clicked[key] === true || clicked[key] === "true"
+                              ? "True"
+                              : "False"
+                            : clicked[key] || "N/A"}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               ) : (
@@ -241,8 +297,8 @@ const CampaignDetailsReport = () => {
                 </div>
               )}
             </InfoPopover>
-          </span>
-        </CustomTooltip>
+          </CustomTooltip>
+        </span>
       ),
     },
   ];
@@ -406,6 +462,7 @@ const CampaignDetailsReport = () => {
           rows={rows}
           columns={columns}
           rowHeight={45}
+          getRowHeight={() => "auto"}
           paginationModel={paginationModel}
           onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
           disableRowSelectionOnClick

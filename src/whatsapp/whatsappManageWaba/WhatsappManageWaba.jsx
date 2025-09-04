@@ -450,6 +450,10 @@ const WhatsappManageWaba = ({ id, name }) => {
       title: "Banned",
       description: "This number has been banned. Contact support for resolution.",
     },
+    DISCONNECTED: {
+      title: "Disconnected",
+      description: "This account has been disconnected. Contact support for resolution.",
+    },
     UNKNOWN: {
       title: "Unknown",
       description: "The status of this number is unknown or not reported.",
@@ -523,6 +527,7 @@ const WhatsappManageWaba = ({ id, name }) => {
           RESTRICTED: { color: "bg-red-500", text: "Restricted" },
           BANNED: { color: "bg-red-700", text: "Banned" },
           UNKNOWN: { color: "bg-gray-400", text: "Unknown" },
+          DISCONNECTED: { color: "bg-red-800", text: "Disconnected" },
         };
         const { color, text } = statusMap[status] || statusMap.UNKNOWN;
         const content = statusMessages[status] || statusMessages.UNKNOWN;

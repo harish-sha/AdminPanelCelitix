@@ -131,7 +131,7 @@ const ResellerLogin = () => {
       setBasicDetails({
         systemInfo: uaResult.browser.name,
         ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // ip: "0.0.0.7",
+        // ip: "43.224.1.236",
         domain,
       });
 
@@ -140,7 +140,7 @@ const ResellerLogin = () => {
         password,
         systemInfo: uaResult.browser.name || "Unknown",
         ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // ip: "0.0.0.7",
+        // ip: "43.224.1.236",
         domain: domain
       };
 
@@ -242,7 +242,8 @@ const ResellerLogin = () => {
         : await requestOtp(payload);
 
       if (!res?.data?.status) {
-        return toast.error(res?.msg || "Unable to send OTP");
+        console.log(res?.data?.msg)
+        return toast.error(res?.data?.msg || "Unable to send OTP");
       }
       toast.success("OTP Sent to your mobile number");
       setStep("verifynumberotp");
@@ -600,7 +601,7 @@ const ResellerLogin = () => {
                 <div className="my-2" >
                   {!isForgotPassword ?
                     <p className="text-center font-medium sm:text-lg playf">
-                      Provide your mobile number for secure access.{" "}
+                      Provide your mobile number <span className="text-sm font-bold">(with country code)</span> <br /> for secure access.{" "}
                     </p>
                     :
                     <p className="text-center font-medium sm:text-lg playf">
@@ -629,9 +630,10 @@ const ResellerLogin = () => {
                   <input
                     type="text"
                     placeholder="Enter Mobile Number"
-                    className="w-full p-2 border border-gray-300 rounded-xl"
+                    className={`w-full p-2 border border-gray-300 rounded-xl ${loading ? "bg-gray-300" : ""} `}
                     onChange={(e) => setVerifyNumber(e.target.value)}
-                    maxLength={13}
+                    maxLength={15}
+                    disabled={loading}
                   />
                 </div>
 
@@ -656,14 +658,17 @@ const ResellerLogin = () => {
                     )}
                   </button>
                 </div>
-                <div className="flex items-center justify-center">
-                  <button
-                    className=" text-black hover:underline p-2 rounded-lg mt-4 text-centre cursor-pointer"
-                    onClick={handleBackToLogin}
-                  >
-                    ← Back to Login
-                  </button>
-                </div>
+
+                {!loading && (
+                  <div className="flex items-center justify-center">
+                    <button
+                      className=" text-black hover:underline p-2 rounded-lg mt-4 text-centre cursor-pointer"
+                      onClick={handleBackToLogin}
+                    >
+                      ← Back to Login
+                    </button>
+                  </div>
+                )}
               </motion.div>
             )}
 
@@ -749,14 +754,16 @@ const ResellerLogin = () => {
                     {isResendDisabled ? `Resend OTP in ${timer} seconds` : ""}
                   </p> */}
 
-                  <div className="flex items-center justify-center">
-                    <button
-                      className=" text-black underline p-2 rounded-lg mt-4 text-centre cursor-pointer"
-                      onClick={handleBackToLogin}
-                    >
-                      ← Back to Login
-                    </button>
-                  </div>
+                  {!loading && (
+                    <div className="flex items-center justify-center">
+                      <button
+                        className=" text-black underline p-2 rounded-lg mt-4 text-centre cursor-pointer"
+                        onClick={handleBackToLogin}
+                      >
+                        ← Back to Login
+                      </button>
+                    </div>
+                  )}
                 </motion.div>
               </>
             )}

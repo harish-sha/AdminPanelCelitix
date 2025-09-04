@@ -35,7 +35,7 @@ export const ConfigureDialog = ({
   const [lastSetMinute, setLastSetMinute] = useState("");
 
   const handleSetMinute = async () => {
-    if (!basicDetails.time || Number(basicDetails.time) <= 0) {
+    if (!basicDetails.timeout || Number(basicDetails.timeout) <= 0) {
       toast.error("Please enter a valid number of minutes");
       return;
     }
@@ -44,6 +44,15 @@ export const ConfigureDialog = ({
     toast.success(`Response time set to ${minuteInput} minutes`);
     // setMinuteInput("");
   };
+
+
+  const templateOptions = [
+    // { value: null, label: "Please select a template", disabled: true, hidden: true },
+    ...(allTemplates?.map((template) => ({
+      value: template.value,
+      label: template.label,
+    })) || []),
+  ];
 
   useEffect(() => {
     async function handleFetchAgents() {
@@ -61,6 +70,7 @@ export const ConfigureDialog = ({
 
     handleFetchAgents();
   }, []);
+
 
   return (
     <Dialog
@@ -109,7 +119,7 @@ export const ConfigureDialog = ({
               }}
               checked={basicDetails?.msgType === "1"}
             />
-            <label htmlFor="customMessage"> Custom</label>
+            <label htmlFor="customMessage">Custom</label>
           </div>
         </div>
 
@@ -139,25 +149,15 @@ export const ConfigureDialog = ({
                 id="templateMessage"
                 name="templateMessage"
                 label="Select Template"
-                options={allTemplates?.map((template) => ({
-                  value: template.value,
-                  label: template.label,
-                }))}
-                value={allTemplates?.find(
-                  (temp) => temp.value == basicDetails?.template
-                )}
-                onChange={(e) => {
+                options={templateOptions}
+                value={basicDetails.template ?? null}
+                onChange={(selected) => {
                   setBasicDetails((prev) => ({
                     ...prev,
-                    template: e,
+                    template: selected,   // selected is the full {value,label} object
                   }));
                   setFileData({ url: "", file: "" });
-                  // fileRef ? (fileRef.current.value = "") : null;
-                  setVariablesData({
-                    length: 0,
-                    data: [],
-                    input: [],
-                  });
+                  setVariablesData({ length: 0, data: [], input: [] });
                 }}
                 className="w-full"
               />
@@ -202,30 +202,31 @@ export const ConfigureDialog = ({
             </div>
           )}
         </div>
-
-        <div className="shadom-md p-3 bg-gray-100 rounded-md w-full flex flex-row gap-5">
-          <div className="w-46">
-            <InputField
-              label="Set No Response Time: "
-              tooltipContent="Enter only minutes"
-              value={basicDetails.time}
-              onChange={(e) =>
-                setBasicDetails((prev) => ({
-                  ...prev,
-                  time: e.target.value,
-                }))
-              }
-            />
-            {lastSetMinute && (
-              <div className="text-green-600 text-xs font-semibold mt-1">
-                Last set: {lastSetMinute} minutes
-              </div>
-            )}
+        {configureState?.type === "15_minutes_message" && (
+          <div className="shadom-md p-3 bg-gray-100 rounded-md w-full flex flex-row gap-5">
+            <div className="w-46">
+              <InputField
+                label="Set No Response Time: "
+                tooltipContent="Enter only minutes"
+                value={basicDetails.timeout}
+                onChange={(e) =>
+                  setBasicDetails((prev) => ({
+                    ...prev,
+                    timeout: e.target.value,
+                  }))
+                }
+              />
+              {lastSetMinute && (
+                <div className="text-green-600 text-xs font-semibold mt-1">
+                  Last set: {lastSetMinute} minutes
+                </div>
+              )}
+            </div>
+            <div className="w-25 mt-6">
+              <UniversalButton label="Set" onClick={handleSetMinute} />
+            </div>
           </div>
-          <div className="w-25 mt-6">
-            <UniversalButton label="Set" onClick={handleSetMinute} />
-          </div>
-        </div>
+        )}
 
         <UniversalButton
           label="Save"

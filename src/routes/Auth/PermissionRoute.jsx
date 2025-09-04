@@ -101,6 +101,7 @@ export const PermissionRoute = ({ children }) => {
       "openRoutes",
       "WorkFlow",
       "chatManagement",
+      "Number Lookup" // - later remove this number lookup according to service id
     ];
 
     return menuItems.filter(

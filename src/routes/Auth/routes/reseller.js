@@ -15,6 +15,7 @@ export const resellerItems = [
       "/apicampaigninfo",
       "/obdmanagecampaign",
       "/obdCampaignDetailslog",
+      "/smscampaigndetailsreport",
     ],
     roles: ["ADMIN"],
   },

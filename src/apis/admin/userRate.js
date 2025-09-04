@@ -126,3 +126,28 @@ export const deleteSmsRateByUser = async (userSrno) => {
     method: "DELETE",
   });
 };
+
+// Lookup pricing
+export const addEditHlrPricing = async (data) => {
+  return await fetchWithAuth(
+    `/pricing/addEditHLRPricing?rate=${data.rate}&userSrno=${data.userSrno}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+export const getHlrPricing = async (data) => {
+  return await fetchWithAuth(`/pricing/getHLRPricing?userSrno=${data}`, {
+    method: "POST",
+  });
+};
+
+export const deleteHlrPricing = async (data) => {
+  return await fetchWithAuth(
+    `/pricing/deleteHLRPricing?userSrno=${data.userSrno}`,
+    {
+      method: "POST",
+    }
+  );
+};

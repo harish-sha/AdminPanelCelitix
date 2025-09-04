@@ -70,7 +70,7 @@ const WhatsappCreateTemplate = () => {
       uploadUrl: "",
     },
   ]);
-
+  const [isShortUrl, setIsShortUrl] = useState(0);
   const textAreaRef = useRef(null)
   const [variables, setVariables] = useState([]);
   const [templatePreview, setTemplatePreview] = useState("");
@@ -251,6 +251,7 @@ const WhatsappCreateTemplate = () => {
         setAllFlows(publishedFlows);
       } catch (e) {
         console.log(e);
+        toast.error("Error while fetching flows");
       }
     }
 
@@ -347,12 +348,14 @@ const WhatsappCreateTemplate = () => {
           type: "URL",
           text: urlTitle,
           url,
+          isShortUrl: isShortUrl,
           example: [urlVariables[0].value],
         });
       } else {
         btns.push({
           type: "URL",
           text: urlTitle,
+          isShortUrl: isShortUrl,
           url,
         });
       }
@@ -1072,6 +1075,8 @@ const WhatsappCreateTemplate = () => {
                             setFlowTemplateState={setFlowTemplateState}
                             flowTemplateState={flowTemplateState}
                             allFlows={allFlows}
+                            setIsShortUrl={setIsShortUrl}
+                            isShortUrl={isShortUrl}
                           />
                         </>
                       )}

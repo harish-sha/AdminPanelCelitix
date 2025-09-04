@@ -58,6 +58,7 @@ import { HiOutlineTemplate } from "react-icons/hi";
 import { TemplateNode } from "./components/template";
 import { AiOutlineApi } from "react-icons/ai";
 import { Api } from "./components/api";
+import { Flow } from "./components/flow";
 
 const initialNodes = [];
 const initialEdges = [];
@@ -152,6 +153,7 @@ function NodeComponent({
         {data.type === "urlbutton" && <p>Url Node ({id})</p>}
         {data.type === "template" && <p>Template Node ({id})</p>}
         {data.type === "api" && <p>API Node ({id})</p>}
+        {data.type === "flow" && <p>Flow Node ({id})</p>}
       </div>
       {data?.type !== "list" && data?.type !== "button" && (
         <Handle
@@ -614,6 +616,17 @@ const CreateWhatsAppBot = () => {
           setNodesInputData={setNodesInputData}
         />
       ),
+      flow: (node: any) => (
+        <NodeComponent
+          id={node.id}
+          data={node.data}
+          onDelete={deleteNode}
+          isConnecting={isConnecting}
+          setIsVisible={setIsVisible}
+          connectionType={connectionType}
+          setNodesInputData={setNodesInputData}
+        />
+      ),
     }),
     [deleteNode, isConnecting, nodesInputData, isSettingBtnDisables]
   );
@@ -700,6 +713,7 @@ const CreateWhatsAppBot = () => {
       urlbutton: {},
       template: {},
       api: {},
+      flow: {},
     };
     const nodeData = nodesInputData[selectedNodeId];
     const requiredFields = data[type];
@@ -776,7 +790,7 @@ const CreateWhatsAppBot = () => {
     setIsVisible(false);
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (isClose = true) => {
     if (!details?.name) {
       return toast.error("Please enter bot name");
     }
@@ -848,6 +862,7 @@ const CreateWhatsAppBot = () => {
       urlbutton: {},
       template: {},
       api: {},
+      flow: {},
     };
 
     let name = "";
@@ -955,17 +970,19 @@ const CreateWhatsAppBot = () => {
         return toast.error("Error Saving Bot");
       }
 
-      setNodes(initialNodes);
-      setEdges(initialEdges);
-      setNodeId(1);
-      setNodesInputData({});
-      setDetails((prev) => ({
-        ...prev,
-        selected: "",
-        name: "",
-      }));
       toast.success("Bot Save Successfully");
-      navigate("/wwhatsappbot");
+      if (isClose) {
+        setNodes(initialNodes);
+        setEdges(initialEdges);
+        setNodeId(1);
+        setNodesInputData({});
+        setDetails((prev) => ({
+          ...prev,
+          selected: "",
+          name: "",
+        }));
+        navigate("/wwhatsappbot");
+      }
     } catch (e) {
       // console.log(e);
       toast.error("Error Saving Bot");
@@ -1108,6 +1125,15 @@ const CreateWhatsAppBot = () => {
             </Button>
             <Button
               draggable
+              onDragStart={(event) => handleDragStart(event, "flow")}
+              onClick={() => addNode("flow")}
+              className={commonButtonClass}
+            >
+              <HiOutlineTemplate className="size-6" />
+              Flow
+            </Button>
+            <Button
+              draggable
               onDragStart={(event) => handleDragStart(event, "api")}
               onClick={() => addNode("api")}
               className={commonButtonClass}
@@ -1160,6 +1186,8 @@ const CreateWhatsAppBot = () => {
               <p className="text-sm">
                 (Make button options for the button node)
               </p>
+            ) : type === "flow" ? (
+              <p className="text-sm">(Make Flow options for the Flow node)</p>
             ) : null}
           </>
         }
@@ -1242,6 +1270,16 @@ const CreateWhatsAppBot = () => {
             />
           ) : type === "api" ? (
             <Api
+              id={selectedNodeId}
+              nodesInputData={nodesInputData}
+              setNodesInputData={setNodesInputData}
+              allVariables={allVariables}
+              addNode={addNode}
+              lastPosition={lastPosition}
+              nodes={nodes}
+            />
+          ) : type === "flow" ? (
+            <Flow
               id={selectedNodeId}
               nodesInputData={nodesInputData}
               setNodesInputData={setNodesInputData}

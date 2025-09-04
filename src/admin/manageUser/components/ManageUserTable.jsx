@@ -103,7 +103,10 @@ import {
   saveEditWhatsappRate,
   saveVoiceRate,
   deleteVoiceRateBySrno,
-  deleteSmsRateByUser
+  deleteSmsRateByUser,
+  addEditHlrPricing,
+  deleteHlrPricing,
+  getHlrPricing,
 } from "@/apis/admin/userRate";
 import { getCountryList } from "@/apis/common/common";
 import {
@@ -987,6 +990,68 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   ];
   // =======================================OBD RATE END=======================================
 
+  // =======================================NumberLookUp RATE Start=======================================
+  const [numberLookupRate, setNumberLookupRate] = useState("");
+  const [savedNumberLookupRate, setSavedNumberLookupRate] = useState("");
+  const [numberLookupInsertTime, setNumberLookupInsertTime] = useState("");
+  const [numberLookupRateDeleteVisible, setNumberLookupRateDeleteVisible] =
+    useState(false);
+
+  // SAVE Rate
+  async function handleNumberLookupSave() {
+    if (!numberLookupRate) {
+      return toast.error("Please enter Number Lookup Rate");
+    }
+    try {
+      const data = {
+        userSrno: currentUserSrno,
+        rate: numberLookupRate,
+      };
+
+      const res = await addEditHlrPricing(data);
+
+      if (!res?.msg?.includes("successfully")) {
+        toast.error("Number Lookup Rate saving failed");
+      } else {
+        toast.success("Number Lookup Rate update successfully");
+
+        // setNumberLookupRate(res?.Rate);
+        // setNumberLookupInsertTime(res?.InsertTime)
+        handleFetchLookUpRate(currentUserSrno);
+      }
+    } catch (error) {
+      toast.error("Failed to update Number Lookup Rate");
+    }
+  }
+
+  async function handleFetchLookUpRate(userSrno) {
+    try {
+      const res = await getHlrPricing(userSrno);
+      setNumberLookupRate(res?.Rate);
+      setNumberLookupInsertTime(res?.InsertTime);
+    } catch (e) {
+      toast.error("Failed to get Number Lookup Rate");
+    }
+  }
+  // Delete Rate
+  async function handleNumberLookupRateDelete(userSrno) {
+    try {
+      const res = await deleteHlrPricing({ userSrno: currentUserSrno });
+      if (!res?.msg?.includes("successfully")) {
+        return toast.error(res?.msg || "Number Lookup Rate deletion failed");
+      } else {
+        setNumberLookupRateDeleteVisible(false);
+        toast.success("Number Lookup Rate deleted successfully");
+        setNumberLookupRate("");
+        handleFetchLookUpRate(currentUserSrno);
+      }
+    } catch (error) {
+      toast.error("Failed to delete Number Lookup Rate");
+    }
+  }
+
+  // =======================================NumberLookUp RATE END=======================================
+
   // =======================================TWO-WAY-SMS RATE START=======================================
   const [twowayStatus, setTwoWayStatus] = useState("disable");
   const [twowayAssign, setTwowayAssign] = useState(null);
@@ -1140,10 +1205,86 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   //=======================================GENERATE API KEY END=======================================
 
-  //=======================================ADD 2FA MOBILE NUMBER START=======================================
-  const [mobileNumbers, setMobileNumbers] = useState([""]);
-  const [otpService, setOtpService] = useState(false);
+  // //=======================================ADD 2FA MOBILE NUMBER START=======================================
+  // const [mobileNumbers, setMobileNumbers] = useState([""]);
+  // const [otpService, setOtpService] = useState(false);
 
+
+  // // Add new input field (Max 5)
+  // const addMobileNumber = () => {
+  //   if (mobileNumbers.length >= 5) {
+  //     toast.error("You can add a maximum of 5 mobile numbers.");
+  //     return;
+  //   }
+  //   setMobileNumbers([...mobileNumbers, ""]);
+  // };
+
+  // async function saveMobileNumber() {
+  //   try {
+  //     const isEmpty = mobileNumbers.some((number) => !number.trim());
+
+  //     if (isEmpty) {
+  //       toast.error("Please enter mobile number in all inputs.");
+  //       return;
+  //     }
+  //     const mbNo = mobileNumbers.join(",");
+  //     const payload = {
+  //       mbno: mbNo,
+  //       userSrno: selectedId,
+  //     };
+  //     const res = await addMobileNumbers(payload);
+  //     if (!res?.msg.includes("successfully")) {
+  //       toast.error(res?.msg);
+  //     }
+  //     toast.success("Mobile number updated successfully");
+  //     setOtpService(false);
+  //   } catch (e) {
+  //     toast.error(e?.message || "Failed to update");
+  //   }
+  // }
+
+  // const removeMobileNumber = (index) => {
+  //   const updatedNumbers = mobileNumbers.filter((_, i) => i !== index);
+  //   setMobileNumbers(updatedNumbers);
+  // };
+
+  // const handleInputChange = (index, value) => {
+  //   const updatedNumbers = [...mobileNumbers];
+  //   updatedNumbers[index] = value;
+  //   setMobileNumbers(updatedNumbers);
+  // };
+
+  // const handleOtp = (id) => {
+  //   setOtpService(true);
+  //   setSelectedId(id);
+  // };
+
+  // useEffect(() => {
+  //   if (!selectedId) return;
+  //   async function fetchMobileNo() {
+  //     try {
+  //       const res = await getMobileNumbers(selectedId);
+  //       const mobile = res?.regMoblienos?.split(",");
+  //       setMobileNumbers(mobile || [""]);
+  //       // setotp
+  //     } catch (e) {
+  //       return toast.error(e.message);
+  //     }
+  //   }
+  //   fetchMobileNo();
+  // }, [otpService]);
+
+  // //=======================================ADD 2FA MOBILE NUMBER END=======================================
+
+  //=======================================ADD 2FA MOBILE NUMBER START=======================================
+  const [mobileNumbers, setMobileNumbers] = useState([
+    { code: "", number: "" },
+  ]);
+  const [otpService, setOtpService] = useState(false);
+  const [saveOtpService, setSaveOtpService] = useState(false);
+  const [countryCodes, setCountryCodes] = useState([]);
+  const [mobileCode, setMobileCode] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Add new input field (Max 5)
   const addMobileNumber = () => {
@@ -1151,42 +1292,109 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       toast.error("You can add a maximum of 5 mobile numbers.");
       return;
     }
-    setMobileNumbers([...mobileNumbers, ""]);
+    setMobileNumbers([...mobileNumbers, { code: "", number: "" }]);
   };
 
-  async function saveMobileNumber() {
-    try {
-      const isEmpty = mobileNumbers.some((number) => !number.trim());
+  // async function saveMobileNumber() {
+  //   try {
+  //     const isEmpty = mobileNumbers.some((number) => !number?.number.trim());
+  //     const isCodeEmpty = mobileNumbers.some((number) => !number?.code.trim());
 
-      if (isEmpty) {
-        toast.error("Please enter mobile number in all inputs.");
+  //     if (isEmpty || isCodeEmpty) {
+  //       toast.error("Please enter mobile number in all inputs.");
+  //       return;
+  //     }
+
+  //     let updatedNumbers = mobileNumbers.code + mobileNumbers.number
+  //     const mbNo = updatedNumbers.join(",");
+  //     const payload = {
+  //       mbno: mbNo,
+  //       userSrno: selectedId,
+  //     };
+  //     const res = await addMobileNumbers(payload);
+  //     if (!res?.msg.includes("successfully")) {
+  //       toast.error(res?.msg);
+  //     }
+  //     toast.success("Mobile number updated successfully");
+  //     setOtpService(false);
+  //   } catch (e) {
+  //     toast.error(e?.message || "Failed to update");
+  //   }
+  // }
+
+  async function saveMobileNumber() {
+    setSaveOtpService(true)
+    try {
+      const isEmpty = mobileNumbers.some((item) => !item?.number?.trim());
+      const isCodeEmpty = mobileNumbers.some((item) => !item?.code);
+
+      if (isEmpty || isCodeEmpty) {
+        toast.error(
+          "Please enter country code and mobile number in all inputs."
+        );
         return;
       }
-      const mbNo = mobileNumbers.join(",");
+
+      // Combine code + number for each entry
+      const updatedNumbers = mobileNumbers.map(
+        (item) => `${item.code}${item.number}`
+      );
+
+      // Join into comma-separated string
+      const mbNo = updatedNumbers.join(",");
+
       const payload = {
         mbno: mbNo,
         userSrno: selectedId,
       };
+
       const res = await addMobileNumbers(payload);
-      if (!res?.msg.includes("successfully")) {
-        toast.error(res?.msg);
+
+      if (!res?.msg?.includes("successfully")) {
+        toast.error(res?.msg || "Failed to update");
+        return;
       }
+
       toast.success("Mobile number updated successfully");
       setOtpService(false);
     } catch (e) {
       toast.error(e?.message || "Failed to update");
+    } finally {
+      setSaveOtpService(false)
     }
   }
 
+  //   const removeMobileNumber = (index) => {
+  //     const updatedNumbers = mobileNumbers.filter((_, i) => i !== index);
+  //     setMobileNumbers(updatedNumbers);
+  //   };
+
+  //   const handleCountryCodeChange = (index, value) => {
+  //   const updated = [...mobileNumbers];
+  //   updated[index].code = value;
+  //   setMobileNumbers(updated);
+  // };
+
+  // const handleInputChange = (index, value) => {
+  //   const updated = [...mobileNumbers];
+  //   updated[index].number = value;
+  //   setMobileNumbers(updated);
+  // };
+
   const removeMobileNumber = (index) => {
-    const updatedNumbers = mobileNumbers.filter((_, i) => i !== index);
-    setMobileNumbers(updatedNumbers);
+    setMobileNumbers((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleCountryCodeChange = (index, value) => {
+    setMobileNumbers((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, code: value } : item))
+    );
   };
 
   const handleInputChange = (index, value) => {
-    const updatedNumbers = [...mobileNumbers];
-    updatedNumbers[index] = value;
-    setMobileNumbers(updatedNumbers);
+    setMobileNumbers((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, number: value } : item))
+    );
   };
 
   const handleOtp = (id) => {
@@ -1194,20 +1402,88 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     setSelectedId(id);
   };
 
+  const splitNumber = (fullNumber = "") => {
+    const digits = fullNumber.replace(/\D/g, ""); // remove non-digits
+    const number = digits.slice(-10); // last 10 digits
+    const code = digits.slice(0, digits.length - 10); // prefix
+    return { code, number };
+  };
+  // useEffect(() => {
+  //   if (!selectedId) return;
+  //   async function fetchMobileNo() {
+  //     try {
+  //       const res = await getMobileNumbers(selectedId);
+  //       const mobile = res?.regMoblienos?.split(",");
+  //       const formatted = mobile.map((num) => ({
+  //         code: "",
+  //         number: num.trim(),
+  //       }));
+  //       setMobileNumbers(
+  //         formatted.length ? formatted : [{ code: "", number: "" }]
+  //       );
+  //     } catch (e) {
+  //       return toast.error(e.message);
+  //     }
+  //   }
+  //   fetchMobileNo();
+  // }, [otpService]);
+
   useEffect(() => {
     if (!selectedId) return;
+
     async function fetchMobileNo() {
       try {
+        setIsLoading(true);
         const res = await getMobileNumbers(selectedId);
-        const mobile = res?.regMoblienos?.split(",");
-        setMobileNumbers(mobile || [""]);
-        // setotp
+
+        const mobile = res?.regMoblienos?.split(","); // ["919876543210", "15551234567"]
+
+        const formatted = (mobile || []).map((m) => splitNumber(m));
+
+        setMobileNumbers(
+          formatted.length ? formatted : [{ code: "", number: "" }]
+        );
+
+        // also update mobileCode array (only the codes)
+        setMobileCode(formatted.map((item) => item.code));
       } catch (e) {
-        return toast.error(e.message);
+        toast.error(e.message || "Failed to fetch numbers");
+      } finally {
+        setIsLoading(false);
       }
     }
+
     fetchMobileNo();
   }, [otpService]);
+
+  // Get country list
+  useEffect(() => {
+    const fetchCountryList = async () => {
+      try {
+        setIsLoading(true);
+
+        const response = await getCountryList();
+        if (response) {
+          // getCountryList(response);
+          setCountryCodes(response);
+        } else {
+          console.error("Failed to fetch Country List!");
+          toast.error("Failed to load Country List");
+        }
+      } catch (error) {
+        console.error("Error fetching country List:", error);
+        toast.error("Error fetching country List.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchCountryList();
+  }, []);
+
+  const formattedCountryOptions = countryCodes.map((c) => ({
+    value: c.countryCode.toString(),
+    label: `+${c.countryCode} - ${c.countryName}`,
+  }));
 
   //=======================================ADD 2FA MOBILE NUMBER END=======================================
 
@@ -1305,6 +1581,12 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     },
     {
       id: "",
+      name: "Number Lookup",
+      enable: 0,
+      disabled: true,
+    },
+    {
+      id: "",
       name: "Two Way",
       enable: 0,
       disabled: true,
@@ -1387,6 +1669,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       rcsRateRes,
       obdRateRes,
       chargesRes,
+      // numberLookup,
+      hlrPricing,
     ] = await Promise.all([
       getTransServices(),
       getPromoServices(),
@@ -1396,7 +1680,12 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       getRCSRateData(srNo),
       getVoiceRateByUser(srNo),
       getCharges(srNo),
+      // getNumberLookupRate(srNo),
+      getHlrPricing(srNo),
     ]);
+
+    setNumberLookupRate(hlrPricing?.Rate);
+    setNumberLookupInsertTime(hlrPricing?.InsertTime);
 
     // Country List
     if (countryListRes) {
@@ -1493,6 +1782,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     {
       id: 7,
       name: "OBD",
+      enable: false,
+    },
+    {
+      id: "",
+      name: "Number Lookup",
       enable: false,
     },
     {
@@ -1605,12 +1899,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       renderCell: (params) => {
         const isActive = params.value === 1;
         return (
-          <CustomTooltip
-            placement="top"
-            title="Click to update status"
-            arrow
-          >
-            <button
+          <CustomTooltip placement="top" title="Click to update status" arrow>
+            {/* <button
               className="flex items-center justify-center gap-2 px-3 rounded-full cursor-pointer"
               onClick={() => {
                 handleUpdateUserStatus(params.row);
@@ -1621,6 +1911,24 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   }`}
               ></span>
               <span>{isActive ? "Active" : "Inactive"}</span>
+            </button> */}
+            <button
+              className="flex items-center justify-center gap-2 px-3 rounded-full cursor-pointer h-full"
+              onClick={() => {
+                handleUpdateUserStatus(params.row);
+              }}
+            >
+              {/* <span
+                className={`w-2.5 h-2.5 rounded-full ${isActive ? "bg-green-500" : "bg-red-500"
+                  }`}
+              ></span>
+              <span>{isActive ? "Active" : "Inactive"}</span> */}
+              <div
+                className={`text-white text-xs w-20 px-2 py-1.5 border rounded-2xl text-center ${isActive ? "bg-green-500" : "bg-red-500"
+                  }`}
+              >
+                {isActive ? "Active" : "Inactive"}
+              </div>
             </button>
           </CustomTooltip>
         );
@@ -1841,6 +2149,86 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
 
   //=======================================PETM CHAIN START=======================================
+  // const [petmDialogVisible, setPETMDialogVisible] = useState(false);
+  // const [petmDetails, setPetmDetails] = useState({
+  //   selectedUserId: "",
+  //   petmChainType: 1,
+  //   tmd: "",
+  //   TMA1: "",
+  //   TMA2: "",
+  // });
+
+  // const handlePetmChain = (id) => {
+  //   setPETMDialogVisible(true);
+  //   setPetmDetails({
+  //     selectedUserId: id,
+  //     petmChainType: 1,
+  //     tmd: "",
+  //     TMA1: "",
+  //     TMA2: "",
+  //   });
+  //   setSelectedId(id);
+  // };
+
+  // useEffect(() => {
+  //   if (!selectedId) return;
+  //   async function fetchPETMChain() {
+  //     try {
+  //       const res = await getPETMChain(selectedId);
+
+  //       setPetmDetails({
+  //         selectedUserId: selectedId,
+  //         petmChainType: res?.petmChainType || 1,
+  //         tmd: res?.tmd || "",
+  //         TMA1: res?.TMA1 || "",
+  //         TMA2: res?.TMA2 || "",
+  //       });
+  //     } catch (e) {
+  //       return toast.error(e.message);
+  //     }
+  //   }
+  //   fetchPETMChain();
+  // }, [petmDialogVisible]);
+
+  // async function handlePETMSave() {
+  //   if (!petmDetails.petmChainType) {
+  //     return toast.error("Please select a chain type");
+  //   }
+  //   if (!petmDetails.tmd) {
+  //     return toast.error("Please select a TMD");
+  //   }
+
+  //   if (
+  //     (petmDetails.petmChainType === 2 || petmDetails.petmChainType === 3) &&
+  //     !petmDetails.TMA1
+  //   ) {
+  //     return toast.error("Please select a TMA1");
+  //   }
+
+  //   if (petmDetails.petmChainType === 3 && !petmDetails.TMA2) {
+  //     return toast.error("Please select a TMA2");
+  //   }
+
+  //   try {
+  //     const res = await savePETMChain(petmDetails);
+  //     if (!res?.msg?.includes("successfully")) {
+  //       return toast.error("Error in saving petm details");
+  //     }
+  //     toast.success("Petm details saved successfully");
+  //     setPETMDialogVisible(false);
+  //     setPetmDetails({
+  //       selectedUserId: "",
+  //       petmChainType: 1,
+  //       tmd: "",
+  //       TMA1: "",
+  //       TMA2: "",
+  //     });
+  //   } catch (e) {
+  //     return toast.error("Error in saving petm details");
+  //   }
+  // }
+
+  // const [selectedId, setSelectedId] = useState("");
   const [petmDialogVisible, setPETMDialogVisible] = useState(false);
   const [petmDetails, setPetmDetails] = useState({
     selectedUserId: "",
@@ -1850,6 +2238,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     TMA2: "",
   });
 
+  // Open dialog and prime defaults for a given user
   const handlePetmChain = (id) => {
     setPETMDialogVisible(true);
     setPetmDetails({
@@ -1862,26 +2251,66 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     setSelectedId(id);
   };
 
+  // Fetch existing PETM chain whenever dialog is opened for the selected user
   useEffect(() => {
-    if (!selectedId) return;
+    if (!selectedId || !petmDialogVisible) return;
+
     async function fetchPETMChain() {
       try {
         const res = await getPETMChain(selectedId);
-
-        setPetmDetails({
+        setPetmDetails((prev) => ({
+          ...prev,
           selectedUserId: selectedId,
-          petmChainType: res?.petmChainType || 1,
-          tmd: res?.tmd || "",
-          TMA1: res?.TMA1 || "",
-          TMA2: res?.TMA2 || "",
-        });
+          petmChainType: res?.petmChainType ?? 1,
+          tmd: res?.tmd ?? "",
+          TMA1: res?.TMA1 ?? "",
+          TMA2: res?.TMA2 ?? "",
+        }));
       } catch (e) {
-        return toast.error(e.message);
+        toast.error(e.message || "Failed to fetch PETM chain");
       }
     }
-    fetchPETMChain();
-  }, [petmDialogVisible]);
 
+    fetchPETMChain();
+  }, [petmDialogVisible, selectedId]);
+
+  // Build minimal payload based on selected chain type
+  const shownPayload = React.useMemo(() => {
+    const { selectedUserId, petmChainType, tmd, TMA1, TMA2 } = petmDetails;
+
+    if (petmChainType === 1) {
+      // Show blank strings for TMA1 & TMA2
+      return {
+        selectedUserId,
+        petmChainType,
+        tmd,
+        TMA1: "",
+        TMA2: "",
+      };
+    }
+
+    if (petmChainType === 2) {
+      // Always include TMA1 (value or ""), and blank TMA2
+      return {
+        selectedUserId,
+        petmChainType,
+        tmd,
+        TMA1: TMA1 ?? "",
+        TMA2: "",
+      };
+    }
+
+    // petmChainType === 3 → include both (value or "")
+    return {
+      selectedUserId,
+      petmChainType,
+      tmd,
+      TMA1: TMA1 ?? "",
+      TMA2: TMA2 ?? "",
+    };
+  }, [petmDetails]);
+
+  // Save handler with validation
   async function handlePETMSave() {
     if (!petmDetails.petmChainType) {
       return toast.error("Please select a chain type");
@@ -1889,23 +2318,24 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     if (!petmDetails.tmd) {
       return toast.error("Please select a TMD");
     }
-
     if (
       (petmDetails.petmChainType === 2 || petmDetails.petmChainType === 3) &&
       !petmDetails.TMA1
     ) {
       return toast.error("Please select a TMA1");
     }
-
     if (petmDetails.petmChainType === 3 && !petmDetails.TMA2) {
       return toast.error("Please select a TMA2");
     }
 
     try {
-      const res = await savePETMChain(petmDetails);
+      // save only minimal payload
+      const res = await savePETMChain(shownPayload);
+
       if (!res?.msg?.includes("successfully")) {
         return toast.error("Error in saving petm details");
       }
+
       toast.success("Petm details saved successfully");
       setPETMDialogVisible(false);
       setPetmDetails({
@@ -1915,10 +2345,12 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         TMA1: "",
         TMA2: "",
       });
+      setSelectedId("");
     } catch (e) {
       return toast.error("Error in saving petm details");
     }
   }
+
   //=======================================PETM CHAIN END=======================================
 
   return (
@@ -2225,37 +2657,40 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
             name="petmChain"
             label="Select PETM Chain"
             options={[
-              {
-                label: "Entity - TMD",
-                value: 1,
-              },
-              {
-                label: "Entity - TMA1 - TMD",
-                value: 2,
-              },
-              {
-                label: "Entity - TMA1 - TMA2 - TMD",
-                value: 3,
-              },
+              { label: "Entity - TMD", value: 1 },
+              { label: "Entity - TMA1 - TMD", value: 2 },
+              { label: "Entity - TMA1 - TMA2 - TMD", value: 3 },
             ]}
             value={petmDetails.petmChainType}
-            onChange={(e) => {
-              setPetmDetails({ ...petmDetails, petmChainType: e });
-              // setPetmDetails({ petmChainType: e, TMA1: "", TMA2: "", tmd: "" });
+            onChange={(val) => {
+              setPetmDetails((prev) => {
+                if (val === 1) {
+                  // keep TMD, explicitly blank TMA1 & TMA2
+                  return { ...prev, petmChainType: 1, TMA1: "", TMA2: "" };
+                }
+                if (val === 2) {
+                  // keep TMD/TMA1, explicitly blank TMA2
+                  return { ...prev, petmChainType: 2, TMA2: "" };
+                }
+                // val === 3 → keep all current values
+                return { ...prev, petmChainType: 3 };
+              });
             }}
             placeholder="Select PE-TM Chain"
           />
+
           <InputField
             label="TMD"
             id="tmd"
             name="tmd"
-            placeholder="Enter TMD "
+            placeholder="Enter TMD"
             type="number"
             value={petmDetails.tmd}
-            onChange={(e) => {
-              setPetmDetails({ ...petmDetails, tmd: e.target.value });
-            }}
+            onChange={(e) =>
+              setPetmDetails((prev) => ({ ...prev, tmd: e.target.value }))
+            }
           />
+
           {(petmDetails.petmChainType === 2 ||
             petmDetails.petmChainType === 3) && (
               <InputField
@@ -2265,11 +2700,12 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 placeholder="Enter TMA-1"
                 type="number"
                 value={petmDetails.TMA1}
-                onChange={(e) => {
-                  setPetmDetails({ ...petmDetails, TMA1: e.target.value });
-                }}
+                onChange={(e) =>
+                  setPetmDetails((prev) => ({ ...prev, TMA1: e.target.value }))
+                }
               />
             )}
+
           {petmDetails.petmChainType === 3 && (
             <InputField
               label="TMA-2"
@@ -2278,11 +2714,22 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               placeholder="Enter TMA-2"
               type="number"
               value={petmDetails.TMA2}
-              onChange={(e) => {
-                setPetmDetails({ ...petmDetails, TMA2: e.target.value });
-              }}
+              onChange={(e) =>
+                setPetmDetails((prev) => ({ ...prev, TMA2: e.target.value }))
+              }
             />
           )}
+
+          {/* Payload Preview */}
+          {/* <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">
+              Payload Preview
+            </label>
+            <pre className="rounded-md bg-gray-100 p-3 text-sm overflow-auto">
+              {JSON.stringify(shownPayload, null, 2)}
+            </pre>
+          </div> */}
+
           <UniversalButton
             id={"saveButton"}
             name={"saveButton"}
@@ -2299,47 +2746,63 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         header="OTP details"
         visible={otpService}
         onHide={() => setOtpService(false)}
-        className="w-[30rem]"
+        className="w-[40rem]"
         draggable={false}
       >
-        <div className="max-w-md p-2 mx-auto rounded-lg border ">
+        <div className="w-full p-2 mx-auto rounded-lg border ">
           <h2 className="mb-4 text-lg font-semibold text-center text-gray-800">
             Mobile Numbers
           </h2>
 
           <div className="flex flex-col gap-3">
-            {mobileNumbers.map((number, index) => (
-              <div key={index} className="relative flex items-center gap-3">
-                <InputField
-                  variant="outlined"
-                  placeholder="Enter mobile number..."
-                  value={number}
-                  onChange={(e) => handleInputChange(index, e.target.value)}
-                  className="w-full"
-                  size="small"
-                />
-                {index > 0 && (
-                  <MdOutlineDeleteForever
-                    onClick={() => removeMobileNumber(index)}
-                    className="absolute text-red-500 cursor-pointer hover:text-red-600 right-2"
-                    size={20}
+            {mobileNumbers.map((item, index) => {
+              return (
+                <div key={index} className="relative flex items-center gap-3">
+                  <DropdownWithSearch
+                    id={`selectCountryCode-${index}`}
+                    name="selectCountryCode"
+                    options={formattedCountryOptions}
+                    value={item?.code}
+                    onChange={(value) => handleCountryCodeChange(index, value)}
                   />
-                )}
-              </div>
-            ))}
+
+                  <InputField
+                    variant="outlined"
+                    placeholder="Enter mobile number..."
+                    value={item?.number}
+                    onChange={(e) => handleInputChange(index, e.target.value)}
+                    className="w-full"
+                    size="small"
+                    maxLength="10"
+                  />
+
+                  {index > 0 && (
+                    <MdOutlineDeleteForever
+                      onClick={() => removeMobileNumber(index)}
+                      className="absolute text-red-500 cursor-pointer hover:text-red-600 right-2"
+                      size={20}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           <div className="flex justify-center gap-2 mt-4">
+            {!saveOtpService && (
+              <UniversalButton
+                label="Add"
+                id="addButton"
+                name="addButton"
+                variant="contained"
+                color="primary"
+                onClick={addMobileNumber}
+              />
+            )}
             <UniversalButton
-              label="Add"
-              id="addButton"
-              name="addButton"
-              variant="contained"
-              color="primary"
-              onClick={addMobileNumber}
-            />
-            <UniversalButton
-              label="Save"
+              // label="Save"
+              label={saveOtpService ? "Saveing" : "Save"}
+              disabled={saveOtpService}
               id="saveButton"
               name="saveButton"
               variant="contained"
@@ -2620,6 +3083,26 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   borderRadius: "8px",
                 },
               }}
+            />
+            <Tab
+              label={
+                <span>
+                  <CampaignOutlinedIcon size={20} />
+                  Number Lookup
+                </span>
+              }
+              {...a11yProps(4)}
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
+                },
+              }}
+              disabled
             />
             <Tab
               label={
@@ -3399,8 +3882,98 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
             </>
           </CustomTabPanel>
 
-          {/* Two way sms */}
+          {/* NumberLookup */}
           <CustomTabPanel value={value} index={4}>
+            <>
+              {enableServices.find((s) => s.name == "Number Lookup")?.enable ? (
+                <p className="mb-2 text-green-500 md:ml-7 lg:ml-0">
+                  Service is enabled
+                </p>
+              ) : (
+                <p className="mb-2 text-red-500 md:ml-7 lg:ml-0">
+                  Service is disabled
+                </p>
+              )}
+              <div className="flex  w-full gap-4 pb-5 align-middle lg:flex-nowrap p-6 md:m-3 lg:m-0">
+                <div className="flex flex-col md:flex-row items-start justify-center md:justify-start md:items-end gap-4">
+                  <div className="flex items-end gap-5">
+                    <div className="w-full md:w-64">
+                      <InputField
+                        label="Add Lookup Rate"
+                        placeholder="(INR / Credit)"
+                        type="number"
+                        value={numberLookupRate}
+                        onChange={(e) => setNumberLookupRate(e.target.value)}
+                      />
+                    </div>
+                    <div className="">
+                      <UniversalButton
+                        label="Save"
+                        id="updateNumberlookupData"
+                        name="updateNumberlookupData"
+                        onClick={handleNumberLookupSave}
+                      />
+                    </div>
+                  </div>
+                  <div className="rounded-lg shadow-md w-60 md:w-full p-3 bg-gray-100 flex items-center  gap-5">
+                    <div className="text-gray-700 font-medium text-sm">
+                      Assigned Rate : ₹ {numberLookupRate}
+                    </div>
+                    <div className="text-gray-700 font-medium text-sm">
+                      Insert Time: {numberLookupInsertTime}
+                    </div>
+                    <div className="flex gap-2">
+                      <div>
+                        <DeleteIcon
+                          className="text-red-500 cursor-pointer"
+                          sx={{
+                            fontSize: "18px",
+                          }}
+                          onClick={() =>
+                            setNumberLookupRateDeleteVisible(true)
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Delete Number Lookup Rate */}
+              <Dialog
+                header="Delete Number Lookup Rate"
+                visible={numberLookupRateDeleteVisible}
+                style={{ width: "27rem" }}
+                onHide={() => setNumberLookupRateDeleteVisible(false)}
+                draggable={false}
+              >
+                <div className="flex items-center justify-center">
+                  <CancelOutlinedIcon sx={{ fontSize: 64, color: "#ff3f3f" }} />
+                </div>
+                <div className="p-4 text-center">
+                  <p className="text-[1.1rem] font-semibold text-gray-700">
+                    Delete Pricing?
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    This action cannot be undone.
+                  </p>
+                </div>
+                <div className="flex justify-center gap-4 mt-4">
+                  <UniversalButton
+                    label="Cancel"
+                    onClick={() => setNumberLookupRateDeleteVisible(false)}
+                  />
+                  <UniversalButton
+                    label="Delete"
+                    onClick={handleNumberLookupRateDelete}
+                  />
+                </div>
+              </Dialog>
+            </>
+          </CustomTabPanel>
+
+          {/* Two way sms */}
+          {/* <CustomTabPanel value={value} index={4}>
             <>
               <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                 <AnimatedDropdown
@@ -3427,7 +4000,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 />
               </div>
             </>
-          </CustomTabPanel>
+          </CustomTabPanel> */}
 
           {/* Missed Call */}
           <CustomTabPanel value={value} index={5}>

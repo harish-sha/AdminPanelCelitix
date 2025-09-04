@@ -8,6 +8,7 @@ export const userItems = [
       "/smsdlttemplates",
       "/smscampaigndetaillogs",
       "/smsAttachmentdetaillog",
+      "/smscampaigndetailsreport",
     ],
     roles: ["ADMIN"],
   },
