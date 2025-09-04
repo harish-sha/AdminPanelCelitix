@@ -492,14 +492,11 @@ const WhatsappLaunchCampaign = () => {
         return toast.error("Please select workflow");
       }
 
+      console.log("workflowState", workflowState);
       requestData = {
         ...requestData,
-        workflowSrno: workflowState?.workflowSrno,
-        workflowFlag: workflowState?.workflowFlag,
+        ...workflowState,
       };
-      // requestData.workflowSrno = workflowState?.workflowSrno;
-      // requestData.workflowFlag = workflowState?.workflowFlag;
-      // requestData.workflowSrno = workflowState?.workflowSrno
     }
 
     // console.log(requestData)

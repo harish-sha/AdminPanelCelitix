@@ -18,7 +18,7 @@ import { DetailsDialog } from "../components/workflow-components/details";
 import { Dialog } from "primereact/dialog";
 import { convertPaylaod } from "@/workflow/edit/helpers/convertPaylaod";
 import UniversalButton from "@/components/common/UniversalButton";
-import { generatePayload } from "@/workflow/create/helpers/generatePayload";
+import { generatePayload } from "./workflow-components/helper/generatePayload";
 
 function NodeComponent({
   id,
@@ -137,8 +137,7 @@ export const ConfigureWorkflow = ({
   };
 
   async function handleSaveWorkflow() {
-    const payload = generatePayload(nodesInputData, nodes, edges);
-    console.log(payload);
+    const payload = generatePayload(nodesInputData, nodes);
     setWorkflowState(payload);
     onClose();
   }
