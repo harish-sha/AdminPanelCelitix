@@ -8,6 +8,18 @@ import InputField from "@/whatsapp/components/InputField";
 import { uploadImageFile } from "@/apis/whatsapp/whatsapp";
 import { Carousel } from "react-responsive-carousel";
 
+const extractVariablesFromText = (text) => {
+  const regex = /{{(\d+)}}/g;
+  let match;
+  const variables = [];
+  while ((match = regex.exec(text)) !== null) {
+    if (!variables.includes(match[1])) {
+      variables.push(match[1]);
+    }
+  }
+  return variables;
+};
+
 export const Variables = ({
   templateType,
   selectedFile,
@@ -82,6 +94,15 @@ export const Variables = ({
     (comp) => comp.type === "CAROUSEL"
   );
 
+  // const isBody = tempDetails?.components?.find(
+  //   (comp) => comp.type === "BODY"
+  // );
+
+  const isUrl = tempDetails?.components?.find(
+    (comp) => comp.type === "BUTTONS"
+  );
+
+
   let CardsData = [];
 
   isCarousal?.cards?.map(({ components: card }, index) => {
@@ -149,7 +170,7 @@ export const Variables = ({
     <div>
       {tempTypes.includes(templateType) && (
         <div>
-          <h1>Upload file</h1>
+          <h1 className="text-sm text-gray-700 font-semibold" >Upload file</h1>
           <div
             className="file-upload-container"
             onDrop={handleFileDrop}
@@ -317,11 +338,11 @@ export const Variables = ({
         </Carousel>
       )}
       {varLength?.length > 0 && (
-        <div className="mb-2 mt-3">
-          <p className="font-semibold">Variable</p>
+        <div className="mt-1">
+          <p className="font-semibold text-sm">Format Variable</p>
           {varLength?.map((item, index) =>
             item.map((item, index) => (
-              <div key={index} className="mt-4">
+              <div key={index} className="mt-2">
                 <InputField
                   id={`${index + 1}`}
                   name={`${index + 1}`}
@@ -335,19 +356,78 @@ export const Variables = ({
           )}
         </div>
       )}
-      {btnVarLength?.length > 0 && (
-        <div className="mt-3">
-          <p className="font-semibold">Button Variable</p>
+      {btnVarLength > 0 && (
+        <div className="">
+          <p className="font-semibold text-sm my-2">Button Variable</p>
           <InputField
             id="btnVariable"
             name="btnVariable"
-            label="Enter Button Variable Value"
+            label="Enter URL Button Variable Value"
             value={btnVariables}
             onChange={(e) => setBtnVariables(e.target.value)}
-            placeholder="Button Text"
+            placeholder="Variable value"
           />
         </div>
       )}
+      {/* {tempDetails?.components?.map((component, idx) => {
+          if (component.type === "BUTTONS") {
+            return (
+              <div key={idx} className="space-y-2">
+                <div className="flex items-center gap-1">
+                  <p className="text-sm font-medium tracking-wide text-gray-700">
+                    URL Parameter
+                  </p>
+                </div>
+                {component.buttons.map((button, index) => {
+                  const urlVariables = extractVariablesFromText(button.url);
+                  return (
+                    <div key={index} className="space-y-4">
+                      {urlVariables.map((variable) => (
+                        <div
+                          key={variable}
+                          className="relative flex flex-col space-y-2"
+                        >
+                          <div className="flex items-center gap-2">
+                            <label
+                              htmlFor={`buttonInput${variable}`}
+                              className="w-10 text-sm font-medium text-gray-600"
+                            >
+                              {`{{${variable}}}`}
+                            </label>
+                            <input
+                              id={`buttonInput${variable}`}
+                              name={`buttonInput${variable}`}
+                              value={variables[`button${variable}`] || ""}
+                              placeholder={`Enter value for {{${variable}}}`}
+                              onChange={(e) =>
+                                handleInputChange(e, variable, "button")
+                              }
+                              className="pl-1 pr-6 py-1.5 w-full border rounded-sm text-[0.85rem] border-gray-300 shadow-sm focus:outline-none"
+                            />
+                          </div>
+                          <div className="absolute top-0 right-0 z-50">
+                            <InputVariable
+                              onSelect={(selectedVar) =>
+                                handleSelectVariable(
+                                  selectedVar,
+                                  variable,
+                                  "button"
+                                )
+                              }
+                              variables={variables}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          }
+          return null;
+        })} */}
     </div>
   );
 };
+

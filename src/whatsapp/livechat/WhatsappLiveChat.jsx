@@ -71,6 +71,19 @@ import moment from "moment";
 import { useWabaAgentContext } from "@/context/WabaAndAgent.jsx";
 import { MdOutlineAddLocationAlt } from "react-icons/md";
 
+// Function to extract variables from text (e.g., {{1}})
+const extractVariablesFromText = (text) => {
+  const regex = /{{(\d+)}}/g;
+  let match;
+  const variables = [];
+  while ((match = regex.exec(text)) !== null) {
+    if (!variables.includes(match[1])) {
+      variables.push(match[1]);
+    }
+  }
+  return variables;
+};
+
 export default function WhatsappLiveChat() {
   const { user } = useUser();
   const fileInputRef = useRef(null);
@@ -127,11 +140,12 @@ export default function WhatsappLiveChat() {
   const [chatIndex, setChatIndex] = useState(1);
   const [chatLoading, setChatLoading] = useState(false);
 
+  const [fetchTemplate, setFetchTemplate] = useState(false);
+
   const [locationPreview, setLocationPreview] = useState(false);
   const [locationPreviewText, setLocationPreviewText] = useState(
     "Do you want to share your location"
   );
-
 
   const [locationData, setLocationData] = useState({
     isLocation: false,
@@ -188,6 +202,8 @@ export default function WhatsappLiveChat() {
 
   const [isSubscribe, setIsSubscribe] = useState(false);
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
+
+  const [isSendingTemplate, setIsSendingTemplate] = useState(false);
 
   useEffect(() => {
     setSelectedWaba(selectedContextWaba);
@@ -517,6 +533,7 @@ export default function WhatsappLiveChat() {
       const res = await fetchAllConversations(data);
 
       // console.log("res", res)
+
       if (data.agentSrno) {
         setAgentInfo(res);
       }
@@ -557,6 +574,63 @@ export default function WhatsappLiveChat() {
       return toast.error("Error fetching all conversations");
     } finally {
       setIsFetching(false);
+    }
+  }
+
+  async function handleFetchAllConvoRepeat() {
+    if (!wabaState?.selectedWaba) return;
+    if (!btnOption) return;
+    const userActive = btnOption == "active" ? 1 : 0;
+    try {
+      const data = {
+        mobileNo: wabaState?.selectedWaba,
+        srno: 0,
+        active: userActive,
+        search: search || "",
+        agentSrno: selectedAgent || "",
+      };
+
+      const res = await fetchAllConversations(data);
+
+      // console.log("res", res)
+      if (data.agentSrno) {
+        setAgentInfo(res);
+      }
+      setConvoDetails(res);
+
+      if (!res.conversationEntityList[0]) {
+        setChatState((prev) => ({
+          ...prev,
+
+          allConversations: [],
+        }));
+        return;
+      }
+
+      // if (res?.unreadCounts?.length > 0) {
+      //   const audio = new Audio("./receive-message.mp3");
+      //   audio.play().catch((e) => {
+      //     console.log("Audio play error:", e);
+      //   });
+      // }
+
+      const mappedConversations = res.conversationEntityList?.map((chat) => {
+        const unread = res.unreadCounts.find(
+          (unreadChat) => unreadChat.mobile === chat.mobileNo
+        );
+        return {
+          ...chat,
+          unreadCount: unread ? unread.unreadCount : 0,
+        };
+      });
+      setChatState((prev) => ({
+        ...prev,
+        allConversations: mappedConversations,
+        // allConversations: [],
+      }));
+    } catch (e) {
+      // console.log(e);
+      return toast.error("Error fetching all conversations");
     }
   }
 
@@ -621,23 +695,20 @@ export default function WhatsappLiveChat() {
   //   convoDetails,
   // ]);
 
-
   useEffect(() => {
     if (!wabaState?.selectedWaba) return;
     handleFetchAllConvo();
   }, [wabaState?.selectedWaba, btnOption, selectedAgent]);
 
-
   useEffect(() => {
     if (!wabaState?.selectedWaba) return;
 
     const intervalId = setInterval(() => {
-      handleFetchAllConvo();
-    }, 5000);
+      handleFetchAllConvoRepeat();
+    }, 4000);
 
     return () => clearInterval(intervalId);
   }, [wabaState?.selectedWaba, btnOption, selectedAgent, convoDetails]);
-
 
   useEffect(() => {
     setChatState((prev) => ({ ...prev, active: null, allConversations: [] }));
@@ -649,7 +720,10 @@ export default function WhatsappLiveChat() {
     }
     try {
       const res = await getWabaTemplateDetails(wabaState.selectedWaba);
-      setAllTemplated(res);
+      const approvedTemplateList = res.filter(
+        (template) => template.status === "APPROVED"
+      );
+      setAllTemplated(approvedTemplateList);
     } catch (e) {
       // console.log(e);
       return toast.error("Error fetching all templates");
@@ -715,6 +789,14 @@ export default function WhatsappLiveChat() {
 
     try {
       const res = await fetchSpecificConversations(payload);
+    
+      const filteredData = (res?.conversationEntityList || [])
+        .filter((item) => item.requestJson && item.templateName) 
+        .map((item) => ({
+          templateName: item.templateName,
+          requestJson: item.requestJson,
+        }));
+
       const messages = [...(res?.conversationEntityList || [])].reverse();
 
       if (!olderChatFetch) {
@@ -789,7 +871,6 @@ export default function WhatsappLiveChat() {
       toast.error("Error fetching specific conversation");
     } finally {
       setChatLoading(false);
-
     }
   }
 
@@ -984,6 +1065,7 @@ export default function WhatsappLiveChat() {
 
     try {
       setIsFetching(true);
+      setIsSendingTemplate(true);
       const res = await func(data);
       if (
         res?.msg?.includes("successfully") ||
@@ -1000,9 +1082,10 @@ export default function WhatsappLiveChat() {
       }
     } catch (e) {
       // console.log(e);
-      return toast.error("Something went wrong. Please try again.");
+      return toast.error(res?.msg || "Something went wrong. Please try again.");
     } finally {
       setIsFetching(false);
+      setIsSendingTemplate(false);
     }
   }
 
@@ -1013,6 +1096,7 @@ export default function WhatsappLiveChat() {
     const wabaId = wabaState.waba.find(
       (waba) => waba.mobileNo === wabaState.selectedWaba
     )?.wabaAccountId;
+    setFetchTemplate(true);
     try {
       // const res = await getWabaTemplate(wabaId, sendmessageData?.templateName);
       // setTemplateDetails(res.data[0]);
@@ -1021,6 +1105,8 @@ export default function WhatsappLiveChat() {
     } catch (e) {
       // console.log(e);
       return toast.error("Error fetching template details");
+    } finally {
+      setFetchTemplate(false);
     }
   }
   useEffect(() => {
@@ -1058,8 +1144,26 @@ export default function WhatsappLiveChat() {
         // });
         item?.buttons?.map(({ type, example, url }) => {
           if (type === "URL") {
-            const varLength = url?.match(/{{(.+?)}}/g);
-            setBtnVarLength(varLength?.length || 0);
+            // const varLength = url?.match(/{{(.*?)}}/g);
+            // const extractedVars = varLength?.map(match => match.replace(/{{|}}/g, ''));
+            // const totalLength = extractedVars?.reduce((sum, item) => sum + (parseInt(item) || 0), 0);
+            // console.log("totalLength", totalLength);
+            // setBtnVarLength(totalLength || 0);
+            let totalLength = 0;
+
+            item?.buttons?.forEach(({ type, url }) => {
+              if (type === "URL" && url) {
+                // Check for URL type and valid URL
+                const varLength = url?.match(/{{(.*?)}}/g); // Extract variables inside {{}}
+                const extractedVars = varLength?.map((match) =>
+                  match.replace(/{{|}}/g, "")
+                );
+
+                // Add the number of variables to totalLength
+                totalLength += extractedVars?.length || 0;
+              }
+            });
+            setBtnVarLength(totalLength || 0);
           }
         });
       }
@@ -1106,7 +1210,7 @@ export default function WhatsappLiveChat() {
           mobile: chatState?.active.mobileNo,
           waba: wabaState.selectedWaba,
           srno: latestMessageData.srno,
-          unreadFlag: 0
+          unreadFlag: 0,
         };
         await readMessage(data);
       } catch (e) {
@@ -1255,15 +1359,14 @@ export default function WhatsappLiveChat() {
       }
 
       toast.success("Location request sent successfully");
-      setLocationPreview(false)
-      setLocationPreviewText("Do you want to share your location")
+      setLocationPreview(false);
+      setLocationPreviewText("Do you want to share your location");
     } catch (e) {
       toast.error("Error getting location");
     }
   }
 
   async function handleUnread(data) {
-
     if (!wabaState.selectedWaba) return;
     try {
       const payload = {
@@ -1280,10 +1383,11 @@ export default function WhatsappLiveChat() {
   }
 
   return (
-    <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
+    <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border">
       <div
-        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${chatState?.active ? "hidden md:block" : "block"
-          }`}
+        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${
+          chatState?.active ? "hidden md:block" : "block"
+        }`}
       >
         <InputData
           setSearch={setSearch}
@@ -1315,7 +1419,8 @@ export default function WhatsappLiveChat() {
           handleUnread={handleUnread}
         />
       </div>
-      <AnimatePresence>
+
+      <AnimatePresence mode="wait">
         {!chatState.active && !isSmallScreen && (
           <motion.div
             key="empty-chat"
@@ -1354,7 +1459,7 @@ export default function WhatsappLiveChat() {
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
               className="relative z-10 px-6 py-10 bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg text-center max-w-xl"
             >
               <div className="w-50 h-50 mx-auto mb-3">
@@ -1403,7 +1508,7 @@ export default function WhatsappLiveChat() {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="relative flex flex-col flex-1 h-screen md:h-full -z-"
+            className="relative flex flex-col flex-1 h-screen md:h-full transition-all w-full duration-200l̥"
           >
             <ChatScreen
               setVisibleRight={setVisibleRight}
@@ -1440,6 +1545,7 @@ export default function WhatsappLiveChat() {
           </motion.div>
         )}
       </AnimatePresence>
+
       {user.role !== "AGENT" && (
         <Dialog
           header="Transfer Chat to Agent"
@@ -1505,7 +1611,7 @@ export default function WhatsappLiveChat() {
       )}
 
       <Dialog
-        header="Send Message to User"
+        header="Send Template to User"
         visible={sendMessageDialogVisible}
         style={{ width: "60rem", height: "40rem" }}
         draggable={false}
@@ -1628,11 +1734,18 @@ export default function WhatsappLiveChat() {
                 </div>
               ) */}
             </div>
-            <div>
-              <UniversalButton label="Send" onClick={handlesendMessage} />
+            <div className="flex justify-center p-4 absolute bottom-0 left-0 w-full bg-white">
+              <UniversalButton
+                label={isSendingTemplate ? "Sending..." : "Send Template"}
+                onClick={handlesendMessage}
+                disabled={isSendingTemplate}
+              />
             </div>
           </div>
           <div>
+            {/* {fetchTemplate ? (
+              <div className="flex items-center justify-center w-100 h-full">Loading Template...</div>
+            ) : ( */}
             <TemplatePreview
               tempDetails={templateDetails}
               messageType={messageType}
@@ -1642,16 +1755,18 @@ export default function WhatsappLiveChat() {
               cardIndex={cardIndex}
               setCardIndex={setCardIndex}
             />
+            {/* // )} */}
           </div>
         </div>
       </Dialog>
+
       <input
         type="file"
         ref={fileInputRef}
         style={{ display: "none" }}
         onChange={handleFileChange}
         accept="image/* video/* audio/*"
-      // multiple
+        // multiple
       />
 
       {imagePreviewVisible && (

@@ -84,6 +84,7 @@ export const ChatScreen = ({
   locationPreviewText,
   setLocationPreviewText,
   requestLocationData,
+  templateJsonData
 }) => {
 
   const endOfMessagesRef = useRef(null);
@@ -402,6 +403,23 @@ export const ChatScreen = ({
     }
   }
 
+  // Text - message body formatter
+  function formatMessageBody(text) {
+    if (!text) return "";
+
+    // Bold -> *text*
+    let formatted = text.replace(/\*(.*?)\*/g, "<strong>$1</strong>");
+
+    // Italic -> _text_
+    formatted = formatted.replace(/_(.*?)_/g, "<em>$1</em>");
+
+    // Strikethrough -> ~text~
+    formatted = formatted.replace(/~(.*?)~/g, "<del>$1</del>");
+
+    return formatted;
+  }
+
+
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
       <div className="mt-0 md:mt-0 z-1 flex items-center bg-gray-100 justify-between w-full h-15 px-2 border rounded-tr-lg">
@@ -513,7 +531,7 @@ export const ChatScreen = ({
         className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col mb-35 md:mb-18 md:-mt-5 bg-[url(/WB.png)]"
       >
 
-        {/* {chatLoading ? (
+        {chatLoading ? (
           <div className="w-full flex gap-2 items-cenetr justify-center">
             <div className="w-full flex flex-col gap-4 p-4">
               {[...Array(10).keys()].map((i) => (
@@ -538,251 +556,251 @@ export const ChatScreen = ({
               ))}
             </div>
           </div>
-        ) : ( */}
-        <>
-          {showScrollButton && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.1 }}
-              exit={{ opacity: 0, y: 10 }}
-              onClick={scrollToBottom}
-              className="fixed bottom-24 right-[50%] px-2 py-1 bg-gray-400 hover:bg-gray-500 text-white rounded-full shadow-md cursor-pointer transition-all hover:scale-110"
-            >
-              <KeyboardDoubleArrowDownIcon fontSize="small" />
-            </motion.div>
-          )}
-
-          {chatState?.specificConversation?.length !== 0 && (
-            <div className="flex items-center justify-center mt-2">
-              <button
-                className="text-[#22577E] border-2 border-[#22577E] px-4 py-2 rounded-md flex gap-2 items-center ml-auto mr-auto mt-2 cursor-pointer text-xs tracking-wider font-medium transition-all hover:bg-[#22577E] hover:text-white hover:border-white"
-                onClick={() => {
-                  setChatIndex((prev) => prev + 1);
-                  // handleFetchSpecificConversation(true);
-                }}
+        ) : (
+          <>
+            {showScrollButton && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.1 }}
+                exit={{ opacity: 0, y: 10 }}
+                onClick={scrollToBottom}
+                className="fixed bottom-24 right-[50%] px-2 py-1 bg-gray-400 hover:bg-gray-500 text-white rounded-full shadow-md cursor-pointer transition-all hover:scale-110"
               >
-                <LuHistory />
-                Load Older
-              </button>
-            </div>
-          )}
-          {chatState?.specificConversation?.length == 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.1 }}
-              exit={{ opacity: 0, y: 10 }}
-              className="flex items-center justify-center mt-4">
-              <motion.div className="flex flex-col items-center justify-center text-center text-gray-600 w-max p-5 border-2 rounded-2xl border-dashed bg-green-50 border-[#22577E]">
-                <LuHistory className="text-[#22577E] mb-2" size={20} />
-                <p className="font-medium text-sm">No older chats found!</p>
-                <p className="text-xs mt-1">
-                  Press the <span className="font-semibold">"Load More"</span>
-                  button to check for additional conversations if available.
-                </p>
+                <KeyboardDoubleArrowDownIcon fontSize="small" />
               </motion.div>
-            </motion.div>
-          )}
+            )}
 
-          {chatState.specificConversation?.map((group, groupIndex) => (
-            <div key={groupIndex} className="mb-5">
-              <div className="flex items-center w-full">
-                <div className="border-b-2 w-full border-dashed border-gray-400">
-                </div>
-                <div className="my-4 text-xs text-center text-gray-700 font-semibold tracking-wide text-nowrap mx-2">
-                  {group?.date}
-                </div>
-                <div className="border-b-2 w-full border-dashed border-gray-400">
-                </div>
+            {chatState?.specificConversation?.length !== 0 && (
+              <div className="flex items-center justify-center mt-2">
+                <button
+                  className="text-[#22577E] border-2 border-[#22577E] px-4 py-2 rounded-md flex gap-2 items-center ml-auto mr-auto mt-2 cursor-pointer text-xs tracking-wider font-medium transition-all hover:bg-[#22577E] hover:text-white hover:border-white"
+                  onClick={() => {
+                    setChatIndex((prev) => prev + 1);
+                    // handleFetchSpecificConversation(true);
+                  }}
+                >
+                  <LuHistory />
+                  Load Older
+                </button>
               </div>
-              <div className="flex flex-col items-start space-y-2">
-                {group.messages.map((msg, index) => {
-                  const isSent = !msg.isReceived;
-                  const isImage = msg.replyType === "image";
-                  const isAudio = msg.replyType === "audio";
-                  const isVideo = msg.replyType === "video";
-                  const isDocument = msg.replyType === "document";
-                  const isLocationRecieved = msg.replyType === "location";
-                  const templateType = msg?.templateType;
-                  // const isText = ["text", "button", "interactive"].includes(
-                  //   msg.replyType
-                  // );
+            )}
+            {chatState?.specificConversation?.length == 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.1 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="flex items-center justify-center mt-4">
+                <motion.div className="flex flex-col items-center justify-center text-center text-gray-600 w-max p-5 border-2 rounded-2xl border-dashed bg-green-50 border-[#22577E]">
+                  <LuHistory className="text-[#22577E] mb-2" size={20} />
+                  <p className="font-medium text-sm">No older chats found!</p>
+                  <p className="text-xs mt-1">
+                    Press the <span className="font-semibold">"Load More"</span>
+                    button to check for additional conversations if available.
+                  </p>
+                </motion.div>
+              </motion.div>
+            )}
 
-                  // console.log("msg", msg);
-                  let locationData = msg?.requestJson;
-                  if (locationData) {
-                    try {
-                      const parsed =
-                        typeof locationData === "string"
-                          ? JSON.parse(locationData)
-                          : locationData;
+            {chatState.specificConversation?.map((group, groupIndex) => (
+              <div key={groupIndex} className="mb-5">
+                <div className="flex items-center w-full">
+                  <div className="border-b-2 w-full border-dashed border-gray-400">
+                  </div>
+                  <div className="my-4 text-xs text-center text-gray-700 font-semibold tracking-wide text-nowrap mx-2">
+                    {group?.date}
+                  </div>
+                  <div className="border-b-2 w-full border-dashed border-gray-400">
+                  </div>
+                </div>
+                <div className="flex flex-col items-start space-y-2">
+                  {group.messages.map((msg, index) => {
+                    const isSent = !msg.isReceived;
+                    const isImage = msg.replyType === "image";
+                    const isAudio = msg.replyType === "audio";
+                    const isVideo = msg.replyType === "video";
+                    const isDocument = msg.replyType === "document";
+                    const isLocationRecieved = msg.replyType === "location";
+                    const templateType = msg?.templateType;
+                    // const isText = ["text", "button", "interactive"].includes(
+                    //   msg.replyType
+                    // );
 
-                      const array = Object.entries(parsed);
+                    // console.log("msg", msg);
+                    let locationData = msg?.requestJson;
+                    if (locationData) {
+                      try {
+                        const parsed =
+                          typeof locationData === "string"
+                            ? JSON.parse(locationData)
+                            : locationData;
 
-                      const interactiveObj = array.find(
-                        ([key]) => key === "interactive"
-                      )?.[1];
+                        const array = Object.entries(parsed);
 
-                      var locationText = interactiveObj?.body?.text;
+                        const interactiveObj = array.find(
+                          ([key]) => key === "interactive"
+                        )?.[1];
 
-                      var isLocation =
-                        interactiveObj?.type === "location_request_message";
-                    } catch (err) {
-                      console.error(
-                        "Invalid JSON in requestJson:",
-                        locationData,
-                        err
-                      );
+                        var locationText = interactiveObj?.body?.text;
+
+                        var isLocation =
+                          interactiveObj?.type === "location_request_message";
+                      } catch (err) {
+                        console.error(
+                          "Invalid JSON in requestJson:",
+                          locationData,
+                          err
+                        );
+                      }
+                    } else {
+                      
                     }
-                  } else {
-                    console.log("No requestJson found for this message");
-                  }
-                  const isBot = msg?.replyType === "interactive";
-                  const isText = ["text", "button"].includes(msg.replyType);
-                  const isReply = msg?.isReply;
-                  const commonMediaClass = "object-contain mb-2 select-none";
-                  const mediaUrl = isSent
-                    ? msg?.mediaPath
-                    : `${BASE_MEDIA_URL}${msg?.mediaPath}`;
+                    const isBot = msg?.replyType === "interactive";
+                    const isText = ["text", "button"].includes(msg.replyType);
+                    const isReply = msg?.isReply;
+                    const commonMediaClass = "object-contain mb-2 select-none";
+                    const mediaUrl = isSent
+                      ? msg?.mediaPath
+                      : `${BASE_MEDIA_URL}${msg?.mediaPath}`;
 
-                  let fileType = "";
-                  // const extension = url.split('.').pop().split(/\#|\?/)[0];
-                  isDocument &&
-                    (fileType = msg?.mediaPath
-                      ?.split(".")
-                      .pop()
-                      .split(/\#|\?/)[0]);
-                  return (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{
-                        opacity: 1,
-                        y: 0,
-                        x: replyingMessageId === msg.id ? (isSent ? -20 : 20) : 0,
-                      }}
-                      transition={{
-                        duration: 0.3,
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 20,
-                      }}
-                      className={`p-2 rounded-lg max-w-[90%] my-1 ${isSent ? "self-end" : "self-start"
-                        }`}
-                    >
-                      {isReply && (
-                        <div className="bg-gray-100 border-l-4 border-green-500 p-2 rounded-sm mb-0">
-                          <p className="text-xs text-gray-500 mb-1">you</p>
-                          <p className="text-sm text-gray-800 break-words">
-                            {msg?.replyMessage}
-                          </p>
-                        </div>
-                      )}
-                      {/* {isReply && <div className="text-sm border-b-2 bg-blue-300 px-3 py-2 rounded-t-md border-gray-700">{msg?.replyMessage}</div>} */}
-                      {(isImage || isVideo || isDocument || isAudio) && (
-                        <div
-                          className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
-                            }`}
-                        >
+                    let fileType = "";
+                    // const extension = url.split('.').pop().split(/\#|\?/)[0];
+                    isDocument &&
+                      (fileType = msg?.mediaPath
+                        ?.split(".")
+                        .pop()
+                        .split(/\#|\?/)[0]);
+                    return (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{
+                          opacity: 1,
+                          y: 0,
+                          x: replyingMessageId === msg.id ? (isSent ? -20 : 20) : 0,
+                        }}
+                        transition={{
+                          duration: 0.3,
+                          type: "spring",
+                          stiffness: 300,
+                          damping: 20,
+                        }}
+                        className={`p-2 rounded-lg max-w-[90%] my-1 ${isSent ? "self-end" : "self-start"
+                          }`}
+                      >
+                        {isReply && (
+                          <div className="bg-gray-100 border-l-4 border-green-500 p-2 rounded-sm mb-0">
+                            <p className="text-xs text-gray-500 mb-1">you</p>
+                            <p className="text-sm text-gray-800 break-words">
+                              {msg?.replyMessage}
+                            </p>
+                          </div>
+                        )}
+                        {/* {isReply && <div className="text-sm border-b-2 bg-blue-300 px-3 py-2 rounded-t-md border-gray-700">{msg?.replyMessage}</div>} */}
+                        {(isImage || isVideo || isDocument || isAudio) && (
                           <div
-                            className={`${msg?.caption ? "p-2 rounded-md" : ""}`}
+                            className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+                              }`}
                           >
-                            {msg?.mediaPath ? (
-                              <>
-                                {isImage && (
-                                  <div
-                                    className={`relative group w-full h-full ${msg?.caption
-                                      ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E]"
-                                      : ""
-                                      }`}
-                                  >
-                                    <img
-                                      src={mediaUrl}
-                                      alt="Image"
-                                      className={`mb-1 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${msg?.caption
-                                        ? "rounded-t-lg"
-                                        : "rounded-md"
+                            <div
+                              className={`${msg?.caption ? "p-2 rounded-md" : ""}`}
+                            >
+                              {msg?.mediaPath ? (
+                                <>
+                                  {isImage && (
+                                    <div
+                                      className={`relative group w-full h-full ${msg?.caption
+                                        ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E]"
+                                        : ""
                                         }`}
-                                    />
-                                    {msg?.caption && (
-                                      <div className="text-sm text-white mb-1 ml-2 whitespace-pre-wrap break-words">
-                                        {msg?.caption}
+                                    >
+                                      <img
+                                        src={mediaUrl}
+                                        alt="Image"
+                                        className={`mb-1 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${msg?.caption
+                                          ? "rounded-t-lg"
+                                          : "rounded-md"
+                                          }`}
+                                      />
+                                      {msg?.caption && (
+                                        <div className="text-sm text-white mb-1 ml-2 whitespace-pre-wrap break-words">
+                                          {msg?.caption}
+                                        </div>
+                                      )}
+                                      <div className="flex items-center justify-center">
+                                        <button
+                                          className="absolute top-20 cursor-pointer bg-gray-300 rounded-full p-1 shadow opacity-0 group-hover:opacity-100 transition-opacity"
+                                          onClick={() => {
+                                            event.stopPropagation();
+                                            setPreviewDialog({
+                                              open: true,
+                                              type: "image",
+                                              url: mediaUrl,
+                                              caption: msg?.caption,
+                                            });
+                                          }}
+                                        >
+                                          <FullscreenIcon fontSize="small" />
+                                        </button>
                                       </div>
-                                    )}
-                                    <div className="flex items-center justify-center">
-                                      <button
-                                        className="absolute top-20 cursor-pointer bg-gray-300 rounded-full p-1 shadow opacity-0 group-hover:opacity-100 transition-opacity"
-                                        onClick={() => {
-                                          event.stopPropagation();
-                                          setPreviewDialog({
-                                            open: true,
-                                            type: "image",
-                                            url: mediaUrl,
-                                            caption: msg?.caption,
-                                          });
-                                        }}
-                                      >
-                                        <FullscreenIcon fontSize="small" />
-                                      </button>
                                     </div>
-                                  </div>
-                                )}
-                                {isVideo && (
-                                  <div
-                                    className={`${msg?.caption
-                                      ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E] relative group"
-                                      : "relative group"
-                                      }`}
-                                  >
-                                    <video
-                                      src={mediaUrl}
-                                      controls
-                                      autoPlay={false}
-                                      className={`mb-1 h-50 border border-gray-200 rounded-md bg-center bg-no-repeat w-[300px] object-cover`}
-                                    />
-                                    {msg?.caption && (
-                                      <div className="text-sm text-white mb-1 ml-2 whitespace-pre-wrap break-words">
-                                        {msg?.caption}
+                                  )}
+                                  {isVideo && (
+                                    <div
+                                      className={`${msg?.caption
+                                        ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E] relative group"
+                                        : "relative group"
+                                        }`}
+                                    >
+                                      <video
+                                        src={mediaUrl}
+                                        controls
+                                        autoPlay={false}
+                                        className={`mb-1 h-50 border border-gray-200 rounded-md bg-center bg-no-repeat w-[300px] object-cover`}
+                                      />
+                                      {msg?.caption && (
+                                        <div className="text-sm text-white mb-1 ml-2 whitespace-pre-wrap break-words">
+                                          {msg?.caption}
+                                        </div>
+                                      )}
+                                      <div className="flex items-center justify-center">
+                                        <button
+                                          className="absolute top-20 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1 shadow cursor-pointer"
+                                          onClick={() => {
+                                            event.stopPropagation();
+                                            setPreviewDialog({
+                                              open: true,
+                                              type: "video",
+                                              url: mediaUrl,
+                                              caption: msg?.caption,
+                                            });
+                                          }}
+                                        >
+                                          <FullscreenIcon fontSize="small" />
+                                        </button>
                                       </div>
-                                    )}
-                                    <div className="flex items-center justify-center">
-                                      <button
-                                        className="absolute top-20 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1 shadow cursor-pointer"
-                                        onClick={() => {
-                                          event.stopPropagation();
-                                          setPreviewDialog({
-                                            open: true,
-                                            type: "video",
-                                            url: mediaUrl,
-                                            caption: msg?.caption,
-                                          });
-                                        }}
-                                      >
-                                        <FullscreenIcon fontSize="small" />
-                                      </button>
                                     </div>
-                                  </div>
-                                )}
-                                {isAudio && (
-                                  <div
-                                    className={`${msg?.caption
-                                      ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E] relative group"
-                                      : "relative group"
-                                      }`}
-                                  >
-                                    <WhatsAppVoiceMessage
-                                      src={mediaUrl}
-                                      controls
-                                      autoPlay={false}
-                                      className={`mb-1 rounded-md bg-center bg-no-repeat w-[300px] object-cover`}
-                                    />
-                                    {msg?.caption && (
-                                      <div className="text-sm text-white mb-1 ml-2 whitespace-pre-wrap break-words">
-                                        {msg?.caption}
-                                      </div>
-                                    )}
-                                    {/* <div className="flex items-center justify-center">
+                                  )}
+                                  {isAudio && (
+                                    <div
+                                      className={`${msg?.caption
+                                        ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E] relative group"
+                                        : "relative group"
+                                        }`}
+                                    >
+                                      <WhatsAppVoiceMessage
+                                        src={mediaUrl}
+                                        controls
+                                        autoPlay={false}
+                                        className={`mb-1 rounded-md bg-center bg-no-repeat w-[300px] object-cover`}
+                                      />
+                                      {msg?.caption && (
+                                        <div className="text-sm text-white mb-1 ml-2 whitespace-pre-wrap break-words">
+                                          {msg?.caption}
+                                        </div>
+                                      )}
+                                      {/* <div className="flex items-center justify-center">
                                     <button
                                       className="absolute top-20 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1 shadow cursor-pointer"
                                       onClick={() => {
@@ -798,120 +816,120 @@ export const ChatScreen = ({
                                       <FullscreenIcon fontSize="small" />
                                     </button>
                                   </div> */}
-                                  </div>
-                                )}
-                                {isDocument && (
-                                  <div
-                                    className={`${msg?.caption
-                                      ? "border border-gray-200 mb-1 rounded-md max-w-[200px] bg-[#22577E] p-1 relative group"
-                                      : "relative group"
-                                      }`}
-                                  >
-                                    {/* <iframe
+                                    </div>
+                                  )}
+                                  {isDocument && (
+                                    <div
+                                      className={`${msg?.caption
+                                        ? "border border-gray-200 mb-1 rounded-md max-w-[200px] bg-[#22577E] p-1 relative group"
+                                        : "relative group"
+                                        }`}
+                                    >
+                                      {/* <iframe
                                     src={mediaUrl}
                                     className={`h-48 border border-gray-200 rounded-md bg-center bg-no-repeat`}
                                     allow="encrypted-media;"
                                     allowFullScreen
                                   /> */}
-                                    <div className="bg-[#e1f3fb] text-black p-4 rounded-sm shadow-md max-w-xs flex items-center gap-3 mb-1">
-                                      <div className="bg-white p-1 rounded-full shadow-inner text-blue-500">
-                                        {/* <InsertDriveFileIcon
+                                      <div className="bg-[#e1f3fb] text-black p-4 rounded-sm shadow-md max-w-xs flex items-center gap-3 mb-1">
+                                        <div className="bg-white p-1 rounded-full shadow-inner text-blue-500">
+                                          {/* <InsertDriveFileIcon
                                         sx={{ fontSize: 25 }}
                                       /> */}
-                                        {getFileType(fileType)}
+                                          {getFileType(fileType)}
+                                        </div>
+                                        <div className="flex flex-col">
+                                          <div
+                                            className="font-medium text-sm truncate w-[10rem]"
+                                            title={msg.fileName}
+                                          >
+                                            {msg.fileName || "Untitled Document"}
+                                          </div>
+                                          <div className="text-xs text-gray-500">
+                                            .{fileType}
+                                          </div>
+                                        </div>
                                       </div>
-                                      <div className="flex flex-col">
-                                        <div
-                                          className="font-medium text-sm truncate w-[10rem]"
-                                          title={msg.fileName}
+                                      {msg?.caption && (
+                                        <div className="text-sm text-white mb-1 ml-2 whitespace-pre-wrap break-words">
+                                          {msg?.caption}
+                                        </div>
+                                      )}
+                                      <div className="flex items-center justify-center">
+                                        <button
+                                          className="absolute top-20 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1 shadow"
+                                          onClick={() => {
+                                            event.stopPropagation();
+                                            setPreviewDialog({
+                                              open: true,
+                                              type: "document",
+                                              url: mediaUrl,
+                                              fileType,
+                                              caption: msg?.caption,
+                                            });
+                                          }}
                                         >
-                                          {msg.fileName || "Untitled Document"}
-                                        </div>
-                                        <div className="text-xs text-gray-500">
-                                          .{fileType}
-                                        </div>
+                                          <FullscreenIcon fontSize="small" />
+                                        </button>
                                       </div>
                                     </div>
-                                    {msg?.caption && (
-                                      <div className="text-sm text-white mb-1 ml-2 whitespace-pre-wrap break-words">
-                                        {msg?.caption}
-                                      </div>
-                                    )}
-                                    <div className="flex items-center justify-center">
-                                      <button
-                                        className="absolute top-20 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1 shadow"
-                                        onClick={() => {
-                                          event.stopPropagation();
-                                          setPreviewDialog({
-                                            open: true,
-                                            type: "document",
-                                            url: mediaUrl,
-                                            fileType,
-                                            caption: msg?.caption,
-                                          });
-                                        }}
+                                  )}
+                                </>
+                              ) : (
+                                // <button
+                                //   className="mb-2 h-48 w-72 flex justify-center items-center object-contain rounded-md border border-gray-200
+                                //     bg-[url(/blurImage.jpg)]"
+                                //   onClick={() => handleAttachmentDownload(msg)}
+                                // >
+                                //   <FileDownloadOutlinedIcon />
+                                // </button>
+                                <motion.div
+                                  className="mb-2 h-48 w-72 flex justify-center items-center object-contain rounded-md border border-gray-200 bg-gray-200 relative overflow-hidden"
+                                  style={{ backdropFilter: "blur(8px)" }}
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  id="download-button"
+                                  onClick={() => handleDownloadWithPreview(msg)}
+                                >
+                                  {isDownloading ? (
+                                    <CircularProgress
+                                      size={24}
+                                      className="text-[#22577E]"
+                                    />
+                                  ) : (
+                                    <>
+                                      <motion.div
+                                        className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-50"
+                                        initial={{ opacity: 0.5 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ duration: 0.3 }}
                                       >
-                                        <FullscreenIcon fontSize="small" />
-                                      </button>
-                                    </div>
-                                  </div>
-                                )}
-                              </>
-                            ) : (
-                              // <button
-                              //   className="mb-2 h-48 w-72 flex justify-center items-center object-contain rounded-md border border-gray-200
-                              //     bg-[url(/blurImage.jpg)]"
-                              //   onClick={() => handleAttachmentDownload(msg)}
-                              // >
-                              //   <FileDownloadOutlinedIcon />
-                              // </button>
-                              <motion.div
-                                className="mb-2 h-48 w-72 flex justify-center items-center object-contain rounded-md border border-gray-200 bg-gray-200 relative overflow-hidden"
-                                style={{ backdropFilter: "blur(8px)" }}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                id="download-button"
-                                onClick={() => handleDownloadWithPreview(msg)}
-                              >
-                                {isDownloading ? (
-                                  <CircularProgress
-                                    size={24}
-                                    className="text-[#22577E]"
-                                  />
-                                ) : (
-                                  <>
-                                    <motion.div
-                                      className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-50"
-                                      initial={{ opacity: 0.5 }}
-                                      animate={{ opacity: 1 }}
-                                      transition={{ duration: 0.3 }}
-                                    >
-                                      <FileDownloadOutlinedIcon className="text-gray-600 cursor-pointer" />
-                                    </motion.div>
-                                  </>
-                                )}
-                              </motion.div>
-                            )}
-                          </div>
-                          {btnOption === "active" && (
-                            <div className="flex gap-2">
-                              <button
-                                className="hover:bg-gray-300 transition-all duration-200 rounded-full p-1 px-2 cursor-pointer"
-                                onClick={() => {
-                                  setChatState((prev) => ({
-                                    ...prev,
-                                    // replyData: msg,
-                                    replyData: {
-                                      ...msg,
-                                      fileType,
-                                    },
-                                    isReply: true,
-                                  }));
-                                }}
-                              >
-                                <FaReply className=" size-3" />
-                              </button>
-                              {/* <a
+                                        <FileDownloadOutlinedIcon className="text-gray-600 cursor-pointer" />
+                                      </motion.div>
+                                    </>
+                                  )}
+                                </motion.div>
+                              )}
+                            </div>
+                            {btnOption === "active" && (
+                              <div className="flex gap-2">
+                                <button
+                                  className="hover:bg-gray-300 transition-all duration-200 rounded-full p-1 px-2 cursor-pointer"
+                                  onClick={() => {
+                                    setChatState((prev) => ({
+                                      ...prev,
+                                      // replyData: msg,
+                                      replyData: {
+                                        ...msg,
+                                        fileType,
+                                      },
+                                      isReply: true,
+                                    }));
+                                  }}
+                                >
+                                  <FaReply className=" size-3" />
+                                </button>
+                                {/* <a
                               onClick={() => {
                                 toast.success("Downloading Start");
                               }}
@@ -924,305 +942,307 @@ export const ChatScreen = ({
                             >
                               <FileDownloadOutlinedIcon className="size-2" />
                             </a> */}
+                                <button
+                                  className="hover:bg-gray-300 transition-all duration-200 rounded-full p-0.5 cursor-pointer"
+                                  // onClick={() => {
+                                  //   // toast.success("Download started");
+                                  //   const url = isSent
+                                  //     ? msg.mediaPath
+                                  //     : `${BASE_MEDIA_URL}${msg.mediaPath}`;
+                                  //   handleDownload(url, msg?.mediaId || "file");
+                                  // }}
+                                  onClick={() => {
+                                    const url = isSent
+                                      ? msg.mediaPath
+                                      : `${BASE_MEDIA_URL}${msg.mediaPath}`;
+                                    const filename = msg.mediaId || "file";
+                                    handleDownload(url, filename);
+                                  }}
+                                >
+                                  <FileDownloadOutlinedIcon className="size-2" />
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {isText && (
+                          <div
+                            className={`flex items-center gap-2 max-w-[200px]  ${isSent ? "flex-row-reverse" : ""
+                              }`}
+                          >
+                            <div className="max-w-[250px]">
+                              <p
+                                className={`whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${isSent
+                                  ? "bg-[#22577E] text-white rounded-br-none"
+                                  : "bg-[#5584AC] text-white rounded-bl-none"
+                                  }`}
+                                dangerouslySetInnerHTML={{ __html: formatMessageBody(msg.messageBody) }}
+                              >
+                                {/* {msg.messageBody} */}
+                              </p>
+                            </div>
+                            {btnOption === "active" && (
                               <button
-                                className="hover:bg-gray-300 transition-all duration-200 rounded-full p-0.5 cursor-pointer"
-                                // onClick={() => {
-                                //   // toast.success("Download started");
-                                //   const url = isSent
-                                //     ? msg.mediaPath
-                                //     : `${BASE_MEDIA_URL}${msg.mediaPath}`;
-                                //   handleDownload(url, msg?.mediaId || "file");
-                                // }}
+                                className="hover:bg-gray-300 transition-all duration-200 rounded-full py-2 px-2 cursor-pointer"
                                 onClick={() => {
-                                  const url = isSent
-                                    ? msg.mediaPath
-                                    : `${BASE_MEDIA_URL}${msg.mediaPath}`;
-                                  const filename = msg.mediaId || "file";
-                                  handleDownload(url, filename);
+                                  setChatState((prev) => ({
+                                    ...prev,
+                                    replyData: msg,
+                                    isReply: true,
+                                  }));
                                 }}
                               >
-                                <FileDownloadOutlinedIcon className="size-2" />
+                                <FaReply className=" size-3" />
                               </button>
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {isText && (
-                        <div
-                          className={`flex items-center gap-2 max-w-[200px]  ${isSent ? "flex-row-reverse" : ""
-                            }`}
-                        >
-                          <div className="max-w-[250px]">
-                            <p
-                              className={`whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${isSent
-                                ? "bg-[#22577E] text-white rounded-br-none"
-                                : "bg-[#5584AC] text-white rounded-bl-none"
-                                }`}
-                            >
-                              {msg.messageBody}
-                            </p>
+                            )}
                           </div>
-                          {btnOption === "active" && (
-                            <button
-                              className="hover:bg-gray-300 transition-all duration-200 rounded-full py-2 px-2 cursor-pointer"
-                              onClick={() => {
-                                setChatState((prev) => ({
-                                  ...prev,
-                                  replyData: msg,
-                                  isReply: true,
-                                }));
-                              }}
-                            >
-                              <FaReply className=" size-3" />
-                            </button>
-                          )}
-                        </div>
-                      )}
+                        )}
 
-                      {isLocation && (
-                        <div className="flex flex-col items-start max-w-xs bg-[#22577E] shadow-md rounded-t-2xl rounded-bl-2xl overflow-hidden">
-                          <div className="bg-white m-2 rounded-t-2xl rounded-bl-2xl p-2">
-                            {/* Message text */}
-                            <p className="text-sm text-black py-2 text-center">
-                              {locationText}
-                            </p>
+                        {isLocation && (
+                          <div className="flex flex-col items-start max-w-xs bg-[#22577E] shadow-md rounded-t-2xl rounded-bl-2xl overflow-hidden">
+                            <div className="bg-white m-2 rounded-t-2xl rounded-bl-2xl p-2">
+                              {/* Message text */}
+                              <p className="text-sm text-black py-2 text-center">
+                                {locationText}
+                              </p>
 
-                            {/* Time */}
-                            {/* <p className="text-xs text-gray-400 self-end pr-3 pb-2">
+                              {/* Time */}
+                              {/* <p className="text-xs text-gray-400 self-end pr-3 pb-2">
                             {formatTime(msg?.insertTime)}
                           </p> */}
 
-                            <button
-                              // onClick={onSendLocation}
-                              className="flex items-center justify-center cursor-pointer gap-2 border-t-2 border-[#22587e74] text-green-500 font-medium py-2 w-full"
-                            >
-                              <IoLocationOutline className="w-4 h-4" />
-                              <span>Send Location</span>
-                            </button>
+                              <button
+                                // onClick={onSendLocation}
+                                className="flex items-center justify-center cursor-pointer gap-2 border-t-2 border-[#22587e74] text-green-500 font-medium py-2 w-full"
+                              >
+                                <IoLocationOutline className="w-4 h-4" />
+                                <span>Send Location</span>
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
 
-                      {isLocationRecieved && (
-                        <>
-                          <div className="p-2 rounded-lg bg-gray-100 border-gray-200 border-2">
-                            <iframe
-                              title="map"
-                              width="250"
-                              height="150"
-                              style={{ border: 0 }}
-                              loading="lazy"
-                              allowFullScreen
-                              referrerPolicy="no-referrer-when-downgrade"
-                              src={`https://www.google.com/maps?q=${msg?.latitude},${msg?.longitude}&hl=es;z=14&output=embed`}
-                            ></iframe>
-                          </div>
-                        </>
-                      )}
+                        {isLocationRecieved && (
+                          <>
+                            <div className="p-2 rounded-lg bg-gray-100 border-gray-200 border-2">
+                              <iframe
+                                title="map"
+                                width="250"
+                                height="150"
+                                style={{ border: 0 }}
+                                loading="lazy"
+                                allowFullScreen
+                                referrerPolicy="no-referrer-when-downgrade"
+                                src={`https://www.google.com/maps?q=${msg?.latitude},${msg?.longitude}&hl=es;z=14&output=embed`}
+                              ></iframe>
+                            </div>
+                          </>
+                        )}
 
-                      {templateType && <TemplateMessagePreview template={msg} />}
-                      {isBot && <BotPreview template={msg} />}
+                        {templateType && <TemplateMessagePreview template={msg} templateJsonData={templateJsonData} />}
+                        {isBot && <BotPreview template={msg} />}
 
-                      <div
-                        className={`mt-1 text-[0.7rem] ${isSent ? "text-end" : "text-start"
-                          }`}
-                      >
                         <div
-                          className={`flex gap-1 items-center ${isSent ? "justify-end" : "justify-start"
+                          className={`mt-1 text-[0.7rem] ${isSent ? "text-end" : "text-start"
                             }`}
                         >
-                          {!isSent && (
-                            <>
-                              {/* For received messages, show time first */}
-                              <p className="text-[0.7rem] font-medium text-black tracking-wide" >{formatTime(msg?.insertTime)}</p>
-                            </>
-                          )}
+                          <div
+                            className={`flex gap-1 items-center ${isSent ? "justify-end" : "justify-start"
+                              }`}
+                          >
+                            {!isSent && (
+                              <>
+                                {/* For received messages, show time first */}
+                                <p className="text-[0.7rem] font-medium text-black tracking-wide" >{formatTime(msg?.insertTime)}</p>
+                              </>
+                            )}
 
-                          {isSent && !msg?.isView && (
-                            <HiOutlineCheck className="size-4" />
-                          )}
-                          {isSent && msg?.isView && (
-                            <VscCheckAll className="size-4 text-blue-500" />
-                          )}
+                            {isSent && !msg?.isView && (
+                              <HiOutlineCheck className="size-4" />
+                            )}
+                            {isSent && msg?.isView && (
+                              <VscCheckAll className="size-4 text-blue-500" />
+                            )}
 
-                          {isSent && (
-                            <>
-                              {/* For sent messages, show time after ticks */}
-                              <p className="text-[0.7rem] font-medium text-black tracking-wide">{formatTime(msg?.insertTime)}</p>
-                            </>
-                          )}
+                            {isSent && (
+                              <>
+                                {/* For sent messages, show time after ticks */}
+                                <p className="text-[0.7rem] font-medium text-black tracking-wide">{formatTime(msg?.insertTime)}</p>
+                              </>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
+                      </motion.div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
-          {/* bg-[#22577E] */}
-          {chatIndex > 1 && (
-            <button
-              className=" text-[#22577E] border-2 border-[#22577E] px-4 py-2 rounded-md flex gap-2 items-center ml-auto mr-auto mt-2 cursor-pointer text-xs tracking-wider font-medium transition-all hover:bg-[#22577E] hover:text-white hover:border-white"
-              onClick={() => {
-                setChatIndex((prev) => prev - 1);
-                // handleFetchSpecificConversation(true);
-              }}
-            >
-              <LuHistory />
-              Load more
-            </button>
-          )}
+            ))}
+            {/* bg-[#22577E] */}
+            {chatIndex > 1 && (
+              <button
+                className=" text-[#22577E] border-2 border-[#22577E] px-4 py-2 rounded-md flex gap-2 items-center ml-auto mr-auto mt-2 cursor-pointer text-xs tracking-wider font-medium transition-all hover:bg-[#22577E] hover:text-white hover:border-white"
+                onClick={() => {
+                  setChatIndex((prev) => prev - 1);
+                  // handleFetchSpecificConversation(true);
+                }}
+              >
+                <LuHistory />
+                Load more
+              </button>
+            )}
 
-          <div ref={endOfMessagesRef} />
-          {/* Image Preview */}
-          {selectedImage?.type && selectedImage.files && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed left-0 bottom-20 w-full bg-gray-50 border-1 border-gray-300 rounded-md shadow-md px-4 py-2 mb-1"
-            >
-              <div className="relative">
-                {/* <button className="flex items-center gap-1">
+            <div ref={endOfMessagesRef} />
+            {/* Image Preview */}
+            {selectedImage?.type && selectedImage.files && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed left-0 bottom-20 w-full bg-gray-50 border-1 border-gray-300 rounded-md shadow-md px-4 py-2 mb-1"
+              >
+                <div className="relative">
+                  {/* <button className="flex items-center gap-1">
               <img
                 src={URL.createObjectURL(selectedImage)}
                 alt=""
                 className="object-cover w-20 h-20"
               />
             </button> */}
-                {selectedImage?.type === "image" && (
-                  <button className="flex items-center gap-1">
-                    <img
-                      src={URL.createObjectURL(selectedImage?.files)}
-                      alt=""
-                      className="mb-2 h-20 w-40 object-cover pointer-events-none "
-                    />
-                  </button>
-                )}
-                {selectedImage.type === "video" && (
-                  <button className="flex items-center gap-1">
-                    <video
-                      src={URL.createObjectURL(selectedImage.files)}
-                      alt=""
-                      className="object-cover w-50 h-20"
-                    />
-                  </button>
-                )}
-                {selectedImage.type === "application" && (
-                  <button className="flex items-center gap-1">
-                    <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md flex items-center gap-3">
-                      <div className="bg-white rounded-full shadow-inner text-blue-500">
-                        {getFileType(selectedImage.fileType)}
-                      </div>
-                      <div className="flex flex-col">
-                        <div
-                          className="font-medium truncate break-words max-w-[10rem]"
-                          title={selectedImage.fileName}
-                        >
-                          {selectedImage.fileName || "Untitled Document"}
+                  {selectedImage?.type === "image" && (
+                    <button className="flex items-center gap-1">
+                      <img
+                        src={URL.createObjectURL(selectedImage?.files)}
+                        alt=""
+                        className="mb-2 h-20 w-40 object-cover pointer-events-none "
+                      />
+                    </button>
+                  )}
+                  {selectedImage.type === "video" && (
+                    <button className="flex items-center gap-1">
+                      <video
+                        src={URL.createObjectURL(selectedImage.files)}
+                        alt=""
+                        className="object-cover w-50 h-20"
+                      />
+                    </button>
+                  )}
+                  {selectedImage.type === "application" && (
+                    <button className="flex items-center gap-1">
+                      <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md flex items-center gap-3">
+                        <div className="bg-white rounded-full shadow-inner text-blue-500">
+                          {getFileType(selectedImage.fileType)}
+                        </div>
+                        <div className="flex flex-col">
+                          <div
+                            className="font-medium truncate break-words max-w-[10rem]"
+                            title={selectedImage.fileName}
+                          >
+                            {selectedImage.fileName || "Untitled Document"}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </button>
-                )}
-                <span
-                  className="absolute text-gray-500 cursor-pointer top-0 right-0 bg-gray-200 hover:bg-gray-400 rounded-full p-0.5"
-                  onClick={() => deleteImages("4")}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                    </button>
+                  )}
+                  <span
+                    className="absolute text-gray-500 cursor-pointer top-0 right-0 bg-gray-200 hover:bg-gray-400 rounded-full p-0.5"
+                    onClick={() => deleteImages("4")}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </span>
-              </div>
-            </motion.div>
-          )}
-          {locationPreview && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed left-0 bottom-20 w-full bg-gray-50 border-1 border-gray-300 rounded-md shadow-md px-4 py-5 mb-1 "
-            >
-              <div className="border-b-2 border-dashed border-gray-400 w-full mb-3 pb-3">
-                <p className="text-gray-400 text-xs text-center tracking-wide">
-                  <span>
-                    <LocationOnOutlinedIcon className="text-[#408386]" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-4 h-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
                   </span>
-                  From here you can request the user’s location. Once they accept,
-                  their location details will be shared with you.
-                </p>
-              </div>
-
-              <div className="flex gap-2 items-end" >
-                <div className="relative w-full max-w-sm bg-slate-800 shadow-md rounded-lg p-4">
-                  <div className="flex flex-col justify-center items-center">
-                    <p className="text-white font-medium text-start text-sm mb-2">
-                      {locationPreviewText}
-                    </p>
-                    <div className="border-t-2 border-gray-500 w-95 mt-1" />
-                    <div className="flex justify-start items-start mt-2 space-x-2">
+                </div>
+              </motion.div>
+            )}
+            {locationPreview && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                className="relative  w-full bg-gray-50 border-1 border-gray-300 rounded-md shadow-md px-4 py-5 mb-15 md:mb-1 "
+              >
+                <span
+                  onClick={() => {
+                    setLocationPreviewText("Do you want to share your location");
+                    setLocationPreview(false);
+                  }}
+                  className="absolute right-1 top-0.5 cursor-pointer bg-gray-300 rounded-full px-1 hover:bg-gray-400 hover:text-white"
+                >
+                  <CloseOutlinedIcon
+                    sx={{
+                      fontSize: "18px",
+                      color: "gray",
+                    }}
+                  />
+                </span>
+                <div className="border-b-2 border-dashed border-gray-400 w-full mb-3 pb-3">
+                  <p className="text-gray-400 text-xs text-center tracking-wide">
+                    <span>
                       <LocationOnOutlinedIcon className="text-[#408386]" />
-                      <p className="text-[#408386] font-medium text-sm">
-                        Send Location{" "}
+                    </span>
+                    From here you can request the user’s location. Once they accept,
+                    their location details will be shared with you.
+                  </p>
+                </div>
+
+                <div className="flex gap-2 items-end flex-wrap w-full">
+                  <div className="relative w-full max-w-sm bg-slate-800 shadow-md rounded-lg p-4">
+                    <div className="flex flex-col justify-center items-center">
+                      <p className="text-white font-medium text-start text-sm mb-2">
+                        {locationPreviewText}
                       </p>
+                      <div className="border-t-2 border-gray-500 w-full mt-1" />
+                      <div className="flex justify-start items-start mt-2 space-x-2">
+                        <LocationOnOutlinedIcon className="text-[#408386]" />
+                        <p className="text-[#408386] font-medium text-sm">
+                          Send Location{" "}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex gap-2 mt-4 items-end">
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-700 ml-2 mb-1">Enter Location Label *</span>
-                    <input
-                      type="text"
-                      value={locationPreviewText}
-                      onChange={(e) => setLocationPreviewText(e.target.value)}
-                      autoFocus
-                      className="w-100 border-2 rounded-full border-gray-300 focus:outline-none text-sm text-gray-800 p-2"
-                    />
+                  <div className="flex gap-2 mt-4 items-end">
+                    <div className="flex flex-col">
+                      <span className="text-sm text-gray-700 ml-2 mb-1">Enter Location Label *</span>
+                      <input
+                        type="text"
+                        value={locationPreviewText}
+                        onChange={(e) => setLocationPreviewText(e.target.value)}
+                        autoFocus
+                        className="w-full md:w-95 border-2 rounded-full border-gray-300 focus:outline-none text-sm text-gray-800 p-2"
+                      />
+                    </div>
+
+                    <button
+                      onClick={() => requestLocationData()}
+                      className="cursor-pointer rounded-full border-2 border-gray-300 p-2 hover:bg-gray-400 transition-all duration-100 hover:text-white shadow-2xl"
+                    >
+                      <FiSend className="text-xl" />
+                    </button>
                   </div>
-
-                  <button
-                    onClick={() => requestLocationData()}
-                    className="cursor-pointer rounded-full border-2 border-gray-300 p-2 hover:bg-gray-400 transition-all duration-100 hover:text-white shadow-2xl"
-                  >
-                    <FiSend className="text-xl" />
-                  </button>
                 </div>
-              </div>
 
 
 
 
-              <div
-                onClick={() => {
-                  setLocationPreviewText("Do you want to share your location");
-                  setLocationPreview(false);
-                }}
-                className="absolute top-1 right-1 cursor-pointer bg-gray-300 rounded-full px-1 hover:bg-gray-400 hover:text-white"
-              >
-                <CloseOutlinedIcon
-                  sx={{
-                    fontSize: "18px",
-                    color: "gray",
-                  }}
-                />
-              </div>
-            </motion.div>
-          )}
-        </>
-        {/* )} */}
+
+              </motion.div>
+            )}
+          </>
+        )}
 
 
       </div>
@@ -1288,7 +1308,7 @@ export const ChatScreen = ({
                       : chatState.replyData?.mediaPath
                   }
                   alt={chatState.replyData?.mediaPath}
-                  className="mb-2 pointer-events-none select-none h-20 w-40"
+                  className="mb-2 pointer-events-none select-none h-20 w-40 rounded-md"
                 />
               )}
               {chatState.replyData?.replyType === "video" && (
@@ -1300,7 +1320,7 @@ export const ChatScreen = ({
                   }
                   controls={false}
                   autoPlay={false}
-                  className="mb-2 h-20 w-40 object-cover pointer-events-none "
+                  className="mb-2 h-20 w-40 object-cover pointer-events-none rounded-md"
                 />
               )}
               {chatState.replyData?.replyType === "audio" && (
@@ -1359,7 +1379,7 @@ export const ChatScreen = ({
                 </div>
               )}
               {chatState.replyData?.messageBody && (
-                <p>{chatState.replyData?.messageBody}</p>
+                <pre className="text-sm text-gray-800 font-medium break-words text-break text-wrap">{chatState.replyData?.messageBody}</pre>
               )}
             </div>
             <div

@@ -4,7 +4,7 @@ import { BsTelephoneFill } from "react-icons/bs";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { Carousel } from "react-responsive-carousel";
 import { useMemo } from "react";
-import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { components } from "react-select";
 
@@ -48,7 +48,6 @@ const getBtnTitle = (type, phone, url, text) => {
       return `Visit us: ${url}`;
   }
 };
-
 
 const MediaRenderer = ({ format, fileUrl, fallbackUrl }) => {
   if (format === "IMAGE") {
@@ -114,42 +113,55 @@ export const TemplatePreview = ({
   );
 
   const renderedComponents = useMemo(() => {
-    return tempDetails?.components?.map(
-      ({ type, text, buttons, format, example }, index) => {
-        if (type === "HEADER" && !example?.header_handle?.[0]) return null;
+  if (!tempDetails?.components) return null;
 
-        // console.log(buttons)
-
-        return (
-          <div key={index} className="flex flex-col w-full gap-3">
-            {type === "HEADER" && tempTypes.includes(format) && (
-              <MediaRenderer
-                format={format}
-                fileUrl={selectedImage?.fileUrl}
-                fallbackUrl={example?.header_handle?.[0]}
-              />
-            )}
-
-            {type === "BODY" && (
-              <div className="text-sm text-gray-800">{text}</div>
-            )}
-
-            {type === "BUTTONS" && buttons?.length > 0 && (
-              <ButtonsGroup buttons={buttons} />
-            )}
-          </div>
-        );
+  return tempDetails.components
+    .slice()
+    .map(({ type, text, buttons, format, example }, index) => {
+      // Skip media header without example
+      if (type === "HEADER" && tempTypes.includes(format) && !example?.header_handle?.[0]) {
+        return null;
       }
-    );
-  }, [tempDetails?.components, selectedImage]);
+
+      return (
+        <div key={index} className="flex flex-col w-full gap-3">
+          {type === "HEADER" && !tempTypes.includes(format) && (
+            <div>
+              <h2 className="text-sm font-bold">{text}</h2>
+            </div>
+          )}
+
+          {type === "HEADER" && tempTypes.includes(format) && (
+            <MediaRenderer
+              format={format}
+              fileUrl={selectedImage?.fileUrl}
+              fallbackUrl={example?.header_handle?.[0]}
+            />
+          )}
+
+          {type === "BODY" && (
+            <div className="text-sm text-gray-800">{text}</div>
+          )}
+
+          {type === "BUTTONS" && buttons?.length > 0 && (
+            <ButtonsGroup buttons={buttons} />
+          )}
+
+          {type === "FOOTER" && (
+            <div className="text-sm text-gray-800">{text}</div>
+          )}
+        </div>
+      );
+    });
+}, [tempDetails?.components, selectedImage]);
+
 
   const CardsData = useMemo(() => {
     return isCarousal
       ? tempDetails?.components?.find((comp) => comp.type === "CAROUSEL")
-        ?.cards || []
+          ?.cards || []
       : [];
   }, [tempDetails, isCarousal]);
-
 
   return (
     <div className="p-3 bg-gray-200 rounded-xl">
@@ -200,7 +212,6 @@ export const TemplatePreview = ({
               }}
             >
               {CardsData?.map((card, index) => {
-
                 const header = card?.components?.find(
                   (item) =>
                     item.type === "HEADER" && tempTypes.includes(item.format)
@@ -215,8 +226,6 @@ export const TemplatePreview = ({
                 const file =
                   carFile?.[index]?.filePath ||
                   header?.example?.header_handle?.[0];
-
-
 
                 return (
                   <div
@@ -246,10 +255,11 @@ export const TemplatePreview = ({
                         {buttons.map((btn, i) => (
                           <button
                             key={i}
-                            title={`${btn.type === "PHONE_NUMBER"
-                              ? `Call: ${btn.phone_number}`
-                              : btn.url
-                              }`}
+                            title={`${
+                              btn.type === "PHONE_NUMBER"
+                                ? `Call: ${btn.phone_number}`
+                                : btn.url
+                            }`}
                             className={`flex items-center justify-center px-4 py-2 text-sm rounded-md cursor-pointer ${getBtnCss(
                               btn.type
                             )}`}

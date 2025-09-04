@@ -30,6 +30,8 @@ export const ChatScreen = ({
   setIsTemplateMessage,
   handleSendTemplateMessage,
   setChatState,
+  selectedMedia,
+  setSelectedMedia,
 }) => {
   const [replyingMessageId, setReplyingMessageId] = useState(null);
   const messageRef = useRef(null);
@@ -171,7 +173,7 @@ export const ChatScreen = ({
 
       {/* Message Render here */}
       <div className="relative flex-1 overflow-y-auto md:-mt-5">
-        <div className="fixed inset-0 bg-[url(/rcsbg4.avif)] bg-cover bg-center filter blur-sm -z-10"></div>
+        <div className="fixed inset-0 bg-[url(/rcsbg4.avif)] bg-cover bg-center  -z-10"></div>
         <div
           ref={messageRef}
           className="p-4 space-y-2 flex flex-col relative"
@@ -210,8 +212,12 @@ export const ChatScreen = ({
                       initial={{ opacity: 0, y: 5 }}
                       animate={{
                         opacity: 1,
-                        y: 0,
-                        x: replyingMessageId === msg.id ? (isSent ? -20 : 20) : 0,
+                        x:
+                          replyingMessageId === msg.id
+                            ? isSent
+                              ? -20
+                              : 20
+                            : 0,
                       }}
                       transition={{
                         duration: 0.3,
@@ -494,6 +500,8 @@ export const ChatScreen = ({
           isSpeedDialOpen={isSpeedDialOpen}
           isTemplateMessage={isTemplateMessage}
           setIsTemplateMessage={setIsTemplateMessage}
+          selectedMedia={selectedMedia}
+          setSelectedMedia={setSelectedMedia}
         />
       ) : (
         <motion.div

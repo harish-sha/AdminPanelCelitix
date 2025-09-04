@@ -213,6 +213,7 @@ const ObdCampaignTable = ({
                                         "sent",
                                         "answered",
                                         "notAnswered",
+                                        "unDelivered",
                                         // "failed",
                                         // "smsCount",
                                         // "totalChargedUnit",

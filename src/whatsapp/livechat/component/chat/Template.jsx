@@ -9,7 +9,44 @@ import { FaReply } from "react-icons/fa6";
 import { BsTelephoneFill } from "react-icons/bs";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
-export const TemplateMessagePreview = ({ template }) => {
+export const TemplateMessagePreview = ({ template, templateJsonData }) => {
+  const [jsonData, setJsonData] = useState([]);
+  const [values, setValues] = useState([]);
+
+  useEffect(() => {
+    if (!jsonData?.length) return;
+
+    const extractedValues = [];
+
+    jsonData.forEach((item) => {
+      try {
+        const parsed = JSON.parse(item.requestJson);
+
+        parsed.template?.components?.forEach((component) => {
+          component?.parameters?.forEach((param) => {
+            if (param.text) {
+              extractedValues.push(param.text);
+            }
+          });
+        });
+      } catch (error) {
+        console.error("Invalid JSON:", item.requestJson);
+      }
+    });
+    setValues(extractedValues);
+  }, [jsonData]);
+
+  useEffect(() => {
+    if (template && template.requestJson) {
+      setJsonData((prev) => [
+        {
+          templateName: template.templateName,
+          requestJson: template.requestJson,
+        },
+      ]);
+    }
+  }, [template]);
+
   const isImage = template?.templateType === "image";
   const isVideo = template?.templateType === "video";
   const isDocument = template?.templateType === "document";
@@ -17,19 +54,15 @@ export const TemplateMessagePreview = ({ template }) => {
 
   const [isFetching, setIsFetching] = useState(false);
 
-
   const mediaPath = template?.mediaPath;
 
   const [tempDetails, setTempDetails] = useState(null);
+
   useEffect(() => {
     if (template) {
       handleFetchSpecificTemplate();
     }
   }, [template]);
-
-  // useEffect(() => {
-  //   console.log(tempDetails);
-  // }, [tempDetails]);
 
   async function handleFetchSpecificTemplate() {
     const { wabaNumber, templateSrno, templateName } = template;
@@ -43,14 +76,6 @@ export const TemplateMessagePreview = ({ template }) => {
 
       const templates = await getWabaTemplate(wabaAccountId, templateName);
 
-      // const matchedTemplate = templates.find(
-      //   (temp) => String(temp?.templateSrno) === String(templateSrno)
-      // );
-      // if (!matchedTemplate) {
-      //   // return toast.error("Template not found.");
-      //   return;
-      // }
-      // setTempDetails(matchedTemplate);
       setTempDetails(templates?.data[0]?.components);
     } catch (error) {
       console.error("Error fetching specific template:", error);
@@ -94,6 +119,13 @@ export const TemplateMessagePreview = ({ template }) => {
   };
 
   function renderMediaTemplate() { }
+
+  const replacePlaceholders = (text, values) => {
+    return text.replace(/{{(\d+)}}/g, (_, index) => {
+      const i = parseInt(index, 10) - 1;
+      return values[i] ?? `{{${index}}}`;
+    });
+  };
 
   const ButtonsGroup = ({ buttons }) => {
     return (
@@ -181,11 +213,35 @@ export const TemplateMessagePreview = ({ template }) => {
                 ></iframe>
               );
             }
-            if (item?.type === "BODY") {
-              return <pre className="text-sm text-wrap " key={index}>{item?.text}</pre>;
+            if (item?.type === "HEADER") {
+              return (
+                <pre className="text-sm font-bold" key={index}>
+                  {item?.text}
+                </pre>
+              );
             }
+
+            if (item?.type === "BODY") {
+              return (
+                <pre className="text-sm text-wrap font-medium" key={index}>
+                  {/* {item?.text} */}
+                  {replacePlaceholders(item?.text, values)}
+                </pre>
+              );
+            }
+
             if (item.type === "BUTTONS" && item?.buttons?.length > 0) {
-              return <ButtonsGroup buttons={item?.buttons} key={index} />
+              return <ButtonsGroup buttons={item?.buttons} key={index} />;
+            }
+            if (item?.type === "FOOTER") {
+              return (
+                <pre
+                  className="text-[0.8rem] text-gray-600 text-wrap font-normal"
+                  key={index}
+                >
+                  {item?.text}
+                </pre>
+              );
             }
           })}
         </div>

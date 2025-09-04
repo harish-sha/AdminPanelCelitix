@@ -281,6 +281,23 @@ export const getSummaryReport = async (data) => {
   }
 };
 
+// fetch CTA (Quick Reply) report
+export const fetchCtaTrackingReport = async (data) => {
+  return await fetchWithAuth(
+    `/whatsapp/pie-chart?campaignSrno=${data?.campSrno}`,
+    {
+      method: "GET",
+    }
+  );
+};
+
+export const downloadCtaTrackingReport = async (data) => {
+  return await fetchWithAuth(`/whatsapp/download-piechart-report`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
 //send template to api
 export const sendTemplatetoApi = async (data) => {
   try {

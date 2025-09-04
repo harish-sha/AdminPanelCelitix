@@ -94,7 +94,7 @@ const Transactions = () => {
     },
     {
       field: "amount",
-      headerName: "Amount Recharged",
+      headerName: "Total Amount",
       flex: 1,
       minWidth: 120,
     },
@@ -118,7 +118,7 @@ const Transactions = () => {
     },
     {
       field: "balance",
-      headerName: "Total Amount",
+      headerName: "Amount Recharged",
       flex: 1,
       minWidth: 120,
     },

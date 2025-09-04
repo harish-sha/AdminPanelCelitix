@@ -118,7 +118,8 @@ const WhatsappConversationTable = ({
     // let finalUrl = `${BASE_MEDIA_URL}${url}`
     // console.log(finalUrl)
 
-    const parsed = /^[a-zA-Z]+:\/\/[^\/]+/.test(url);
+    // const parsed = /^[a-zA-Z]+:\/\/[^\/]+/.test(url);
+    const finalUrl = `https://cb.celitix.com/${url}`;
 
     if (!parsed) {
       return toast.error("Invalid URL");
@@ -129,7 +130,7 @@ const WhatsappConversationTable = ({
       const pathname = new URL(row.mediaPath).pathname;
       mimeType = pathname.split(".").pop();
     }
-    setFileData({ url, type, mimeType });
+    setFileData({ url: finalUrl, type, mimeType });
     setIsDialogOpen(true);
   }
 

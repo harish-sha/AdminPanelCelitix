@@ -1336,7 +1336,7 @@ const WhatsappLiveChatSettings = () => {
       button: ["Configure"],
       desc: "Greets users automatically when they message for the first time. Helps create a quick and professional first response.",
       message: "",
-      type: "Welcome_message",
+      type: "welcome_message",
       tooltip:
         "“Hi! 👋 Thanks for reaching out. Our team will connect with you shortly.”",
     },
@@ -1366,11 +1366,11 @@ const WhatsappLiveChatSettings = () => {
     },
     {
       id: 4,
-      name: "Off Hours Message",
+      name: "Agent No Response",
       button: ["Configure"],
       desc: "Activates auto-replies during agent off-shift times. Ensures customers receive a response even when no one is online.",
       message: "",
-      type: "off_hour_msg",
+      type: "15_minutes_message",
       tooltip: (
         <>
           <div><b>What it does:</b> Auto-replies when no agent is online based on shift time settings.</div>
@@ -1396,15 +1396,16 @@ const WhatsappLiveChatSettings = () => {
       filePath: "",
       wabaNumber: wabaState.selected,
       wabaSrno: wabaSrno,
-      tempJson: JSON.stringify({
-        template: {
-          replyButtons: [],
-          name: "test13",
-          language: { code: "en", policy: "deterministic" },
-        },
-        to: "mobileno",
-        type: "template",
-      }),
+      // tempJson: JSON.stringify({
+      //   template: {
+      //     replyButtons: [],
+      //     name: "test13",
+      //     language: { code: "en", policy: "deterministic" },
+      //   },
+      //   to: "mobileno",
+      //   type: "template",
+      // }),
+      tempJson: "",
       mediaPath: "",
       messageEntity: "0",
       timeout: Number(minutes) || 0,
@@ -1655,7 +1656,7 @@ const WhatsappLiveChatSettings = () => {
               onHide={() => setWorkingHoursDialog(false)}
               className="w-[40rem]"
               draggable={false}
-              // onClick={handleWorkingSave}
+            // onClick={handleWorkingSave}
             >
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <div className="space-y-2">

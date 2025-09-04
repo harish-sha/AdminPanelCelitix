@@ -190,13 +190,13 @@ export const VariableManager = ({
             sx={{ width: "100%", marginBottom: "1rem" }}
           />
         </div>
-        <div className="absolute top-[0.58rem] right-2 h-10">
+        {/* <div className="absolute top-[0.58rem] right-2 h-10">
           <InputVariable
             variables={headers}
             onSelect={(e) => insertVariable(e, index)}
           />
-        </div>
-        <div className="absolute top-[0.8rem] right-10">
+        </div> */}
+        <div className="absolute top-[0.8rem] right-3">
           <CustomEmojiPicker onSelect={(e) => handleEmojiAdd(e, index)} />
         </div>
       </div>
@@ -273,7 +273,7 @@ export const VariableManager = ({
 
   const renderBtnInput = () => (
     <>
-      <p>Button Variables</p>
+      <p className="text-sm text-gray-700" >Button Variables</p>
       <div className="relative w-full p-2">
         {btnvarList?.map((label, index) => (
           <div className="relative w-full" key={index}>
@@ -294,12 +294,12 @@ export const VariableManager = ({
                 sx={{ width: "100%", marginBottom: "1rem" }}
               />
             </div>
-            <div className="absolute top-[0.1rem] right-0 h-10">
+            {/* <div className="absolute top-[0.1rem] right-0 h-10">
               <InputVariable
                 variables={headers}
                 onSelect={(e) => insertBtnVariable(e, index)}
               />
-            </div>
+            </div> */}
             {/* <div className="absolute top-[0.5rem] right-10">
               <CustomEmojiPicker onSelect={(e) => handleEmojiAdd(e, index)} />
             </div> */}
@@ -312,8 +312,8 @@ export const VariableManager = ({
   return (
     <>
       {templateDetails[0] && (
-        <div className="bg-white  rounded-md">
-          <div className="bg-[#128C7E] p-2 rounded-t-md">
+        <div className="bg-white rounded-md">
+          <div className="bg-blue-400 p-2 rounded-md">
             <h1 className="text-[0.8rem] font-medium text-white tracking-wider">
               Template Type: {templateDetails[0].templateType}
             </h1>

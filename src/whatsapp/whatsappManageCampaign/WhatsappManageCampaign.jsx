@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
 import SummarizeOutlinedIcon from "@mui/icons-material/SummarizeOutlined";
 import DateRangeIcon from "@mui/icons-material/DateRange";
@@ -91,6 +91,8 @@ const WhatsappManageCampaign = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [value, setValue] = useState(0);
   const [campaignName, setCampaignName] = useState("");
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [scheduleCampaignName, setScheduleCampaignName] = useState("");
   const [inputValueMobileLogs, setInputValueMobileLogs] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -665,7 +667,7 @@ const WhatsappManageCampaign = () => {
 
   // flows report
   const [flowReplyList, setFlowReplyList] = useState([]);
-  const [selectedDateFlow, setSelectedDateFlow] = useState(""); // format: yyyy-mm-dd
+  const [selectedDateFlow, setSelectedDateFlow] = useState(new Date()); // format: yyyy-mm-dd
   const [isFlowFetching, setIsFlowFetching] = useState(""); // format: yyyy-mm-dd
 
   const fetchFlowReplyDetails = async () => {
@@ -682,13 +684,13 @@ const WhatsappManageCampaign = () => {
     setIsFlowFetching(false);
   };
 
-  const fetchFlowMainResponse = async (flowName) => {
+  const fetchFlowMainResponse = async (item) => {
     setIsFlowFetching(true);
     try {
       const data = {
-        flowName: flowName,
-        templateName: "" || null, // optional
-        campaignSrno: "" || 0, // optional
+        flowName: "",
+        templateName: item.template_name || null,
+        campaignSrno: item.campaign_srno || 0, // optional
       };
       const response = await flowMainResponse(data);
     } catch (error) {
@@ -702,6 +704,38 @@ const WhatsappManageCampaign = () => {
       fetchFlowReplyDetails();
     }
   }, [selectedDateFlow]);
+
+  const filteredFlowList = useMemo(() => {
+    const q = (search || "").trim().toLowerCase();
+    if (!q) return flowReplyList;
+    return flowReplyList.filter((it) => {
+      const hay = [
+        it?.flow_name,
+        it?.flow_id,
+        it?.campaign_name,
+        it?.campaign_id,
+        it?.template_name,
+      ].map(v => String(v ?? "").toLowerCase());
+      return hay.some(v => v.includes(q));
+    });
+  }, [flowReplyList, search]);
+
+
+    const highlightMatch = (text, query) => {
+    if (!query) return text;
+
+    const parts = text.split(new RegExp(`(${query})`, "gi"));
+    return parts.map((part, i) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <mark key={i} className="bg-yellow-300 rounded">
+          {part}
+        </mark>
+      ) : (
+        part
+      )
+    );
+  };
+
 
   return (
     <div className="w-full ">
@@ -1592,7 +1626,7 @@ const WhatsappManageCampaign = () => {
             </div>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={4}>
-            <div className="flex flex-col gap-6 bg-gradient-to-b from-blue-50 via-white to-white min-h-[80vh] p-4 md:p-6 rounded-xl">
+            <div className="flex flex-col gap-6 bg-gradient-to-b from-gray-50 to-gray-50 min-h-[80vh] p-4 md:p-6 rounded-xl">
               {/* Header Section */}
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
@@ -1601,8 +1635,16 @@ const WhatsappManageCampaign = () => {
                     Flow Summary Report
                   </h2>
                 </div>
-
-                <div className="flex flex-col items-start">
+                
+                <div className="flex flex-wrap lg:flex-nowrap items-start gap-2">
+                  <InputField
+                  label="Search Flow"
+                    type="text"
+                    placeholder="Search by Flow Name & Id..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="border border-gray-300 rounded-md px-3 py-1.5 w-full  text-sm"
+                  />
                   <UniversalDatePicker
                     label="Select Date"
                     value={selectedDateFlow}
@@ -1615,10 +1657,16 @@ const WhatsappManageCampaign = () => {
               {/* Display Selected Date */}
               {selectedDateFlow && (
                 <div className="text-sm text-gray-600 font-medium">
-                  Showing results for:{" "}
+                  Showing results for :{" "}
                   <span className="text-gray-800 font-semibold">
                     {format(new Date(selectedDateFlow), "dd MMMM yyyy")}
                   </span>
+                  {typeof filteredFlowList?.length === "number" && (
+                    <span className="ml-2 text-gray-500">
+                      • {filteredFlowList.length} result
+                      {filteredFlowList.length === 1 ? "" : "s"}
+                    </span>
+                  )}
                 </div>
               )}
 
@@ -1631,11 +1679,17 @@ const WhatsappManageCampaign = () => {
                 <div className="text-center text-gray-500 py-6">
                   No flow replies found for the selected date.
                 </div>
+              ) : filteredFlowList.length === 0 ? (
+                <div className="text-center text-gray-500 py-6">
+                  No results match your search.
+                </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {flowReplyList.map((item, idx) => (
+                  {filteredFlowList.map((item, idx) => (
                     <motion.div
-                      key={idx}
+                      key={
+                        item?.flow_id || `${item?.flow_name || "row"}-${idx}`
+                      }
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: idx * 0.1 }}
@@ -1649,21 +1703,24 @@ const WhatsappManageCampaign = () => {
                           <div>
                             <p className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1">
                               <MdOutlineDescription className="text-gray-500" />
-                              Flow Name:
+                              Campaign Name:
                             </p>
                             <h3 className="text-lg font-semibold text-gray-800">
-                              {item.flow_name || "—"}
+                              {/* {item.campaign_name || "—"} */}
+                              {highlightMatch(String(item.campaign_name || "—"), search)}
                             </h3>
                           </div>
                           <div>
                             <p className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1">
                               <MdOutlineDescription className="text-gray-500" />
-                              Campaign Name:
+                              Flow Name:
                             </p>
                             <h3 className="text-lg font-semibold text-gray-800">
-                              {item.campaign_name || "—"}
+                              {/* {item.flow_name || "—"} */}
+                              {highlightMatch(String(item.flow_name || "—"), search)}
                             </h3>
                           </div>
+
                           {/* <div className="flex flex-col text-gray-600 font-medium">
                             <p className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1">
                               <MdOutlineAnalytics className="text-gray-500" />
@@ -1683,6 +1740,7 @@ const WhatsappManageCampaign = () => {
                             </p>
                             <p className="text-gray-800 font-semibold text-lg">
                               {item.template_name || "—"}
+                              {highlightMatch(String(item.template_name || "—"), search)}
                             </p>
                           </div>
 
@@ -1701,9 +1759,7 @@ const WhatsappManageCampaign = () => {
                       <div className="mt-4">
                         <div
                           onClick={() =>
-                            fetchFlowMainResponse(
-                              item.flow_name || item.template_name
-                            )
+                            fetchFlowMainResponse(item)
                           }
                           className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline mt-auto"
                         >

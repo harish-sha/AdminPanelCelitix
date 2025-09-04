@@ -347,10 +347,10 @@ const ObdManageVoiceClips = () => {
 
       const formattedData = Array.isArray(filteredData)
         ? filteredData.map((item, index) => ({
-          sn: index + 1,
-          id: item.srNo,
-          ...item,
-        }))
+            sn: index + 1,
+            id: item.srNo,
+            ...item,
+          }))
         : [];
 
       setRows(formattedData);
@@ -434,7 +434,8 @@ const ObdManageVoiceClips = () => {
     for (let i = 1; i < dynamicList.length; i++) {
       if (dynamicList[i].dynamicType === dynamicList[i - 1].dynamicType) {
         toast.error(
-          `Consecutive items at positions ${i} and ${i + 1
+          `Consecutive items at positions ${i} and ${
+            i + 1
           } have the same type "${dynamicList[i].dynamicType}"`
         );
         return true;
@@ -462,6 +463,17 @@ const ObdManageVoiceClips = () => {
           isError = true;
         }
       });
+      if (isError) return;
+    }
+
+    if (selectedOption === "option2") {
+      dynamicVoice.dynamicList.forEach((item, index) => {
+        if (item.dynamicType === "variable" && !item.variableValue) {
+          toast.error(`Please upload variable for item ${index + 1}`);
+          isError = true;
+        }
+      });
+      if (isError) return;
     }
 
     selectedOption === "option2" &&
@@ -499,11 +511,16 @@ const ObdManageVoiceClips = () => {
           voiceType: typeId[selecteTransactional],
           variableValue: dynamicVoice?.voiceName,
         };
+
         const res = await saveDynamicVoice(payload);
         setIsVisible(false);
         // toast.success(res.msg);
         //  setDynamicVoice({});
-        await handlefetchAllVoiceClips()
+        setDynamicVoice({
+          voiceName: "",
+          dynamicList:[]
+        });
+        await handlefetchAllVoiceClips();
       }
     } catch (e) {
       toast.error("Something went wrong");
@@ -528,7 +545,7 @@ const ObdManageVoiceClips = () => {
 
     setDynamicVoice((prev) => ({
       ...prev,
-      dynamicList: [...prev.dynamicList, newItem],
+      dynamicList: [...prev?.dynamicList, newItem],
     }));
   }
 
@@ -701,7 +718,7 @@ const ObdManageVoiceClips = () => {
                   // visible={isVisible}
                   checked={selectedOption === "option1"}
                   onChange={handleChangeEnablePostpaid}
-                // onClick={()=>setIsChecked(false)}
+                  // onClick={()=>setIsChecked(false)}
                 />
                 <label className="text-sky-800 text-xs md:text-sm font-semibold">
                   Static
@@ -733,7 +750,7 @@ const ObdManageVoiceClips = () => {
                   value="transactional"
                   checked={selecteTransactional === "transactional"}
                   onChange={handleChangeTransactional}
-                  onClick={() => { }}
+                  onClick={() => {}}
                 />
                 <label className="text-xs md:text-sm font-semibold">
                   Transactional
@@ -863,7 +880,7 @@ const ObdManageVoiceClips = () => {
                 />
               </div>
             </div>
-            {dynamicVoice.dynamicList.length > 0 && (
+            {dynamicVoice?.dynamicList?.length > 0 && (
               <>
                 <div className="space-y-2 max-h-70 overflow-y-auto border border-gray-300 p-2 rounded-md mt-2">
                   {dynamicVoice.dynamicList.map((list, index) => (
@@ -984,10 +1001,12 @@ const ObdManageVoiceClips = () => {
           </div>
         ) : (
           <>
-            <div
-              className="mb-4 w-[260px] border border-gray-300 rounded-xl shadow-lg p-4 hover:shadow-xl hover:border-blue-500 transition duration-300"
-            >
-              <MusicPlayerSlider data={selectedRow} onPlay={() => { }} isPlaying={false} />
+            <div className="mb-4 w-[260px] border border-gray-300 rounded-xl shadow-lg p-4 hover:shadow-xl hover:border-blue-500 transition duration-300">
+              <MusicPlayerSlider
+                data={selectedRow}
+                onPlay={() => {}}
+                isPlaying={false}
+              />
             </div>
           </>
         )}

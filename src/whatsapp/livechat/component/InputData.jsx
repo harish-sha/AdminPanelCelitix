@@ -59,21 +59,6 @@ export const InputData = ({
     setSwitchChat,
   } = useWabaAgentContext();
 
-  // console.log(
-  //   "convoDetailssssssssssssssssssssssssssssssssssssssssss",
-  //   convoDetails
-  // );
-  // console.log("activeConvooooooooooooooooooooooo", activeConvo);
-  // console.log("inactiveConvooooooooooooooooooooo", inactiveConvo);
-  // console.log(
-  //   "convoooooooooooooooooooooo",
-  //   convoDetails?.conversationEntityList?.filter(
-  //     (chat) =>
-  //       !convoDetails?.unreadCounts?.some(
-  //         (unread) => unread.mobile === chat.mobileNo
-  //       )
-  //   )
-  // );
 
   useEffect(() => {
     function handleClickOutside(e) {

@@ -8,6 +8,7 @@ import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { InputOtp } from "primereact/inputotp";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -131,7 +132,7 @@ const Login = () => {
         systemInfo: uaResult.browser.name || "Unknown",
         ip: ipResponse?.data?.clientIp || "0.0.0.0",
         // systemInfo: "Chrome",
-        // ip: "43.224.1.223",
+        // ip: "43.224.1.239",
       }));
 
       const payloadd = {
@@ -139,7 +140,7 @@ const Login = () => {
         systemInfo: uaResult.browser.name || "Unknown",
         ip: ipResponse?.data?.clientIp || "0.0.0.0",
         // systemInfo: "Chrome",
-        // ip: "43.224.1.223",
+        // ip: "43.224.1.239",
       };
 
       delete payloadd.rememberMe;
@@ -205,6 +206,7 @@ const Login = () => {
     } else {
       payload = { ...inputDetails };
     }
+    setLoading(true)
     try {
       const res = isForgotPassword
         ? await forgotPassword(payload)
@@ -219,6 +221,8 @@ const Login = () => {
     } catch (e) {
       console.log(e);
       return toast.error("Unable to send OTP");
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -252,6 +256,8 @@ const Login = () => {
     }
 
     delete inputDetails.rememberMe;
+
+    setLoading(true)
 
     try {
       let payload = {};
@@ -297,6 +303,8 @@ const Login = () => {
     } catch (e) {
       console.log(e);
       return toast.error("Unable to verify OTP");
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -304,26 +312,6 @@ const Login = () => {
     setCountdown(15);
     setIsBtnVisible(false);
   }
-
-  // async function sendOtp() {
-  //   if (!inputDetails.mobileNo) {
-  //     toast.error("Please enter your mobile number.");
-  //     return;
-  //   }
-  //   delete inputDetails.rememberMe;
-  //   try {
-  //     const res = await requestOtp(inputDetails);
-  //     if (!res?.data?.status) {
-  //       toast.error(res?.data?.msg);
-  //       return;
-  //     }
-  //     toast.success(res?.data?.msg);
-  //     setStep(3);
-  //   } catch (e) {
-  //     console.log(e);
-  //     toast.error("Unable to send OTP");
-  //   }
-  // }
 
   const handleBackToOne = () => {
     setStep(1);
@@ -391,7 +379,8 @@ const Login = () => {
                         });
                       }}
                       placeholder="Enter User ID"
-                      className={`block w-full p-2 py-2.5 border rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm`}
+                      className={`block w-full p-2 py-2.5 border rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${loading ? "bg-gray-300 transition-all duration-100 cursor-not-allowed " : ""} `}
+                      disabled={loading}
                       required
                     />
                     <div className="">
@@ -414,7 +403,8 @@ const Login = () => {
                           required
                           id="password"
                           name="password"
-                          className={`block w-full p-2 py-2.5 border rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm`}
+                          className={`block w-full p-2 py-2.5 border rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${loading ? "bg-gray-300 transition-all duration-100 cursor-not-allowed " : ""} `}
+                          disabled={loading}
                         />
                         <div
                           className="absolute right-3 top-3 cursor-pointer"
@@ -469,13 +459,13 @@ const Login = () => {
                     // className="w-full flex items-center justify-center"
                     className="p-8 flex flex-col justify-center col-start-2"
                   >
-                    <div className="flex flex-col items-center justify-center space-y-3 w-90 min-h-100 p-5 rounded-2xl shadow-xl ">
+                    <div className="flex flex-col items-center justify-center space-y-5 w-90 min-h-100 p-4 rounded-2xl shadow-md">
                       <div>
                         <h1 className="text-[2.8rem] text-center font-semibold bluetxt playf">
                           Verify Number
                         </h1>
                         <p className="text-base sm:text-sm text-center ">
-                          Provide your mobile number for secure access.{" "}
+                          Provide your mobile number <br /> <span className="text-sm font-medium">(with country code)</span> for secure access.{" "}
                         </p>
                       </div>
                       {isForgotPassword && (
@@ -498,7 +488,7 @@ const Login = () => {
                       <InputField
                         id="mobileNo"
                         name="mobileNo"
-                        tooltipContent="Enter your registered mobile number only"
+                        tooltipContent="Enter your registered mobile number only with country code"
                         label={"Enter Mobile No"}
                         value={inputDetails.mobileNo}
                         placeholder="Enter Mobile Number"
@@ -509,29 +499,43 @@ const Login = () => {
                           }));
                         }}
                         type="number"
+                        disabled={loading}
                       />
-                      <UniversalButton
+                      {/* <UniversalButton
                         id="Send Otp"
                         name="Send Otp"
                         label={"Send OTP"}
-                        // onClick={sendOtp}
                         onClick={() => {
                           handleSendOtp();
                         }}
-                      />
-                      <p
-                        className="text-sm text-gray-800 flex justify-center items-center  hover:underline hover:font-semibold transition-all cursor-pointer"
-                        onClick={handleBackToOne}
-                      >
-                        <KeyboardBackspaceOutlinedIcon />
-                        Back to login
-                      </p>
-                      {/* <p className="text-sm text-gray-800 flex justify-center items-center  hover:underline hover:font-semibold transition-all cursor-pointer"
-                        onClick={handleBackToThree}
-                      >
-                        <KeyboardBackspaceOutlinedIcon />
-                        Back to login
-                      </p> */}
+                      /> */}
+                      <div className="flex items-center justify-center">
+                        <button
+                          className={`custom-signin-btnlog ${loading ? "loading" : ""
+                            }`}
+                          disabled={loading}
+                          onClick={() => {
+                            handleSendOtp();
+                          }}
+                        >
+                          <div className="back"></div>
+                          {!loading ? (
+                            <span className="text">Send OTP</span>
+                          ) : (
+                            <div className="circle-spinner" />
+                          )}
+                        </button>
+                      </div>
+
+                      {!loading && (
+                        <p
+                          className="text-sm text-gray-800 flex justify-center items-center  hover:underline hover:font-semibold transition-all cursor-pointer"
+                          onClick={handleBackToOne}
+                        >
+                          <KeyboardBackspaceOutlinedIcon />
+                          Back to login
+                        </p>
+                      )}
                     </div>
                   </motion.div>
                 </>
@@ -547,7 +551,7 @@ const Login = () => {
                     // className="w-full flex items-center justify-center"
                     className="p-8 flex flex-col justify-center col-start-2"
                   >
-                    <div className="flex flex-col items-center space-y-3 justify-center w-90 min-h-100 p-5 rounded-2xl shadow-xl">
+                    <div className="flex flex-col items-center space-y-5 justify-center w-90 min-h-100 p-5 rounded-2xl shadow-md">
                       <div>
                         <h1 className="text-[2.8rem] text-center font-semibold bluetxt playf">
                           Enter OTP
@@ -557,18 +561,11 @@ const Login = () => {
                           below
                         </p>
                       </div>
-                      <InputField
+                      {/* <InputField
                         tooltipContent="Enter OTP receive on your mobile number"
-                        label={"Enter Otp"}
+                        label={"Enter OTP"}
                         placeholder="Enter OTP"
                         maxLength={6}
-                        // value={otp.mobileNo}
-                        // onChange={(e) => {
-                        //   setOtp((prevOtp) => ({
-                        //     ...prevOtp,
-                        //     mobileNo: e.target.value,
-                        //   }));
-                        // }}
                         value={inputDetails.otp}
                         onChange={(e) => {
                           setInputDetails({
@@ -576,18 +573,45 @@ const Login = () => {
                             otp: e.target.value,
                           });
                         }}
+                      /> */}
+                      <InputOtp
+                        length={6}
+                        value={inputDetails.otp}
+                        onChange={(e) => {
+                          setInputDetails({
+                            ...inputDetails,
+                            otp: e.value,
+                          });
+                        }}
+                        variant={"outlined"}
+                        className="p-2"
                       />
 
                       {error && (
                         <p className="text-red-500 text-sm mb-2">{error}</p>
                       )}
                       <div className="flex items-center gap-4">
-                        <UniversalButton
+                        {/* <UniversalButton
                           id="Verify Otp"
                           name="Verify Otp"
                           label={"Verify OTP"}
                           onClick={handleVerifyOtp}
-                        />
+                        /> */}
+                        <div className="flex items-center justify-center">
+                          <button
+                            className={`custom-signin-btnlog ${loading ? "loading" : ""
+                              }`}
+                            disabled={loading}
+                            onClick={handleVerifyOtp}
+                          >
+                            <div className="back"></div>
+                            {!loading ? (
+                              <span className="text">Verify</span>
+                            ) : (
+                              <div className="circle-spinner" />
+                            )}
+                          </button>
+                        </div>
 
                         {/* {countdown > 0 && (
                           <p className="text-sm text-green-800 mt-2 flex justify-center">
@@ -595,28 +619,45 @@ const Login = () => {
                           </p>
                         )} */}
                         {countdown != 0 && (
-                          <p className="text-md text-gray-800 mt-2 flex justify-center">
+                          <p className="text-sm text-gray-600 mt-2 flex justify-center">
                             Resend OTP in {countdown}s
                           </p>
                         )}
                         {isBtnVisible && (
-                          <UniversalButton
-                            id="Resend Otp"
-                            name="Resend Otp"
-                            label={"Resend OTP"}
-                            // onClick={handleResendOTP}
-                            onClick={handleSendOtp}
-                          />
+                          // <UniversalButton
+                          //   id="Resend Otp"
+                          //   name="Resend Otp"
+                          //   label={"Resend OTP"}
+                          //   onClick={handleSendOtp}
+                          // />
+                          <div className="flex items-center justify-center">
+                            <button
+                              className={`custom-signin-btnlog ${loading ? "loading" : ""
+                                }`}
+                              disabled={loading}
+                              onClick={handleSendOtp}
+
+                            >
+                              <div className="back"></div>
+                              {!loading ? (
+                                <span className="text">Resend</span>
+                              ) : (
+                                <div className="circle-spinner" />
+                              )}
+                            </button>
+                          </div>
                         )}
                       </div>
 
-                      <p
-                        className="text-sm text-gray-800 flex justify-center items-center  hover:underline hover:font-semibold transition-all cursor-pointer"
-                        onClick={handleBackToTwo}
-                      >
-                        <KeyboardBackspaceOutlinedIcon />
-                        Back to Mobile Input
-                      </p>
+                      {!loading && (
+                        <p
+                          className="text-sm text-gray-800 flex justify-center items-center  hover:underline hover:font-semibold transition-all cursor-pointer"
+                          onClick={handleBackToTwo}
+                        >
+                          <KeyboardBackspaceOutlinedIcon />
+                          Back to Mobile Input
+                        </p>
+                      )}
                       {/* <p className="text-sm text-gray-800 flex justify-center items-center  hover:underline hover:font-semibold transition-all cursor-pointer"
                         onClick={handleBackToOne}
                       >

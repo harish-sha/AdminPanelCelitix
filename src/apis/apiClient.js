@@ -14,6 +14,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
 
   const defaultHeaders = {
     Authorization: `Bearer ${token}`,
+    // key: "8c0082ab86XX",
   };
 
   if (!(options.body instanceof FormData)) {

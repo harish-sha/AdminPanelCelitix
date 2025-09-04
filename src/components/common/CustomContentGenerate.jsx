@@ -48,12 +48,12 @@ Write the message as a short marketing template message with a clear CTA if appl
         }));
         try {
             const response = await axios.post(
-                "https://api.openai.com/v1/chat/completions",
+                "https://api.openai.com/v1/responses",
                 {
-                    model: "gpt-3.5-turbo",
+                    model: "gpt-4o-mini",
                     messages: [
                         {
-                            role: "system",
+                            role: "developer",
                             content: `
                                     You are an AI assistant for marketing and promotional messages.
                                     Your only job is to help users write short, engaging marketing and promotional messages for campaigns.
@@ -63,8 +63,7 @@ Write the message as a short marketing template message with a clear CTA if appl
                         },
                         { role: "user", content: message },
                     ],
-                    max_tokens: 1024,
-                    temperature: 0.7,
+                    max_output_tokens: 1024
                 },
                 {
                     headers: {

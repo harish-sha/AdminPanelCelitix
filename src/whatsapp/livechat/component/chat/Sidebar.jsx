@@ -85,6 +85,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import Lottie from "lottie-react";
 import pointingAnimation from "@/assets/animation/pointing.json";
+import Datanotfound from "@/assets/animation/Datanotfound.json";
 import { getAllGroups } from "@/apis/common/common";
 import toast from "react-hot-toast";
 import { useWabaAgentContext } from "@/context/WabaAndAgent.jsx";
@@ -101,30 +102,28 @@ export const ChatSidebar = ({
   setChatIndex,
   handleUnread,
   handleFetchSpecificConversation,
-  // isLoading
+  isLoading,
 }) => {
   // const isLoading =
   //   Boolean(selectedWaba) &&
   //   (!chatState?.allConversations);
-  const [isLoading, setIsLoading] = useState(false)
-  useEffect(() => {
-    if (Boolean(selectedWaba) &&
-      (!chatState?.allConversations) || (chatState.allConversations.length === 0)) {
-      setIsLoading(true)
-    } else {
-      setIsLoading(false)
-    }
-  }, [chatState?.allConversations])
-  // const isLoading =
-  //   Boolean(selectedWaba) &&
-  //   (!chatState?.allConversations) || (chatState.allConversations.length === 0);
 
-  // console.log("isLoading", isLoading);
-  // console.log("chatState?.allConversations", chatState?.allConversations);
-  // console.log(
-  //   "chatState.allConversations.length ",
-  //   chatState.allConversations.length
-  // );
+  // const [isLoading, setIsLoading] = useState(false)
+
+
+  // useEffect(() => {
+  //   if (Boolean(selectedWaba) &&
+  //     (!chatState?.allConversations) || (chatState.allConversations.length === 0)) {
+  //     setIsLoading(true)
+  //   } else if(Boolean(selectedWaba) &&
+  //     (chatState.allConversations === [])){
+  //       setIsLoading(false)
+  //     }else {
+  //     setIsLoading(false)
+  //   }
+
+  // }, [chatState?.allConversations])
+
 
   const { convoDetails, activeConvo, inactiveConvo, switchChat } =
     useWabaAgentContext();
@@ -154,10 +153,7 @@ export const ChatSidebar = ({
     };
   }, [openChatOption]);
 
-  // const filteredConvos = chatState?.allConversations?.filter(
-  //   (convo) =>
-  //     Array.isArray(switchChat) && switchChat.some((sw) => sw.id === convo.id)
-  // );
+
 
   const filteredConvos =
     chatState?.allConversations?.filter(
@@ -167,21 +163,6 @@ export const ChatSidebar = ({
           (sw) => sw.mobile === convo.mobileNo || sw.mobileNo === convo.mobileNo
         )
     ) || [];
-  // const filteredConvos = [];
-
-  // console.log("filteredConvos", filteredConvos);
-
-  // const isLoading = selectedWaba && !chatState?.allConversations;
-
-  // async function fetchAgentDetails(srno) {
-  //   try {
-  //     const res = await getAgentList();
-  //     return res?.data?.find((agent) => agent.sr_no === srno)?.name;
-  //   } catch (e) {
-  //     console.log(e);
-  //     toast.error("Error fetching agent details");
-  //   }
-  // }
 
   async function fetchAgentDetails(srno) {
     try {
@@ -258,7 +239,8 @@ export const ChatSidebar = ({
         </motion.div>
       )}
       {/* Skeleton Loader */}
-      {isLoading && selectedWaba &&
+      {isLoading &&
+        selectedWaba &&
         Array.from({ length: 8 }).map((_, index) => (
           <div key={index} className="p-3 border-b rounded-md shadow-sm mb-2">
             <div className="flex items-center gap-3">
@@ -277,151 +259,184 @@ export const ChatSidebar = ({
             ? filteredConvos
               .slice()
               .sort((a, b) => new Date(b.insertTime) - new Date(a.insertTime))
-              .map((chat, index) => (
-                <motion.div
-                  key={chat.srno || index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                  className={`group p-4 rounded-xl cursor-pointer transition-all duration-200 mb-2 shadow-sm ${chatState?.active?.srno === chat.srno
-                    ? "bg-gradient-to-br from-[#5584AC] to-[#5584AC] border-l-6 border-[#22577E] text-white"
-                    : "bg-gradient-to-br from-gray-100 to-blue-100 hover:from-gray-200 hover:to-blue-200 text-gray-800"
-                    }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div
-                      className="flex items-center gap-2"
-                      onClick={async () => {
-                        const agentName = await getUserAgent(chat?.mobileNo);
-                        const grpSrno = await fetchGrpList(
-                          agentName?.groupName
-                        );
+              .map((chat, index) => {
+                return (
+                  <motion.div
+                    // key={chat.srno || index}
+                    key={chat.mobileNo}
+                    initial={{ opacity: 0, y: 3 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.1, delay: index * 0.03 }}
+                    className={`group p-4 rounded-xl cursor-pointer transition-all duration-200 mb-2 shadow-sm ${chatState?.active?.mobileNo === chat.mobileNo
+                      ? "bg-gradient-to-br from-[#5584AC] to-[#5584AC] border-l-6 border-[#22577E] text-white"
+                      : "bg-gradient-to-br from-gray-100 to-blue-100 hover:from-gray-200 hover:to-blue-200 text-gray-800"
+                      }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div
+                        className="flex items-center gap-2"
+                        onClick={async () => {
+                          const agentName = await getUserAgent(
+                            chat?.mobileNo
+                          );
+                          const grpSrno = await fetchGrpList(
+                            agentName?.groupName
+                          );
 
-                        setChatState((prev) => ({
-                          ...prev,
-                          active: chat,
-                          replyData: "",
-                          isReply: false,
-                          agentName: agentName,
-                        }));
-                        setChatIndex(1);
-                        setSelectedAgentList(chat?.agentSrno);
-                        setSelectedGroupList(grpSrno);
-                      }}
-                    >
-                      <div className="relative">
-                        {chat.image ? (
-                          <img
-                            src={chat.image}
-                            alt=""
-                            className="w-10 h-10 rounded-full object-cover"
-                          />
-                        ) : (
-                          <div
-                            className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm ${chatState?.active?.srno === chat.srno
-                              ? "bg-white text-blue-600"
-                              : "bg-gray-300 text-gray-900"
-                              }`}
-                          >
-                            {chat.contectName?.charAt(0)?.toUpperCase() ||
-                              "?"}
-                          </div>
-                        )}
-                        <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 border border-white rounded-full"></div>
-                      </div>
-                      <div className="ml-2">
-                        {chat.contectName || chat.mobileNo}
-                        <p className="text-xs truncate w-[200px]">
-                          {chat?.messageBody}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end justify-end">
-                      <p className="text-xs transition-all">
-                        {formatDate(chat.insertTime)}
-                      </p>
-                      {chat.unreadCount > 0 && (
-                        <motion.div
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.1 }}
-                          className="flex items-center justify-center w-5 h-5 text-xs mt-1 text-gray-900 border-1 border-green-900 bg-green-400 rounded-full font-medium"
-                        >
-                          {chat.unreadCount}
-                        </motion.div>
-                      )}
-                    </div>
-                    <div className="relative">
-                      <button
-                        className="hover:bg-gray-100 p-1 rounded-full transition-all cursor-pointer hover:text-[#22577E]"
-                        onClick={() =>
-                          // setOpenChatOption(
-                          //   openChatOption === chat?.srno ? null : chat?.srno
-                          // )
-                          setOpenChatOption((prev) =>
-                            prev.status && prev.srno === chat?.srno
-                              ? { status: false, srno: "" }
-                              : { status: true, srno: chat?.srno }
-                          )
-                        }
+                          setChatState((prev) => ({
+                            ...prev,
+                            active: chat,
+                            replyData: "",
+                            isReply: false,
+                            agentName: agentName,
+                          }));
+                          setChatIndex(1);
+                          setSelectedAgentList(chat?.agentSrno);
+                          setSelectedGroupList(grpSrno);
+                        }}
                       >
-                        <BsThreeDotsVertical />
-                      </button>
-
-                      {openChatOption.srno === chat.srno &&
-                        openChatOption.status === true && (
+                        <div className="relative">
+                          {chat.image ? (
+                            <img
+                              src={chat.image}
+                              alt=""
+                              className="w-10 h-10 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div
+                              className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm ${chatState?.active?.srno === chat.srno
+                                ? "bg-white text-blue-600"
+                                : "bg-gray-300 text-gray-900"
+                                }`}
+                            >
+                              {chat.contectName?.charAt(0)?.toUpperCase() ||
+                                "?"}
+                            </div>
+                          )}
+                          <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 border border-white rounded-full"></div>
+                        </div>
+                        <div className="ml-2">
+                          {chat.contectName || chat.mobileNo}
+                          <p className="text-xs truncate w-[200px]">
+                            {chat?.messageBody}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end justify-end">
+                        <p className="text-xs transition-all">
+                          {formatDate(chat.insertTime)}
+                        </p>
+                        {chat.unreadCount > 0 && (
                           <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.1 }}
-                            className="absolute right-5 -bottom-1 w-35 bg-white text-black border  rounded-md shadow-2xl z-50 cursor-pointer text-xs py-2 px-2 border-gray-200 hover:bg-gray-100 transition-all duration-200 "
+                            className="flex items-center justify-center w-5 h-5 text-xs mt-1 text-gray-900 border-1 border-green-900 bg-green-400 rounded-full font-medium"
                           >
-                            <button
-                              onClick={() => {
-                                handleUnread(chat);
-                                setOpenChatOption({
-                                  status: false,
-                                  srno: "",
-                                });
-                              }}
-                              ref={menuRef}
-                              className="block cursor-pointer"
-                            >
-                              <DoneAllIcon
-                                className="text-gray-400 text-xs mr-2"
-                                sx={{ fontSize: "18px" }}
-                              />
-                              Unread Chat
-                            </button>
+                            {chat.unreadCount}
                           </motion.div>
                         )}
+                      </div>
+                      <div className="relative">
+                        <button
+                          className="hover:bg-gray-100 p-1 rounded-full transition-all cursor-pointer hover:text-[#22577E]"
+                          onClick={() =>
+                            // setOpenChatOption(
+                            //   openChatOption === chat?.srno ? null : chat?.srno
+                            // )
+                            setOpenChatOption((prev) =>
+                              prev.status && prev.srno === chat?.srno
+                                ? { status: false, srno: "" }
+                                : { status: true, srno: chat?.srno }
+                            )
+                          }
+                        >
+                          <BsThreeDotsVertical />
+                        </button>
+
+                        {openChatOption.srno === chat.srno &&
+                          openChatOption.status === true && (
+                            <motion.div
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ duration: 0.1 }}
+                              className="absolute right-5 -bottom-1 w-35 bg-white text-black border  rounded-md shadow-2xl z-50 cursor-pointer text-xs py-2 px-2 border-gray-200 hover:bg-gray-100 transition-all duration-200 "
+                            >
+                              <button
+                                onClick={() => {
+                                  handleUnread(chat);
+                                  setOpenChatOption({
+                                    status: false,
+                                    srno: "",
+                                  });
+                                }}
+                                ref={menuRef}
+                                className="block cursor-pointer"
+                              >
+                                <DoneAllIcon
+                                  className="text-gray-400 text-xs mr-2"
+                                  sx={{ fontSize: "18px" }}
+                                />
+                                Unread Chat
+                              </button>
+                            </motion.div>
+                          )}
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))
+                  </motion.div>
+                );
+              })
             : selectedWaba && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className="text-md font-normal text-gray-900 mb-2 flex items-center justify-center h-[90%]"
+                className="text-md font-normal text-gray-900 mb-2 flex flex-col items-center justify-center h-[90%]"
               >
-                No conversation found
+                {/* No conversation found */}
+                {/* Lottie or animated illustration */}
+                <motion.div
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                  transition={{
+                    duration: 1,
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                  }}
+                  className="mb-6"
+                >
+                  <Lottie
+                    animationData={Datanotfound}
+                    loop
+                    autoplay
+                    className="w-70 h-45"
+                  />
+                </motion.div>
+
+                {/* Title */}
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-xl font-semibold text-[#22577E] mb-2"
+                >
+                  No Conversations Found
+                </motion.p>
+
+                {/* Subtitle */}
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-sm font-normal text-gray-600 max-w-md text-center"
+                >
+                  There are currently no chats to display. They’ll appear here
+                  when available.
+                </motion.p>
               </motion.div>
             )}
         </>
       )}
-
-      {/* {selectedWaba && !isLoading && !chatState?.allConversations.length && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="text-md font-normal text-gray-900 mb-2 flex items-center justify-center h-[90%]"
-        >
-          No conversation found
-        </motion.div>
-      )} */}
     </div>
   );
 };

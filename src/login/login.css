@@ -79,6 +79,83 @@
   width: 120% !important;
 }
 
+/* custom sign in btn only login start*/
+.custom-signin-btnlog {
+  isolation: isolate;
+  color: #000;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 11px 35px;
+  border-radius: 9999rem;
+  background: transparent;
+  position: relative;
+  border: none;
+  cursor: pointer;
+  transition: all 200ms ease-out;
+  overflow: hidden;
+  letter-spacing: 1.5px;
+}
+
+.custom-signin-btnlog > .back {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid black;
+  border-radius: inherit;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: -1;
+  transition: all 200ms ease-out;
+}
+
+.custom-signin-btnlog > .back::before {
+  content: "";
+  width: 0;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  /* background: linear-gradient(to right, #2b40b0, #8447c6); */
+  background-color: #000;
+  position: absolute;
+  transition: all 200ms ease-out;
+}
+
+.custom-signin-btnlog:hover {
+  color: white;
+}
+
+.custom-signin-btnlog:hover > .back {
+  transform: scale(0.95);
+}
+
+.custom-signin-btnlog:hover > .back::before {
+  width: 120%;
+}
+
+.custom-signin-btnlog:active > .back {
+  transform: scale(0.9);
+}
+
+.custom-signin-btnlog.loading {
+  color: white;
+  pointer-events: none;
+}
+
+.custom-signin-btnlog.loading > .back {
+  transform: scale(0.95);
+}
+
+.custom-signin-btnlog.loading > .back::before {
+  width: 120% !important;
+}
+
+/* custom sign in btn only login end*/
+
 .circle-spinner {
   width: 20px;
   height: 20px;

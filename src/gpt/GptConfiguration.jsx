@@ -20,11 +20,11 @@ const GptConfiguration = () => {
 
       // Ask GPT for main purpose and services offered
       const analysisRes = await axios.post(
-        'https://api.openai.com/v1/chat/completions',
+        'https://api.openai.com/v1/responses',
         {
-          model: 'gpt-3.5-turbo',
-          messages: [
-            { role: 'system', content: 'You are an assistant that extracts the main work and services from website content.' },
+          model: 'gpt-4o-mini',
+          input: [
+            { role: 'developer', content: 'You are an assistant that extracts the main work and services from website content.' },
             {
               role: 'user',
               content: `Please read the following website content and provide:

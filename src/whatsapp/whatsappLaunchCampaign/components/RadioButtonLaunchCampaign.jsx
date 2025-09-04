@@ -592,7 +592,6 @@ function RadioButtonLaunchCampaign({
                 }
               }}
             />
-
           </div>
         )}
 

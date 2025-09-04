@@ -31,7 +31,9 @@ const InteractiveActions = ({
   setUrlVariables,
   setFlowTemplateState,
   flowTemplateState,
-  allFlows
+  allFlows,
+  isShortUrl,
+  setIsShortUrl,
 }) => {
   // useEffect(() => {
   //   if (interactiveAction !== "all" || selectedTemplateType) {
@@ -215,6 +217,30 @@ const InteractiveActions = ({
                       }
                       setUrl(e.target.value);
                       validateUrl(e.target.value);
+                    }}
+                  />
+                </div>
+                <div className="flex items-center gap-2 border-2 border-gray-500 w-max p-2 rounded-2xl">
+                  <CustomTooltip
+                    title="Enable this option to generate a tracking URL for your WhatsApp interactive template. 
+When checked, every click on the button will be tracked and logged into analytics. 
+You’ll be able to measure user engagement, monitor performance, and generate detailed reports 
+on how recipients interact with your message."
+                    placement="top"
+                    arrow
+                  >
+                    <span>
+                      <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+                    </span>
+                  </CustomTooltip>
+                  <label htmlFor="isShortUrl" className="text-gray-800 text-sm font-medium">Tracking URL?</label>
+                  <input
+                    id="isShortUrl"
+                    name="isShortUrl"
+                    type="checkbox"
+                    value={Boolean(isShortUrl)}
+                    onChange={(e) => {
+                      setIsShortUrl(Number(e.target.checked));
                     }}
                   />
                 </div>

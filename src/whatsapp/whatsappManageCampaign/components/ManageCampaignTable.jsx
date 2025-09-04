@@ -71,7 +71,6 @@
 //     const navigate = useNavigate();
 
 //     const handleView = (row) => {
-//         console.log("handleView:", row)
 //     };
 
 //     const handleSummaryReport = (row) => {
@@ -306,10 +305,13 @@ import {
   GridPagination,
 } from "@mui/x-data-grid";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import CallToActionIcon from "@mui/icons-material/CallToAction";
 import { Paper, Typography, Box, Button } from "@mui/material";
 import {
   campaignSummaryInfo,
   getWhatsappCampaignReport,
+  fetchCtaTrackingReport,
+  downloadCtaTrackingReport
 } from "../../../apis/whatsapp/whatsapp.js";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -321,6 +323,10 @@ import DropdownMenuPortalCampaign from "@/utils/DropdownMenuCampaign.jsx";
 import InfoPopover from "../../../components/common/InfoPopover.jsx";
 import CampaignSummaryUI from "./CampaignSummaryUI.jsx";
 import moment from "moment";
+import { Dialog } from "primereact/dialog";
+import { FiDownload } from "react-icons/fi";
+import toast from "react-hot-toast";
+import { useDownload } from "@/context/DownloadProvider.jsx";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -390,13 +396,45 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
     pageSize: 10,
   });
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
+  const [dropdownCTAOpenId, setDropdownCTAOpenId] = useState(null);
   const [campaignInfo, setCampaignInfo] = useState(null);
   const [campaignInfoMap, setCampaignInfoMap] = useState({});
-
+  const [campaignCTAMap, setCampaignCTAMap] = useState({});
   const dropdownButtonRefs = useRef({});
+  const [isOpen, setIsOpen] = useState(false);
+  const [replySrno, setReplySrno] = useState("");
+  const dropdownCTAButtonRefs = useRef({});
   const navigate = useNavigate();
+  const { triggerDownloadNotification } = useDownload();
+
 
   const closeDropdown = () => setDropdownOpenId(null);
+
+  const handleReplyDownload = async (srno) => {
+    try {
+      const payload = {
+        campaignSrno: srno,
+        type: 3,
+        selectedUserId: 0,
+      };
+
+      const res = await downloadCtaTrackingReport(payload);
+
+      console.log("res", res)
+
+      if (!res) {
+        toast.error("Failed to download reply data");
+        return;
+      } else {
+        toast.success(res.msg)
+        setIsOpen(false)
+        triggerDownloadNotification();
+      }
+    } catch (err) {
+      toast.error(err?.message || "Download failed");
+    }
+  };
+
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -436,6 +474,29 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
     }
   };
 
+  const handleCTAView = async (row) => {
+    setIsOpen(true);
+    const id = row.id;
+    setReplySrno(row?.campaignSrno)
+    // setDropdownCTAOpenId(null);
+
+    const data = {
+      campSrno: row?.campaignSrno,
+    };
+
+    try {
+      const res = await fetchCtaTrackingReport(data);
+      setCampaignCTAMap((prev) => ({
+        ...prev,
+        campaignReplies: res?.data || [],
+      }));
+
+      // setDropdownCTAOpenId(id);
+    } catch (e) {
+      console.error("Error fetching campaign summary:", e);
+    }
+  };
+
   const handleSummaryReport = (row) => {
     navigate("/wcampaigndetailsreport", {
       state: {
@@ -466,7 +527,8 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
       headerName: "Created On",
       flex: 1,
       minWidth: 120,
-      renderCell: (params) => moment(params.row.queTime).format("DD-MM-YYYY HH:mm"),
+      renderCell: (params) =>
+        moment(params.row.queTime).format("DD-MM-YYYY HH:mm"),
     },
     {
       field: "campaignName",
@@ -562,6 +624,48 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
               <InfoOutlinedIcon sx={{ fontSize: "1.2rem", color: "green" }} />
             </IconButton>
           </CustomTooltip>
+          <CustomTooltip title="CTA Analytics" placement="top" arrow>
+            <IconButton
+              className="text-xs"
+              // ref={(el) => {
+              //   if (el) dropdownCTAButtonRefs.current[params.row.id] = el;
+              // }}
+              onClick={() => handleCTAView(params.row)}
+            >
+              <CallToActionIcon sx={{ fontSize: "1.2rem", color: "orange" }} />
+            </IconButton>
+          </CustomTooltip>
+
+          {/* Cta info popover old */}
+          {/* <InfoPopover
+            anchorEl={dropdownCTAButtonRefs.current[params.row.id]}
+            open={dropdownCTAOpenId === params.row.id}
+            onClose={() => setDropdownCTAOpenId(null)}
+          >
+            {campaignCTAMap?.campaignReplies?.length > 0 ? (
+              <div className="w-[280px] max-w-full">
+                <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
+                  <React.Fragment>
+                    <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2">
+                      Reply Message
+                    </div>
+                    <div className="text-right font-semibold text-gray-800 border-b border-gray-200 pb-2">
+                      {campaignCTAMap.campaignReplies[0].message}
+                    </div>
+
+                    <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2">
+                      Reply Count
+                    </div>
+                    <div className="text-right font-semibold text-gray-800 border-b border-gray-200 pb-2">
+                      {campaignCTAMap.campaignReplies[0].replyCount}
+                    </div>
+                  </React.Fragment>
+                </div>
+              </div>
+            ) : (
+              <div className="text-sm text-gray-500">No Data Available</div>
+            )}
+          </InfoPopover> */}
 
           {/* <InfoPopover
             anchorEl={dropdownButtonRefs.current[params.row.id]}
@@ -740,52 +844,122 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
   };
 
   return (
-    <Paper sx={{ height: 558 }} id={id} name={name}>
-      <DataGrid
-        id={id}
-        name={name}
-        rows={rows}
-        columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[10, 20, 50]}
-        pagination
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        // checkboxSelection
-        rowHeight={45}
-        slots={{
-          footer: CustomFooter,
-          noRowsOverlay: CustomNoRowsOverlay,
-        }}
-        slotProps={{ footer: { totalRecords: rows.length } }}
-        onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-        disableRowSelectionOnClick
-        // autoPageSize
-        disableColumnResize
-        disableColumnMenu
-        sx={{
-          border: 0,
-          "& .MuiDataGrid-cellCheckbox": {
-            outline: "none !important",
-          },
-          "& .MuiDataGrid-cell": {
-            outline: "none !important",
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            color: "#193cb8",
-            fontSize: "14px",
-            fontWeight: "bold !important",
-          },
-          "& .MuiDataGrid-row--borderBottom": {
-            backgroundColor: "#e6f4ff !important",
-          },
-          "& .MuiDataGrid-columnSeparator": {
-            // display: "none",
-            color: "#ccc",
-          },
-        }}
-      />
-    </Paper>
+    <>
+      <Paper sx={{ height: 558 }} id={id} name={name}>
+        <DataGrid
+          id={id}
+          name={name}
+          rows={rows}
+          columns={columns}
+          initialState={{ pagination: { paginationModel } }}
+          pageSizeOptions={[10, 20, 50]}
+          pagination
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          // checkboxSelection
+          rowHeight={45}
+          slots={{
+            footer: CustomFooter,
+            noRowsOverlay: CustomNoRowsOverlay,
+          }}
+          slotProps={{ footer: { totalRecords: rows.length } }}
+          onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+          disableRowSelectionOnClick
+          // autoPageSize
+          disableColumnResize
+          disableColumnMenu
+          sx={{
+            border: 0,
+            "& .MuiDataGrid-cellCheckbox": {
+              outline: "none !important",
+            },
+            "& .MuiDataGrid-cell": {
+              outline: "none !important",
+            },
+            "& .MuiDataGrid-columnHeaders": {
+              color: "#193cb8",
+              fontSize: "14px",
+              fontWeight: "bold !important",
+            },
+            "& .MuiDataGrid-row--borderBottom": {
+              backgroundColor: "#e6f4ff !important",
+            },
+            "& .MuiDataGrid-columnSeparator": {
+              // display: "none",
+              color: "#ccc",
+            },
+          }}
+        />
+      </Paper>
+
+      {/* cta dialog */}
+      {/* <Dialog onHide={() => setIsOpen(false)} visible={isOpen} className="w-xl" draggable={false} >
+        <div className="flex flex-col gap-3">
+          {campaignCTAMap?.campaignReplies?.length > 0 ? (
+            <>
+            <div className="flex justify-between">
+              <div className="gap-2">
+              <p className="text-sm text-gray-600 text-medium">Reply Message: <span className="font-medium text-gray-800 text-sm">{campaignCTAMap.campaignReplies[0].message} </span></p>
+              <div className="border-t border-gray-200" />
+              <p className="text-sm text-gray-600 text-medium">Reply Count: <span className="font-medium text-gray-800 text-sm">   {campaignCTAMap.campaignReplies[0].replyCount} </span></p>
+              </div>
+              <FiDownload fontSize="14px" />
+              </div>
+            </>
+          ) : (
+            <div className="text-sm text-gray-500 w-full flex items-center justify-center">No Data Available</div>
+          )}
+        </div>
+      </Dialog> */}
+
+      <Dialog
+        onHide={() => setIsOpen(false)}
+        visible={isOpen}
+        className="w-xl rounded-lg shadow-lg"
+        draggable={false}
+      >
+        <div className="flex flex-col gap-4">
+          {/* Header Section */}
+          <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+            <h2 className="text-base font-semibold text-gray-800">
+              Campaign Reply Details
+            </h2>
+
+            <div className="flex items-center gap-3">
+              {/* Download Button */}
+              <button
+                className="flex items-center gap-1 px-2 py-2 text-sm text-blue-600 cursor-pointer hover:text-blue-800 rounded-full border border-blue-200 hover:border-blue-400 transition"
+                onClick={() => handleReplyDownload(replySrno)}
+              >
+                <FiDownload size={14} />
+              </button>
+            </div>
+          </div>
+
+          {/* Body Section */}
+          {campaignCTAMap?.campaignReplies?.length > 0 ? (
+            <div className="flex flex-col gap-3">
+              <p className="text-sm text-gray-600">
+                Reply Message:{" "}
+                <span className="font-medium text-gray-800">
+                  {campaignCTAMap.campaignReplies[0].message}
+                </span>
+              </p>
+              <p className="text-sm text-gray-600">
+                Reply Count:{" "}
+                <span className="font-medium text-gray-800">
+                  {campaignCTAMap.campaignReplies[0].replyCount}
+                </span>
+              </p>
+            </div>
+          ) : (
+            <div className="text-sm text-gray-500 w-full flex items-center justify-center">
+              No Data Available
+            </div>
+          )}
+        </div>
+      </Dialog>
+    </>
   );
 };
 

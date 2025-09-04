@@ -328,8 +328,13 @@ const RcsLiveChat = () => {
   async function handleFileInput(e) {
     const files = e.target.files[0];
     const name = files.name;
-    const size = files.size / 1024;
+    const size = files.size / 1024 / 1024;
     const mimeType = files.type.split("/")[0];
+    let fileType = files.type.split("/")[1];
+
+    if (fileType.includes("sheet")) {
+      fileType = "xlsx"
+    }
 
     const fileurl = await uploadImageFile(files);
 
@@ -342,6 +347,7 @@ const RcsLiveChat = () => {
       mimeType,
       file: files,
       fileUrl: fileurl?.fileUrl,
+      fileType,
     });
     setIsSpeedDialOpen(false);
   }
@@ -358,12 +364,13 @@ const RcsLiveChat = () => {
       const payload = {
         agentId: chatState.active.agentId,
         mobileNo: chatState.active.mobileNo,
-        message: input.trim(),
+        // message: input.trim(),
         // replyType: "text",
         replyType:
           selectedMedia.mimeType === "application"
             ? "document"
             : selectedMedia.mimeType,
+        ...(selectedMedia?.fileUrl ? {} : { message: input.trim() }),
         // chatNo: chatState.active.srno,
       };
 
@@ -375,10 +382,9 @@ const RcsLiveChat = () => {
             contentInfo: {
               fileUrl: selectedMedia.fileUrl,
             },
-
-            mobileno: chatState.active.mobileNo,
-            botId: chatState.active.agentId,
           },
+          mobileno: chatState.active.mobileNo,
+          botId: chatState.active.agentId,
         };
       }
 
@@ -388,6 +394,13 @@ const RcsLiveChat = () => {
         return;
       }
       setInput("");
+      setSelectedMedia({
+        name: "",
+        size: "0MB",
+        mimeType: "text",
+        file: null,
+        fileUrl: null,
+      });
       await handleFetchSpecificConvo();
     } catch (e) {
       toast.error("Error sending message");
@@ -403,22 +416,45 @@ const RcsLiveChat = () => {
       return;
     try {
       const payload = {
+        agentId: chatState.active.agentId,
+        mobileNo: chatState.active.mobileNo,
+        replyType: "template",
+        // chatNo: chatState.active.srno,
+      };
+      const body = {
         contentMessage: {
           templateMessage: {
             templateCode: templateState.templateName,
           },
-          mobileno: chatState.active.mobileNo,
-          botId: contextAgentList.id,
         },
+        mobileno: chatState.active.mobileNo,
+        botId: contextAgentList.id,
       };
 
-      const res = await sendRCSTemplateMessage(payload);
-      if (!res?.status) {
+      const res = await sendRCSMessage(payload, body);
+      if (res?.status !== "success") {
         toast.error(res?.message);
         return;
       }
 
       toast.success("Template message sent successfully");
+      setIsTemplateMessage(false);
+      setIsSpeedDialOpen(false);
+      setTemplateState((prev) => ({ ...prev, selected: "" }));
+      setTemplateDetails({});
+      setVarLength(0);
+      setVarList(0);
+      setInputVariables([]);
+      setBtnVarLength(0);
+      setBtnVarList(0);
+      setBtnInputVariables([]);
+      setSelectedIndex(0);
+      setCarVar({
+        length: 0,
+        data: {},
+      });
+      setCarVarInput([]);
+      setFinalVarList([]);
     } catch (e) {
       toast.error("Error sending Template message");
     }
@@ -559,7 +595,7 @@ const RcsLiveChat = () => {
         />
       </div>
 
-      <AnimatePresence>
+      <AnimatePresence mode="wait" >
         {!chatState.active && !isSmallScreen && (
           <motion.div
             key="empty-chat"
@@ -666,7 +702,9 @@ const RcsLiveChat = () => {
               isSpeedDialOpen={isSpeedDialOpen}
               isTemplateMessage={isTemplateMessage}
               setIsTemplateMessage={setIsTemplateMessage}
-            // specificConversation={specificConversation}
+              // specificConversation={specificConversation}
+              selectedMedia={selectedMedia}
+              setSelectedMedia={setSelectedMedia}
             />
           </motion.div>
         )}

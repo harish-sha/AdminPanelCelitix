@@ -225,6 +225,7 @@ export const PermissionRoute = () => {
       "Leadmanagement",
       "WorkFlow",
       "chatManagement",
+      "Number Lookup" // - later remove this number lookup according to service id
       // "E-mail",
     ];
 
