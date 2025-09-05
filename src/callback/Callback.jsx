@@ -546,10 +546,10 @@ const Callback = () => {
       >
         <div className="space-y-4">
           <AnimatedDropdown
-            id="responseType"
-            name="responseType"
-            label="Response Type"
-            placeholder="Select Response Type"
+            id="waba"
+            name="waba"
+            label="Select Waba"
+            placeholder="Select Waba"
             options={allWaba?.map((item) => ({
               label: item.name,
               value: item.mobileNo,
