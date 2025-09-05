@@ -719,20 +719,6 @@ export const getFlowSampleRequest = async (data) => {
   );
 };
 
-export const saveWhatsappCallback = async (data) => {
-  return await fetchWithAuth(`/Whatsapp/callbackUrl`, {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-};
-
-export const getWhatsappCallback = async (data) => {
-  return await fetchWithAuth("/Whatsapp/getDetails", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-};
-
 
 export const getWhatsAppTemplateDetails = async (data) => {
   const url =

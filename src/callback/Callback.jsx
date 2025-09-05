@@ -26,11 +26,11 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 import { Dialog } from "primereact/dialog";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import TerminalApp from "./components/TerminalApp";
+import { getWabaList } from "@/apis/whatsapp/whatsapp";
 import {
-  getWabaList,
   getWhatsappCallback,
   saveWhatsappCallback,
-} from "@/apis/whatsapp/whatsapp";
+} from "@/apis/callback/callback";
 import { DataTable } from "@/components/layout/DataTable";
 
 // Custom Tab Panel
