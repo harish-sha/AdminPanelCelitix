@@ -131,10 +131,10 @@ export const AddCallback = () => {
                 value: "voice",
                 label: "OBD",
               },
-              {
-                value: "whatsapp",
-                label: "WhatsApp",
-              },
+              // {
+              //   value: "whatsapp",
+              //   label: "WhatsApp",
+              // },
             ]}
             value={details.callBackType}
             onChange={(e) => {
