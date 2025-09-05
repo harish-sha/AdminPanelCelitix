@@ -1308,10 +1308,9 @@ const CreateWhatsAppBot = () => {
               id={selectedNodeId}
               nodesInputData={nodesInputData}
               setNodesInputData={setNodesInputData}
+              setIsVisible={setIsVisible}
+              addVariable={addVariable}
               allVariables={allVariables}
-              addNode={addNode}
-              lastPosition={lastPosition}
-              nodes={nodes}
             />
           ) : type === "goto" ? (
             <GoTo
@@ -1322,7 +1321,7 @@ const CreateWhatsAppBot = () => {
             />
           ) : null}
 
-          {type !== "template" && (
+          {type !== "template" && type !== "flow" && (
             <div className="flex gap-2">
               <Button onClick={handleSaveNodeData}>Save</Button>
               <Button onClick={() => setIsVisible(false)}>Cancel</Button>

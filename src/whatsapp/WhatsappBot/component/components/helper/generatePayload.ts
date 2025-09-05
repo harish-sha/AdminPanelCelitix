@@ -146,7 +146,7 @@ function generateBotPayload(
         (entry["bodyText"] = nodeInput?.bodyText),
         (entry["buttonText"] = nodeInput?.buttonText),
         (entry["condition_reply"] = true);
-        entry["storeVariables"] = [];
+        entry["storeVariables"] = nodeInput?.storedVariable;
     }
     if (finalType === "goto") {
       entry["gotoStep"] = nodeInput?.gotoStep;
