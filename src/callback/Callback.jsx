@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import PhoneCallbackIcon from "@mui/icons-material/PhoneCallback";
-import PhoneIcon from '@mui/icons-material/Phone';
+import PhoneIcon from "@mui/icons-material/Phone";
 import callback from "../assets/icons/Callback02.svg";
 import UniversalDatePicker from "../whatsapp/components/UniversalDatePicker";
 import InputField from "../whatsapp/components/InputField";
@@ -26,6 +26,7 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 import { Dialog } from "primereact/dialog";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import TerminalApp from "./components/TerminalApp";
+import { getWabaList, saveWhatsappCallback } from "@/apis/whatsapp/whatsapp";
 
 // Custom Tab Panel
 function CustomTabPanel({ children, value, index, ...other }) {
@@ -72,6 +73,28 @@ const Callback = () => {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
 
+  const [whatsappCallbackVisible, setWhatsappCallbackVisible] = useState(false);
+  const [whatsappCallbackDetails, setWhatsappCallbackDetails] = useState({
+    wabaNumber: "",
+    url: "",
+    wabaSrno: "",
+  });
+
+  const [allWaba, setAllWaba] = useState([]);
+
+  useEffect(() => {
+    const fetchAllWaba = async () => {
+      if (!whatsappCallbackVisible) return;
+      try {
+        const res = await getWabaList();
+        setAllWaba(res);
+      } catch {
+        toast.error("Failed to load WABA list");
+      }
+    };
+    fetchAllWaba();
+  }, [whatsappCallbackVisible]);
+
   async function handleFetchData() {
     try {
       const payload = {
@@ -117,6 +140,19 @@ const Callback = () => {
 
   const handleOpen = () => {
     navigate("/addcallback");
+  };
+
+  const handleWhatsappCallback = async () => {
+    try {
+      const res = await saveWhatsappCallback(whatsappCallbackDetails);
+      if (!res?.status) {
+        toast.error(res?.msg);
+        return;
+      }
+      toast.success(res?.msg);
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
   };
 
   const callBackType = [
@@ -336,6 +372,12 @@ const Callback = () => {
               <div className="flex gap-2">
                 <UniversalButton label="Search" onClick={handleFetchData} />
                 <UniversalButton label="Add Callback" onClick={handleOpen} />
+                <UniversalButton
+                  label="Add Whatsapp Callback"
+                  onClick={() => {
+                    setWhatsappCallbackVisible(true);
+                  }}
+                />
               </div>
             </div>
 
@@ -411,6 +453,66 @@ const Callback = () => {
               />
             </div>
           </div>
+        </div>
+      </Dialog>
+
+      {/* add whatsapp Callback Dialog */}
+      <Dialog
+        header="Add Whatsapp Callback"
+        visible={whatsappCallbackVisible}
+        onHide={() => {
+          setWhatsappCallbackVisible(false);
+          setWhatsappCallbackDetails({
+            wabaNumber: "",
+            url: "",
+            wabaSrno: "",
+          });
+        }}
+        className="lg:w-[30rem] md:w-[40rem] w-[17rem]"
+        draggable={false}
+      >
+        <div className="space-y-4">
+          <AnimatedDropdown
+            id="responseType"
+            name="responseType"
+            label="Response Type"
+            placeholder="Select Response Type"
+            options={allWaba?.map((item) => ({
+              label: item.name,
+              value: item.mobileNo,
+            }))}
+            value={whatsappCallbackDetails.wabaNumber}
+            onChange={(e) => {
+              const wabaSrno = allWaba.find(
+                (item) => item.mobileNo === e
+              )?.wabaSrno;
+              setWhatsappCallbackDetails({
+                ...whatsappCallbackDetails,
+                wabaNumber: e,
+                wabaSrno,
+              });
+            }}
+          />
+
+          <InputField
+            id="url"
+            type="url"
+            name="url"
+            label={"URL"}
+            placeholder="Enter URL"
+            value={whatsappCallbackDetails.url}
+            onChange={(e) => {
+              setWhatsappCallbackDetails({
+                ...whatsappCallbackDetails,
+                url: e.target.value,
+              });
+            }}
+          />
+
+          <UniversalButton
+            label="Add"
+            onClick={handleWhatsappCallback}
+          />
         </div>
       </Dialog>
     </Box>
