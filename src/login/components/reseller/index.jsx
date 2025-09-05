@@ -131,7 +131,7 @@ const ResellerLogin = () => {
       setBasicDetails({
         systemInfo: uaResult.browser.name,
         ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // ip: "43.224.1.236",
+        // ip: "43.224.1.215",
         domain,
       });
 
@@ -140,7 +140,7 @@ const ResellerLogin = () => {
         password,
         systemInfo: uaResult.browser.name || "Unknown",
         ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // ip: "43.224.1.236",
+        // ip: "43.224.1.215",
         domain: domain
       };
 
