@@ -62,7 +62,7 @@ export const Details = ({
         id="saveBot"
         name="saveBot"
         label={`${isUpdate ? "Update" : "Save"}`}
-        onClick={() => handleSubmit(false)}
+        onClick={() => handleSubmit(isUpdate ? false : true)}
         style={{}}
       />
 

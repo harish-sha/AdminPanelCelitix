@@ -51,7 +51,7 @@ export const Flow = ({
         const publishedFlows = res.filter(
           (flow) => flow.status === "PUBLISHED"
         );
-        setAllFlows(res);
+        setAllFlows(publishedFlows);
       } catch (e) {
         toast.error("Error while fetching flows");
       }
