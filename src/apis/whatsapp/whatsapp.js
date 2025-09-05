@@ -291,8 +291,25 @@ export const fetchCtaTrackingReport = async (data) => {
   );
 };
 
+// Download Cta Tracking Report
 export const downloadCtaTrackingReport = async (data) => {
   return await fetchWithAuth(`/whatsapp/download-piechart-report`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// Click Report List
+export const clickReportList = async (data) => {
+  return await fetchWithAuth(`/click/whatsappClickReportList`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// Click Report List Detail
+export const clickDetailsReport = async (data) => {
+  return await fetchWithAuth(`/click/whatsappClickDetailsReport`, {
     method: "POST",
     body: JSON.stringify(data),
   });

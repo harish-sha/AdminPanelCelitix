@@ -383,18 +383,18 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     //   to: "/unsubscribe",
     //   roles: ["ADMIN", "DIRECTUSER"],
     // },
-    // {
-    //   id: "",
-    //   name: "Leadmanagement",
-    //   icon: <LeaderboardOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
-    //   label: "Lead Management",
-    //   type: "single",
-    //   to: "/leadmanagement/leaddash",
-    //   // links: [
-    //   //   to: "/leadmanagement/leaddash"
-    //   // ]
-    //   roles: ["ADMIN"],
-    // },
+    {
+      id: "",
+      name: "Leadmanagement",
+      icon: <LeaderboardOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
+      label: "Lead Management",
+      type: "single",
+      to: "/leadmanagement/leaddash",
+      // links: [
+      //   to: "/leadmanagement/leaddash"
+      // ]
+      roles: ["ADMIN"],
+    },
     // {
     //   id: "",
     //   name: "Aiconfiguration",

@@ -1581,13 +1581,13 @@ const WhatsappManageWaba = ({ id, name }) => {
                               </h2>
                               {row.businessVerificationStatus ===
                                 "verified" && (
-                                <Lottie
-                                  animationData={verified}
-                                  loop
-                                  autoplay
-                                  style={{ width: "30px", height: "30px" }}
-                                />
-                              )}
+                                  <Lottie
+                                    animationData={verified}
+                                    loop
+                                    autoplay
+                                    style={{ width: "30px", height: "30px" }}
+                                  />
+                                )}
                             </div>
                             <div className="flex gap-2">
                               <CustomTooltip
@@ -1672,15 +1672,14 @@ const WhatsappManageWaba = ({ id, name }) => {
                                   onMouseLeave={() => setDropdownOpenId(null)}
                                 >
                                   <span
-                                    className={`px-4 py-1.5 rounded-full text-white text-xs font-semibold ${
-                                      {
+                                    className={`px-4 py-1.5 rounded-full text-white text-xs font-semibold ${{
                                         CONNECTED: "bg-green-600",
                                         FLAGGED: "bg-orange-500",
                                         RESTRICTED: "bg-red-500",
                                         BANNED: "bg-red-700",
                                         UNKNOWN: "bg-gray-400",
                                       }[row.status] || "bg-gray-400"
-                                    }`}
+                                      }`}
                                   >
                                     {statusMessages[row.status]?.title ||
                                       "Unknown"}
@@ -1721,14 +1720,13 @@ const WhatsappManageWaba = ({ id, name }) => {
                                   className="flex items-center gap-2"
                                 >
                                   <span
-                                    className={`inline-block w-4 h-4 rounded-full ${
-                                      {
+                                    className={`inline-block w-4 h-4 rounded-full ${{
                                         GREEN: "bg-green-600",
                                         YELLOW: "bg-yellow-400",
                                         RED: "bg-red-500",
                                         UNKNOWN: "bg-gray-400",
                                       }[row.quality] || "bg-gray-400"
-                                    }`}
+                                      }`}
                                   />
                                   <span className="text-sm font-semibold text-gray-700">
                                     {qualityMessages[row.quality]?.title ||

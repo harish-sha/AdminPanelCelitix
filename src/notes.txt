@@ -27,6 +27,13 @@ pass: QZ@5x4bC
 ===new devs suggestions===
 1.add ticket system in live chat - close and open  
 2.reseller - add reminder for low balance
+3.Add language translate in live chat whatsapp, rcs
+4.Add profile pics in chatscreen whatsapp - to identify bot reponse or user response
+5.add is updating with loop spin icon in admin - user status update active and inactive
+6.update whatsapp bot new ui and also update api node same as postman and apply as much section like postman like testing ,response  and in response remove the add variable button
+7.pending merge leadmanagement - reseller
+8.add flows bot update from arihant branch
+
 
 
 ---instagram section , media settings, lead management - pending merge

@@ -19,6 +19,56 @@
   }
 }
 
+/* Shimmer button start  */
+
+.shimmer-btn {
+  position: relative;
+  overflow: hidden;
+  padding: 0.5rem 1.5rem;
+  border-radius: 1rem;
+  /* background-color: #578FCA;  */
+  background-color: #647FBC; 
+  /* background-color: #10b981; */
+  color: white;
+  font-weight: 500;
+  font-size: 0.875rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.shimmer-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.shimmer-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  height: 100%;
+  width: 150%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+}
+
+.shimmer-btn:hover::before {
+  animation: shimmer 0.3s ease-in;
+}
+
+@keyframes shimmer {
+  100% {
+    left: 150%;
+  }
+}
+
+/* Shimmer button end */
+
 /* Hide scrollbar but allow scrolling */
 .scrollbar-hide {
   -ms-overflow-style: none; /* IE and Edge */
@@ -34,7 +84,6 @@
   word-wrap: break-word !important;
   overflow-x: hidden !important;
 }
-
 
 .popf {
   font-family: "Poppins", sans-serif !important;
@@ -553,19 +602,18 @@ a {
   -text-fill-color: transparent;
 }
 
-
 .css-1wulh66-MuiInputAdornment-root {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    max-height: 2em;
-    -webkit-align-items: center;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    white-space: nowrap;
-    color: rgba(0, 0, 0, 0.54);
-    margin-left: 0px !important;
-    margin-right: -20px !important;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  max-height: 2em;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  white-space: nowrap;
+  color: rgba(0, 0, 0, 0.54);
+  margin-left: 0px !important;
+  margin-right: -20px !important;
 }
