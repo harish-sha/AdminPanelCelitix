@@ -26,7 +26,12 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 import { Dialog } from "primereact/dialog";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import TerminalApp from "./components/TerminalApp";
-import { getWabaList, saveWhatsappCallback } from "@/apis/whatsapp/whatsapp";
+import {
+  getWabaList,
+  getWhatsappCallback,
+  saveWhatsappCallback,
+} from "@/apis/whatsapp/whatsapp";
+import { DataTable } from "@/components/layout/DataTable";
 
 // Custom Tab Panel
 function CustomTabPanel({ children, value, index, ...other }) {
@@ -82,6 +87,8 @@ const Callback = () => {
 
   const [allWaba, setAllWaba] = useState([]);
 
+  const [wabaCallbackRows, setWabaCallbackRows] = useState([]);
+
   useEffect(() => {
     const fetchAllWaba = async () => {
       if (!whatsappCallbackVisible) return;
@@ -94,6 +101,31 @@ const Callback = () => {
     };
     fetchAllWaba();
   }, [whatsappCallbackVisible]);
+
+  const fetchWhatappCallbackDetails = async () => {
+    try {
+      const payload = {
+        wabaNumber: whatsappCallbackDetails.wabaNumber,
+        wabaSrno: whatsappCallbackDetails.wabaSrno,
+      };
+      const res = await getWhatsappCallback(payload);
+      const formattedRows = [
+        {
+          id: 1,
+          sn: 1,
+          ...res,
+        },
+      ];
+      setWabaCallbackRows(formattedRows);
+    } catch {
+      toast.error("Failed to load WABA list");
+    }
+  };
+  useEffect(() => {
+    if (!whatsappCallbackDetails.wabaNumber) return;
+
+    fetchWhatappCallbackDetails();
+  }, [whatsappCallbackDetails]);
 
   async function handleFetchData() {
     try {
@@ -150,6 +182,7 @@ const Callback = () => {
         return;
       }
       toast.success(res?.msg);
+      fetchWhatappCallbackDetails();
     } catch (e) {
       toast.error("Something went wrong");
     }
@@ -271,6 +304,46 @@ const Callback = () => {
         </>
       ),
     },
+  ];
+
+  const whatsappCols = [
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    {
+      field: "wabaNumber",
+      headerName: "WABA Number",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "url",
+      headerName: "URL",
+      flex: 1,
+      minWidth: 120,
+    },
+    // {
+    //   field: "action",
+    //   headerName: "Action",
+    //   flex: 1,
+    //   minWidth: 150,
+    //   renderCell: (params) => (
+    //     <>
+    //       <CustomTooltip title="Edit" placement="top" arrow>
+    //         <IconButton onClick={() => {}}>
+    //           <EditNoteOutlinedIcon size={20} />
+    //         </IconButton>
+    //       </CustomTooltip>
+
+    //       <CustomTooltip title="Delete" placement="top" arrow>
+    //         <IconButton onClick={() => {}}>
+    //           <MdOutlineDeleteForever
+    //             className="text-red-500 cursor-pointer hover:text-red-600"
+    //             size={20}
+    //           />
+    //         </IconButton>
+    //       </CustomTooltip>
+    //     </>
+    //   ),
+    // },
   ];
 
   async function editData(row) {
@@ -468,7 +541,7 @@ const Callback = () => {
             wabaSrno: "",
           });
         }}
-        className="lg:w-[30rem] md:w-[40rem] w-[17rem]"
+        className="w-[50rem]"
         draggable={false}
       >
         <div className="space-y-4">
@@ -509,10 +582,16 @@ const Callback = () => {
             }}
           />
 
-          <UniversalButton
-            label="Add"
-            onClick={handleWhatsappCallback}
-          />
+          <UniversalButton label="Add" onClick={handleWhatsappCallback} />
+
+          <div>
+            <DataTable
+              id="whatsappCallback"
+              name="whatsappCallback"
+              col={whatsappCols}
+              rows={wabaCallbackRows}
+            />
+          </div>
         </div>
       </Dialog>
     </Box>
