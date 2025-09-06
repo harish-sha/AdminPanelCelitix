@@ -37,19 +37,14 @@ const HlrLookupReports = () => {
     try {
       setIsFetching(true);
 
-      const res = await hlrLookupReport({
+      const payload = {
         fromdate: moment(tableParams.fromDate).format("DD-MM-YYYY"),
         todate: moment(tableParams.toDate).format("DD-MM-YYYY"),
-        mobileno: tableParams.mobileNo || ""
-      });
+        mobileno: tableParams.mobileNo || "",
+      };
 
-      const data = Array.isArray(res)
-        ? res
-        : Array.isArray(res?.data)
-          ? res.data
-          : [];
-
-      setLookupReportTableData(data);
+      const res = await hlrLookupReport(payload);
+      setLookupReportTableData(res);
     } catch (err) {
       console.error("Error fetching LookupReport data:", err);
       setLookupReportTableData([]);
@@ -61,11 +56,10 @@ const HlrLookupReports = () => {
   useEffect(() => {
     handleLookupReportSearch();
   }, [
-    tableParams.fromDate,
-    tableParams.toDate,
-    tableParams.mobileNo,
+    // tableParams.fromDate,
+    // tableParams.toDate,
+    // tableParams.mobileNo,
   ]);
-
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -203,7 +197,7 @@ const HlrLookupReports = () => {
               </div>
             </div>
           </div>
-          <div className="w-full ">
+          <div className="w-full">
             <LookUpReportTable
               data={lookupReportTableData}
             />

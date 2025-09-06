@@ -565,6 +565,14 @@ const WhatsappLaunchCampaign = () => {
     }
   };
 
+  // Change radio button (cloud API & MMLITE)
+  // useEffect(() => {
+  //   const onboarded = wabaList?.some(item => item.apiStatus === "ONBOARDED");
+  //   if (onboarded) {
+  //     setMarketingType(1);
+  //   }
+  // }, [wabaList]);
+
   const handleOptionChange = (value) => {
     setSelectedOption(value);
     setFormData({});

@@ -156,7 +156,7 @@ const bots = [
 ];
 
 const ResellerDashboard = () => {
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState([]);
   const [formData, setFormData] = useState({
     firstName: "",
   });
@@ -172,7 +172,6 @@ const ResellerDashboard = () => {
     setIsLoading(true);
     try {
       const res = await fetchBalance();
-      console.log("balance", res);
       setBalance(parseFloat(res.balance));
       setRechargableCredit(parseFloat(res.rechargableCredit));
       setRefreshKey((prevKey) => prevKey + 1);
@@ -215,7 +214,6 @@ const ResellerDashboard = () => {
     setIsLoading(true);
     try {
       const data = await dailySeriveUsage(payload);
-      console.log("daily service usage", data);
 
       if (data && Object.keys(data).length > 0) {
         setUsageData(data);
@@ -281,9 +279,9 @@ const ResellerDashboard = () => {
     const fetchUser = async () => {
       setIsLoading(true);
       try {
-        const response = await getUserDetails();
-        if (response?.statusCode === 200) {
-          const user = response.data[0];
+        const res = await getUserDetails();
+        if (res?.statusCode === 200) {
+          const user = res.data[0];
           setUserData(user);
 
           // 2) Derive the flat list of ACTIVE service names:
@@ -494,12 +492,12 @@ const ResellerDashboard = () => {
               }}
             /> */}
             <span className="text-indigo-600 text-2xl font-semibold">
-              {(formData.firstName || "U").charAt(0).toUpperCase()}
+              {(userData.firstName || "U").charAt(0).toUpperCase()}
             </span>
           </div>
           <div>
             <h2 className="text-3xl font-semibold playf">
-              Welcome back, {formData.firstName || "User"}{" "}
+              Welcome back, {userData.firstName || "User"}{" "}
             </h2>
             <p className="text-xs opacity-80">
               You're doing great. Here's a quick overview of your dashboard.
