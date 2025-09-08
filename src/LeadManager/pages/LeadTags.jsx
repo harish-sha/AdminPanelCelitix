@@ -21,6 +21,7 @@ import { MdSearchOff } from "react-icons/md";
 import { FaTags } from "react-icons/fa";
 import { Tooltip } from "@mui/material";
 import Loader from "@/whatsapp/components/Loader";
+import CustomTooltip from "@/components/common/CustomTooltip";
 
 export default function LeadTags() {
   const [tags, setTags] = useState([]);
@@ -536,7 +537,7 @@ export default function LeadTags() {
                           </div>
                         </label>
                       </td> */}
-                      <Tooltip
+                      <CustomTooltip
                         arrow
                         placement="top"
                         title={
@@ -549,11 +550,11 @@ export default function LeadTags() {
                             onToggle={() => handleToggleStatus(tag)}
                           />
                         </td>
-                      </Tooltip>
+                      </CustomTooltip>
 
                       {/* Actions */}
                       <td className="px-4 py-3 text-right">
-                        <Tooltip arrow placement="top" title="Edit Tag">
+                        <CustomTooltip arrow placement="top" title="Edit Tag">
                           <button
                             // onClick={() => openEditDialog(tag)}
                             onClick={() => handleEditTag(tag.srNo)}
@@ -562,8 +563,8 @@ export default function LeadTags() {
                           >
                             <FiEdit size={16} />
                           </button>
-                        </Tooltip>
-                        <Tooltip arrow placement="top" title="Delete Tag">
+                        </CustomTooltip>
+                        <CustomTooltip arrow placement="top" title="Delete Tag">
                           <button
                             onClick={() => openDeleteDialog(tag)}
                             className="ml-3 text-red-500 hover:text-red-700 cursor-pointer"
@@ -571,7 +572,7 @@ export default function LeadTags() {
                           >
                             <FiTrash2 size={16} />
                           </button>
-                        </Tooltip>
+                        </CustomTooltip>
                       </td>
                     </tr>
                   ))

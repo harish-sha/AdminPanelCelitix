@@ -53,6 +53,7 @@ import BotPreview from "../BotPreview";
 import { useUser } from "@/context/auth";
 import WhatsAppVoiceMessage from "./AudioPreview";
 import { IoLocationOutline } from "react-icons/io5";
+import { getChatDateLabel } from "@/utils/getChatDateLabel";
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -84,13 +85,11 @@ export const ChatScreen = ({
   locationPreviewText,
   setLocationPreviewText,
   requestLocationData,
-  templateJsonData
+  templateJsonData,
 }) => {
-
   const endOfMessagesRef = useRef(null);
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
   const [isBlocking, setIsBlocking] = useState(false);
-
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -148,7 +147,8 @@ export const ChatScreen = ({
 
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
     }
 
     if (endOfMessagesRef.current) {
@@ -160,7 +160,8 @@ export const ChatScreen = ({
 
     const timeout = setTimeout(() => {
       if (chatContainerRef.current) {
-        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        chatContainerRef.current.scrollTop =
+          chatContainerRef.current.scrollHeight;
       }
       if (endOfMessagesRef.current) {
         endOfMessagesRef.current.scrollIntoView({
@@ -176,8 +177,9 @@ export const ChatScreen = ({
   const mediaRender = (isSent) => {
     return (
       <div
-        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
-          }`}
+        className={`flex items-center gap-2 w-full ${
+          isSent ? "flex-row-reverse" : ""
+        }`}
       >
         <div className={`p-2 ${msg?.caption ? " rounded-md" : ""}`}></div>
       </div>
@@ -419,6 +421,17 @@ export const ChatScreen = ({
     return formatted;
   }
 
+  const ChatDateSeparator = ({ date }) => {
+    return (
+      <div className="flex items-center w-full my-4">
+        <div className="border-b border-gray-300 flex-grow"></div>
+        <span className="mx-3 bg-gray-200 text-gray-700 text-xs font-semibold px-3 py-1 rounded-full shadow-sm">
+          {getChatDateLabel(date)}
+        </span>
+        <div className="border-b border-gray-300 flex-grow"></div>
+      </div>
+    );
+  };
 
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
@@ -497,10 +510,11 @@ export const ChatScreen = ({
                     );
                   }}
                   disabled={isBlocking}
-                  className={`px-3 py-1 rounded-md text-xs transition cursor-pointer ${isBlocking
-                    ? "bg-red-300 text-white"
-                    : "bg-red-500 text-white hover:bg-red-600"
-                    }`}
+                  className={`px-3 py-1 rounded-md text-xs transition cursor-pointer ${
+                    isBlocking
+                      ? "bg-red-300 text-white"
+                      : "bg-red-500 text-white hover:bg-red-600"
+                  }`}
                 >
                   {isBlocking ? "Blocking..." : "Block"}
                 </button>
@@ -530,7 +544,6 @@ export const ChatScreen = ({
         ref={chatContainerRef}
         className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col mb-35 md:mb-18 md:-mt-5 bg-[url(/WB.png)]"
       >
-
         {chatLoading ? (
           <div className="w-full flex gap-2 items-cenetr justify-center">
             <div className="w-full flex flex-col gap-4 p-4">
@@ -540,13 +553,16 @@ export const ChatScreen = ({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: i * 0.08 }}
-                  className={`flex ${i % 2 === 0 ? "justify-start" : "justify-end"}`}
+                  className={`flex ${
+                    i % 2 === 0 ? "justify-start" : "justify-end"
+                  }`}
                 >
                   <div
-                    className={`rounded-2xl px-4 py-3 animate-pulse ${i % 2 === 0
-                      ? "bg-gray-400/60 dark:bg-gray-700/40"
-                      : "bg-blue-400/60 dark:bg-blue-900/30"
-                      }`}
+                    className={`rounded-2xl px-4 py-3 animate-pulse ${
+                      i % 2 === 0
+                        ? "bg-gray-400/60 dark:bg-gray-700/40"
+                        : "bg-blue-400/60 dark:bg-blue-900/30"
+                    }`}
                     style={{
                       width: `${120 + (i % 3) * 40}px`,
                       height: `${35 + (i % 2) * 15}px`,
@@ -591,7 +607,8 @@ export const ChatScreen = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.1 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="flex items-center justify-center mt-4">
+                className="flex items-center justify-center mt-4"
+              >
                 <motion.div className="flex flex-col items-center justify-center text-center text-gray-600 w-max p-5 border-2 rounded-2xl border-dashed bg-green-50 border-[#22577E]">
                   <LuHistory className="text-[#22577E] mb-2" size={20} />
                   <p className="font-medium text-sm">No older chats found!</p>
@@ -606,13 +623,12 @@ export const ChatScreen = ({
             {chatState.specificConversation?.map((group, groupIndex) => (
               <div key={groupIndex} className="mb-5">
                 <div className="flex items-center w-full">
-                  <div className="border-b-2 w-full border-dashed border-gray-400">
-                  </div>
+                  <div className="border-b-1 w-full border-dashed border-gray-400"></div>
                   <div className="my-4 text-xs text-center text-gray-700 font-semibold tracking-wide text-nowrap mx-2">
-                    {group?.date}
+                    {/* {group?.date} */}
+                    <ChatDateSeparator date={group?.date} />
                   </div>
-                  <div className="border-b-2 w-full border-dashed border-gray-400">
-                  </div>
+                  <div className="border-b-1 w-full border-dashed border-gray-400"></div>
                 </div>
                 <div className="flex flex-col items-start space-y-2">
                   {group.messages.map((msg, index) => {
@@ -654,7 +670,6 @@ export const ChatScreen = ({
                         );
                       }
                     } else {
-                      
                     }
                     const isBot = msg?.replyType === "interactive";
                     const isText = ["text", "button"].includes(msg.replyType);
@@ -678,7 +693,12 @@ export const ChatScreen = ({
                         animate={{
                           opacity: 1,
                           y: 0,
-                          x: replyingMessageId === msg.id ? (isSent ? -20 : 20) : 0,
+                          x:
+                            replyingMessageId === msg.id
+                              ? isSent
+                                ? -20
+                                : 20
+                              : 0,
                         }}
                         transition={{
                           duration: 0.3,
@@ -686,8 +706,9 @@ export const ChatScreen = ({
                           stiffness: 300,
                           damping: 20,
                         }}
-                        className={`p-2 rounded-lg max-w-[90%] my-1 ${isSent ? "self-end" : "self-start"
-                          }`}
+                        className={`p-2 rounded-lg max-w-[90%] my-1 ${
+                          isSent ? "self-end" : "self-start"
+                        }`}
                       >
                         {isReply && (
                           <div className="bg-gray-100 border-l-4 border-green-500 p-2 rounded-sm mb-0">
@@ -700,28 +721,33 @@ export const ChatScreen = ({
                         {/* {isReply && <div className="text-sm border-b-2 bg-blue-300 px-3 py-2 rounded-t-md border-gray-700">{msg?.replyMessage}</div>} */}
                         {(isImage || isVideo || isDocument || isAudio) && (
                           <div
-                            className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
-                              }`}
+                            className={`flex items-center gap-2 w-full ${
+                              isSent ? "flex-row-reverse" : ""
+                            }`}
                           >
                             <div
-                              className={`${msg?.caption ? "p-2 rounded-md" : ""}`}
+                              className={`${
+                                msg?.caption ? "p-2 rounded-md" : ""
+                              }`}
                             >
                               {msg?.mediaPath ? (
                                 <>
                                   {isImage && (
                                     <div
-                                      className={`relative group w-full h-full ${msg?.caption
-                                        ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E]"
-                                        : ""
-                                        }`}
+                                      className={`relative group w-full h-full ${
+                                        msg?.caption
+                                          ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E]"
+                                          : ""
+                                      }`}
                                     >
                                       <img
                                         src={mediaUrl}
                                         alt="Image"
-                                        className={`mb-1 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${msg?.caption
-                                          ? "rounded-t-lg"
-                                          : "rounded-md"
-                                          }`}
+                                        className={`mb-1 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${
+                                          msg?.caption
+                                            ? "rounded-t-lg"
+                                            : "rounded-md"
+                                        }`}
                                       />
                                       {msg?.caption && (
                                         <div className="text-sm text-white mb-1 ml-2 whitespace-pre-wrap break-words">
@@ -748,10 +774,11 @@ export const ChatScreen = ({
                                   )}
                                   {isVideo && (
                                     <div
-                                      className={`${msg?.caption
-                                        ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E] relative group"
-                                        : "relative group"
-                                        }`}
+                                      className={`${
+                                        msg?.caption
+                                          ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E] relative group"
+                                          : "relative group"
+                                      }`}
                                     >
                                       <video
                                         src={mediaUrl}
@@ -784,10 +811,11 @@ export const ChatScreen = ({
                                   )}
                                   {isAudio && (
                                     <div
-                                      className={`${msg?.caption
-                                        ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E] relative group"
-                                        : "relative group"
-                                        }`}
+                                      className={`${
+                                        msg?.caption
+                                          ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E] relative group"
+                                          : "relative group"
+                                      }`}
                                     >
                                       <WhatsAppVoiceMessage
                                         src={mediaUrl}
@@ -820,10 +848,11 @@ export const ChatScreen = ({
                                   )}
                                   {isDocument && (
                                     <div
-                                      className={`${msg?.caption
-                                        ? "border border-gray-200 mb-1 rounded-md max-w-[200px] bg-[#22577E] p-1 relative group"
-                                        : "relative group"
-                                        }`}
+                                      className={`${
+                                        msg?.caption
+                                          ? "border border-gray-200 mb-1 rounded-md max-w-[200px] bg-[#22577E] p-1 relative group"
+                                          : "relative group"
+                                      }`}
                                     >
                                       {/* <iframe
                                     src={mediaUrl}
@@ -843,7 +872,8 @@ export const ChatScreen = ({
                                             className="font-medium text-sm truncate w-[10rem]"
                                             title={msg.fileName}
                                           >
-                                            {msg.fileName || "Untitled Document"}
+                                            {msg.fileName ||
+                                              "Untitled Document"}
                                           </div>
                                           <div className="text-xs text-gray-500">
                                             .{fileType}
@@ -968,16 +998,20 @@ export const ChatScreen = ({
 
                         {isText && (
                           <div
-                            className={`flex items-center gap-2 max-w-[200px]  ${isSent ? "flex-row-reverse" : ""
-                              }`}
+                            className={`flex items-center gap-2 max-w-[200px]  ${
+                              isSent ? "flex-row-reverse" : ""
+                            }`}
                           >
                             <div className="max-w-[250px]">
                               <p
-                                className={`whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${isSent
-                                  ? "bg-[#22577E] text-white rounded-br-none"
-                                  : "bg-[#5584AC] text-white rounded-bl-none"
-                                  }`}
-                                dangerouslySetInnerHTML={{ __html: formatMessageBody(msg.messageBody) }}
+                                className={`whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${
+                                  isSent
+                                    ? "bg-[#22577E] text-white rounded-br-none"
+                                    : "bg-[#5584AC] text-white rounded-bl-none"
+                                }`}
+                                dangerouslySetInnerHTML={{
+                                  __html: formatMessageBody(msg.messageBody),
+                                }}
                               >
                                 {/* {msg.messageBody} */}
                               </p>
@@ -1040,21 +1074,30 @@ export const ChatScreen = ({
                           </>
                         )}
 
-                        {templateType && <TemplateMessagePreview template={msg} templateJsonData={templateJsonData} />}
+                        {templateType && (
+                          <TemplateMessagePreview
+                            template={msg}
+                            templateJsonData={templateJsonData}
+                          />
+                        )}
                         {isBot && <BotPreview template={msg} />}
 
                         <div
-                          className={`mt-1 text-[0.7rem] ${isSent ? "text-end" : "text-start"
-                            }`}
+                          className={`mt-1 text-[0.7rem] ${
+                            isSent ? "text-end" : "text-start"
+                          }`}
                         >
                           <div
-                            className={`flex gap-1 items-center ${isSent ? "justify-end" : "justify-start"
-                              }`}
+                            className={`flex gap-1 items-center ${
+                              isSent ? "justify-end" : "justify-start"
+                            }`}
                           >
                             {!isSent && (
                               <>
                                 {/* For received messages, show time first */}
-                                <p className="text-[0.7rem] font-medium text-black tracking-wide" >{formatTime(msg?.insertTime)}</p>
+                                <p className="text-[0.7rem] font-medium text-black tracking-wide">
+                                  {formatTime(msg?.insertTime)}
+                                </p>
                               </>
                             )}
 
@@ -1068,7 +1111,9 @@ export const ChatScreen = ({
                             {isSent && (
                               <>
                                 {/* For sent messages, show time after ticks */}
-                                <p className="text-[0.7rem] font-medium text-black tracking-wide">{formatTime(msg?.insertTime)}</p>
+                                <p className="text-[0.7rem] font-medium text-black tracking-wide">
+                                  {formatTime(msg?.insertTime)}
+                                </p>
                               </>
                             )}
                           </div>
@@ -1176,7 +1221,9 @@ export const ChatScreen = ({
               >
                 <span
                   onClick={() => {
-                    setLocationPreviewText("Do you want to share your location");
+                    setLocationPreviewText(
+                      "Do you want to share your location"
+                    );
                     setLocationPreview(false);
                   }}
                   className="absolute right-1 top-0.5 cursor-pointer bg-gray-300 rounded-full px-1 hover:bg-gray-400 hover:text-white"
@@ -1193,8 +1240,8 @@ export const ChatScreen = ({
                     <span>
                       <LocationOnOutlinedIcon className="text-[#408386]" />
                     </span>
-                    From here you can request the user’s location. Once they accept,
-                    their location details will be shared with you.
+                    From here you can request the user’s location. Once they
+                    accept, their location details will be shared with you.
                   </p>
                 </div>
 
@@ -1216,7 +1263,9 @@ export const ChatScreen = ({
 
                   <div className="flex gap-2 mt-4 items-end">
                     <div className="flex flex-col">
-                      <span className="text-sm text-gray-700 ml-2 mb-1">Enter Location Label *</span>
+                      <span className="text-sm text-gray-700 ml-2 mb-1">
+                        Enter Location Label *
+                      </span>
                       <input
                         type="text"
                         value={locationPreviewText}
@@ -1234,17 +1283,10 @@ export const ChatScreen = ({
                     </button>
                   </div>
                 </div>
-
-
-
-
-
               </motion.div>
             )}
           </>
         )}
-
-
       </div>
 
       {/* media full screen preview */}
@@ -1379,7 +1421,9 @@ export const ChatScreen = ({
                 </div>
               )}
               {chatState.replyData?.messageBody && (
-                <pre className="text-sm text-gray-800 font-medium break-words text-break text-wrap">{chatState.replyData?.messageBody}</pre>
+                <pre className="text-sm text-gray-800 font-medium break-words text-break text-wrap">
+                  {chatState.replyData?.messageBody}
+                </pre>
               )}
             </div>
             <div
