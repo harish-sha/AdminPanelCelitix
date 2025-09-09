@@ -14,7 +14,11 @@ import UniversalButton from "../../../whatsapp/components/UniversalButton";
 import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
 import { RadioButton } from "primereact/radiobutton";
 import toast from "react-hot-toast";
-import { getSMPPDetailsById, updateSMPP } from "@/apis/admin/admin";
+import {
+  getSMPPDetailsById,
+  updateSMPP,
+  updateSmppStatus,
+} from "@/apis/admin/admin";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -75,7 +79,7 @@ const CustomPagination = ({
     </Box>
   );
 };
-const ManageSMPPTable = ({ id, name, data,handleFetchSmppDetails }) => {
+const ManageSMPPTable = ({ id, name, data, handleFetchSmppDetails }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [addserviceedit, setAddServiceedit] = useState(false);
   const [versioneditStatus, setVersionEditStatus] = useState("disable");
@@ -359,6 +363,26 @@ const ManageSMPPTable = ({ id, name, data,handleFetchSmppDetails }) => {
       toast.error("Error updating SMPP");
     }
   };
+
+  async function handleUpdateStatus(row) {
+    if (!row?.serviceId) return;
+    try {
+      const payload = {
+        serviceId: row?.serviceId,
+        status: Number(!row?.status),
+      };
+
+      const res = await updateSmppStatus(payload);
+      console.log("res", res);
+      // if (!res?.status) {
+      //   return toast.error("Error while updating status");
+      // }
+      // toast.success("Status updated successfully");
+      await handleFetchSmppDetails();
+    } catch (e) {
+      return toast.error("Error while updating status");
+    }
+  }
   const rows = Array.isArray(data)
     ? data?.map((item, i) => ({
         id: i + 1,
@@ -403,13 +427,14 @@ const ManageSMPPTable = ({ id, name, data,handleFetchSmppDetails }) => {
       minWidth: 80,
       renderCell: (params) => (
         <div className="py-2">
-          <div
+          <button
             className={`text-white text-xs px-2 py-1 border rounded-md text-center ${
               params.row.status ? "bg-green-500" : "bg-red-500"
             }`}
+            onClick={() => handleUpdateStatus(params.row)}
           >
             {params.row.status ? "Active" : "Inactive"}
-          </div>
+          </button>
         </div>
       ),
     },

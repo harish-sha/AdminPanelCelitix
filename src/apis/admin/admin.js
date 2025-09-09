@@ -427,3 +427,13 @@ export const getNotificationVariable = async (data) => {
     method: "GET",
   });
 };
+
+
+
+export const updateSmppStatus = async (data) => {
+  return await fetchWithAuth("/smpp/updateSmppStatusByServiceId", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
