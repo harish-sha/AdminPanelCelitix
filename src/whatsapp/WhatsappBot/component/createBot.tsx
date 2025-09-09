@@ -373,9 +373,7 @@ const CreateWhatsAppBot = () => {
         );
         isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
       } else {
-        isSourceAlreadyConnected = edges.some(
-          (edge) => edge.sourceHandle === source
-        );
+        isSourceAlreadyConnected = edges.some((edge) => edge.source === source);
         isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
       }
 
@@ -383,7 +381,6 @@ const CreateWhatsAppBot = () => {
         toast.error("This connection is not allowed!");
         return;
       }
-
       setEdges((eds) => addEdge(connection, eds));
     },
     [edges, setEdges]
