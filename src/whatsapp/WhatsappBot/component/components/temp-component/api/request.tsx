@@ -35,6 +35,21 @@ export const Request = ({
 
   const [isJsonCorrect, setIsJsonCorrect] = React.useState(true);
 
+  function formatJson(json) {
+    try {
+      const parsed = JSON.parse(json);
+      const pretty = JSON.stringify(parsed, null, 2);
+
+      setNodesInputData((prev) => ({
+        ...prev,
+        [id]: {
+          ...prev[id],
+          apiRequestJson: pretty,
+        },
+      }));
+    } catch (e) {}
+  }
+
   useEffect(() => {
     try {
       if (
@@ -315,6 +330,16 @@ export const Request = ({
                 `}
                 className="mt-2 resize-none h-40"
               />
+              <button
+                className="absolute top-1 right-2 text-sm font-medium text-gray-800 font-p underline"
+                onClick={() => {
+                  isJsonCorrect
+                    ? formatJson(nodesInputData[id]?.apiRequestJson)
+                    : null;
+                }}
+              >
+                Format
+              </button>
               <div className="absolute bottom-0 right-0 text-sm">
                 {isJsonCorrect ? (
                   <TiTickOutline className="text-green-500 size-6" />
