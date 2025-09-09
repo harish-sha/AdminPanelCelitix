@@ -204,8 +204,7 @@ export const Request = ({
 
   function handleVariableInsertParam(variable: string, index: number) {
     const param = [...params];
-    const prevMessage = param[index]["value"] || "";
-    const updatedMessage = prevMessage + " " + `${variable}`;
+    const updatedMessage = ` ${variable}`;
     param[index]["value"] = updatedMessage.trim();
     setParams(param);
   }
