@@ -6,14 +6,13 @@ import {
 import InputField from "@/components/layout/InputField";
 import { Button } from "@/components/ui/button";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
-import InputVariable from "@/whatsapp/whatsappLaunchCampaign/components/InputVariable";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 import AddIcon from "@mui/icons-material/Add";
 import { Dialog } from "primereact/dialog";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import UniversalButton from "@/components/common/UniversalButton";
-import { add } from "date-fns";
+import InputVariable from "./insertVar";
 
 export const Flow = ({
   id,
@@ -137,6 +136,12 @@ export const Flow = ({
     setSelectedVariable(e);
   }
 
+  function handleInsertVar(e: string, index: number) {
+    const allVar = [...storedVariable];
+    allVar[index]["varName"] = e;
+    setStoredVariable(allVar);
+  }
+
   return (
     <>
       <DropdownWithSearch
@@ -209,7 +214,7 @@ export const Flow = ({
       <div className="w-full space-y-2">
         {storedVariable.map((item, index) => (
           <div className="flex gap-2 w-full" key={index}>
-            <div className="w-1/2">
+            <div className="w-full">
               <DropdownWithSearch
                 id="storedVariable"
                 name="storedVariable"
@@ -224,11 +229,11 @@ export const Flow = ({
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 w-full mt-1 relative">
               <InputField
-                id="variableName"
-                label="Variable Name"
-                name="variableName"
+                id={`Variable Name ${index + 1}`}
+                label={`Variable Name ${index + 1}`}
+                name={`Variable Name ${index + 1}`}
                 value={storedVariable[index]?.varName}
                 onChange={(e) => {
                   handleStoredVariable(e.target.value, index, "varName");
@@ -236,7 +241,16 @@ export const Flow = ({
                 placeholder="Enter variable name"
               />
 
-              <div className="flex justify-end">
+              <div className="absolute top-7 right-0">
+                <InputVariable
+                  variables={allVariables}
+                  onSelect={(e) => {
+                    handleInsertVar(e, index);
+                  }}
+                />
+              </div>
+
+              {/* <div className="flex justify-end">
                 <button
                   className=" border bg-black text-white rounded-md p-2"
                   onClick={() => {
@@ -246,7 +260,7 @@ export const Flow = ({
                 >
                   Add Variable
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         ))}
