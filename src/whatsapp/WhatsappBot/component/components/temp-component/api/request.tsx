@@ -3,8 +3,9 @@ import { Textarea } from "@/components/ui/textarea";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import React, { useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
-import { MdOutlineDeleteForever } from "react-icons/md";
+import { MdDangerous, MdOutlineDeleteForever } from "react-icons/md";
 import InputVariable from "../../insertVar";
+import { TiTickOutline } from "react-icons/ti";
 
 export const Request = ({
   id,
@@ -31,6 +32,23 @@ export const Request = ({
   ]);
 
   const [addHeader, setAddHeader] = React.useState(false);
+
+  const [isJsonCorrect, setIsJsonCorrect] = React.useState(true);
+
+  useEffect(() => {
+    try {
+      if (
+        nodesInputData[id]?.apiRequestJson &&
+        JSON.parse(nodesInputData[id]?.apiRequestJson)
+      ) {
+        setIsJsonCorrect(true);
+      } else {
+        setIsJsonCorrect(false);
+      }
+    } catch (e) {
+      setIsJsonCorrect(false);
+    }
+  }, [nodesInputData[id]?.apiRequestJson]);
 
   function handleAddParams() {
     if (params.length >= 5) return;
@@ -277,25 +295,34 @@ export const Request = ({
               Request JSON
             </label>
 
-            <Textarea
-              id="requestJson"
-              name="requestJson"
-              value={nodesInputData[id]?.apiRequestJson}
-              onChange={(e) => {
-                setNodesInputData((prev) => ({
-                  ...prev,
-                  [id]: {
-                    ...prev[id],
-                    apiRequestJson: e.target.value,
-                  },
-                }));
-              }}
-              placeholder={`{
+            <div className="relative">
+              <Textarea
+                id="requestJson"
+                name="requestJson"
+                value={nodesInputData[id]?.apiRequestJson}
+                onChange={(e) => {
+                  setNodesInputData((prev) => ({
+                    ...prev,
+                    [id]: {
+                      ...prev[id],
+                      apiRequestJson: e.target.value,
+                    },
+                  }));
+                }}
+                placeholder={`{
     "key": "value"
 }
                 `}
-              className="mt-2 resize-none h-40"
-            />
+                className="mt-2 resize-none h-40"
+              />
+              <div className="absolute bottom-0 right-0 text-sm">
+                {isJsonCorrect ? (
+                  <TiTickOutline className="text-green-500 size-6" />
+                ) : (
+                  <MdDangerous className="text-red-500 size-6" />
+                )}
+              </div>
+            </div>
           </div>
         )}
 
