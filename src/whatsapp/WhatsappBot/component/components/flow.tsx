@@ -97,27 +97,35 @@ export const Flow = ({
   }
 
   function handleSaveNodeData() {
-    let isError = false;
-    // storedVariable.forEach(({ paramName, varName }) => {
-    //   if (!varName) {
-    //     isError = true
-    //   };
-    //   if (!paramName) {
-    //     isError = true
-    //   }
-    //   addVariable(varName);
-    // });
+    let hasError = false;
+
     for (let i = 0; i < storedVariable.length; i++) {
       const { paramName, varName } = storedVariable[i];
-      if (!varName) {
-        return toast.error("Please enter variable name at index: " + i);
+
+      const p = (paramName ?? "").trim();
+      const v = (varName ?? "").trim();
+
+      if (p && !v) {
+        toast.error(`Please enter variable value at index: ${i + 1}`);
+        hasError = true;
+        continue;
       }
-      if (!paramName) {
-        return toast.error("Please enter param name at index: " + i);
+
+      if (!p && v) {
+        toast.error(`Please enter parameter name at index: ${i + 1}`);
+        hasError = true;
+        continue;
       }
-      addVariable(varName);
+
+      if (!p && !v) {
+        continue;
+      }
+
+      addVariable(v);
     }
-    // if (isError) return;
+
+    if (hasError) return;
+
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
@@ -144,7 +152,7 @@ export const Flow = ({
 
   useEffect(() => {
     const storedVariables = nodesInputData[id]?.storedVariables;
-    setStoredVariable(storedVariables);
+    setStoredVariable(storedVariables || [{ paramName: "", varName: "" }]);
   }, [id]);
 
   return (
