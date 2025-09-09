@@ -229,16 +229,17 @@ export const Request = ({
           }}
           maxLength={"1000"}
         />
-        {nodesInputData[id]?.apiUrl && (
-          <div className="absolute top-7 right-0">
-            <InputVariable
-              variables={allVariables}
-              onSelect={(e) => {
-                handleInsertVar(e);
-              }}
-            />
-          </div>
-        )}
+        {nodesInputData[id]?.apiUrl &&
+          /^https?:\/\/.+/.test(nodesInputData[id]?.apiUrl) && (
+            <div className="absolute top-7 right-0">
+              <InputVariable
+                variables={allVariables}
+                onSelect={(e) => {
+                  handleInsertVar(e);
+                }}
+              />
+            </div>
+          )}
       </div>
       <AnimatedDropdown
         id="requestType"
