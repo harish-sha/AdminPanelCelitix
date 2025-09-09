@@ -125,7 +125,7 @@ export const Request = ({
     if (!url) return;
     if (!e) return;
     const removeVariableTag = removeVariable(url);
-    const variableTage = `{{${e}}}`;
+    const variableTage = `${e}`;
     const newUrl = removeVariableTag + "/" + variableTage;
     setNodesInputData((prev) => ({
       ...prev,

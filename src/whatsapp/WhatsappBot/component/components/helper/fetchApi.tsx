@@ -5,7 +5,7 @@ export const fetchApi = async (data) => {
     const method = (data?.apiMethod || "get").toLowerCase(); // default to 'get'
     const url = data?.apiUrl;
     const headers = data?.header || {};
-    const body = data?.apiRequestJson || {};
+    const body = JSON.parse(data?.apiRequestJson) || {};
     const params = data?.params || [{ key: "", value: "" }];
 
     let paramValue = {};
@@ -36,10 +36,9 @@ export const fetchApi = async (data) => {
     let res;
     if (method === "get" || method === "delete") {
       res = await axios[method](url, config);
+    } else {
+      res = await axios[method](url, body, config);
     }
-    // } else {
-    //   res = await axios[method](url, body, config);
-    // }
     return res.data;
   } catch (e) {
     console.error("API Error:", e);
