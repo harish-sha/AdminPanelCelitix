@@ -1,6 +1,9 @@
 import React from "react";
 import { Request } from "./temp-component/api/request";
 import { Response } from "./temp-component/api/response";
+import UniversalButton from "@/components/common/UniversalButton";
+import { fetchApi } from "./helper/fetchApi";
+import { Dialog } from "primereact/dialog";
 
 export const Api = ({
   id,
@@ -20,6 +23,18 @@ export const Api = ({
   nodes: any;
 }) => {
   const [selectedOption, setSelectedOption] = React.useState("request");
+
+  const [apiDataDialog, setApiDataDialog] = React.useState({
+    isOpen: false,
+    data: "",
+  });
+
+  async function handleTestAPI() {
+    if (!nodesInputData[id]?.apiUrl) return;
+    if (!nodesInputData[id]?.apiMethod) return;
+    const res = await fetchApi(nodesInputData[id]);
+    setApiDataDialog({ isOpen: true, data: res });
+  }
 
   return (
     <div className="space-y-2">
@@ -62,6 +77,26 @@ export const Api = ({
           nodes={nodes}
         />
       )}
+
+      <UniversalButton
+        id="testApi"
+        name="testApi"
+        label="Test API"
+        onClick={handleTestAPI}
+        style={{}}
+      />
+
+      <Dialog
+        header="API Response"
+        visible={apiDataDialog.isOpen}
+        onHide={() => setApiDataDialog({ isOpen: false, data: "" })}
+        style={{ width: "40%" }}
+        draggable={false}
+      >
+        {
+          JSON.stringify(apiDataDialog.data, null, 2)
+        }
+      </Dialog>
     </div>
   );
 };
