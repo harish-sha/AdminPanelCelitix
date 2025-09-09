@@ -4,6 +4,7 @@ import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import React, { useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
+import InputVariable from "../../insertVar";
 
 export const Request = ({
   id,
@@ -182,25 +183,46 @@ export const Request = ({
           ]
     );
   }, []);
+
+  function handleVariableInsertParam(variable: string, index: number) {
+    const param = [...params];
+    const prevMessage = param[index]["value"] || "";
+    const updatedMessage = prevMessage + " " + `${variable}`;
+    param[index]["value"] = updatedMessage.trim();
+    setParams(param);
+  }
+
   return (
     <div className="space-y-2">
-      <InputField
-        label="URL"
-        name="url"
-        id="url"
-        placeholder="https://example.com"
-        value={nodesInputData[id]?.apiUrl}
-        onChange={(e) => {
-          setNodesInputData((prev) => ({
-            ...prev,
-            [id]: {
-              ...prev[id],
-              apiUrl: e.target.value,
-            },
-          }));
-        }}
-        maxLength={"1000"}
-      />
+      <div className="relative">
+        <InputField
+          label="URL"
+          name="url"
+          id="url"
+          placeholder="https://example.com"
+          value={nodesInputData[id]?.apiUrl}
+          onChange={(e) => {
+            setNodesInputData((prev) => ({
+              ...prev,
+              [id]: {
+                ...prev[id],
+                apiUrl: e.target.value,
+              },
+            }));
+          }}
+          maxLength={"1000"}
+        />
+        {nodesInputData[id]?.apiUrl && (
+          <div className="absolute top-7 right-0">
+            <InputVariable
+              variables={allVariables}
+              onSelect={(e) => {
+                handleInsertVar(e);
+              }}
+            />
+          </div>
+        )}
+      </div>
       <AnimatedDropdown
         id="requestType"
         name="requestType"
@@ -289,28 +311,40 @@ export const Request = ({
           <div className="space-y-2">
             {params?.map((param, index) => (
               <div className="flex gap-2">
-                <InputField
-                  label=""
-                  name="paramsKey"
-                  id="paramsKey"
-                  placeholder={`Params Key ${index + 1}`}
-                  value={params[index]?.key}
-                  onChange={(e) => {
-                    handleInsertParams(e, index, "key");
-                  }}
-                  maxLength={"100"}
-                />
-                <InputField
-                  label=""
-                  name="paramsValue"
-                  id="paramsValue"
-                  placeholder={`Params Value ${index + 1}`}
-                  value={params[index]?.value}
-                  onChange={(e) => {
-                    handleInsertParams(e, index, "value");
-                  }}
-                  maxLength={"100"}
-                />
+                <div className="w-full">
+                  <InputField
+                    label=""
+                    name="paramsKey"
+                    id="paramsKey"
+                    placeholder={`Params Key ${index + 1}`}
+                    value={params[index]?.key}
+                    onChange={(e) => {
+                      handleInsertParams(e, index, "key");
+                    }}
+                    maxLength={"100"}
+                  />
+                </div>
+                <div className="relative w-full">
+                  <InputField
+                    label=""
+                    name="paramsValue"
+                    id="paramsValue"
+                    placeholder={`Params Value ${index + 1}`}
+                    value={params[index]?.value}
+                    onChange={(e) => {
+                      handleInsertParams(e, index, "value");
+                    }}
+                    maxLength={"100"}
+                  />
+                  <div className="absolute top-0 right-0">
+                    <InputVariable
+                      variables={allVariables}
+                      onSelect={(e) => {
+                        handleVariableInsertParam(e, index);
+                      }}
+                    />
+                  </div>
+                </div>
 
                 <button
                   className="text-red-500"
@@ -391,8 +425,8 @@ export const Request = ({
         </div>
       )}
 
-      {/* Uncomment when payload come */}
-      <AnimatedDropdown
+      {/* Uncomment when payload comes */}
+      {/* <AnimatedDropdown
         id="variable"
         name="variable"
         label="Select Variable"
@@ -405,7 +439,7 @@ export const Request = ({
           handleInsertVar(e);
         }}
         placeholder="Select Variable"
-      />
+      /> */}
     </div>
   );
 };
