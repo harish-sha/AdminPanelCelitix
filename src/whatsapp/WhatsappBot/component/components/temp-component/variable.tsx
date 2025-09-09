@@ -89,14 +89,14 @@ export const Variables = ({
                         className="flex-1 w-full focus:outline-none"
                       />
 
-                      <div className="absolute top-0 right-0">
+                      {/* <div className="absolute top-0 right-0">
                         <InputVariable
                           variables={allVariables}
                           onSelect={(e) => {
                             handleVariableInsert(e, index);
                           }}
                         />
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
