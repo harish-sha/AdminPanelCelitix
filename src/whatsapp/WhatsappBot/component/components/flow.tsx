@@ -142,6 +142,11 @@ export const Flow = ({
     setStoredVariable(allVar);
   }
 
+  useEffect(() => {
+    const storedVariables = nodesInputData[id]?.storedVariables;
+    setStoredVariable(storedVariables);
+  }, [id]);
+
   return (
     <>
       <DropdownWithSearch

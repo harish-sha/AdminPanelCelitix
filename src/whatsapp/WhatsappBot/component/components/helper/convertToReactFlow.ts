@@ -107,8 +107,8 @@ export const transformNodesById = (parsedFlowData) => {
       variableId: node?.answerText,
       // apiJson: node?.apiRequestJson || node?.params
       apiRequestJson: JSON.stringify(node?.apiJson),
-      varName: (Array.isArray(node?.apiResponse?.storedData) ? node.apiResponse.storedData[0]?.varName : "") || ""
-
+      varName: (Array.isArray(node?.apiResponse?.storedData) ? node.apiResponse.storedData[0]?.varName : "") || "",
+      storedVariables: node?.storeVariables,
     };
   });
 
