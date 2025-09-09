@@ -1002,6 +1002,14 @@ const CreateWhatsAppBot = () => {
     }
   };
 
+  useEffect(() => {
+    const lastPosition = nodes.at(-1)?.position;
+
+    setLastPosition({
+      x: lastPosition?.x + 50,
+      y: lastPosition?.y + 50,
+    });
+  }, [nodes]);
   return (
     <>
       <div className="flex">
