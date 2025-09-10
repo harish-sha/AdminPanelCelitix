@@ -679,22 +679,10 @@ const CreateWhatsAppBot = () => {
 
   function handleSaveNodeData() {
     const data = {
-      image: {
-        fileUrl: "",
-        fileCaption: "",
-      },
-      audio: {
-        fileUrl: "",
-        fileCaption: "",
-      },
-      document: {
-        fileUrl: "",
-        fileCaption: "",
-      },
-      video: {
-        fileUrl: "",
-        fileCaption: "",
-      },
+      image: {},
+      audio: {},
+      document: {},
+      video: {},
       starting: {
         startingKeyword: "",
       },
@@ -758,6 +746,34 @@ const CreateWhatsAppBot = () => {
         `Please fill in the following fields: ${missingFields.join(", ")}`
       );
       return;
+    }
+
+    const typeContainsFile = [
+      "image",
+      "audio",
+      "document",
+      "video",
+      "urlbutton",
+      "button",
+    ];
+
+    if (typeContainsFile.includes(type)) {
+      if (nodeData?.selectedOption === "upload" && !nodeData?.fileUrl) {
+        toast.error("Please select a file to upload");
+        return;
+      } else if (nodeData?.selectedOption === "url" && !nodeData?.fileUrl) {
+        toast.error("Please enter a valid URL");
+        return;
+      } else if (
+        nodeData?.selectedOption === "url" &&
+        nodeData?.fileUrl &&
+        !/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi.test(
+          nodeData?.fileUrl
+        )
+      ) {
+        toast.error("Please enter a valid URL");
+        return;
+      }
     }
 
     if (type === "list" && nodeData.options.length === 0) {
@@ -901,22 +917,10 @@ const CreateWhatsAppBot = () => {
     }
 
     const dataTemplate = {
-      image: {
-        fileUrl: "",
-        fileCaption: "",
-      },
-      audio: {
-        fileUrl: "",
-        fileCaption: "",
-      },
-      document: {
-        fileUrl: "",
-        fileCaption: "",
-      },
-      video: {
-        fileUrl: "",
-        fileCaption: "",
-      },
+      image: {},
+      audio: {},
+      document: {},
+      video: {},
       starting: {
         startingKeyword: "",
       },
@@ -955,7 +959,6 @@ const CreateWhatsAppBot = () => {
         //last
         apiUrl: "",
         apiMethod: "",
-       
       },
       flow: {
         bodyText: "",
@@ -977,6 +980,34 @@ const CreateWhatsAppBot = () => {
       if (!requiredFields) {
         toast.error(`Unsupported node type "${type}" in node ${id}`);
         return;
+      }
+
+      const typeContainsFile = [
+        "image",
+        "audio",
+        "document",
+        "video",
+        "urlbutton",
+        "button",
+      ];
+
+      if (typeContainsFile.includes(type)) {
+        if (nodeData?.selectedOption === "upload" && !nodeData?.fileUrl) {
+          toast.error("Please select a file to upload in node " + id);
+          return;
+        } else if (nodeData?.selectedOption === "url" && !nodeData?.fileUrl) {
+          toast.error("Please enter a valid URL in node " + id);
+          return;
+        } else if (
+          nodeData?.selectedOption === "url" &&
+          nodeData?.fileUrl &&
+          !/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi.test(
+            nodeData?.fileUrl
+          )
+        ) {
+          toast.error("Please enter a valid URL in node " + id);
+          return;
+        }
       }
 
       if (
