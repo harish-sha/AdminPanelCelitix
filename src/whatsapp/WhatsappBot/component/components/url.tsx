@@ -216,13 +216,13 @@ export const Url = ({
                   name="text"
                   tooltipContent="Enter URL of media"
                   label={"URL"}
-                  value={nodesInputData[id]?.urlbuttonMediaUrl}
+                  value={nodesInputData[id]?.fileUrl}
                   onChange={(e: { target: { value: any } }) => {
                     setNodesInputData((prev) => ({
                       ...prev,
                       [id]: {
                         ...prev[id],
-                        urlbuttonMediaUrl: e.target.value,
+                        fileUrl: e.target.value,
                       },
                     }));
                   }}
