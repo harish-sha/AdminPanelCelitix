@@ -1003,6 +1003,8 @@ const CreateWhatsAppBot = () => {
   };
 
   useEffect(() => {
+    if (!nodes.length || nodes.length == 1) return;
+    
     const lastPosition = nodes.at(-1)?.position;
 
     setLastPosition({
