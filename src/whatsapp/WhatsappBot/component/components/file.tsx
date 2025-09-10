@@ -9,6 +9,12 @@ import { extractVariable } from "./helper/extractVariable";
 import { IconButton, Slider } from "@mui/material";
 import PauseRounded from "@mui/icons-material/PauseRounded";
 import PlayArrowRounded from "@mui/icons-material/PlayArrowRounded";
+import {
+  FormatBoldOutlined,
+  FormatItalicOutlined,
+  FormatStrikethroughOutlined,
+} from "@mui/icons-material";
+import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
 
 export const FileNodeContent = ({
   accept,
@@ -27,6 +33,7 @@ export const FileNodeContent = ({
 }) => {
   const fileRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const inputRef = useRef(null);
 
   const [paused, setPaused] = useState(true);
   const [position, setPosition] = useState<number | number[]>(0);
@@ -199,6 +206,85 @@ export const FileNodeContent = ({
     );
   }
 
+  function addFormat(formatType: string) {
+    if (!inputRef.current) return;
+    const input = nodesInputData[id]?.fileCaption || "";
+    if (input?.length >= 20) return;
+
+    const inputEl = inputRef.current;
+    const { selectionStart, selectionEnd } = inputEl;
+    const selectedText = input?.substring(selectionStart, selectionEnd);
+    const data = {
+      bold: {
+        start: "*",
+        end: "*",
+      },
+      italic: {
+        start: "_",
+        end: "_",
+      },
+      strike: {
+        start: "~",
+        end: "~",
+      },
+    };
+    const { start, end } = data[formatType];
+    const newValue =
+      input.substring(0, selectionStart) +
+      start +
+      selectedText +
+      end +
+      input.substring(selectionEnd);
+
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        fileCaption: newValue,
+      },
+    }));
+
+    requestAnimationFrame(() => {
+      const pos = selectionEnd + start.length + end.length;
+      inputEl.setSelectionRange(pos, pos);
+      inputEl.focus();
+    });
+  }
+
+  function insertEmoji(emoji: string) {
+    if (!inputRef.current) return;
+    const input = nodesInputData[id]?.fileCaption || "";
+    if (input?.length >= 20) return;
+
+    const inputEl = inputRef.current;
+
+    const start = inputEl.selectionStart;
+    const end = inputEl.selectionEnd;
+
+    const newText = input.substring(0, start) + emoji + input.substring(end);
+
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        fileCaption: newText,
+      },
+    }));
+
+    requestAnimationFrame(() => {
+      inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
+      inputEl.focus();
+    });
+
+    //  inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
+    //  inputEl.focus();
+
+    // setTimeout(() => {
+    //   inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
+    //   inputEl.focus();
+    // }, 0);
+  }
+
   return (
     <div className="flex flex-col gap-2">
       <AnimatedDropdown
@@ -314,7 +400,40 @@ export const FileNodeContent = ({
             },
           }));
         }}
+        ref={inputRef}
+        maxLength="20"
       />
+
+      <div className="items-center justify-start hidden gap-1 md:flex mt-2">
+        <button
+          onClick={() => {
+            addFormat("bold");
+          }}
+          className="hover:bg-gray-200 rounded-full p-0.5 cursor-pointer"
+        >
+          <FormatBoldOutlined />
+        </button>
+        <button
+          onClick={() => {
+            addFormat("italic");
+          }}
+          className="hover:bg-gray-200 rounded-full p-0.5 cursor-pointer"
+        >
+          <FormatItalicOutlined />
+        </button>
+        <button
+          onClick={() => {
+            addFormat("strike");
+          }}
+          className="hover:bg-gray-200 rounded-full p-0.5 cursor-pointer"
+        >
+          <FormatStrikethroughOutlined />
+        </button>
+
+        <div className="mr-2">
+          <CustomEmojiPicker position="top" onSelect={insertEmoji} />
+        </div>
+      </div>
       <AnimatedDropdown
         id="selectVaribleDropdown"
         name="selectVaribleDropdown"

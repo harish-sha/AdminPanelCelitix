@@ -6,13 +6,19 @@ import {
 import InputField from "@/components/layout/InputField";
 import { Button } from "@/components/ui/button";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import AddIcon from "@mui/icons-material/Add";
 import { Dialog } from "primereact/dialog";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import UniversalButton from "@/components/common/UniversalButton";
 import InputVariable from "./insertVar";
+import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
+import {
+  FormatBoldOutlined,
+  FormatItalicOutlined,
+  FormatStrikethroughOutlined,
+} from "@mui/icons-material";
 
 export const Flow = ({
   id,
@@ -42,6 +48,8 @@ export const Flow = ({
   const [isOpen, setIsOpen] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [selectedVariable, setSelectedVariable] = React.useState("");
+
+  const inputRef = useRef(null);
 
   useEffect(() => {
     async function handleFetchAllFlows() {
@@ -155,6 +163,85 @@ export const Flow = ({
     setStoredVariable(storedVariables || [{ paramName: "", varName: "" }]);
   }, [id]);
 
+  function addFormat(formatType: string) {
+    if (!inputRef.current) return;
+    const input = nodesInputData[id]?.bodyText || "";
+    if (input?.length >= 50) return;
+
+    const inputEl = inputRef.current;
+    const { selectionStart, selectionEnd } = inputEl;
+    const selectedText = input?.substring(selectionStart, selectionEnd);
+    const data = {
+      bold: {
+        start: "*",
+        end: "*",
+      },
+      italic: {
+        start: "_",
+        end: "_",
+      },
+      strike: {
+        start: "~",
+        end: "~",
+      },
+    };
+    const { start, end } = data[formatType];
+    const newValue =
+      input.substring(0, selectionStart) +
+      start +
+      selectedText +
+      end +
+      input.substring(selectionEnd);
+
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        bodyText: newValue,
+      },
+    }));
+
+    requestAnimationFrame(() => {
+      const pos = selectionEnd + start.length + end.length;
+      inputEl.setSelectionRange(pos, pos);
+      inputEl.focus();
+    });
+  }
+
+  function insertEmoji(emoji: string) {
+    if (!inputRef.current) return;
+    const input = nodesInputData[id]?.bodyText || "";
+    if (input?.length >= 50) return;
+
+    const inputEl = inputRef.current;
+
+    const start = inputEl.selectionStart;
+    const end = inputEl.selectionEnd;
+
+    const newText = input.substring(0, start) + emoji + input.substring(end);
+
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        bodyText: newText,
+      },
+    }));
+
+    requestAnimationFrame(() => {
+      inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
+      inputEl.focus();
+    });
+
+    //  inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
+    //  inputEl.focus();
+
+    // setTimeout(() => {
+    //   inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
+    //   inputEl.focus();
+    // }, 0);
+  }
+
   return (
     <>
       <DropdownWithSearch
@@ -182,23 +269,58 @@ export const Flow = ({
         disabled={false}
         placeholder="Select a flow"
       />
-      <InputField
-        id="bodyText"
-        name="bodyText"
-        label="Body Text"
-        type="text"
-        placeholder="Enter body text"
-        value={nodesInputData[id]?.bodyText}
-        onChange={(e) => {
-          setNodesInputData((prev) => ({
-            ...prev,
-            [id]: {
-              ...prev[id],
-              bodyText: e.target.value,
-            },
-          }));
-        }}
-      />
+      <div>
+        <InputField
+          id="bodyText"
+          name="bodyText"
+          label="Body Text"
+          type="text"
+          placeholder="Enter body text"
+          value={nodesInputData[id]?.bodyText}
+          onChange={(e) => {
+            setNodesInputData((prev) => ({
+              ...prev,
+              [id]: {
+                ...prev[id],
+                bodyText: e.target.value,
+              },
+            }));
+          }}
+          ref={inputRef}
+          maxLength="50"
+        />
+
+        <div className="items-center justify-start hidden gap-1 md:flex mt-2">
+          <button
+            onClick={() => {
+              addFormat("bold");
+            }}
+            className="hover:bg-gray-200 rounded-full p-0.5 cursor-pointer"
+          >
+            <FormatBoldOutlined />
+          </button>
+          <button
+            onClick={() => {
+              addFormat("italic");
+            }}
+            className="hover:bg-gray-200 rounded-full p-0.5 cursor-pointer"
+          >
+            <FormatItalicOutlined />
+          </button>
+          <button
+            onClick={() => {
+              addFormat("strike");
+            }}
+            className="hover:bg-gray-200 rounded-full p-0.5 cursor-pointer"
+          >
+            <FormatStrikethroughOutlined />
+          </button>
+
+          <div className="mr-2">
+            <CustomEmojiPicker position="top" onSelect={insertEmoji} />
+          </div>
+        </div>
+      </div>
 
       <InputField
         id="buttonText"
