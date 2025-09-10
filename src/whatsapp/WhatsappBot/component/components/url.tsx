@@ -178,6 +178,7 @@ export const Url = ({
                       ...nodesInputData[id],
                       selectedOption: e,
                       text: "",
+                      fileUrl: "",
                     },
                   }));
                 }}

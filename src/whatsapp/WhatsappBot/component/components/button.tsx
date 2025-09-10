@@ -230,6 +230,7 @@ export const ButtonNodeContent = ({
                       ...nodesInputData[id],
                       selectedOption: e,
                       text: "",
+                      fileUrl: "",
                     },
                   }));
                 }}

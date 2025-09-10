@@ -302,6 +302,7 @@ export const FileNodeContent = ({
             [id]: {
               ...nodesInputData[id],
               selectedOption: e,
+              fileUrl : ""
             },
           }));
         }}
