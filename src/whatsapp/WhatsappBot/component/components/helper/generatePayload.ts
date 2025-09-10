@@ -146,7 +146,7 @@ function generateBotPayload(
         (entry["bodyText"] = nodeInput?.bodyText),
         (entry["buttonText"] = nodeInput?.buttonText),
         (entry["condition_reply"] = true);
-        entry["storeVariables"] = nodeInput?.storedVariable;
+      entry["storeVariables"] = nodeInput?.storedVariable;
     }
     if (finalType === "goto") {
       entry["gotoStep"] = nodeInput?.gotoStep;
@@ -210,7 +210,7 @@ function generateApiPayload(entry, nodeInput) {
     nodeInput?.apiResponse?.actionType !== "createNewNode" &&
     nodeInput?.jsonVar
   ) {
-    entry["apiResponse"]["storedData"] = [...(nodeInput?.jsonVar)];
+    entry["apiResponse"]["storedData"] = [...nodeInput?.jsonVar];
   }
 
   if (nodeInput?.apiResponse?.actionType === "createNewNode") {

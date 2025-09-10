@@ -721,11 +721,26 @@ const CreateWhatsAppBot = () => {
         message: "",
         buttonTexts: [],
       },
-      urlbutton: {},
+      urlbutton: {
+        fileUrl: "",
+        urlbuttonbody: "",
+        urlbuttonText: "",
+        urlbuttonUrl: "",
+        urlbuttonFooter: "",
+      },
       template: {},
-      api: {},
-      flow: {},
-      goto: {},
+      api: {
+        //last
+        apiUrl: "",
+        apiMethod: "",
+      },
+      flow: {
+        bodyText: "",
+        buttonText: "",
+      },
+      goto: {
+        gotoStep: "",
+      },
     };
     const nodeData = nodesInputData[selectedNodeId];
     const requiredFields = data[type];
@@ -749,10 +764,67 @@ const CreateWhatsAppBot = () => {
       toast.error("Please add at least one option in list node");
       return;
     }
+    if (type === "template" && !nodeData.templateSrno) {
+      toast.error("Please select template");
+      return;
+    }
+    if (type === "template" && !nodeData.json) {
+      toast.error("Something went wrong. Please try again. ");
+      return;
+    }
+
+    if (type === "flow" && !nodeData.flowSrno) {
+      toast.error("Please select flow");
+      return;
+    }
     if (type === "button" && nodeData.buttonTexts.length === 0) {
       toast.error("Please add at least one option in button node");
       return;
     }
+
+    if (
+      type === "api" &&
+      nodeData?.apiDatatype === "parameter" &&
+      !nodeData?.apiJson
+    ) {
+      toast.error("Please add at least one parameter in api node");
+      return;
+    }
+
+    if (
+      type === "api" &&
+      nodeData?.apiDatatype === "json" &&
+      !nodeData?.apiRequestJson
+    ) {
+      toast.error("Please add JSON body in api node");
+      return;
+    }
+
+    if (
+      nodeData?.apiResponse?.responseType === "text" &&
+      nodeData?.apiResponse?.actionType !== "createNewNode" &&
+      !nodeData?.varName
+    ) {
+      toast.error("Please add variable name in response api node");
+      return;
+    } else if (
+      nodeData?.apiResponse?.responseType === "text" &&
+      nodeData?.apiResponse?.actionType !== "createNewNode" &&
+      nodeData?.jsonVar &&
+      !nodeData?.jsonVar?.length
+    ) {
+      toast.error(
+        "Please add atleast one json params and variable in response api node"
+      );
+      return;
+    }
+
+    // if (nodeInput?.apiResponse?.actionType === "createNewNode") {
+    //   (entry["apiResponse"]["conditionName"] =
+    //     nodeInput?.apiResponse?.rowTitle),
+    //     // (entry["apiResponse"]["conditionValue"] = nodeInput?.apiResponse?.rowValue),
+    //     (entry["apiResponse"]["storeInVariable"] = undefined);
+    // }
 
     if (type === "list") {
       const optionsToSave = [];
@@ -871,11 +943,27 @@ const CreateWhatsAppBot = () => {
         message: "",
         buttonTexts: [],
       },
-      urlbutton: {},
+      urlbutton: {
+        fileUrl: "",
+        urlbuttonbody: "",
+        urlbuttonText: "",
+        urlbuttonUrl: "",
+        urlbuttonFooter: "",
+      },
       template: {},
-      api: {},
-      flow: {},
-      goto: {},
+      api: {
+        //last
+        apiUrl: "",
+        apiMethod: "",
+       
+      },
+      flow: {
+        bodyText: "",
+        buttonText: "",
+      },
+      goto: {
+        gotoStep: "",
+      },
     };
 
     let name = "";
@@ -953,6 +1041,64 @@ const CreateWhatsAppBot = () => {
       if (isError) {
         return;
       }
+      if (type === "list" && nodeData.options.length === 0) {
+        toast.error("Please add at least one option in list node");
+        return;
+      }
+      if (type === "template" && !nodeData.templateSrno) {
+        toast.error("Please select template");
+        return;
+      }
+      if (type === "template" && !nodeData.json) {
+        toast.error("Something went wrong. Please try again. ");
+        return;
+      }
+
+      if (type === "flow" && !nodeData.flowSrno) {
+        toast.error("Please select flow");
+        return;
+      }
+      if (type === "button" && nodeData.buttonTexts.length === 0) {
+        toast.error("Please add at least one option in button node");
+        return;
+      }
+
+      if (
+        type === "api" &&
+        nodeData?.apiDatatype === "parameter" &&
+        !nodeData?.apiJson
+      ) {
+        toast.error("Please add at least one parameter in api node");
+        return;
+      }
+
+      if (
+        type === "api" &&
+        nodeData?.apiDatatype === "json" &&
+        !nodeData?.apiRequestJson
+      ) {
+        toast.error("Please add JSON body in api node");
+        return;
+      }
+
+      if (
+        nodeData?.apiResponse?.responseType === "text" &&
+        nodeData?.apiResponse?.actionType !== "createNewNode" &&
+        !nodeData?.varName
+      ) {
+        toast.error("Please add variable name in response api node");
+        return;
+      } else if (
+        nodeData?.apiResponse?.responseType === "text" &&
+        nodeData?.apiResponse?.actionType !== "createNewNode" &&
+        nodeData?.jsonVar &&
+        !nodeData?.jsonVar?.length
+      ) {
+        toast.error(
+          "Please add atleast one json params and variable in response api node"
+        );
+        return;
+      }
     }
     // }
     const srno = details?.waba.find(
@@ -1004,7 +1150,7 @@ const CreateWhatsAppBot = () => {
 
   useEffect(() => {
     if (!nodes.length || nodes.length == 1) return;
-    
+
     const lastPosition = nodes.at(-1)?.position;
 
     setLastPosition({
