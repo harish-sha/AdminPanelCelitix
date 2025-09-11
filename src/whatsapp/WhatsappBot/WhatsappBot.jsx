@@ -63,9 +63,12 @@ const WhatsappBot = () => {
   async function handleFetchAllBot() {
     try {
       const res = await getAllBot();
-      setAllBots(res);
+
+      const sorted = res.sort((a, b) => new Date(b.saveTime) - new Date(a.saveTime));
+
+      setAllBots(sorted);
     } catch (e) {
-      // console.log(e);
+      toast.error("Failed to fetch all bots");
     }
   }
   useEffect(() => {
