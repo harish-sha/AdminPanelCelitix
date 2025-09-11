@@ -208,10 +208,6 @@ export const FileNodeContent = ({
     );
   }
 
-  useEffect(() => {
-    console.log("nodesInputData", nodesInputData[id]);
-  }, [nodesInputData]);
-
   function addFormat(formatType: string) {
     if (!inputRef.current) return;
     const input = nodesInputData[id]?.fileCaption || "";

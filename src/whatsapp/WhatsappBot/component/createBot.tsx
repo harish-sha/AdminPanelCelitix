@@ -350,22 +350,10 @@ const CreateWhatsAppBot = () => {
     (connection: { source: any; target: any }) => {
       const { source, target } = connection;
 
+      const type = nodes.find((n) => n.id === source)?.data?.type;
+
       let isSourceAlreadyConnected = false;
       let isTargetAlreadyConnected = false;
-
-      // if (type !== "list" || type !== "button") {
-      //   isSourceAlreadyConnected = edges.some((edge) => edge.source === source);
-
-      //   isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
-      // }
-
-      // if (type === "list" || type === "button") {
-      //   isSourceAlreadyConnected = edges.some(
-      //     (edge) => edge.sourceHandle === source
-      //   );
-
-      //   isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
-      // }
 
       if (type === "list" || type === "button") {
         isSourceAlreadyConnected = edges.some(
@@ -373,7 +361,7 @@ const CreateWhatsAppBot = () => {
         );
         isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
       } else {
-        isSourceAlreadyConnected = edges.some((edge) => {edge.source === source || edge.sourceHandle === source});
+        isSourceAlreadyConnected = edges.some((edge) => edge.source === source);
         isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
       }
 
