@@ -96,11 +96,13 @@ export const FileNodeContent = ({
         ...prev[id],
         selectedOption: nodesInputData[id]?.selectedOption,
         fileUrl:
+          nodesInputData[id]?.fileUrl ||
           nodesInputData[id]?.imageUrl ||
           nodesInputData[id]?.videoUrl ||
           nodesInputData[id]?.documentUrl,
 
         fileCaption:
+          nodesInputData[id]?.fileCaption ||
           nodesInputData[id]?.imageCaption ||
           nodesInputData[id]?.videoCaption ||
           nodesInputData[id]?.documentCaption,
@@ -108,7 +110,7 @@ export const FileNodeContent = ({
         variable: variable,
       },
     }));
-  }, []);
+  }, [id]);
 
   function togglePlayPause() {
     if (!audioRef.current) return;
@@ -206,6 +208,10 @@ export const FileNodeContent = ({
     );
   }
 
+  useEffect(() => {
+    console.log("nodesInputData", nodesInputData[id]);
+  }, [nodesInputData]);
+
   function addFormat(formatType: string) {
     if (!inputRef.current) return;
     const input = nodesInputData[id]?.fileCaption || "";
@@ -302,7 +308,7 @@ export const FileNodeContent = ({
             [id]: {
               ...nodesInputData[id],
               selectedOption: e,
-              fileUrl : ""
+              fileUrl: "",
             },
           }));
         }}

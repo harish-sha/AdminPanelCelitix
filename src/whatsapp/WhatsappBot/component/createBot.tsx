@@ -373,7 +373,7 @@ const CreateWhatsAppBot = () => {
         );
         isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
       } else {
-        isSourceAlreadyConnected = edges.some((edge) => edge.source === source);
+        isSourceAlreadyConnected = edges.some((edge) => {edge.source === source || edge.sourceHandle === source});
         isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
       }
 
