@@ -15,6 +15,7 @@ import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
 import { RadioButton } from "primereact/radiobutton";
 import toast from "react-hot-toast";
 import {
+  deleteSMPP,
   getSMPPDetailsById,
   updateSMPP,
   updateSmppStatus,
@@ -89,6 +90,7 @@ const ManageSMPPTable = ({ id, name, data, handleFetchSmppDetails }) => {
     pageSize: 10,
   });
   const [editDetails, setEditDetails] = useState(null);
+  const [deleteData, setDeleteData] = useState({ isOpen: false, id: null });
   // const
 
   const handleChangeVersionEditStatus = (event) => {
@@ -101,8 +103,7 @@ const ManageSMPPTable = ({ id, name, data, handleFetchSmppDetails }) => {
   const servicetypeoption = [
     { label: "Transactional", value: 1 },
     { label: "Promotional", value: 2 },
-    { label: "International", value: 3 },
-    { label: "Both", value: "Both" },
+    { label: "Both", value: 3 },
   ];
   const handleEditService = (service) => {
     // console.log(service);
@@ -346,6 +347,20 @@ const ManageSMPPTable = ({ id, name, data, handleFetchSmppDetails }) => {
       toast.error("Error in fetching smpp details");
     }
   };
+  const handleDelete = async () => {
+    if (!deleteData?.id)
+      try {
+        const res = await deleteSMPP(deleteData?.id);
+        console.log("res", res);
+        // await handleFetchSmppDetails();
+        // setEditDetails(res[0]);
+        // setVersionEditStatus(res[0]?.Version);
+        // setTpEditStatus(res[0]?.tps ? "enable" : "disable");
+        // setAddServiceedit(true);
+      } catch (e) {
+        toast.error("Error in fetching smpp details");
+      }
+  };
 
   const handleUpdateSmpp = async () => {
     try {
@@ -455,17 +470,19 @@ const ManageSMPPTable = ({ id, name, data, handleFetchSmppDetails }) => {
               />
             </IconButton>
           </CustomTooltip>
-          {/* <CustomTooltip title="Delete Service" placement="top" arrow>
+          <CustomTooltip title="Delete Service" placement="top" arrow>
             <IconButton
               className="no-xs"
-              onClick={() => handleDelete(params.row)}
+              onClick={() =>
+                setDeleteData({ isOpen: true, id: params.row?.serviceId })
+              }
             >
               <MdOutlineDeleteForever
                 className="text-red-500 cursor-pointer hover:text-red-600"
                 size={20}
               />
             </IconButton>
-          </CustomTooltip> */}
+          </CustomTooltip>
         </>
       ),
     },
@@ -898,6 +915,48 @@ const ManageSMPPTable = ({ id, name, data, handleFetchSmppDetails }) => {
               name="saveedit"
               onClick={handleUpdateSmpp}
             />
+          </div>
+        </div>
+      </Dialog>
+
+      <Dialog
+        header="Confirm Delete"
+        visible={deleteData.isOpen}
+        onHide={() => {
+          setDeleteData((prev) => ({ isOpen: false, id: "" }));
+        }}
+        className="lg:w-[40rem] md:w-[30rem] w-[20rem]"
+        draggable={false}
+      >
+        <div>
+          <div className="p-4 text-center">
+            <p className="text-[1.1rem] font-semibold text-gray-600">
+              Are you sure ?
+            </p>
+            <p>
+              Do you really want to delete this? This process cannot be undo.
+            </p>
+            <div className="flex justify-center gap-4 mt-2">
+              <UniversalButton
+                label="Cancel"
+                style={{
+                  backgroundColor: "#090909",
+                }}
+                onClick={() => {
+                  setDeleteData((prev) => ({ isOpen: false, id: "" }));
+                }}
+              />
+              <UniversalButton
+                label="Delete"
+                variant="danger"
+                style={
+                  {
+                    // backgroundColor: "red",
+                  }
+                }
+                onClick={handleDelete}
+              />
+            </div>
           </div>
         </div>
       </Dialog>

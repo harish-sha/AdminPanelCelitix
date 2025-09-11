@@ -293,6 +293,12 @@ export const getSMPPDetailsById = async (id) => {
   );
 };
 
+export const deleteSMPP = async (id) => {
+  return await fetchWithAuth(`/smpp/deleteSmpp?serviceId=${id}`, {
+    method: "POST",
+  });
+};
+
 export const updateSMPP = async (data) => {
   return await fetchWithAuth(`/smpp/editSmppConnection`, {
     method: "POST",
@@ -428,12 +434,9 @@ export const getNotificationVariable = async (data) => {
   });
 };
 
-
-
 export const updateSmppStatus = async (data) => {
   return await fetchWithAuth("/smpp/updateSmppStatusByServiceId", {
     method: "POST",
     body: JSON.stringify(data),
   });
 };
-
