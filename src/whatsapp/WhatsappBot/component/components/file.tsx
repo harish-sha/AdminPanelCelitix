@@ -39,7 +39,35 @@ export const FileNodeContent = ({
   const [position, setPosition] = useState<number | number[]>(0);
   const [duration, setDuration] = useState(0);
   const handleFileUpload = async (event: any) => {
+    if (!fileRef) return;
+    let isError = false;
+    let fileSize = null;
+
     const file = event.target.files[0];
+
+    const size = file?.size / 1024 / 1024;
+    if (accept === "image" && size > 5) {
+      isError = true;
+      fileSize = 5;
+    }
+
+    if (accept === "video" && size > 16) {
+      isError = true;
+      fileSize = 16;
+    }
+
+    if (isError) {
+      toast.error(`File size should be less than ${fileSize}MB`);
+      fileRef.current.value = null;
+      setNodesInputData((prev) => ({
+        ...prev,
+        [id]: {
+          ...prev[id],
+          fileUrl: "",
+        },
+      }));
+      return;
+    }
 
     const type = file?.type?.split("/")[0];
     // if (type !== "image" && type !== "video" && type !== accept) {

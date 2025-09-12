@@ -18,6 +18,7 @@ import {
   FormatStrikethroughOutlined,
 } from "@mui/icons-material";
 import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
+import toast from "react-hot-toast";
 
 export const ButtonNodeContent = ({
   id,
@@ -86,7 +87,35 @@ export const ButtonNodeContent = ({
   }, [options]);
 
   const handleFileUpload = async (event: any) => {
+    if (!fileRef) return;
+
+    let isError = false;
+    let fileSize = null;
     const file = event.target.files[0];
+
+     const size = file?.size / 1024 / 1024;
+     if (nodesInputData[id]?.type === "image" && size > 5) {
+       isError = true;
+       fileSize = 5;
+     }
+
+     if (nodesInputData[id]?.type === "video" && size > 16) {
+       isError = true;
+       fileSize = 16;
+     }
+
+     if (isError) {
+           toast.error(`File size should be less than ${fileSize}MB`);
+           fileRef.current.value = null;
+           setNodesInputData((prev) => ({
+             ...prev,
+             [id]: {
+               ...prev[id],
+               fileUrl: "",
+             },
+           }));
+           return;
+         }
 
     setNodesInputData((prev) => ({
       ...prev,
@@ -147,39 +176,39 @@ export const ButtonNodeContent = ({
     });
   }
 
- function insertEmoji(emoji: string) {
-   if (!inputRef.current) return;
-   const input = nodesInputData[id]?.message || "";
-   if (input?.length >= 1024) return;
+  function insertEmoji(emoji: string) {
+    if (!inputRef.current) return;
+    const input = nodesInputData[id]?.message || "";
+    if (input?.length >= 1024) return;
 
-   const inputEl = inputRef.current;
+    const inputEl = inputRef.current;
 
-   const start = inputEl.selectionStart;
-   const end = inputEl.selectionEnd;
+    const start = inputEl.selectionStart;
+    const end = inputEl.selectionEnd;
 
-   const newText = input.substring(0, start) + emoji + input.substring(end);
+    const newText = input.substring(0, start) + emoji + input.substring(end);
 
-   setNodesInputData((prev) => ({
-     ...prev,
-     [id]: {
-       ...prev[id],
-       message: newText,
-     },
-   }));
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        message: newText,
+      },
+    }));
 
-   requestAnimationFrame(() => {
-     inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
-     inputEl.focus();
-   });
+    requestAnimationFrame(() => {
+      inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
+      inputEl.focus();
+    });
 
-  //  inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
-  //  inputEl.focus();
+    //  inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
+    //  inputEl.focus();
 
-   // setTimeout(() => {
-   //   inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
-   //   inputEl.focus();
-   // }, 0);
- }
+    // setTimeout(() => {
+    //   inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
+    //   inputEl.focus();
+    // }, 0);
+  }
 
   return (
     <>
