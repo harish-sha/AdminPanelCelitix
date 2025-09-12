@@ -93,9 +93,7 @@ export const Api = ({
         style={{ width: "40%" }}
         draggable={false}
       >
-        {
-          JSON.stringify(apiDataDialog.data, null, 2)
-        }
+        <pre>{JSON.stringify(apiDataDialog.data, null, 2)}</pre>
       </Dialog>
     </div>
   );

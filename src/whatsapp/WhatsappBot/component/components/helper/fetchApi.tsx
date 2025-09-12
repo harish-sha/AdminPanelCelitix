@@ -5,7 +5,7 @@ export const fetchApi = async (data) => {
     const method = (data?.apiMethod || "get").toLowerCase(); // default to 'get'
     const url = data?.apiUrl;
     const headers = data?.header || {};
-    const body = JSON.parse(data?.apiRequestJson || {}) || {};
+    const body = JSON.parse(data?.apiRequestJson || "{}") || {};
     const params = data?.params || [{ key: "", value: "" }];
 
     let paramValue = {};
