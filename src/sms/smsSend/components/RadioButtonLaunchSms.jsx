@@ -24,6 +24,7 @@ export const RadioButtonLaunchSms = ({
   countryList,
   inputDetails,
   setInputDetails,
+  inputRef,
 }) => {
   const fileInputRef = useRef(null);
 
@@ -117,7 +118,6 @@ export const RadioButtonLaunchSms = ({
     });
   }
 
-
   function stripPlaceholders(str) {
     const varsToRemove = ["short_url", "whatsapp_chat", "file"];
     return varsToRemove.reduce(
@@ -126,15 +126,24 @@ export const RadioButtonLaunchSms = ({
     );
   }
   function handleAttachmentChange(e) {
+    if (!inputRef) return;
+    const input = inputRef.current;
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
     setInputDetails((prev) => {
       const strippedMessage = stripPlaceholders(prev.message);
       const hasAttachment = Boolean(e);
       const tag = hasAttachment ? `{#${e}#}` : "";
 
+      const updatedMessage =
+        strippedMessage.substring(0, start) +
+        tag +
+        strippedMessage.substring(end);
+
       return {
         ...prev,
         attachmentType: hasAttachment ? e : null,
-        message: strippedMessage + tag,
+        message: updatedMessage,
         shortUrl: hasAttachment ? 1 : 0,
         attachmentVar: {},
       };
@@ -297,7 +306,7 @@ export const RadioButtonLaunchSms = ({
                     // isUploading ?
                     // "disabled" : ""
                     ""
-                    }`}
+                  }`}
                 >
                   <FileUploadOutlinedIcon
                     sx={{ color: "white", fontSize: "23px" }}
@@ -484,29 +493,29 @@ export const RadioButtonLaunchSms = ({
         )}
         {(inputDetails.attachmentType === "short_url" ||
           inputDetails.attachmentType === "whatsapp_chat") && (
-            <div className="mt-2">
-              <InputField
-                id="attachmentText"
-                name="attachmentText"
-                onChange={handleAttachmentFileChange}
-                label={
-                  inputDetails.attachmentType === "short_url"
-                    ? "Short URL"
-                    : "WhatsApp Chat"
-                }
-                placeholder={
-                  inputDetails.attachmentType === "short_url"
-                    ? "Enter Short URL"
-                    : "Enter WhatsApp Number with Country Code"
-                }
-                value={
-                  inputDetails?.attachmentVar[
+          <div className="mt-2">
+            <InputField
+              id="attachmentText"
+              name="attachmentText"
+              onChange={handleAttachmentFileChange}
+              label={
+                inputDetails.attachmentType === "short_url"
+                  ? "Short URL"
+                  : "WhatsApp Chat"
+              }
+              placeholder={
+                inputDetails.attachmentType === "short_url"
+                  ? "Enter Short URL"
+                  : "Enter WhatsApp Number with Country Code"
+              }
+              value={
+                inputDetails?.attachmentVar[
                   `{#${inputDetails?.attachmentType}#}`
-                  ] || ""
-                }
-              />
-            </div>
-          )}
+                ] || ""
+              }
+            />
+          </div>
+        )}
       </div>
     </div>
   );
