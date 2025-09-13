@@ -220,7 +220,7 @@ const InteractiveActions = ({
                     }}
                   />
                 </div>
-                <div className="flex items-center gap-2 border-2 border-gray-500 w-max p-2 rounded-2xl">
+                {/* <div className="flex items-center gap-2 border-2 border-gray-500 w-max p-2 rounded-2xl">
                   <CustomTooltip
                     title="Enable this option to generate a tracking URL for your WhatsApp interactive template. 
 When checked, every click on the button will be tracked and logged into analytics. 
@@ -243,7 +243,7 @@ on how recipients interact with your message."
                       setIsShortUrl(Number(e.target.checked));
                     }}
                   />
-                </div>
+                </div> */}
                 <div className="mt-5">
                   <VariableManagerUrl
                     templateFormat={url}
