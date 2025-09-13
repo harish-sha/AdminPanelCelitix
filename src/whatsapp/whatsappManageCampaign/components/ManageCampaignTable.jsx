@@ -306,12 +306,15 @@ import {
 } from "@mui/x-data-grid";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import CallToActionIcon from "@mui/icons-material/CallToAction";
+import { SlGraph } from "react-icons/sl";
+import { ImStatsDots } from "react-icons/im";
+import { IoAnalyticsSharp } from "react-icons/io5";
 import { Paper, Typography, Box, Button } from "@mui/material";
 import {
   campaignSummaryInfo,
   getWhatsappCampaignReport,
   fetchCtaTrackingReport,
-  downloadCtaTrackingReport
+  downloadCtaTrackingReport,
 } from "../../../apis/whatsapp/whatsapp.js";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -400,13 +403,14 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
   const [campaignInfo, setCampaignInfo] = useState(null);
   const [campaignInfoMap, setCampaignInfoMap] = useState({});
   const [campaignCTAMap, setCampaignCTAMap] = useState({});
+  const [campaignCTAMapLoading, setCampaignCTAMapLoading] = useState(false);
+  console.log("campaignCTAMap", campaignCTAMap);
   const dropdownButtonRefs = useRef({});
   const [isOpen, setIsOpen] = useState(false);
   const [replySrno, setReplySrno] = useState("");
   const dropdownCTAButtonRefs = useRef({});
   const navigate = useNavigate();
   const { triggerDownloadNotification } = useDownload();
-
 
   const closeDropdown = () => setDropdownOpenId(null);
 
@@ -420,21 +424,20 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
 
       const res = await downloadCtaTrackingReport(payload);
 
-      console.log("res", res)
+      console.log("res", res);
 
       if (!res) {
         toast.error("Failed to download reply data");
         return;
       } else {
-        toast.success(res.msg)
-        setIsOpen(false)
+        toast.success(res.msg);
+        setIsOpen(false);
         triggerDownloadNotification();
       }
     } catch (err) {
       toast.error(err?.message || "Download failed");
     }
   };
-
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -477,13 +480,13 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
   const handleCTAView = async (row) => {
     setIsOpen(true);
     const id = row.id;
-    setReplySrno(row?.campaignSrno)
+    setReplySrno(row?.campaignSrno);
     // setDropdownCTAOpenId(null);
 
     const data = {
       campSrno: row?.campaignSrno,
     };
-
+    setCampaignCTAMapLoading(true);
     try {
       const res = await fetchCtaTrackingReport(data);
       setCampaignCTAMap((prev) => ({
@@ -494,6 +497,8 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
       // setDropdownCTAOpenId(id);
     } catch (e) {
       console.error("Error fetching campaign summary:", e);
+    } finally {
+      setCampaignCTAMapLoading(false);
     }
   };
 
@@ -632,7 +637,7 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
               // }}
               onClick={() => handleCTAView(params.row)}
             >
-              <CallToActionIcon sx={{ fontSize: "1.2rem", color: "orange" }} />
+              <IoAnalyticsSharp className="text-[1.2rem] text-red-500 font-semibold" sx={{ fontSize: "1.2rem", color: "orange" }} />
             </IconButton>
           </CustomTooltip>
 
@@ -937,20 +942,46 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
           </div>
 
           {/* Body Section */}
-          {campaignCTAMap?.campaignReplies?.length > 0 ? (
-            <div className="flex flex-col gap-3">
-              <p className="text-sm text-gray-600">
-                Reply Message:{" "}
-                <span className="font-medium text-gray-800">
-                  {campaignCTAMap.campaignReplies[0].message}
-                </span>
-              </p>
-              <p className="text-sm text-gray-600">
-                Reply Count:{" "}
-                <span className="font-medium text-gray-800">
-                  {campaignCTAMap.campaignReplies[0].replyCount}
-                </span>
-              </p>
+          {campaignCTAMapLoading ? (
+            <div className="text-sm text-blue-500 w-full flex items-center justify-center">
+              Loading...
+            </div>
+          ) : campaignCTAMap?.campaignReplies?.length > 0 ? (
+            <div className="overflow-x-auto rounded-lg shadow">
+              <table className="min-w-full border border-gray-200 text-sm">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-4 py-2 text-left font-semibold text-gray-700 border-b">
+                      S.No
+                    </th>
+                    {Object.keys(campaignCTAMap.campaignReplies[0]).map(
+                      (key) => (
+                        <th
+                          key={key}
+                          className="px-4 py-2 text-left font-semibold text-gray-700 border-b capitalize"
+                        >
+                          {key.replace(/([A-Z])/g, " $1")}{" "}
+                        </th>
+                      )
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  {campaignCTAMap.campaignReplies.map((reply, index) => (
+                    <tr
+                      key={index}
+                      className="hover:bg-gray-50 transition-colors border-b last:border-none"
+                    >
+                      <td className="px-4 py-2 text-gray-700">{index + 1}</td>
+                      {Object.keys(reply).map((key) => (
+                        <td key={key} className="px-4 py-2 text-gray-700">
+                          {reply[key]}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           ) : (
             <div className="text-sm text-gray-500 w-full flex items-center justify-center">

@@ -225,11 +225,16 @@ export default function LeadTags() {
   };
 
   // Filtered list
+  // const filteredTags = (Array.isArray(tags) ? tags : []).filter(
+  //   (tag) =>
+  //     tag.tagName.toLowerCase().includes(filter.toLowerCase()) ||
+  //     tag.tagDetails.toLowerCase().includes(filter.toLowerCase())
+  // ).sort((a, b) => new Date(b.insertTime) - new Date(a.insertTime));
   const filteredTags = (Array.isArray(tags) ? tags : []).filter(
     (tag) =>
       tag.tagName.toLowerCase().includes(filter.toLowerCase()) ||
       tag.tagDetails.toLowerCase().includes(filter.toLowerCase())
-  ).sort((a, b) => new Date(b.insertTime) - new Date(a.insertTime));
+  );
 
   function highlightMatch(text, query) {
     if (!query) return text;
@@ -281,7 +286,7 @@ export default function LeadTags() {
             t.srNo === tag.srNo ? { ...t, status: newStatus } : t
           )
         );
-        // fetchTags();
+        fetchTags();
       } else {
         toast.error(res?.message || "Failed to update tag status");
       }
@@ -648,7 +653,7 @@ export default function LeadTags() {
                 <div className="relative flex flex-col items-center ml-10">
                   <div className="absolute -top-8 flex flex-col items-center animate-bounce w-max">
                     <span className="bg-gray-800 text-white text-xs px-2 py-1 rounded-md shadow-lg">
-                      Choose more colors
+                      Explore more colors
                     </span>
                     <span className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-800"></span>
                   </div>

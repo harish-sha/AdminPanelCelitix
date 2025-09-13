@@ -160,77 +160,80 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
 
       {!isMobile ? (
         <div className="flex gap-3 items-center ml-auto">
-          {/* NAVBAR RIGHT CLUSTER */}
-          <div className="flex items-center gap-3">
+          {user.role === "DIRECTUSER" && (
+            <>
+              {/* NAVBAR RIGHT CLUSTER */}
+              <div className="flex items-center gap-3">
+                {/* API Docs animated card/button */}
 
-            {/* API Docs animated card/button */}
-            <motion.div
-              whileHover={{ y: -1, scale: 1.01 }}
-              whileTap={{ scale: 0.985 }}
-              transition={{ type: "spring", stiffness: 300, damping: 22 }}
-              className="group rounded-lg p-[1px] bg-gradient-to-r from-emerald-400/70 via-sky-400/70 to-fuchsia-400/70
-               hover:from-emerald-500 via-sky-500 hover:to-fuchsia-500 transition-colors duration-200"
-            >
-              <Link
-                to="/docs/quickstart" // change to your route, e.g. "/api-docs" or external link
-                className="flex items-center gap-2 rounded-[10px] bg-white/90 px-3 py-1.5 text-sm
-                 backdrop-blur dark:bg-gray-900/80 dark:text-gray-100"
-                aria-label="Open API Documentation"
-              >
-                {/* Icon bubble */}
+
                 <motion.div
-                  className="flex h-7 w-7 items-center justify-center rounded-md text-white
-                   dark:bg-white dark:text-gray-900"
-                  initial={false}
-                  animate={{ rotate: 0 }}
-                  whileHover={{ rotate: 8 }}
-                  transition={{ type: "spring", stiffness: 240, damping: 16 }}
+                  whileHover={{ y: -1, scale: 1.01 }}
+                  whileTap={{ scale: 0.985 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 22 }}
+                  className="group rounded-lg p-[1px] bg-gradient-to-r from-emerald-400/70 via-sky-400/70 to-fuchsia-400/70
+               hover:from-emerald-500 via-sky-500 hover:to-fuchsia-500 transition-colors duration-200"
                 >
-                  <BookOpen className="h-4 w-4 text-green-500" aria-hidden="true" />
-                </motion.div>
+                  <Link
+                    to="/docs/quickstart" // change to your route, e.g. "/api-docs" or external link
+                    className="flex items-center gap-2 rounded-[10px] bg-white/90 px-3 py-1.5 text-sm
+                 backdrop-blur dark:bg-gray-900/80 dark:text-gray-100"
+                    aria-label="Open API Documentation"
+                  >
+                    {/* Icon bubble */}
+                    <motion.div
+                      className="flex h-7 w-7 items-center justify-center rounded-md text-white
+                   dark:bg-white dark:text-gray-900"
+                      initial={false}
+                      animate={{ rotate: 0 }}
+                      whileHover={{ rotate: 8 }}
+                      transition={{ type: "spring", stiffness: 240, damping: 16 }}
+                    >
+                      <BookOpen className="h-4 w-4 text-green-500" aria-hidden="true" />
+                    </motion.div>
 
-                {/* Texts */}
-                <div className="flex min-w-0 flex-col">
-                  <span className="font-medium hover:font-semibold text-[13px] transition-all duration-200">API Docs</span>
-                  {/* <span className="text-[11px] text-gray-500 dark:text-gray-400 leading-none">
+                    {/* Texts */}
+                    <div className="flex min-w-0 flex-col">
+                      <span className="font-medium hover:font-semibold text-[13px] transition-all duration-200">API Docs</span>
+                      {/* <span className="text-[11px] text-gray-500 dark:text-gray-400 leading-none">
                     REST, Webhooks & Guides
                   </span> */}
-                </div>
+                    </div>
 
-                {/* Chevron/External icon */}
-                <motion.div
-                  className="ml-1"
-                  initial={{ x: 0, opacity: 0.7 }}
-                  whileHover={{ x: 3, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 250, damping: 18 }}
-                >
-                  <ExternalLink className="h-3 w-3 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200" />
+                    {/* Chevron/External icon */}
+                    <motion.div
+                      className="ml-1"
+                      initial={{ x: 0, opacity: 0.7 }}
+                      whileHover={{ x: 3, opacity: 1 }}
+                      transition={{ type: "spring", stiffness: 250, damping: 18 }}
+                    >
+                      <ExternalLink className="h-3 w-3 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200" />
+                    </motion.div>
+                  </Link>
                 </motion.div>
-              </Link>
-            </motion.div>
-          </div>
-
-          <div className="group relative">
-            <div
-              className="flex items-center gap-2 rounded-md border border-gray-200 bg-blue-50 px-2.5 py-1 text-[11px] leading-none text-gray-700
-               dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 tracking-wide h-10"
-              aria-describedby="last-login-tooltip"
-            >
-              <div className="flex flex-col gap-1">
-                <div>
-                  <span className="text-gray-400 dark:text-gray-500">•</span>&nbsp;
-                  <span className="font-semibold">User&nbsp;ID : </span>
-                  <span className="font-mono tabular-nums">{ipDetails?.user_id || "-"}</span>
-                </div>
-                <div>
-                  <span className="text-gray-400 dark:text-gray-500">•</span>&nbsp;
-                  <span className="font-semibold ">Current&nbsp;Login IP : </span>
-                  <span className="font-mono tabular-nums">{ipDetails?.ip || "-"}</span>
-                </div>
               </div>
-            </div>
 
-            {/* <div
+              <div className="group relative">
+                <div
+                  className="flex items-center gap-2 rounded-md border border-gray-200 bg-blue-50 px-2.5 py-1 text-[11px] leading-none text-gray-700
+               dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 tracking-wide h-10"
+                  aria-describedby="last-login-tooltip"
+                >
+                  <div className="flex flex-col gap-1">
+                    <div>
+                      <span className="text-gray-400 dark:text-gray-500">•</span>&nbsp;
+                      <span className="font-semibold">User&nbsp;ID : </span>
+                      <span className="font-mono tabular-nums">{ipDetails?.user_id || "-"}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-400 dark:text-gray-500">•</span>&nbsp;
+                      <span className="font-semibold ">Current&nbsp;Login IP : </span>
+                      <span className="font-mono tabular-nums">{ipDetails?.ip || "-"}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* <div
               id="last-login-tooltip"
               role="tooltip"
               className="pointer-events-none absolute left-1/2 top-full z-50 mt-1 -translate-x-1/2 whitespace-nowrap rounded-md
@@ -240,7 +243,12 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
               {ipDetails?.insert_time ? `Last activity: ${ipDetails.insert_time}` : "No timestamp available"}
               <div className="absolute -top-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-black" />
             </div> */}
-          </div>
+              </div>
+            </>
+          )}
+
+
+
           {[
             // {
             //   title: "Account Info",

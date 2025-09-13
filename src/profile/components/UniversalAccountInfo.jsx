@@ -18,6 +18,7 @@ import Loader from "../../whatsapp/components/Loader";
 import { getCountryList } from "../../apis/common/common";
 import { ProgressSpinner } from "primereact/progressspinner";
 import InputField from "@/components/layout/InputField";
+import moment from "moment";
 
 const CustomPagination = ({
   totalPages,
@@ -130,7 +131,7 @@ function AccountInfoModal({ show, handleClose }) {
       sn: 1,
       id: 1,
       service: "SMS",
-      created_on: accountInfo[0]?.smsUpdateTime,
+      created_on: moment(accountInfo[0]?.smsUpdateTime).format("YYYY-MM-DD hh:mm:ss"),
       pricing: `${accountInfo[0]?.smsRate} INR/Credit`,
     },
     {
@@ -144,14 +145,14 @@ function AccountInfoModal({ show, handleClose }) {
       sn: 3,
       id: 3,
       service: "OBD",
-      created_on: accountInfo[0]?.voiceUpdateTime,
+      created_on: moment(accountInfo[0]?.voiceUpdateTime).format("YYYY-MM-DD hh:mm:ss"),
       pricing: `${accountInfo[0]?.voiceRate15Sec ? "15sec -" : "30sec -"} ${accountInfo[0]?.voiceRate15Sec || accountInfo[0]?.voiceRate30Sec} INR/Credit`,
     },
     {
       sn: 4,
       id: 4,
       service: "RCS",
-      created_on: rcsrate[0]?.update_time.replaceAll("-", "-"),
+      created_on: moment(rcsrate[0]?.update_time).format("YYYY-MM-DD hh:mm:ss"),
       pricing: (
         <button onClick={() => setShowRcsPricing(true)}>
           <VisibilityIcon className="text-green-600 cursor-pointer" />
@@ -169,7 +170,7 @@ function AccountInfoModal({ show, handleClose }) {
       sn: 6,
       id: 6,
       service: "WhatsApp",
-      created_on: whatsapprate[0]?.update_time.replaceAll("-", "-"),
+      created_on: moment(whatsapprate[0]?.update_time).format("YYYY-MM-DD hh:mm:ss"),
       pricing: (
         <button onClick={() => setShowWhatsPricing(true)}>
           <VisibilityIcon className="text-green-600 cursor-pointer" />
@@ -178,20 +179,27 @@ function AccountInfoModal({ show, handleClose }) {
     },
     {
       sn: 7,
+      id: 12,
+      service: "Number Lookup",
+      created_on: moment(accountInfo[0]?.hlrUpdateTime).format("YYYY-MM-DD hh:mm:ss"),
+      pricing: `${accountInfo[0]?.hlrRate} INR/Credit`,
+    },
+    {
+      sn: 8,
       id: 7,
       service: "IBD",
       created_on: "-",
       pricing: "-",
     },
     {
-      sn: 8,
+      sn: 9,
       id: 8,
       service: "MissedCall",
       created_on: "-",
       pricing: "-",
     },
     {
-      sn: 9,
+      sn: 10,
       id: 9,
       service: "C2C",
       created_on: "-",
@@ -387,7 +395,7 @@ function AccountInfoModal({ show, handleClose }) {
 
 
             {new Date() < new Date(accountInfo[0]?.expiryDate) ? (
-              <Paper sx={{ height: "auto" }}>
+              <Paper sx={{ height: "558px" }}>
                 <DataGrid
                   rows={accountrows}
                   columns={accountcolumns}

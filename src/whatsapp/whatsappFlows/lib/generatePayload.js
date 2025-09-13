@@ -737,49 +737,186 @@ export const generatePayload = (data) => {
       //   };
       // }
 
+      // if (type === "footerbutton") {
+      //   const footerData = pay.footer?.footer_1 || {};
+      //   const onClickActionName = footerData.on_click_action || "complete";
+      //   const nextScreenId = data[index + 1]?.id || null;
+
+      //   // 🔹 Collect all form fields from this screen
+      //   const formPayload = {};
+      //   layout.children.forEach((child) => {
+      //     // Include all input/selection components
+      //     if (
+      //       [
+      //         "TextInput",
+      //         "TextArea",
+      //         "Dropdown",
+      //         "CheckboxGroup",
+      //         "RadioButtonsGroup",
+      //         "PhotoPicker",
+      //         "DatePicker",
+      //         "CalendarPicker",
+      //         "ChipsSelector",
+      //         "DocumentPicker",
+      //       ].includes(child.type)
+      //     ) {
+      //       if (child.name) {
+      //         formPayload[child.name] = `\${form.${child.name}}`;
+      //       }
+      //     }
+      //   });
+
+      //   component = {
+      //     type: "Footer",
+      //     label: footerData.label || "Submit",
+      //     "on-click-action": {
+      //       payload: formPayload,
+      //       name: onClickActionName,
+      //       // name: onClickActionName,
+      //       // ...(onClickActionName === "complete" && { payload: formPayload }),
+      //       ...(index !== data.length - 1 && {
+      //         next: {
+      //           type: "screen",
+      //           name: nextScreenId,
+      //         },
+      //       }),
+      //     },
+      //   };
+      // }
+
+      // if (type === "footerbutton") {
+      //   const footerData = pay.footer?.footer_1 || {};
+      //   const onClickActionName = footerData.on_click_action || "complete";
+      //   const nextScreenId = data[index + 1]?.id || null;
+
+      //   //  Collect all form fields from this screen
+      //   const formPayload = {};
+      //   layout.children.forEach((child) => {
+      //     if (
+      //       [
+      //         "TextInput",
+      //         "TextArea",
+      //         "Dropdown",
+      //         "CheckboxGroup",
+      //         "RadioButtonsGroup",
+      //         "PhotoPicker",
+      //         "DatePicker",
+      //         "CalendarPicker",
+      //         "ChipsSelector",
+      //         "DocumentPicker",
+      //       ].includes(child.type)
+      //     ) {
+      //       formPayload[
+      //         child.name
+      //       ] = `\${screen.${screenId}.form.${child.name}}`;
+      //     }
+      //   });
+
+      //   if (onClickActionName === "complete") {
+      //     component = {
+      //       type: "Footer",
+      //       label: footerData.label || "submit",
+      //       "on-click-action": {
+      //         name: "complete",
+      //         payload: formPayload,
+      //       },
+      //     };
+      //   } else if (onClickActionName === "navigate") {
+      //     component = {
+      //       type: "Footer",
+      //       label: footerData.label || "continue",
+      //       "on-click-action": {
+      //         name: "navigate",
+      //         ...(index !== data.length - 1 && {
+      //           next: {
+      //             type: "screen",
+      //             name: nextScreenId,
+      //           },
+      //         }),
+      //       },
+      //     };
+      //   }
+      // }
+
+
+      
       if (type === "footerbutton") {
         const footerData = pay.footer?.footer_1 || {};
         const onClickActionName = footerData.on_click_action || "complete";
         const nextScreenId = data[index + 1]?.id || null;
 
-        // 🔹 Collect all form fields from this screen
-        const formPayload = {};
-        layout.children.forEach((child) => {
-          // Include all input/selection components
-          if (
-            [
-              "TextInput",
-              "TextArea",
-              "Dropdown",
-              "CheckboxGroup",
-              "RadioButtonsGroup",
-              "PhotoPicker",
-              "DatePicker",
-              "CalendarPicker",
-              "ChipsSelector",
-              "DocumentPicker",
-            ].includes(child.type)
-          ) {
-            if (child.name) {
-              formPayload[child.name] = `\${form.${child.name}}`;
+        // Collect all form fields
+        const collectFields = (children, format, scrId = null) => {
+          const fields = {};
+          children.forEach((child) => {
+            if (
+              [
+                "TextInput",
+                "TextArea",
+                "Dropdown",
+                "CheckboxGroup",
+                "RadioButtonsGroup",
+                "PhotoPicker",
+                "DatePicker",
+                "CalendarPicker",
+                "ChipsSelector",
+                "DocumentPicker",
+              ].includes(child.type)
+            ) {
+              if (format === "current") {
+                fields[child.name] = `\${form.${child.name}}`;
+              } else if (format === "previous") {
+                fields[child.name] = `\${screen.${scrId}.form.${child.name}}`;
+              }
             }
-          }
-        });
-
-        component = {
-          type: "Footer",
-          label: footerData.label || "Submit",
-          "on-click-action": {
-            payload: formPayload,
-            name: onClickActionName,
-            ...(index !== data.length - 1 && {
-              next: {
-                type: "screen",
-                name: nextScreenId,
-              },
-            }),
-          },
+          });
+          return fields;
         };
+
+        if (onClickActionName === "complete") {
+          let payloadObj = {};
+
+          if (data.length === 1) {
+            // ✅ Only one screen → use current form fields
+            payloadObj = collectFields(layout.children, "current");
+          } else {
+           
+            for (let i = 0; i < index; i++) {
+              const prevScreen = data[i];
+              const prevLayout =
+                payload.screens[i]?.layout?.children || [];
+              Object.assign(
+                payloadObj,
+                collectFields(prevLayout, "previous", prevScreen.id)
+              );
+            }
+            // Current screen
+            Object.assign(payloadObj, collectFields(layout.children, "current"));
+          }
+
+          component = {
+            type: "Footer",
+            label: footerData.label || "submit",
+            "on-click-action": {
+              name: "complete",
+              payload: payloadObj,
+            },
+          };
+        } else if (onClickActionName === "navigate") {
+          component = {
+            type: "Footer",
+            label: footerData.label || "continue",
+            "on-click-action": {
+              name: "navigate",
+              ...(index !== data.length - 1 && {
+                next: {
+                  type: "screen",
+                  name: nextScreenId,
+                },
+              }),
+            },
+          };
+        }
       }
 
       layout.children.push(component);

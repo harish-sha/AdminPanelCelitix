@@ -385,8 +385,8 @@ export const InputData = ({
                           <div
                             key={item.sr_no}
                             className={`flex items-center gap-2 p-1 border-2 hover:bg-[#5584AC] hover:text-white transition-all duration-200 cursor-pointer rounded-md overflow-y-auto  ${selectedAgent === item.sr_no
-                                ? "bg-[#5584AC] border-[#5584AC] text-white"
-                                : "bg-gray-100 border-[#5584AC]"
+                              ? "bg-[#5584AC] border-[#5584AC] text-white"
+                              : "bg-gray-100 border-[#5584AC]"
                               }
                                `}
                             onClick={() =>
@@ -577,8 +577,8 @@ export const InputData = ({
                 // handleFetchAllConvo()
               }}
               className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "active"
-                  ? "text-white font-semibold"
-                  : "text-gray-700"
+                ? "text-white font-semibold"
+                : "text-gray-700"
                 }`}
             >
               Active
@@ -590,8 +590,8 @@ export const InputData = ({
                 // handleFetchAllConvo()
               }}
               className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "close"
-                  ? "text-white font-semibold"
-                  : "text-gray-700"
+                ? "text-white font-semibold"
+                : "text-gray-700"
                 }`}
             >
               Close

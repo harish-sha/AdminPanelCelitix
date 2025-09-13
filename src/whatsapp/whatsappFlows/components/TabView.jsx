@@ -334,9 +334,21 @@ export default function CustomTabView({
               <InputField
                 label="Enter screen name"
                 value={screenEditName}
+                // onChange={(e) => {
+                //   const value = e.target.value;
+                //   setScreenEditName(value);
+                // }}
                 onChange={(e) => {
                   const value = e.target.value;
                   setScreenEditName(value);
+                  if (!value) {
+                    setScreenID("");
+                    return;
+                  }
+                  const sanitized = value.replace(/\s+/g, "_").toLowerCase();
+                  const randomLetters = generateRandomLetters();
+                  const id = `${sanitized}_${randomLetters}`.toUpperCase();
+                  setScreenID(id);
                 }}
                 required
                 placeholder="Screen Name"

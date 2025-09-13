@@ -584,6 +584,8 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
                   onChange={(e) =>
                     setDataToExport({ ...dataToExport, fromDate: e })
                   }
+                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                  maxDate={new Date()}
                 />
                 <UniversalDatePicker
                   label="To Date:"
@@ -592,6 +594,8 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
                   onChange={(e) =>
                     setDataToExport({ ...dataToExport, toDate: e })
                   }
+                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                  maxDate={new Date()}
                 />
               </div>
 

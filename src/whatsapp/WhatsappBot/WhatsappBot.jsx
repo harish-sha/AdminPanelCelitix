@@ -70,9 +70,11 @@ const WhatsappBot = () => {
     try {
       setIsLoading(true);
       const res = await getAllBot();
-      setAllBots(res);
+      const sorted = res.sort((a, b) => new Date(b.saveTime) - new Date(a.saveTime));
+
+      setAllBots(sorted);
     } catch (e) {
-      // console.log(e);
+      toast.error("Failed to fetch all bots");
     } finally {
       setIsLoading(false);
     }
@@ -257,7 +259,6 @@ const WhatsappBot = () => {
   const totalPages = Math.ceil(filteredBots.length / rowsPerPage);
 
   const paginatedBots = filteredBots
-    .reverse()
     .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   // let paginatedBots = []
@@ -393,9 +394,9 @@ const WhatsappBot = () => {
           </div> */}
 
           <div className="bg-white p-3 rounded-xl shadow">
-            <h2 className="text-lg font-semibold mb-2 text-gray-800">
+            {/* <h2 className="text-lg font-semibold mb-2 text-gray-800">
               Templates
-            </h2>
+            </h2> */}
             <Carousel
               value={templates}
               numVisible={3}
@@ -420,8 +421,8 @@ const WhatsappBot = () => {
             />
           </div>
 
-          <div className="bg-white border border-gray-300 rounded-xl shadow-sm md:p-4 p-2 h-auto flex flex-col">
-            <div className="p-2">
+          <div className="bg-white border border-gray-300 rounded-xl shadow-sm md:p-3 p-2 h-fit overflow-scroll flex flex-col">
+            <div className="">
               {/* Header */}
               <div className="flex flex-col sm:flex-row sm:justify-between items-center mb-4 bg-white">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2 mb-2 sm:mb-0">
@@ -457,15 +458,15 @@ const WhatsappBot = () => {
                     </div>
                   </div>
                 ) : paginatedBots.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-6 min-h-[400px]">
-                    <div className="flex flex-col items-center justify-center border-2 border-dashed p-5 rounded-3xl shadow-2xl border-blue-300">
-                      <div className="w-60 h-60">
+                  <div className="flex flex-col items-center justify-center h-90">
+                    <div className="flex flex-col items-center justify-center border-1 border-dashed p-5 rounded-3xl shadow-2xl border-blue-300">
+                      <div className="w-50 h-40 mb-3">
                         <Lottie animationData={nothinganimation} loop />
                       </div>
-                      <div className="text-xl font-semibold text-gray-500 text-center">
+                      <div className="text-md font-semibold text-gray-500 text-center">
                         No Bot found.
                         <br />
-                        <span className="text-base font-normal text-gray-400">
+                        <span className="text-sm font-normal text-gray-400">
                           Start your professional journey by creating a new Bot!
                         </span>
                       </div>
@@ -475,10 +476,9 @@ const WhatsappBot = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className=" h-auto ">
+                  <div className="h-88">
                     {paginatedBots.map((bot, index) => {
                       const ref = dropdownButtonRefs[bot.botSrno];
-
                       return (
                         <div
                           key={bot.botSrno}
@@ -487,28 +487,27 @@ const WhatsappBot = () => {
                           <div className="grid lg:grid-cols-4 xl:grid-cols-5 bg-blue-100 px-6 py-4   xs:grid-cols-1 md:grid-cols-3 gap-2 sm:grid-cols-3  items-center justify-between flex-wrap sm:flex-nowrap">
                             <div className="flex items-center gap-4 flex-1">
                               <RadioButtonCheckedOutlinedIcon className="text-green-500" fontSize="small" />
-                              <div className="text-sm text-center ">
-                                <div className="font-semibold ">BotName:</div>
-                                <div className="text-gray-500"> {highlightMatch(String(bot.botName || ""), search)} </div>
-
+                              <div className=" text-center ">
+                                <div className="text-sm font-medium text-gray-500">Bot Name:</div>
+                                <div className="text-[0.92rem] font-semibold text-gray-800"> {highlightMatch(String(bot.botName || ""), search)} </div>
                               </div>
                             </div>
 
-                            <div className="text-sm text-center ">
-                              <div className="font-semibold ">Whatsapp Account:</div>
-                              <div className="text-gray-500"> {bot.wabaNumber}  </div>
+                            <div className=" text-center ">
+                              <div className="text-sm font-medium text-gray-500">Whatsapp Account:</div>
+                              <div className="text-[0.92rem] font-semibold text-gray-800"> {bot.wabaNumber}  </div>
                             </div>
 
-                            <div className="text-sm text-center ">
-                              <div className="font-semibold ">Starting KeyWords: </div>
-                              <div className="text-gray-500"> {bot.startKeywords}</div>
+                            <div className="text-center ">
+                              <div className="text-sm font-medium text-gray-500">Starting KeyWords: </div>
+                              <div className="text-[0.92rem] font-semibold text-gray-800"> {bot.startKeywords}</div>
                             </div>
 
 
-                            <div className="text-sm text-center ">
-                              <div className="font-semibold ">
+                            <div className=" text-center ">
+                              <div className="text-sm font-medium text-gray-500">
                                 Created On:</div>
-                              <div className="text-gray-500">{moment(bot.saveTime).format("DD-MM-YYYY h:mm:ss a")}</div>
+                              <div className="text-[0.92rem] font-semibold text-gray-800">{moment(bot.saveTime).format("DD-MM-YYYY h:mm:ss a")}</div>
                             </div>
 
 
@@ -570,7 +569,7 @@ const WhatsappBot = () => {
 
 
                 )}
-                <div className="flex justify-end items-center mt-4 gap-2 w-full whitespace-nowrap sm:overflow-x-scroll">
+                <div className="flex justify-end items-center gap-2 w-full whitespace-nowrap sm:overflow-x-scroll">
                   {Array.from({ length: totalPages }, (_, i) => (
                     <button
                       key={i + 1}

@@ -48,6 +48,7 @@ import moment from "moment";
 import InfoPopover from "@/components/common/InfoPopover";
 import { ImInfo } from "react-icons/im";
 import CampaignTableSms from "./components/CampaignTableSms"
+import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
 
 const SmsReports = () => {
   const navigate = useNavigate();
@@ -241,11 +242,11 @@ const SmsReports = () => {
     { label: "International", value: "3" },
   ];
   const attachmentoptions = [
-    { label: "All", value: "All" },
-    { label: "File", value: "File" },
-    { label: "Short Url", value: "Short Url" },
-    { label: "Whats App Chat", value: "Whats App Chat" },
-    { label: "Click To Call", value: "Click To Call " },
+    { label: "All", value: "1" },
+    { label: "File", value: "2" },
+    { label: "Short Url", value: "3" },
+    { label: "Whats App Chat", value: "4" },
+    { label: "Click To Call", value: "5" },
   ];
 
   const handleChangesmsReports = (event) => {
@@ -1215,7 +1216,7 @@ const SmsReports = () => {
       // ),
       startDate: moment(attachmentDataToFilter.startDate).format("YYYY-MM-DD"),
       endDate: moment(attachmentDataToFilter.endDate).format("YYYY-MM-DD"),
-      type: "",
+      type: attachmentDataToFilter.type || "",
     };
 
     try {
@@ -1309,7 +1310,7 @@ const SmsReports = () => {
     }
   };
 
-  const handlePreviosDayDetailDisplay = async (col) => {          
+  const handlePreviosDayDetailDisplay = async (col) => {
     if (!col) return;
     const data = {
       summaryType: col || selectedCol,
@@ -1549,6 +1550,11 @@ const SmsReports = () => {
                   onClick={() => {
                     setIsExportDialogOpen(true);
                   }}
+                  icon={
+                    <IosShareOutlinedIcon
+                      sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
+                    />
+                  }
                   disabled={isFetching}
                 />
               </div>
@@ -1701,11 +1707,13 @@ const SmsReports = () => {
               <div className="w-full sm:w-42">
                 <div className="w-max-content">
                   <UniversalButton
-                    label="Show"
+                    label={isFetching ? "Searching..." : "Search"}
+                    icon={<IoSearch />}
                     id="previousshow"
                     name="previousshow"
                     variant="primary"
                     onClick={handlePreviousDaysSearch}
+                    disabled={isFetching}
                   />
                 </div>
               </div>
@@ -1797,11 +1805,13 @@ const SmsReports = () => {
               <div className="w-full sm:w-56">
                 <div className="w-max-content">
                   <UniversalButton
-                    label="Show"
+                    label={isFetching ? "Searching..." : "Search"}
+                    icon={<IoSearch />}
                     id="summaryshow"
                     name="summaryshow"
                     variant="primary"
                     onClick={handleDayWiseSummary}
+                    disabled={isFetching}
                   />
                 </div>
               </div>
@@ -1872,11 +1882,13 @@ const SmsReports = () => {
               </div>
               <div className="w-max-content">
                 <UniversalButton
-                  label="Show"
+                  label={isFetching ? "Searching..." : "Search"}
+                  icon={<IoSearch />}
                   id="attachmentshow"
                   name="attachmentshow"
                   variant="primary"
                   onClick={handleAttachmentSearch}
+                  disabled={isFetching}
                 />
               </div>
             </div>

@@ -17,6 +17,7 @@ export const StartingNodeContent = ({
 
   function handleInputAddBtn() {
     if (inputFields.length >= 5) {
+      toast.error("You can only add up to 5 starting keywords");
       return;
     }
     setInputFields([...inputFields, ""]);
@@ -77,15 +78,15 @@ export const StartingNodeContent = ({
             }
           />
           {inputFields.length > 1 && (
-            <Button
+            <span
               id="deleteInput"
-              name="deleteInput"
-              variant="destructive"
+              // name="deleteInput"
+              // variant="destructive"
               onClick={() => handleInputDeleteBtn(index)}
-              className="mt-7"
+              className="mt-7 text-red-700 cursor-pointer hover:text-red-700 transition-colors duration-200"
             >
-              <MdOutlineDeleteForever />
-            </Button>
+              <MdOutlineDeleteForever fontSize={24} />
+            </span>
           )}
         </div>
       ))}

@@ -67,7 +67,8 @@ export const PermissionRoute = () => {
           "/wmmlite",
           "/wflowedit",
           "/cannedmessagemanager",
-          "/edit-template"
+          "/edit-template",
+          "/wflowsdetailsreport",
         ],
         roles: ["ADMIN"],
       },
@@ -158,6 +159,7 @@ export const PermissionRoute = () => {
           "/tagmanager",
           "/selfrecharge",
           "/unsubscribe",
+          "/salespersondashboard",
           "/dummy"
         ],
         roles: ["ADMIN"],

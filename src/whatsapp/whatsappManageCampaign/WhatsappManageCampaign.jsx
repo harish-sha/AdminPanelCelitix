@@ -26,6 +26,7 @@ import {
 } from "react-icons/md";
 import { motion } from "framer-motion";
 import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
+import { TiFlowSwitch } from "react-icons/ti";
 
 import { Checkbox } from "primereact/checkbox";
 
@@ -57,6 +58,7 @@ import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import ManageScheduleCampaignTable from "./components/ManageScheduleCampaignTable";
 import moment from "moment";
 import { useDownload } from "@/context/DownloadProvider";
+import { useNavigate } from "react-router-dom";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -194,6 +196,7 @@ const WhatsappManageCampaign = () => {
     dialed: false,
   });
 
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchCampaignListAll = async () => {
       setIsLoading(true);
@@ -657,7 +660,11 @@ const WhatsappManageCampaign = () => {
       }
 
       toast.success(res?.msg);
-      setExportDialogState({ isOpen: false, fromDate: new Date(), toDate: new Date() });
+      setExportDialogState({
+        isOpen: false,
+        fromDate: new Date(),
+        toDate: new Date(),
+      });
       triggerDownloadNotification();
     } catch (e) {
       console.log(e);
@@ -669,6 +676,7 @@ const WhatsappManageCampaign = () => {
   const [flowReplyList, setFlowReplyList] = useState([]);
   const [selectedDateFlow, setSelectedDateFlow] = useState(new Date()); // format: yyyy-mm-dd
   const [isFlowFetching, setIsFlowFetching] = useState(""); // format: yyyy-mm-dd
+  const [flowsDetailedReports, setFlowsDetailedReports] = useState([]);
 
   const fetchFlowReplyDetails = async () => {
     if (!selectedDateFlow) return;
@@ -693,6 +701,8 @@ const WhatsappManageCampaign = () => {
         campaignSrno: item.campaign_srno || 0, // optional
       };
       const response = await flowMainResponse(data);
+      setFlowsDetailedReports(response);
+      navigate("/wflowsdetailsreport", { state: { data: response } });
     } catch (error) {
       console.error("Error fetching flow main response:", error);
     }
@@ -715,13 +725,12 @@ const WhatsappManageCampaign = () => {
         it?.campaign_name,
         it?.campaign_id,
         it?.template_name,
-      ].map(v => String(v ?? "").toLowerCase());
-      return hay.some(v => v.includes(q));
+      ].map((v) => String(v ?? "").toLowerCase());
+      return hay.some((v) => v.includes(q));
     });
   }, [flowReplyList, search]);
 
-
-    const highlightMatch = (text, query) => {
+  const highlightMatch = (text, query) => {
     if (!query) return text;
 
     const parts = text.split(new RegExp(`(${query})`, "gi"));
@@ -735,7 +744,6 @@ const WhatsappManageCampaign = () => {
       )
     );
   };
-
 
   return (
     <div className="w-full ">
@@ -828,10 +836,10 @@ const WhatsappManageCampaign = () => {
                 },
               }}
             />
-            {/* <Tab
+            <Tab
               label={
                 <span>
-                  <AccountTreeOutlinedIcon size={20} /> Flows Report
+                  <AccountTreeOutlinedIcon size={20} /> Flows Summary
                 </span>
               }
               {...a11yProps(4)}
@@ -845,7 +853,7 @@ const WhatsappManageCampaign = () => {
                   borderRadius: "8px",
                 },
               }}
-            /> */}
+            />
           </Tabs>
           <CustomTabPanel value={value} index={0} className="">
             <div>
@@ -1052,7 +1060,13 @@ const WhatsappManageCampaign = () => {
                     <UniversalButton
                       id="export"
                       name="export"
-                      onClick={() => { setExportDialogState({ isOpen: true, toDate: new Date(), fromDate: new Date() }) }}
+                      onClick={() => {
+                        setExportDialogState({
+                          isOpen: true,
+                          toDate: new Date(),
+                          fromDate: new Date(),
+                        });
+                      }}
                       label={"Export"}
                       icon={
                         <IosShareOutlinedIcon
@@ -1115,28 +1129,26 @@ const WhatsappManageCampaign = () => {
                 header={"Export Data"}
                 visible={exportDialogState.isOpen}
                 style={{ width: "27rem" }}
-                onHide={() => setExportDialogState({
-                  isOpen: false,
-                  toDate: new Date(),
-                  fromDate: new Date()
-                })}
+                onHide={() =>
+                  setExportDialogState({
+                    isOpen: false,
+                    toDate: new Date(),
+                    fromDate: new Date(),
+                  })
+                }
                 draggable={false}
               >
                 <div className="space-y-2">
-
-
                   <UniversalDatePicker
                     id="fromDate"
                     name="fromDate"
                     label="From Date"
                     tooltipContent="Select From Date"
                     onChange={(e) => {
-                      setExportDialogState((prev) => (
-                        {
-                          ...prev,
-                          fromDate: e
-                        }
-                      ))
+                      setExportDialogState((prev) => ({
+                        ...prev,
+                        fromDate: e,
+                      }));
                     }}
                     value={exportDialogState.fromDate}
                   />
@@ -1146,12 +1158,10 @@ const WhatsappManageCampaign = () => {
                     label="To Date"
                     tooltipContent="Select To Date"
                     onChange={(e) => {
-                      setExportDialogState((prev) => (
-                        {
-                          ...prev,
-                          toDate: e
-                        }
-                      ))
+                      setExportDialogState((prev) => ({
+                        ...prev,
+                        toDate: e,
+                      }));
                     }}
                     value={exportDialogState.toDate}
                   />
@@ -1625,9 +1635,9 @@ const WhatsappManageCampaign = () => {
               )} */}
             </div>
           </CustomTabPanel>
-          <CustomTabPanel value={value} index={4}>
+          {/* <CustomTabPanel value={value} index={4}>
             <div className="flex flex-col gap-6 bg-gradient-to-b from-gray-50 to-gray-50 min-h-[80vh] p-4 md:p-6 rounded-xl">
-              {/* Header Section */}
+              {/* Header Section 
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
                   <MdBarChart className="text-blue-600 text-2xl" />
@@ -1654,7 +1664,7 @@ const WhatsappManageCampaign = () => {
                 </div>
               </div>
 
-              {/* Display Selected Date */}
+              {/* Display Selected Date *
               {selectedDateFlow && (
                 <div className="text-sm text-gray-600 font-medium">
                   Showing results for :{" "}
@@ -1670,7 +1680,7 @@ const WhatsappManageCampaign = () => {
                 </div>
               )}
 
-              {/* Data State */}
+              {/* Data State *
               {isFlowFetching ? (
                 <div className="text-center text-blue-500 font-medium py-6">
                   Loading flow replies...
@@ -1698,7 +1708,7 @@ const WhatsappManageCampaign = () => {
                       <div className="absolute top-0 right-0 h-2 w-full bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 rounded-t-2xl" />
 
                       <div className="flex flex-col gap-3 pt-3">
-                        {/* Campaign / Flow Name */}
+                        {/* Campaign / Flow Name 
                         <div className="grid grid-cols-2 items-start justify-between">
                           <div>
                             <p className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1">
@@ -1706,7 +1716,7 @@ const WhatsappManageCampaign = () => {
                               Campaign Name:
                             </p>
                             <h3 className="text-lg font-semibold text-gray-800">
-                              {/* {item.campaign_name || "—"} */}
+                              {/* {item.campaign_name || "—"} *
                               {highlightMatch(String(item.campaign_name || "—"), search)}
                             </h3>
                           </div>
@@ -1716,7 +1726,7 @@ const WhatsappManageCampaign = () => {
                               Flow Name:
                             </p>
                             <h3 className="text-lg font-semibold text-gray-800">
-                              {/* {item.flow_name || "—"} */}
+                              {/* {item.flow_name || "—"} *
                               {highlightMatch(String(item.flow_name || "—"), search)}
                             </h3>
                           </div>
@@ -1730,21 +1740,21 @@ const WhatsappManageCampaign = () => {
                               {format(new Date(selectedDate), "dd MMMM yyyy")}
                             </span>
                           </div> */}
-                        </div>
+          {/* </div> */}
 
-                        {/* Template Name */}
+          {/* Template Name *
                         <div className="grid grid-cols-2 items-start justify-between">
                           <div>
                             <p className="text-xs font-medium text-gray-500 mb-1">
                               Template Used
                             </p>
                             <p className="text-gray-800 font-semibold text-lg">
-                              {item.template_name || "—"}
+                              {/* {item.template_name || "—"} *
                               {highlightMatch(String(item.template_name || "—"), search)}
                             </p>
                           </div>
 
-                          {/* Reply Count */}
+                          {/* Reply Count *
                           <div>
                             <p className="text-xs font-medium text-gray-500 mb-1">
                               Total Responses Received
@@ -1755,7 +1765,7 @@ const WhatsappManageCampaign = () => {
                           </div>
                         </div>
                       </div>
-                      {/* View Detailed Report */}
+                      {/* View Detailed Report *
                       <div className="mt-4">
                         <div
                           onClick={() =>
@@ -1771,6 +1781,316 @@ const WhatsappManageCampaign = () => {
                   ))}
                 </div>
               )}
+            </div>
+          </CustomTabPanel> */}
+          <CustomTabPanel value={value} index={4}>
+            <div className="flex flex-col gap-6 bg-gradient-to-b from-gray-50 to-gray-50 min-h-[80vh] p-4 md:p-6 rounded-xl overflow-x-scroll  ">
+              {/* Header Section */}
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  {/* <MdBarChart className="text-blue-600 text-2xl" /> */}
+                  <TiFlowSwitch className="text-blue-800 text-2xl" />
+                  <h2 className="text-xl font-semibold text-gray-700">
+                    Flow Summary Report
+                  </h2>
+                </div>
+
+                <div className="flex flex-wrap lg:flex-nowrap items-start gap-2">
+                  <div className="w-60">
+                    <InputField
+                      label="Search Flow"
+                      type="text"
+                      placeholder="Search by Flow Name & Campaign..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                    // className="border border-gray-300 rounded-md px-3 py-1.5 w-full  text-sm"
+                    />
+                  </div>
+                  <div className="w-60">
+                    <UniversalDatePicker
+                      label="Select Date"
+                      value={selectedDateFlow}
+                      onChange={(newValue) => setSelectedDateFlow(newValue)}
+                      defaultValue={new Date()}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Display Selected Date */}
+              {selectedDateFlow && (
+                <div className="text-sm text-gray-600 font-medium text-center">
+                  Showing results for : &nbsp;
+                  <span className="text-blue-800 font-semibold">
+                    {format(new Date(selectedDateFlow), "dd MMMM yyyy")}
+                  </span>
+                  {typeof filteredFlowList?.length === "number" && (
+                    <span className="ml-2 text-gray-500">
+                      • {filteredFlowList.length} result
+                      {filteredFlowList.length === 1 ? "" : "s"}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              <div className="flex justify-center">
+                {/* Data State */}
+                {isFlowFetching ? (
+                  <div className="text-center text-blue-500 font-medium py-6 flex flex-col gap-3 w-full">
+                    Loading flow replies...
+                    <UniversalSkeleton height="5rem" width="100%" />
+                    <UniversalSkeleton height="5rem" width="100%" />
+                    <UniversalSkeleton height="5rem" width="100%" />
+                    <UniversalSkeleton height="5rem" width="100%" />
+                    <UniversalSkeleton height="5rem" width="100%" />
+                  </div>
+                ) : flowReplyList.length === 0 ? (
+                  <div className="flex items-center justify-center w-[50%] min-h-[300px] rounded-2xl ">
+                    <div className="flex flex-col items-center text-center p-6">
+                      {/* Animated  SVG */}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-24 h-24 text-indigo-600 mb-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <rect
+                          x="3"
+                          y="3"
+                          width="6"
+                          height="6"
+                          rx="1"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        />
+                        <rect
+                          x="15"
+                          y="3"
+                          width="6"
+                          height="6"
+                          rx="1"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        />
+                        <rect
+                          x="9"
+                          y="15"
+                          width="6"
+                          height="6"
+                          rx="1"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        />
+
+                        {/* Animated lines */}
+                        <path
+                          d="M9 6h6"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeDasharray="6"
+                          strokeDashoffset="6"
+                        >
+                          <animate
+                            attributeName="stroke-dashoffset"
+                            from="6"
+                            to="0"
+                            dur="1s"
+                            repeatCount="indefinite"
+                          />
+                        </path>
+
+                        <path
+                          d="M6 9v6"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeDasharray="6"
+                          strokeDashoffset="6"
+                        >
+                          <animate
+                            attributeName="stroke-dashoffset"
+                            from="6"
+                            to="0"
+                            dur="1s"
+                            begin="0.3s"
+                            repeatCount="indefinite"
+                          />
+                        </path>
+
+                        <path
+                          d="M18 9v6"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeDasharray="6"
+                          strokeDashoffset="6"
+                        >
+                          <animate
+                            attributeName="stroke-dashoffset"
+                            from="6"
+                            to="0"
+                            dur="1s"
+                            begin="0.6s"
+                            repeatCount="indefinite"
+                          />
+                        </path>
+                      </svg>
+
+                      {/* Text */}
+                      <h2 className="text-lg font-semibold text-gray-800">
+                        No Flow Replies Found
+                      </h2>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Try selecting another date to view responses.
+                      </p>
+                    </div>
+                  </div>
+                ) : filteredFlowList.length === 0 ? (
+                  <div className="flex items-center justify-center  w-[50%] min-h-[300px] rounded-2xl">
+                    <div className="flex flex-col items-center text-center p-6">
+                      {/* Animated  SVG */}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-20 h-20 text-purple-600 mb-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <circle
+                          cx="11"
+                          cy="11"
+                          r="7"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          className="animate-pulse"
+                        />
+                        <line
+                          x1="16"
+                          y1="16"
+                          x2="21"
+                          y2="21"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <animate
+                            attributeName="x2"
+                            values="21;19;21"
+                            dur="1.5s"
+                            repeatCount="indefinite"
+                          />
+                          <animate
+                            attributeName="y2"
+                            values="21;19;21"
+                            dur="1.5s"
+                            repeatCount="indefinite"
+                          />
+                        </line>
+                      </svg>
+
+                      <h2 className="text-lg font-semibold text-gray-800">
+                        No results match your search
+                      </h2>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Try adjusting your keywords or filters.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="h-150 overflow-scroll w-full rounded-2xl border p-3">
+                    <div className="flex flex-col gap-4">
+                      {filteredFlowList.map((item, idx) => (
+                        <motion.div
+                          key={
+                            item?.flow_id ||
+                            `${item?.flow_name || "row"}-${idx}`
+                          }
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.1, delay: idx * 0.1 }}
+                          className="bg-gradient-to-r from-blue-50 via-indigo-100 to-purple-50  border-1 border-blue-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all  relative overflow-hidden group"
+                        >
+                          <div className="flex flex-row lg:items-start gap-4 w-full flex-wrap">
+                            {/* Campaign / Flow Details */}
+                            <div className="w-20 text-center">
+                              <p className="text-sm font-medium text-gray-500 mb-1">
+                                Sr.no
+                              </p>
+                              <p className="text-md font-semibold text-gray-800">
+                                {idx + 1}
+                              </p>
+                            </div>
+
+                            {/* Campaign name */}
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-500 mb-1 flex items-center justify-center gap-1 text-nowrap">
+                                <MdOutlineDescription className="text-gray-500" />
+                                Campaign Name
+                              </p>
+                              <h3 className="text-md font-semibold text-gray-800 text-center">
+                                {/* {item.campaign_name || "—"} */}
+                                {highlightMatch(
+                                  String(item.campaign_name || "—"),
+                                  search
+                                )}
+                              </h3>
+                            </div>
+
+                            {/* Template Name */}
+                            <div className="flex-1 text-center">
+                              <p className="text-sm font-medium text-gray-500 mb-1 text-nowrap">
+                                Template Used
+                              </p>
+                              <p className="text-gray-800 font-semibold text-md">
+                                {/* {item.template_name || "—"} */}
+                                {highlightMatch(
+                                  String(item.template_name || "—"),
+                                  search
+                                )}
+                              </p>
+                            </div>
+
+                            {/* FlowName */}
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-500 mb-1 flex items-center justify-center gap-1 text-nowrap">
+                                <MdOutlineDescription className="text-gray-500" />
+                                Flow Name
+                              </p>
+                              <h3 className="text-md font-semibold text-gray-800 text-center">
+                                {/* {item.flow_name || "—"} */}
+                                {highlightMatch(
+                                  String(item.flow_name || "—"),
+                                  search
+                                )}
+                              </h3>
+                            </div>
+
+                            {/* Reply Count */}
+                            <div className="flex-1 text-center text-nowrap">
+                              <p className="text-sm font-medium text-gray-500 mb-1">
+                                Total Responses Received
+                              </p>
+                              <span className="inline-block bg-blue-200 text-blue-700 font-semibold text-lg px-3 py-1 rounded-full  shadow-lg">
+                                {item.reply_count}
+                              </span>
+                            </div>
+
+                            {/* View Detailed Report */}
+                            <div className="flex-1 text-center mt-3">
+                              <div
+                                onClick={() => fetchFlowMainResponse(item)}
+                                className="inline-flex items-center gap-1 text-sm text-blue-800 hover:underline mt-auto cursor-pointer text-nowrap font-medium"
+                              >
+                                View Detailed Report
+                                <MdOpenInNew className="text-base" />
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </CustomTabPanel>
         </Box>

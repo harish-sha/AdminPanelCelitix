@@ -115,8 +115,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     {
       id: "",
       name: "Home",
-      // icon: <FaHome />,
-      icon: <img src={dash3} className="w-4 h-4" />,
+      icon: <FaHome />,
+      // icon: <img src={dash3} className="w-4 h-4" />,
       label: "Dashboard",
       type: "single",
       to: "/",
@@ -383,18 +383,18 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     //   to: "/unsubscribe",
     //   roles: ["ADMIN", "DIRECTUSER"],
     // },
-    {
-      id: "",
-      name: "Leadmanagement",
-      icon: <LeaderboardOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
-      label: "Lead Management",
-      type: "single",
-      to: "/leadmanagement/leaddash",
-      // links: [
-      //   to: "/leadmanagement/leaddash"
-      // ]
-      roles: ["ADMIN"],
-    },
+    // {
+    //   id: "",
+    //   name: "Leadmanagement",
+    //   icon: <LeaderboardOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
+    //   label: "Lead Management",
+    //   type: "single",
+    //   to: "/leadmanagement/leaddash",
+    //   // links: [
+    //   //   to: "/leadmanagement/leaddash"
+    //   // ]
+    //   roles: ["ADMIN"],
+    // },
     // {
     //   id: "",
     //   name: "Aiconfiguration",
@@ -608,12 +608,25 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
             {/*Dropdown Content */}
             <motion.div
               initial={{ height: 0, opacity: 0 }}
-              animate={{
-                height:
-                  openDropdown === item.name
-                    ? dropdownRefs[item.name]?.scrollHeight
-                    : 0,
-                opacity: openDropdown === item.name ? 1 : 0,
+              // animate={{
+              //   height:
+              //     openDropdown === item.name
+              //       ? dropdownRefs[item.name]?.scrollHeight
+              //       : 0,
+              //   opacity: openDropdown === item.name ? 1 : 0,
+              // }}
+              animate={openDropdown === item.name ? "open" : "collapsed"}
+              variants={{
+                open: {
+                  height: "auto",
+                  opacity: 1,
+                  transition: { duration: 0.3 },
+                },
+                collapsed: {
+                  height: 0,
+                  opacity: 0,
+                  transition: { duration: 0.3 },
+                },
               }}
               transition={{ duration: 0.3 }}
               className="overflow-hidden"

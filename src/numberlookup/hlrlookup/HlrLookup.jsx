@@ -8,6 +8,7 @@ import { Search, ContentCopy, CloudUpload } from "@mui/icons-material";
 import { getCountryList } from "@/apis/common/common";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import UniversalButton from "@/components/common/UniversalButton";
+import OneTimeDropdown from "./components/OneTimeDropdown";
 
 const HlrLookup = () => {
   const [selectedOption, setSelectedOption] = useState("Copy-Paste");
@@ -21,22 +22,24 @@ const HlrLookup = () => {
   const [countryCodes, setCountryCodes] = useState([]);
   const [isValid, setIsValid] = useState(false);
 
-
   const handleNumberChange = (e) => {
     const value = e.target.value.replace(/\\D/g, "");
     setMobileNo(value);
     setIsValid(value.length >= 8 && countryCode !== "");
   };
 
-
   useEffect(() => {
     const fetchCountryList = async () => {
       try {
-
         const response = await getCountryList();
         if (response) {
           // getCountryList(response);
-          setCountryCodes(response);
+          const uniqueArray = [
+            ...new Map(
+              response.map((item) => [item.countryCode, item])
+            ).values(),
+          ];
+          setCountryCodes(uniqueArray);
         } else {
           console.error("Failed to fetch Country List!");
           toast.error("Failed to load Country List");
@@ -58,7 +61,9 @@ const HlrLookup = () => {
 
   const handleNumberLookup = async () => {
     if (!isValid) {
-      toast?.error("Please select country code and enter a valid mobile number.");
+      toast?.error(
+        "Please select country code and enter a valid mobile number."
+      );
       return;
     }
     try {
@@ -88,8 +93,7 @@ const HlrLookup = () => {
 
         setResult(data);
         toast?.success("Lookup complete");
-      }
-      else {
+      } else {
         setResult(null);
         toast?.error("Lookup failed. Try again.");
       }
@@ -164,7 +168,7 @@ const HlrLookup = () => {
 
     //       {/* Lookup Button */}
     //       <button
-    //         className={`h-11 px-5 text-white text-sm md:text-md font-semibold rounded-r-full shadow transition 
+    //         className={`h-11 px-5 text-white text-sm md:text-md font-semibold rounded-r-full shadow transition
     //           ${isValid && !isFetching
     //             ? "bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:ring focus:ring-blue-500/40"
     //             : "bg-gray-400 cursor-not-allowed"
@@ -299,67 +303,89 @@ const HlrLookup = () => {
     //   </div>
     // </div>
 
-    <div className=" bg-gradient-to-br from-slate-50 to-slate-100 p-4 rounded">
+    <div className="bg-gradient-to-br from-slate-50 to-slate-100 md:p-4 p-0 rounded-2xl">
       <div className="max-w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Panel */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className="bg-white rounded-2xl shadow-md p-6 border border-slate-100"
+          className="bg-white rounded-2xl shadow-md p-2 md:p-6 border border-slate-100"
         >
-          <h2 className="text-xl font-semibold text-slate-800 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-semibold text-slate-800 mb-4 flex items-center justify-center md:justify-start gap-2">
             <Search className="text-indigo-500" /> Number Lookup
           </h2>
           <p className="text-sm text-slate-500 mb-4">
-            Please <span className="font-medium text-blue-700">select a country code </span>
-            and <span className="font-medium text-blue-600">enter a valid mobile number </span>
+            Please{" "}
+            <span className="font-medium text-blue-700">
+              select a country code{" "}
+            </span>
+            and{" "}
+            <span className="font-medium text-blue-600">
+              enter a valid mobile number{" "}
+            </span>
             to perform the lookup.
           </p>
 
-          <div className="flex items-center mb-3 border rounded-full px-1 py-1">
-            <div className="w-56">
-              <DropdownWithSearch
-                id="selectCountryCode"
-                name="selectCountryCode"
-                options={formattedCountryOptions}
-                value={countryCode}
-                onChange={(val) => {
-                  setCountryCode(val);
-                  setIsValid(mobileNo.length >= 8 && val !== "");
-                }}
-                placeholder="Select country..."
-              />
+          <div className="w-full">
+            <div className="flex flex-col lg:flex-row items-stretch space-y-2">
+              {/* Country code */}
+              <div className="w-full lg:max-w-60">
+                <OneTimeDropdown
+                  options={formattedCountryOptions} // [{label, value}]
+                  value={countryCode}
+                  onChange={(val) => {
+                    setCountryCode(val);
+                    setIsValid(mobileNo.length >= 8 && val !== "");
+                  }}
+                  matchMode="startsWith"
+                  classNameMain="flex h-11 items-center bg-white border rounded-md lg:rounded-l-full lg:rounded-r-none"
+                />
+              </div>
+
+              {/* Phone + Button */}
+              <div className="flex flex-col sm:flex-row w-full h-24 md:h-auto space-y-2">
+                <input
+                  type="text"
+                  placeholder="Enter mobile number..."
+                  value={mobileNo}
+                  onChange={handleNumberChange}
+                  maxLength={15}
+                  inputMode="numeric"
+                  className="h-11 px-4 text-sm placeholder-slate-400 bg-slate-50
+          border border-slate-300 focus:outline-none 
+          rounded-md sm:rounded-md lg:rounded-none lg:rounded-l-none
+          flex-1 min-w-0 
+        "
+                  aria-label="Mobile number"
+                />
+
+                <button
+                  onClick={handleNumberLookup}
+                  disabled={!isValid || isFetching}
+                  className={`
+          h-11 px-6 text-white text-sm font-semibold shadow transition
+          rounded-md sm:rounded-md lg:rounded-r-full
+          ${isValid && !isFetching
+                      ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                      : "bg-slate-300 cursor-not-allowed"
+                    }
+          w-full sm:w-auto
+        `}
+                  aria-disabled={!isValid || isFetching}
+                >
+                  {isFetching ? "Checking..." : "Lookup"}
+                </button>
+              </div>
             </div>
-
-            {/* Mobile Input */}
-            <input
-              type="text"
-              placeholder="Enter mobile number..."
-              value={mobileNo}
-              onChange={handleNumberChange}
-              maxLength={15}
-              inputMode="numeric"
-              className="flex-1 h-10 px-4 text-sm placeholder-slate-400 bg-slate-50 border-t border-b border-slate-300 focus:outline-none  transition"
-            />
-
-            {/* Lookup Button */}
-            <button
-              onClick={handleNumberLookup}
-              disabled={!isValid || isFetching}
-              className={`h-10 px-6 text-white text-sm font-semibold rounded-r-full shadow transition ${isValid && !isFetching
-                ? "bg-gradient-to-r from-blue-500 to-blue-500 tracking-wider cursor-pointer"
-                : "bg-slate-300 cursor-not-allowed"
-                }`}
-            >
-              {isFetching ? "Checking..." : "Lookup"}
-            </button>
           </div>
 
-
           {/* Counter */}
-          <div className="text-xs text-slate-500 mb-5">
-            {countryCode ? `Selected: +${countryCode}` : "Please select a country"} | {mobileNo.length}/15 digits
+          <div className="text-xs text-slate-500 mt-2 md:mt-0 mb-5">
+            {countryCode
+              ? `Selected: +${countryCode}`
+              : "Please select a country"}{" "}
+            | {mobileNo.length}/15 digits
           </div>
 
           {/* Results Table */}
@@ -377,15 +403,30 @@ const HlrLookup = () => {
                   ["Lookup Description", result?.lookupDescription],
                   ["Original Operator", result?.originalOperator],
                   ["Original Circle", result?.originalCircle],
-                  ["Ported", result?.ported ? "Yes" : result?.ported === false ? "No" : "-"],
+                  [
+                    "Ported",
+                    result?.ported
+                      ? "Yes"
+                      : result?.ported === false
+                        ? "No"
+                        : "-",
+                  ],
                   ["Ported Operator", result?.portedOperator],
                   ["Ported Circle", result?.portedCircle],
                 ].map(([label, value], i) => (
-                  <tr key={i} className={i % 2 === 0 ? "bg-slate-50" : "bg-white"}>
+                  <tr
+                    key={i}
+                    className={i % 2 === 0 ? "bg-slate-50" : "bg-white"}
+                  >
                     <td className="w-1/3 border border-slate-200 p-3 font-medium text-slate-700">
                       {label}
                     </td>
-                    <td className={`border border-slate-200 p-3 ${label === "Lookup Status" ? "text-green-600 font-semibold" : "text-slate-600"}`}>
+                    <td
+                      className={`border border-slate-200 p-3 ${label === "Lookup Status"
+                        ? "text-green-600 font-semibold"
+                        : "text-slate-600"
+                        }`}
+                    >
                       {value || "-"}
                     </td>
                   </tr>
@@ -400,15 +441,20 @@ const HlrLookup = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, delay: 0, ease: "easeOut" }}
-          className="bg-white rounded-2xl shadow-md p-6 border border-slate-100"
+          className="bg-white rounded-2xl shadow-md p-2 md:p-6 border border-slate-100"
         >
-          <h2 className="text-xl font-semibold text-slate-800 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-semibold text-slate-800 mb-4 flex items-center justify-center md:justify-start gap-2">
             <CloudUpload className="text-blue-500" /> Bulk Lookup
           </h2>
 
           {/* Radio Options */}
           <div className="flex flex-col md:flex-row gap-4 mb-4">
-            <label className={`flex items-center gap-2 px-3 py-2 rounded-lg shadow-sm cursor-pointer transition ${selectedOption === "Copy-Paste" ? "bg-indigo-50 border border-indigo-400" : "bg-slate-50 border border-slate-200"}`}>
+            <label
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg shadow-sm cursor-pointer transition ${selectedOption === "Copy-Paste"
+                ? "bg-indigo-50 border border-indigo-400"
+                : "bg-slate-50 border border-slate-200"
+                }`}
+            >
               <input
                 type="radio"
                 value="Copy-Paste"
@@ -417,10 +463,17 @@ const HlrLookup = () => {
                 className="text-indigo-600"
               />
               <ContentCopy className="text-blue-500" />
-              <span className="text-sm font-medium text-slate-700">Copy-Paste</span>
+              <span className="text-sm font-medium text-slate-700">
+                Copy-Paste
+              </span>
             </label>
 
-            <label className={`flex items-center gap-2 px-3 py-2 rounded-lg shadow-sm cursor-pointer transition ${selectedOption === "Import-Copy" ? "bg-indigo-50 border border-indigo-400" : "bg-slate-50 border border-slate-200"}`}>
+            <label
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg shadow-sm cursor-pointer transition ${selectedOption === "Import-Copy"
+                ? "bg-indigo-50 border border-indigo-400"
+                : "bg-slate-50 border border-slate-200"
+                }`}
+            >
               <input
                 type="radio"
                 value="Import-Copy"
@@ -429,7 +482,9 @@ const HlrLookup = () => {
                 className="text-indigo-600"
               />
               <CloudUpload className="text-blue-500" />
-              <span className="text-sm font-medium text-slate-700">Import File</span>
+              <span className="text-sm font-medium text-slate-700">
+                Import File
+              </span>
             </label>
           </div>
 
@@ -442,9 +497,15 @@ const HlrLookup = () => {
             className="w-full h-56 p-3 text-sm text-slate-600 bg-slate-50 border border-slate-200 rounded-lg focus:border-indigo-500 focus:ring focus:ring-indigo-400/30 transition"
           />
 
-          <div className="mt-2 text-sm text-slate-500">Valid: {validCount || 0} | Invalid: {invalidCount || 0} | Total: {totalCount || 0}</div>
+          <div className="mt-2 text-sm text-slate-500">
+            Valid: {validCount || 0} | Invalid: {invalidCount || 0} | Total:{" "}
+            {totalCount || 0}
+          </div>
           <div className="w-full flex items-center justify-center mt-2">
-            <UniversalButton label="Remove Duplicates" onClick={handleRemoveDuplicates} />
+            <UniversalButton
+              label="Remove Duplicates"
+              onClick={handleRemoveDuplicates}
+            />
           </div>
           {results.length > 0 && (
             <div className="mt-4 border rounded-xl overflow-hidden">
@@ -452,14 +513,23 @@ const HlrLookup = () => {
                 <table className="w-full text-sm border-collapse">
                   <thead className="bg-slate-100 text-slate-700 sticky top-0 z-10">
                     <tr>
-                      <th className="p-2 border border-slate-200 text-center">Number</th>
-                      <th className="p-2 border border-slate-200 text-center">Status</th>
-                      <th className="p-2 border border-slate-200 text-center">Reason</th>
+                      <th className="p-2 border border-slate-200 text-center">
+                        Number
+                      </th>
+                      <th className="p-2 border border-slate-200 text-center">
+                        Status
+                      </th>
+                      <th className="p-2 border border-slate-200 text-center">
+                        Reason
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {results.map((r, i) => (
-                      <tr key={i} className={r.valid ? "bg-green-50" : "bg-red-50"}>
+                      <tr
+                        key={i}
+                        className={r.valid ? "bg-green-50" : "bg-red-50"}
+                      >
                         <td className="p-2 border border-slate-200 text-slate-700">
                           {r.number}
                         </td>
@@ -476,8 +546,6 @@ const HlrLookup = () => {
               </div>
             </div>
           )}
-
-
         </motion.div>
       </div>
     </div>

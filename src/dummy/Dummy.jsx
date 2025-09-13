@@ -664,16 +664,22 @@ import { FaFire } from "react-icons/fa";
 import { AnimatePresence, useAnimate, usePresence } from "framer-motion";
 import { SiAmazon, SiGithub, SiGoogle, SiMeta, SiTwitch } from "react-icons/si";
 import { twMerge } from "tailwind-merge";
+import ApiDebugTool from "./ApiDebugTool";
+import CollaborativeEditor from "./CollaborativeEditor";
 
 const Dummy = () => {
     return (
-        <div className="flex flex-col w-full bg-neutral-900 text-neutral-50">
-            {/* kanban board */}
-            {/* <Board /> */}
-            {/* Todo list */}
-            <VanishList />
-            {/* origami logo */}
-            {/* <DivOrigami /> */}
+        // <div className="flex flex-col w-full bg-neutral-900 text-neutral-50">
+        //     {/* kanban board */}
+        //     {/* <Board /> */}
+        //     {/* Todo list */}
+        //     {/* <VanishList /> */}
+        //     {/* origami logo */}
+        //     {/* <DivOrigami /> */}
+        // </div>
+        <div className="h-full">
+            <ApiDebugTool />
+            <CollaborativeEditor />
         </div>
     );
 };

@@ -3,9 +3,9 @@ import InputVariable from "@/whatsapp/whatsappLaunchCampaign/components/InputVar
 import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 
-export const Variable = ({ setInputDetails, inputDetails, headers }) => {
+export const Variable = ({ setInputDetails, inputDetails, headers, inputRef }) => {
   const [allHeaders, setAllHeaders] = useState([]);
-  const inputRef = useRef(null);
+  // const inputRef = useRef(null);
 
   useEffect(() => {
     const isHeaderAvailable = headers?.length;

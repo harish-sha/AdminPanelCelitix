@@ -35,7 +35,51 @@ pass: QZ@5x4bC
 7.pending merge leadmanagement - reseller
 8.add flows bot update from arihant branch
 9.pending - 06-09-2025 merge hlrlookup page with reseller
+10.automatic all cpaas channels - 
+11. whatsapp managetemplate - add template with ai genererated content with all languages and prefill button to prefill body,footer and chatscreen
 
 
 
----instagram section , media settings, lead management - pending merge
+---instagram section , media settings, lead management - pending merge and total files changes
+whatsapp bot merege files from main dummy- (pending files)
+
+
+src/assets/animation/Files.json - (done)
+src/components/common/Dropdown.jsx - new file (done)
+src/index.css - (done)
+src/whatsapp/WhatsappBot/WhatsappBot.jsx - (done)
+src/whatsapp/WhatsappBot/component/components/AudioPlayer.tsx - new file (done)
+src/whatsapp/WhatsappBot/component/components/GuidesManager.jsx - new file (done)
+src/whatsapp/WhatsappBot/component/components/ParticleBackground.jsx - new file (done)
+src/whatsapp/WhatsappBot/component/components/PreviewDrawer.jsx - new file (done)
+src/whatsapp/WhatsappBot/component/components/button.tsx - (done) - issues pending upload and edit
+src/whatsapp/WhatsappBot/component/components/details.tsx - (done)
+src/whatsapp/WhatsappBot/component/components/file.tsx - (done)
+src/whatsapp/WhatsappBot/component/components/helper/convertToReactFlow.ts - (done) commit changes
+src/whatsapp/WhatsappBot/component/components/list.tsx - (done)
+src/whatsapp/WhatsappBot/component/components/starting.tsx - (done)
+src/whatsapp/WhatsappBot/component/components/temp-component/preview.tsx - (done)
+src/whatsapp/WhatsappBot/component/components/temp-component/variable.tsx - (done)
+src/whatsapp/WhatsappBot/component/components/template.tsx - (done) commit changes
+src/whatsapp/WhatsappBot/component/components/text.tsx - (done)
+src/whatsapp/WhatsappBot/component/components/url.tsx - (done) - issues pending upload and edit
+src/whatsapp/WhatsappBot/component/createBot.tsx - (done)
+src/whatsapp/WhatsappBot/WhatsappBot.jsx - (done)
+
+
+==========Sep 12 updates===================
+1.Fix Sidebar issue in mobile devices - 
+2.Create new dashboard UI for agent
+3.Rename header name - transaction
+4.Add Hlrlookup,and lookup reports
+5.Add hlrlookup pricing - accountinfo
+6.SMS reports - add new keys - smscampaigndetails report and detailedlogs report
+8.Fix variable insert via attachements in send sms campaign
+9.Fix Dropdown issues
+10.Whatsapp Launch Campaign - add default MMLITE option when user is onboarded to MMLITE
+11.Create new ui - whatsapp bot - add api testing section
+12.Whatsapp Manage campaign  - add flows summary report and details report
+13./getSalesPersonList - cors error
+14. add usertype and sales person - admin
+15.add sales person - reseller admin
+16.

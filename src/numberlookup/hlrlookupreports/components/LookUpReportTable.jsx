@@ -13,6 +13,7 @@ import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
 import InputField from "../../../whatsapp/components/InputField";
 import UniversalTextArea from "../../../whatsapp/components/UniversalTextArea";
 import UniversalButton from "../../../whatsapp/components/UniversalButton";
+import moment from "moment";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -108,7 +109,7 @@ const LookUpTable = ({ id, name, data }) => {
   const rows = data?.map((row, idx) => ({
     sn: idx + 1,
     id: row["Sr. No."] || idx,
-    insertTime: row["Insert Time"],
+    insertTime: moment(row["Insert Time"]).format("YYYY-MM-DD hh:mm:ss"),
     lookupDescription: row["Lookup Description"],
     lookupStatus: row["Lookup Status"],
     mobileNo: row["Mobile No"],
@@ -121,23 +122,23 @@ const LookUpTable = ({ id, name, data }) => {
   }));
 
   const columns = [
-    { field: "sn", headerName: "Sr. No.", flex: 0.5, Width: 50 },
+    { field: "sn", headerName: "Sr. No.", flex: 0, width: 100 },
     {
       field: "insertTime",
       headerName: "Insert Time",
       flex: 1,
-      minWidth: 130,
-      renderCell: (params) => (
-        <div
-          style={{
-            // whiteSpace: "normal",
-            // wordBreak: "break-word",
-            // lineHeight: "1.4",
-          }}
-        >
-          {params.value}
-        </div>
-      ),
+      minWidth: 180,
+      // renderCell: (params) => (
+      //   <div
+      //     style={{
+      //       // whiteSpace: "normal",
+      //       // wordBreak: "break-word",
+      //       // lineHeight: "1.4",
+      //     }}
+      //   >
+      //     {params.value}
+      //   </div>
+      // ),
     },
     {
       field: "lookupDescription",
@@ -150,6 +151,7 @@ const LookUpTable = ({ id, name, data }) => {
             whiteSpace: "normal",
             wordBreak: "break-word",
             lineHeight: "1.4",
+            // fontSize: "14px"
           }}
         >
           {params.value}

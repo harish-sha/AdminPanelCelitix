@@ -13,6 +13,7 @@ import Mainlayout from "@/mainlayout/Mainlayout";
 // dashboard
 import Dashboard from "@/dashboard/Dashboard";
 import ResellerDashboard from "@/dashboard/ResellerDashboard";
+import AgentDashboard from "@/dashboard/AgentDashboard";
 
 // canned message
 import CannedMessage from "@/cannedmessage/CannedMessage";
@@ -39,6 +40,7 @@ import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
 import { BlockUser } from "@/whatsapp/blockUser";
 import { EditFlow } from "@/whatsapp/whatsappFlows/Pages/FlowEditPage";
 import { EditTemplate } from "@/whatsapp/managetemplate/edit";
+import FlowsDetailsReport from "@/whatsapp/whatsappManageCampaign/components/page/FlowsDetailsReport";
 // MMLite
 import MmLite from "@/whatsapp/mmlite/MmLite";
 
@@ -160,14 +162,28 @@ import Unsubscribe from "@/whatsapp/unsubscribe/Unsubscribe";
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
 
+// User
+import { useUser } from "@/context/auth";
+// import SalesPersonDashboard from "@/dashboard/SalesPersonDashboard";
+
 const Approutes = () => {
+  const { user } = useUser();
+
   return (
     <Routes>
       <Route path="/" element={<Mainlayout />}>
         {/* dashboard */}
-        {/* <Route index element={<Dashboard />} /> */}
-        <Route index element={<ResellerDashboard />} />
-        {/* <Route path="resellerdash" element={<ResellerDashboard />} /> */}
+        {/* <Route index element={<Dashboard />} /> 
+        <Route index element={<ResellerDashboard />} /> */}
+
+        {user.role === "DIRECTUSER" ? (
+          <Route index element={<ResellerDashboard />} />
+        ) : (
+          <Route index element={<AgentDashboard />} />
+        )}
+
+        {/* <Route path="salespersondashboard" element={<SalesPersonDashboard />} /> */}
+
 
         {/* SMS */}
         <Route path="sendsms" element={<SendSms />} />
@@ -199,6 +215,7 @@ const Approutes = () => {
         <Route path="wlaunchcampaign" element={<WhatsappLaunchCampaign />} />
         <Route path="wlivechat" element={<WhatsappLiveChat />} />
         <Route path="wmanagecampaign" element={<WhatsappManageCampaign />} />
+        <Route path="wflowsdetailsreport" element={<FlowsDetailsReport />} />
         <Route path="wmanageoptin" element={<WhatsappManageOptin />} />
         <Route path="wchatwidget" element={<WhatsappChatWidget />} />
         <Route path="wqrcode" element={<WhatsappQrCode />} />

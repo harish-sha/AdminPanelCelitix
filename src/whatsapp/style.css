@@ -167,3 +167,24 @@
   animation: fade-in 0.5s ease-in-out;
 } */
 
+
+/* deashboad rings */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-slower {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); } /* negative for counter rotation if you want */
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.animate-spin-slower {
+  animation: spin-slower 20s linear infinite;
+}
+
+/* deashboad rings */

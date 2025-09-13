@@ -70,8 +70,7 @@ const CustomPagination = ({
   );
 };
 
-const AttachmentLogsTbaleSms = ({ id, name, data = [] }) => {
-  console.log("data", data)
+const AttachmentLogsTableSms = ({ id, name, data = [] }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -79,21 +78,30 @@ const AttachmentLogsTbaleSms = ({ id, name, data = [] }) => {
   });
   const navigate = useNavigate();
 
-  const handleDetailed = () => {
-    navigate("/smsAttachmentdetaillog");
+  const handleDetailed = (data) => {
+    navigate("/smsAttachmentdetaillog", { state: { id: data?.srno } });
   };
 
   const handleDownload = () => {
     navigate("/download");
   };
 
-  const rows = Array.from({ length: 20 }, (_, i) => ({
+  // const rows = Array.from({ length: 20 }, (_, i) => ({
+  //   id: i + 1,
+  //   sn: i + 1,
+  //   campaignname: "XYZ",
+  //   date: "27/09/2023",
+  //   totalclicks: "6",
+  // }));
+
+  const rows = data?.map((item, i) => ({
     id: i + 1,
     sn: i + 1,
-    campaignname: "XYZ",
-    date: "27/09/2023",
-    totalclicks: "6",
-  }));
+    srno: item.campaign_srno,
+    campaignname: item.campaign_name,
+    date: item.queTime,
+    count: item.count
+  }))
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 120 },
@@ -103,10 +111,10 @@ const AttachmentLogsTbaleSms = ({ id, name, data = [] }) => {
       flex: 1,
       minWidth: 120,
     },
-    { field: "date", headerName: "Date", flex: 1, minWidth: 120 },
+    { field: "date", headerName: "Que Date", flex: 1, minWidth: 120 },
     {
-      field: "totalclicks",
-      headerName: "Total clicks",
+      field: "count",
+      headerName: "Count",
       flex: 1,
       minWidth: 120,
     },
@@ -130,7 +138,7 @@ const AttachmentLogsTbaleSms = ({ id, name, data = [] }) => {
               />
             </IconButton>
           </CustomTooltip>
-          <CustomTooltip title="Download" placement="top" arrow>
+          {/* <CustomTooltip title="Download" placement="top" arrow>
             <IconButton onClick={() => handleDownload(params.row)}>
               <DownloadForOfflineOutlinedIcon
                 sx={{
@@ -139,7 +147,7 @@ const AttachmentLogsTbaleSms = ({ id, name, data = [] }) => {
                 }}
               />
             </IconButton>
-          </CustomTooltip>
+          </CustomTooltip> */}
         </>
       ),
     },
@@ -202,7 +210,7 @@ const AttachmentLogsTbaleSms = ({ id, name, data = [] }) => {
         <DataGrid
           id={id}
           name={name}
-          data={data}
+          rows={rows}
           columns={columns}
           initialState={{ pagination: { paginationModel } }}
           pageSizeOptions={[10, 20, 50]}
@@ -237,4 +245,4 @@ const AttachmentLogsTbaleSms = ({ id, name, data = [] }) => {
   );
 };
 
-export default AttachmentLogsTbaleSms;
+export default AttachmentLogsTableSms;

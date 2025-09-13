@@ -182,7 +182,14 @@ const CampaignDetailsReport = () => {
       flex: 1,
       minWidth: 220,
       renderCell: (params) => (
-        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+        <div
+          style={{
+            whiteSpace: "normal",
+            wordWrap: "break-word",
+            overflowWrap: "break-word",
+            padding: "5px 0px",
+          }}
+        >
           {params.value}
         </div>
       ),
@@ -263,32 +270,45 @@ const CampaignDetailsReport = () => {
                       { label: "Delivery Time", key: "del_time" },
                       { label: "Unique ID", key: "unique_id" },
                       { label: "Circle Srno", key: "circle_srno" },
+                      { label: "Circle Name", key: "circle_name" },
                       { label: "Source", key: "source" },
                       { label: "PE ID", key: "PE_ID" },
                       { label: "Template ID", key: "template_id" },
+                      { label: "Description", key: "reason" },
                       { label: "Unicode", key: "isunicode" },
                       { label: "Character Length", key: "actual_sms_length" },
-                      { label: "Country", key: "country" },
+                      { label: "Country Name", key: "country_name" },
+                      { label: "Country Code", key: "country_code" },
                       // { label: "Actual Status", key: "actual_status" },
-                      // { label: "Service Type", key: "service_type" },
-                      { label: "Description", key: "desc" },
-                    ].map(({ label, key }, index) => (
-                      <tr
-                        key={index}
-                        className="hover:bg-gray-50 transition-colors border-b last:border-none"
-                      >
-                        <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3 text-nowrap">
-                          {label}
-                        </td>
-                        <td className="px-4 py-2 text-gray-800">
-                          {key === "isEnabledForInsights"
-                            ? clicked[key] === true || clicked[key] === "true"
-                              ? "True"
-                              : "False"
-                            : clicked[key] || "N/A"}
-                        </td>
-                      </tr>
-                    ))}
+                      { label: "Service Type", key: "account_usage_type_id" },
+                    ].map(({ label, key }, index) => {
+                      let value = clicked[key] || "N/A";
+
+                      if (key === "isunicode") {
+                        value = clicked[key] === "0" ? "No" : "Yes";
+                      } else if (key === "account_usage_type_id") {
+                        const usageMap = {
+                          1: "Transactional",
+                          2: "Promotional",
+                          3: "International",
+                        };
+                        value = usageMap[clicked[key]] || "Unknown";
+                      }
+
+                      return (
+                        <tr
+                          key={index}
+                          className="hover:bg-gray-50 transition-colors border-b last:border-none py-4 px-2"
+                        >
+                          <td className="font-medium capitalize text-gray-600 border-b border-gray-200  text-nowrap">
+                            {label}
+                          </td>
+                          <td className="py-2 text-gray-800 text-right font-semibold">
+                            {value}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               ) : (
@@ -335,10 +355,10 @@ const CampaignDetailsReport = () => {
       item.account_usage_type_id === "1"
         ? "Transactional"
         : item.account_usage_type_id === "2"
-          ? "Promotional"
-          : item.account_usage_type_id === "3"
-            ? "International"
-            : "Unknown",
+        ? "Promotional"
+        : item.account_usage_type_id === "3"
+        ? "International"
+        : "Unknown",
     ["Character Length"]: item.actual_sms_length,
     ["Delivery Time"]: item.del_time,
   }));

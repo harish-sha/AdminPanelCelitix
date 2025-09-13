@@ -360,7 +360,7 @@ export const ChatSidebar = ({
                               initial={{ opacity: 0, x: 20 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ duration: 0.1 }}
-                              className="absolute right-5 -bottom-1 w-35 bg-white text-black border  rounded-md shadow-2xl z-50 cursor-pointer text-xs py-2 px-2 border-gray-200 hover:bg-gray-100 transition-all duration-200 "
+                              className="absolute right-5 -bottom-1 w-36 bg-white text-black border  rounded-md shadow-2xl z-50 cursor-pointer text-xs py-2 px-2 border-gray-200 hover:bg-gray-100 transition-all duration-200"
                             >
                               <button
                                 onClick={() => {
@@ -377,7 +377,7 @@ export const ChatSidebar = ({
                                   className="text-gray-400 text-xs mr-2"
                                   sx={{ fontSize: "18px" }}
                                 />
-                                Unread Chat
+                                mark as unread
                               </button>
                             </motion.div>
                           )}

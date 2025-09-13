@@ -97,7 +97,7 @@ const HlrLookupReports = () => {
               },
             }}
           />
-          <Tab
+          {/* <Tab
             label={
               <span>
                 <LibraryBooksOutlinedIcon size={20} /> DayWise HLR Summary
@@ -114,9 +114,9 @@ const HlrLookupReports = () => {
                 borderRadius: "8px",
               },
             }}
-          />
+          /> */}
         </Tabs>
-        <div className="mt-5 ml-5 md:ml-0">
+        {/* <div className="mt-5 ml-5 md:ml-0">
           <UniversalButton
             label={"Export"}
             id="exportCampaign"
@@ -128,7 +128,7 @@ const HlrLookupReports = () => {
               />
             }
           />
-        </div>
+        </div> */}
       </div>
 
       <CustomTabPanel value={value} index={0}>

@@ -684,7 +684,7 @@ export const ExportDialog = ({
       onHide={() => setVisibledialog(false)}
       header="Export"
       modal
-      //   draggable={false}
+    //   draggable={false}
     >
       {/* Export Type Selection */}
       <div className="flex gap-4">
@@ -851,6 +851,8 @@ export const ExportDialog = ({
                   setDataToExport({ ...dataToExport, fromDate: e })
                 }
                 defaultValue={new Date()}
+                minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                maxDate={new Date()}
               />
               <UniversalDatePicker
                 label="To Date:"
@@ -859,6 +861,8 @@ export const ExportDialog = ({
                   setDataToExport({ ...dataToExport, toDate: e })
                 }
                 defaultValue={new Date()}
+                minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                maxDate={new Date()}
               />
             </div>
 
