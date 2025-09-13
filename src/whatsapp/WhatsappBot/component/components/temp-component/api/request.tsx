@@ -125,7 +125,7 @@ export const Request = ({
     if (!url) return;
     if (!e) return;
     const removeVariableTag = removeVariable(url);
-    const variableTage = `${e}`;
+    const variableTage = `{{${e}}}`;
     const newUrl = removeVariableTag + "/" + variableTage;
     setNodesInputData((prev) => ({
       ...prev,
@@ -219,7 +219,7 @@ export const Request = ({
 
   function handleVariableInsertParam(variable: string, index: number) {
     const param = [...params];
-    const updatedMessage = ` ${variable}`;
+    const updatedMessage = `{{${variable}}}`;
     param[index]["value"] = updatedMessage.trim();
     setParams(param);
   }

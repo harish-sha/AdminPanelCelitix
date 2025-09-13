@@ -42,7 +42,6 @@ export const TextNodeContent = ({
     }));
   }, []);
   const handleAddVariable = (e: any) => {
-    if (!e) return;
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
@@ -50,6 +49,7 @@ export const TextNodeContent = ({
         variable: e,
       },
     }));
+    if (!e) return;
     const newTag = `{{${e}}}`;
 
     const updatedMessage = (nodesInputData[id]?.message || "") + newTag;
