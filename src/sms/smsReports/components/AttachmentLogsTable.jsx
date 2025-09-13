@@ -70,7 +70,7 @@ const CustomPagination = ({
   );
 };
 
-const AttachmentLogsTable = ({ id, name, data }) => {
+const AttachmentLogsTable = ({ id, name, data, selectedUser }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -78,80 +78,76 @@ const AttachmentLogsTable = ({ id, name, data }) => {
   });
   const navigate = useNavigate();
 
-  const handleDetailed = () => {
-    navigate("/smsAttachmentdetaillog");
+  const handleDetailed = (data) => {
+    navigate("/smsAttachmentdetaillog", { state: { id: data?.srno, selectedUserId: data.selectedUserId } });
   };
 
   const handleDownload = () => {
     navigate("/download");
   };
 
-  const rows = data || []
+  const rows = data?.map((item, i) => ({
+    id: i + 1,
+    sn: i + 1,
+    srno: item.campaign_srno,
+    campaignname: item.campaign_name,
+    date: item.queTime,
+    count: item.count
+  }))
 
   const columns = [
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 120 },
-        {
-          field: "campaign_name",
-          headerName: "Campaign Name",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "queTime",
-          headerName: "Date",
-          flex: 1,
-          minWidth: 120,
-          renderCell: (params) =>
-            moment(params.row.queTime).format("YYYY-MM-DD HH:mm"),
-        },
-        {
-          field: "count",
-          headerName: "Total clicks",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "action",
-          headerName: "Action",
-          flex: 1,
-          minWidth: 100,
-          renderCell: (params) => (
-            <>
-              <CustomTooltip title="Detailed Log" placement="top" arrow>
-                <IconButton
-                  className="no-xs"
-                  onClick={() =>
-                    navigate("/smsAttachmentdetaillog", {
-                      state: { id: params.row.campaign_srno },
-                    })
-                  }
-                >
-                  <DescriptionOutlinedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                      color: "green",
-                    }}
-                  />
-                </IconButton>
-              </CustomTooltip>
-              <CustomTooltip title="Download" placement="top" arrow>
-                <IconButton
-                  onClick={() => {
-                    // console.log(params.row);
-                  }}
-                >
-                  <DownloadForOfflineOutlinedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                      color: "gray",
-                    }}
-                  />
-                </IconButton>
-              </CustomTooltip>
-            </>
-          ),
-        },
-      ]
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 120 },
+    {
+      field: "campaignname",
+      headerName: "Campaign Name",
+      flex: 1,
+      minWidth: 120,
+    },
+    { field: "date", headerName: "Que Date", flex: 1, minWidth: 120 },
+    {
+      field: "count",
+      headerName: "Count",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params) => (
+        <>
+          <CustomTooltip title="Detailed Log" placement="top" arrow>
+            <IconButton
+              className="no-xs"
+              onClick={() => handleDetailed(params.row)}
+            >
+              <DescriptionOutlinedIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "green",
+                }}
+              />
+            </IconButton>
+          </CustomTooltip>
+          {/* <CustomTooltip title="Download" placement="top" arrow>
+            <IconButton
+              onClick={() => {
+                // console.log(params.row);
+              }}
+            >
+              <DownloadForOfflineOutlinedIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "gray",
+                }}
+              />
+            </IconButton>
+          </CustomTooltip> */}
+        </>
+      ),
+    },
+  ]
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
   const CustomFooter = () => {

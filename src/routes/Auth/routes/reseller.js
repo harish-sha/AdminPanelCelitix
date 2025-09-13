@@ -2,7 +2,12 @@ export const resellerItems = [
   { name: "Home", links: "/", roles: ["ADMIN"] },
   {
     name: "User Management",
-    links: ["/manageuser", "/manageadduser"],
+    links: [
+      "/manageuser",
+      "/manageadduser",
+      "/managesalesperson",
+      "/addsalesuser",
+    ],
     roles: ["ADMIN"],
   },
   {

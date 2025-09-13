@@ -84,9 +84,9 @@ export const downloadDetailedLogs = async (data) => {
 };
 
 // download detailed logs
-export const fetchDetailsAttachment = async (srno, mbno) => {
+export const fetchDetailsAttachment = async (srno, mbno, selectedUserId = "0") => {
   return await fetchWithAuth(
-    `/searchDetailLogsByMobileNo?campaignSrNo=${srno}&mobileNo=${mbno}`,
+    `/searchDetailLogsByMobileNo?campaignSrNo=${srno}&mobileNo=${mbno}&selectedUserId=${selectedUserId}`,
     {
       method: "POST",
     }

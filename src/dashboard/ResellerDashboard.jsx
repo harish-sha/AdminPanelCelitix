@@ -207,7 +207,7 @@ const bots = [
 ];
 
 const ResellerDashboard = () => {
-    const [userData, setUserData] = useState(null);
+    const [userData, setUserData] = useState([]);
     const [formData, setFormData] = useState({
         firstName: "",
     });
@@ -262,9 +262,9 @@ const ResellerDashboard = () => {
     useEffect(() => {
         const fetchUserDetails = async () => {
             setIsLoading(true);
-            const response = await getUserDetails();
-            if (response && response.statusCode === 200) {
-                const user = response.data[0];
+            const res = await getUserDetails();
+            if (res && res.statusCode === 200) {
+                const user = res.data[0];
                 setUserData(user);
                 setFormData({ firstName: user.firstName || user.name || "" });
             } else {

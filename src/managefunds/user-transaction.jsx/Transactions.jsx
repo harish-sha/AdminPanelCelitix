@@ -145,7 +145,7 @@ const TransactionsUser = () => {
     },
     {
       field: "before",
-      headerName: "Amount Before Recharge",
+      headerName: "Amount Before",
       flex: 1,
       minWidth: 120,
     },
@@ -157,7 +157,7 @@ const TransactionsUser = () => {
     },
     {
       field: "after",
-      headerName: "Amount After Recharge",
+      headerName: "Amount After",
       flex: 1,
       minWidth: 120,
     },

@@ -1,12 +1,12 @@
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import React, { useEffect } from "react";
-import InputVariable from "@/whatsapp/whatsappLaunchCampaign/components/InputVariable";
 import InputField from "@/components/layout/InputField";
 import { Dialog } from "primereact/dialog";
 import { FaPlus } from "react-icons/fa";
 import UniversalButton from "@/components/common/UniversalButton";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { fetchApi } from "../../helper/fetchApi";
+import InputVariable from "../../insertVar";
 
 export const Response = ({
   id,
@@ -56,12 +56,12 @@ export const Response = ({
     newJsonVar[index] = { ...newJsonVar[index], [key]: value };
     setJsonVar(newJsonVar);
   }
-  function handleInputVariable(e) {
+  function handleInputVariable(e, index) {
     if (!e) return;
-    const tag = `{{${e}}}`;
+    const tag = `${e}`;
     if (nodesInputData[id]?.apiResponse?.responseType === "json") {
       const newJsonVar = [...jsonVar];
-      newJsonVar[index] = { ...newJsonVar[index], varName: tag };
+      newJsonVar[index] = { ...newJsonVar[index], varName: tag.trim() };
       setJsonVar(newJsonVar);
     }
     setNodesInputData((prev) => ({
@@ -87,8 +87,22 @@ export const Response = ({
   }, [jsonVar]);
 
   useEffect(() => {
-    const jsonVar = nodesInputData[id]?.apiResponse?.storedData || [];
-    if (!jsonVar.length) return;
+    const jsonVar = nodesInputData[id]?.apiResponse?.storedData || [
+      { paramName: "", varName: "" },
+    ];
+
+    const varName = nodesInputData[id]?.varName || "";
+
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        apiResponse: {
+          ...prev[id]?.apiResponse,
+          varName,
+        },
+      },
+    }));
 
     setJsonVar(jsonVar);
   }, []);
@@ -143,7 +157,6 @@ export const Response = ({
     nodesInputData[id]?.apiResponse?.rowTitle,
     nodesInputData[id]?.apiResponse?.rowValue,
   ]);
-
   return (
     <div className="space-y-2">
       <AnimatedDropdown
@@ -209,7 +222,7 @@ export const Response = ({
 
       {nodesInputData[id]?.apiResponse?.actionType === "storeInVariable" &&
         nodesInputData[id]?.apiResponse?.responseType === "text" && (
-          <div className="space-y-2 ">
+          <div className="space-y-2 relative">
             <InputField
               id="variableName"
               name="variableName"
@@ -230,14 +243,22 @@ export const Response = ({
               placeholder="Enter Variable Name"
               maxLength={"100"}
             />
-            <div className="flex justify-end">
+            <div className="absolute top-7 right-0">
+              <InputVariable
+                variables={allVariables}
+                onSelect={(e) => {
+                  handleInputVariable(e, index);
+                }}
+              />
+            </div>
+            {/* <div className="flex justify-end">
               <button
                 className=" border bg-black text-white rounded-md p-2"
                 onClick={() => setIsOpen(true)}
               >
                 Add Variable
               </button>
-            </div>
+            </div> */}
           </div>
         )}
       {nodesInputData[id]?.apiResponse?.actionType === "storeInVariable" &&
@@ -263,18 +284,28 @@ export const Response = ({
                   placeholder="Enter Parameter Name"
                   maxLength={"100"}
                 />
-                <InputField
-                  id="varValue"
-                  name="varValue"
-                  label={`Variable-${index + 1}`}
-                  value={jsonVar[index]?.varName}
-                  onChange={(e) => {
-                    handleJsonVarChange(index, "varName", e.target.value);
-                  }}
-                  placeholder="Enter Variable"
-                  maxLength={"100"}
-                />
-                <div className="flex justify-end mb-2">
+                <div className="relative w-full">
+                  <InputField
+                    id="varValue"
+                    name="varValue"
+                    label={`Variable-${index + 1}`}
+                    value={jsonVar[index]?.varName}
+                    onChange={(e) => {
+                      handleJsonVarChange(index, "varName", e.target.value);
+                    }}
+                    placeholder="Enter Variable"
+                    maxLength={"100"}
+                  />
+                  <div className="absolute top-7 right-0">
+                    <InputVariable
+                      variables={allVariables}
+                      onSelect={(e) => {
+                        handleInputVariable(e, index);
+                      }}
+                    />
+                  </div>
+                </div>
+                {/* <div className="flex justify-end mb-2">
                   <button
                     title="Add Variable"
                     className=" border bg-black text-white rounded-md p-2 flex gap-2 items-center"
@@ -285,7 +316,7 @@ export const Response = ({
                   >
                     <FaPlus />
                   </button>
-                </div>
+                </div> */}
                 <div className="flex justify-end mb-2">
                   <button
                     title="Delete Item"
@@ -349,7 +380,7 @@ export const Response = ({
 
       {/* Dialog */}
 
-      <Dialog
+      {/* <Dialog
         header="Add Variable"
         visible={isOpen}
         onHide={() => {
@@ -388,7 +419,7 @@ export const Response = ({
             style={{}}
           />
         </div>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 };

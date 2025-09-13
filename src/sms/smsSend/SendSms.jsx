@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Grid1 } from "./components/grid1";
 import { getAllTemplates, sendSms } from "@/apis/sms/sms";
 import { RadioButtonLaunchSms } from "./components/RadioButtonLaunchSms";
@@ -26,7 +26,7 @@ const SendSms = () => {
     attachmentVar: {},
     shortUrl: 0,
   });
-
+  const inputRef = useRef(null);
   const [allTemplates, setAllTemplates] = useState([]);
 
   const [selectedOption, setSelectedOption] = useState("group");
@@ -295,6 +295,7 @@ const SendSms = () => {
           inputDetails={inputDetails}
           allTemplates={allTemplates}
           headers={contactData?.fileHeaders || []}
+          inputRef={inputRef}
         />
         {/* <div className="flex"> */}
         <RadioButtonLaunchSms
@@ -310,6 +311,7 @@ const SendSms = () => {
           countryList={countryList}
           setInputDetails={setInputDetails}
           inputDetails={inputDetails}
+          inputRef={inputRef}
         />
         <Preview inputDetails={inputDetails} />
         {/* </div> */}

@@ -494,8 +494,7 @@ const WhatsappLaunchCampaign = () => {
 
       requestData = {
         ...requestData,
-        workflowSrno: workflowState?.workflowSrno,
-        workflowFlag: workflowState?.workflowFlag,
+        ...workflowState,
       };
       // requestData.workflowSrno = workflowState?.workflowSrno;
       // requestData.workflowFlag = workflowState?.workflowFlag;
@@ -564,6 +563,14 @@ const WhatsappLaunchCampaign = () => {
       // setIsLoading(false);
     }
   };
+
+  // Change radio button (cloud API & MMLITE)
+  useEffect(() => {
+    const onboarded = wabaList?.some(item => item.apiStatus === "ONBOARDED");
+    if (onboarded) {
+      setMarketingType(1);
+    }
+  }, [wabaList]);
 
   const handleOptionChange = (value) => {
     setSelectedOption(value);

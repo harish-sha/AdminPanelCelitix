@@ -14,8 +14,12 @@ import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
 import { IoSearch } from "react-icons/io5";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
-import { hlrLookupReport } from "@/apis/HlrLookup/HlrLookup.js";
 import moment from "moment";
+import { fetchUserSrno } from "@/apis/admin/admin";
+import toast from "react-hot-toast";
+import DropdownWithSearch from "@/admin/components/DropdownWithSearch";
+import { hlrLookupReport } from "@/apis/HlrLookup/HlrLookup";
+import { useUser } from "@/context/auth";
 
 const HlrLookupReports = () => {
   const [value, setValue] = useState(0);
@@ -23,33 +27,58 @@ const HlrLookupReports = () => {
     setValue(newValue);
   };
 
-
   const [lookupReportTableData, setLookupReportTableData] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState("");
+  const { user } = useUser();
+
+  useEffect(() => {
+    //fetchAllUsersDetails
+    if (user.role === "RESELLER") {
+      const fetchAllUsersDetails = async () => {
+        const data = {
+          userSrno: "",
+          date: "",
+        };
+        try {
+          setIsFetching(true);
+          const res = await fetchUserSrno(data);
+          console.log("res", res);
+          setAllUsers(res);
+        } catch (e) {
+          console.log("e", e);
+          toast.error("Something went wrong! Please try again later.");
+        } finally {
+          setIsFetching(false);
+        }
+      };
+      fetchAllUsersDetails();
+    }
+  }, []);
 
   const [tableParams, setTableParams] = useState({
     fromDate: new Date(),
     toDate: new Date(),
-    mobileNo: null
-  })
+    mobileNo: null,
+  });
 
   const handleLookupReportSearch = async () => {
     try {
+      if (user.role === "RESELLER" && !selectedUser) {
+        toast.error("Please select a user first.");
+        return;
+      }
       setIsFetching(true);
-
-      const res = await hlrLookupReport({
+      const payload = {
         fromdate: moment(tableParams.fromDate).format("DD-MM-YYYY"),
         todate: moment(tableParams.toDate).format("DD-MM-YYYY"),
-        mobileno: tableParams.mobileNo || ""
-      });
+        mobileno: tableParams.mobileNo || "",
+        selectedUserId: selectedUser || 0,
+      };
 
-      const data = Array.isArray(res)
-        ? res
-        : Array.isArray(res?.data)
-          ? res.data
-          : [];
-
-      setLookupReportTableData(data);
+      const res = await hlrLookupReport(payload);
+      setLookupReportTableData(res);
     } catch (err) {
       console.error("Error fetching LookupReport data:", err);
       setLookupReportTableData([]);
@@ -59,11 +88,14 @@ const HlrLookupReports = () => {
   };
 
   useEffect(() => {
-    handleLookupReportSearch();
+    if (selectedUser) {
+      handleLookupReportSearch();
+    }
   }, [
-    tableParams.fromDate,
-    tableParams.toDate,
-    tableParams.mobileNo,
+    // tableParams.fromDate,
+    // tableParams.toDate,
+    // tableParams.mobileNo,
+    // selectedUser,
   ]);
 
 
@@ -103,7 +135,7 @@ const HlrLookupReports = () => {
               },
             }}
           />
-          <Tab
+          {/* <Tab
             label={
               <span>
                 <LibraryBooksOutlinedIcon size={20} /> DayWise HLR Summary
@@ -120,21 +152,30 @@ const HlrLookupReports = () => {
                 borderRadius: "8px",
               },
             }}
-          />
+          /> */}
         </Tabs>
-        <div className="mt-5 ml-5 md:ml-0">
-          <UniversalButton
-            label={"Export"}
-            id="exportCampaign"
-            name="exportCampaign"
-            variant="primary"
-            icon={
-              <IosShareOutlinedIcon
-                sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
-              />
-            }
-          />
-        </div>
+        {user.role === "RESELLER" && (
+          <div className="w-full sm:w-60 px-2 flex justify-end">
+            <DropdownWithSearch
+              id="manageuser"
+              name="manageuser"
+              label="Select User"
+              tooltipContent="Select user you want to see reports"
+              tooltipPlacement="right"
+              options={allUsers
+                .slice()
+                .sort((a, b) => a.userName.localeCompare(b.userName))
+                .map((user) => ({
+                  label: user.userName,
+                  value: user.srNo,
+                }))}
+              value={selectedUser}
+              onChange={setSelectedUser}
+              placeholder="Select User"
+            />
+          </div>
+        )}
+
       </div>
 
       <CustomTabPanel value={value} index={0}>
@@ -189,7 +230,7 @@ const HlrLookupReports = () => {
             </div>
 
             <div className="w-full sm:w-52 flex gap-2">
-              <div className="flex item-end">
+              <div className="mt-5">
                 <UniversalButton
                   variant="outlined"
                   color="primary"
@@ -201,15 +242,25 @@ const HlrLookupReports = () => {
                   disabled={isFetching}
                 />
               </div>
+              <div className="mt-5 ml-5 md:ml-0">
+                <UniversalButton
+                  label={"Export"}
+                  id="exportCampaign"
+                  name="exportCampaign"
+                  variant="primary"
+                  icon={
+                    <IosShareOutlinedIcon
+                      sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
+                    />
+                  }
+                />
+              </div>
             </div>
           </div>
           <div className="w-full ">
-            <LookUpReportTable
-              data={lookupReportTableData}
-            />
+            <LookUpReportTable data={lookupReportTableData} />
           </div>
         </div>
-
       </CustomTabPanel>
 
       <CustomTabPanel value={value} index={1}>

@@ -52,6 +52,8 @@ import moment from "moment";
 import InfoPopover from "@/components/common/InfoPopover";
 import { ImInfo } from "react-icons/im";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
+
 
 const SmsReports = () => {
   const navigate = useNavigate();
@@ -303,11 +305,11 @@ const SmsReports = () => {
     { label: "International", value: "3" },
   ];
   const attachmentoptions = [
-    { label: "All", value: "All" },
-    { label: "File", value: "File" },
-    { label: "Short Url", value: "Short Url" },
-    { label: "Whats App Chat", value: "Whats App Chat" },
-    { label: "Click To Call", value: "Click To Call " },
+    { label: "All", value: "1" },
+    { label: "File", value: "2" },
+    { label: "Short Url", value: "3" },
+    { label: "Whats App Chat", value: "4" },
+    { label: "Click To Call", value: "5" },
   ];
 
   const handleChangesmsReports = (event) => {
@@ -1047,7 +1049,7 @@ const SmsReports = () => {
       ...attachmentDataToFilter,
       startDate: moment(attachmentDataToFilter.startDate).format("YYYY-MM-DD"),
       endDate: moment(attachmentDataToFilter.endDate).format("YYYY-MM-DD"),
-      type: "",
+      type: attachmentDataToFilter.type || "",
       selectedUserId: selectedUser,
     };
 
@@ -1149,7 +1151,7 @@ const SmsReports = () => {
     };
 
     // setPreviousDayDetailsDialog(true);
-  setSelectedColDetails(col);
+    setSelectedColDetails(col);
     try {
       setIsFetching(true);
       const res = await getPreviousCampaignDetails(data);
@@ -1609,6 +1611,11 @@ const SmsReports = () => {
                   onClick={() => {
                     setIsExportDialogOpen(true);
                   }}
+                  icon={
+                    <IosShareOutlinedIcon
+                      sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
+                    />
+                  }
                   disabled={isFetching}
                 />
               </div>
@@ -1763,11 +1770,13 @@ const SmsReports = () => {
               <div className="w-full sm:w-42">
                 <div className="w-max-content">
                   <UniversalButton
-                    label="Show"
+                    label={isFetching ? "Searching..." : "Search"}
+                    icon={<IoSearch />}
                     id="previousshow"
                     name="previousshow"
                     variant="primary"
                     onClick={handlePreviousDaysSearch}
+                    disabled={isFetching}
                   />
                 </div>
               </div>
@@ -1863,11 +1872,13 @@ const SmsReports = () => {
               <div className="w-full sm:w-56">
                 <div className="w-max-content">
                   <UniversalButton
-                    label="Show"
+                    label={isFetching ? "Searching..." : "Search"}
+                    icon={<IoSearch />}
                     id="summaryshow"
                     name="summaryshow"
                     variant="primary"
                     onClick={handleDayWiseSummary}
+                    disabled={isFetching}
                   />
                 </div>
               </div>
@@ -1940,11 +1951,13 @@ const SmsReports = () => {
               </div>
               <div className="w-max-content">
                 <UniversalButton
-                  label="Show"
+                  label={isFetching ? "Searching..." : "Search"}
+                  icon={<IoSearch />}
                   id="attachmentshow"
                   name="attachmentshow"
                   variant="primary"
                   onClick={handleAttachmentSearch}
+                  disabled={isFetching}
                 />
               </div>
             </div>
@@ -2095,7 +2108,7 @@ const SmsReports = () => {
         className="w-fit "
         draggable={false}
       > */}
-        {/* {isFetching ? (
+      {/* {isFetching ? (
           <div className="card flex justify-content-center">
             <ProgressSpinner strokeWidth="2" className="text-blue-500" />
           </div>
@@ -2117,7 +2130,7 @@ const SmsReports = () => {
             totalPage={totalPage}
           />
         )} */}
-        {/* <PreviousDaysTableSms
+      {/* <PreviousDaysTableSms
           id="previousdaydetailstable"
           name="previousdaydetailstable"
           rows={previousDayRows}

@@ -39,6 +39,7 @@ import PhoneMissedOutlinedIcon from "@mui/icons-material/PhoneMissedOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 // import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
@@ -57,6 +58,8 @@ import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutli
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import moment from "moment";
+import { Loop as LoopIcon } from "@mui/icons-material";
+import { InputSwitch } from "primereact/inputswitch";
 
 
 // COMPONENTS
@@ -81,7 +84,9 @@ import {
   getMobileNumbers,
   getPETMChain,
   getPromoServices,
+  getPincodeData,
   getTransServices,
+  getSalesPersonList,
   saveCharges,
   savePETMChain,
   saveServicesByUser,
@@ -218,6 +223,28 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [value, setValue] = useState(0);
   const [countryOptions, setCountryOptions] = useState([]);
 
+  const [accountManager, setAccountManager] = useState([]);
+
+  useEffect(() => {
+    async function handleFetchAccountManager() {
+      try {
+        const res = await getSalesPersonList();
+
+        const formattedData = Array.isArray(res?.data)
+          ? res?.data?.map((item, index) => ({
+            value: item?.SalesPersonId,
+            label: item?.SalesPersonName,
+          }))
+          : [];
+        setAccountManager(formattedData);
+      } catch (e) {
+        toast.error("Error fetching Account Manager List");
+      }
+    }
+
+    handleFetchAccountManager();
+  }, []);
+
   // Function to validate input
   const validateInput = (value, setter) => {
     value = value.replace(/[^0-9.]/g, "");
@@ -249,10 +276,13 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   };
 
   // =======================================UPDATE USER STATUS START=======================================
+  const [loadingRowId, setLoadingRowId] = useState(null);
+
   async function handleUpdateUserStatus(row) {
     if (!row?.srno) return;
 
     try {
+      setLoadingRowId(row.srno); // start spinner
       const payload = {
         userSrno: row?.srno,
         status: Number(!row?.status),
@@ -269,6 +299,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     } catch (e) {
       console.log(e);
       toast.error("Failed to fetch user details. Please try again.");
+    } finally {
+      setLoadingRowId(null); // stop spinner
     }
   }
 
@@ -296,6 +328,23 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     pinCode: "",
     agentLimit: "",
   });
+
+
+  async function handleGetPincodeData(pincode) {
+    if (!pincode || pincode?.length !== 6) return;
+    try {
+      const res = await getPincodeData(pincode);
+      if (!res?.stateName) return;
+
+      setUpdateDetails((prev) => ({
+        city: res.district,
+        state: res?.stateName,
+        country: "India",
+      }));
+    } catch (e) {
+      toast.error("Error in Fetching Pincode Data");
+    }
+  }
 
   const handleEdit = async (srNo) => {
     try {
@@ -345,6 +394,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       srno: selectedId,
       ...updateDetails,
       expiryDate: formattedExpiryDate,
+      applicationType: updateDetails?.userType == "1" ? "2" : "1",
+      salePersonId: updateDetails?.accountManager
     };
 
     try {
@@ -765,6 +816,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [promoOption, setPromoOption] = useState([]);
   const [dltRate, setDltRate] = useState("");
   const [smsDeleteVisible, setSMSDeleteVisible] = useState(false);
+  const [smsRows, setSmsRows] = useState([]);
 
 
   const resetSmsFields = () => {
@@ -777,6 +829,14 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   };
 
   const handleSaveSmsPricing = async () => {
+    // if (!trans) {
+    //   toast.error("Please select transactional service.");
+    //   return;
+    // }
+    // if (!promo) {
+    //   toast.error("Please select promotional service.");
+    //   return;
+    // }
     const payload = {
       srno: "",
       userSrno: String(currentUserSrno),
@@ -789,13 +849,57 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     const res = await addSmsPricing(payload);
     if (res?.statusCode === 200) {
       toast.success(res.message || "SMS Pricing saved successfully!");
-      getSmsRateByUser(currentUserSrno)
+      // getSmsRateByUser(currentUserSrno)
       // resetSmsFields();
       // setassignRate(false);
+      const d = await getSmsRateByUser(currentUserSrno);
+      // resetSmsFields();
+      // setassignRate(false);
+      setSmsRows([
+        {
+          id: 1,
+          sn: 1,
+          ...d,
+          countryName: "India",
+        },
+      ]);
     } else {
       toast.error(res.message || "Failed to save SMS Pricing.");
     }
   };
+
+  function handleSMSEdit() {
+    const d = smsRows[0];
+
+    setTranscheck(!!d.transService);
+    setPromocheck(!!d.promoService);
+    setTrans(d.transService || null);
+    setPromo(d.promoService || null);
+    setSmsRate(d.rate || "");
+    setDltRate(d.dltRate || "");
+  }
+
+  // const handleRemoveSMSPricing = async () => {
+  //   try {
+  //     const res = await deleteSmsRateByUser(currentUserSrno);
+
+  //     if (res?.status === true) {
+  //       toast.success(res?.message || "Price removed successfully.");
+  //       setSmsRate("");
+  //       setDltRate("");
+  //       setSMSDeleteVisible(false);
+  //     } else {
+  //       toast.error(res?.message || "Failed to remove SMS pricing.");
+  //     }
+  //   } catch (e) {
+  //     console.error(e);
+  //     if (e?.response?.data?.message) {
+  //       toast.error(e.response.data.message);
+  //     } else {
+  //       toast.error("Something went wrong while removing SMS pricing.");
+  //     }
+  //   }
+  // };
 
   const handleRemoveSMSPricing = async () => {
     try {
@@ -805,6 +909,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         toast.success(res?.message || "Price removed successfully.");
         setSmsRate("");
         setDltRate("");
+        setSmsRows([]);
         setSMSDeleteVisible(false);
       } else {
         toast.error(res?.message || "Failed to remove SMS pricing.");
@@ -818,6 +923,39 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       }
     }
   };
+
+  const smsCol = [
+    { field: "sn", headerName: "S.No", flex: 0, Width: 120 },
+    { field: "countryName", headerName: "Country", flex: 1, minWidth: 120 },
+    { field: "rate", headerName: "Rate", flex: 1, minWidth: 120 },
+    {
+      field: "dltRate",
+      headerName: "DLT Rate",
+      flex: 1,
+      minWidth: 120,
+    },
+    { field: "updateTime", headerName: "Updated On", flex: 1, minWidth: 150 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params) => (
+        <>
+          <CustomTooltip arrow title="Edit Rate" placement="top">
+            <IconButton onClick={() => handleSMSEdit()}>
+              <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
+            </IconButton>
+          </CustomTooltip>
+          <CustomTooltip arrow title="Delete Rate" placement="top">
+            <IconButton onClick={() => setSMSDeleteVisible(true)}>
+              <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
+            </IconButton>
+          </CustomTooltip>
+        </>
+      ),
+    },
+  ];
   // =======================================SMS RATE END=======================================
 
   // =======================================OBD RATE START=======================================
@@ -1714,14 +1852,26 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     );
 
     // set SMS data
-    if (userSmsData?.data) {
-      const d = userSmsData.data;
-      setTranscheck(!!d.transService);
-      setPromocheck(!!d.promoService);
-      setTrans(d.transService || null);
-      setPromo(d.promoService || null);
-      setSmsRate(d.rate || "");
-      setDltRate(d.dltRate || "");
+    // if (userSmsData?.data) {
+    //   const d = userSmsData.data;
+    //   setTranscheck(!!d.transService);
+    //   setPromocheck(!!d.promoService);
+    //   setTrans(d.transService || null);
+    //   setPromo(d.promoService || null);
+    //   setSmsRate(d.rate || "");
+    //   setDltRate(d.dltRate || "");
+    // }
+    // set SMS data
+    if (userSmsData) {
+      const d = userSmsData;
+      setSmsRows([
+        {
+          id: 1,
+          sn: 1,
+          ...d,
+          countryName: "India",
+        },
+      ]);
     }
 
     // set WhatsApp table data
@@ -1884,12 +2034,18 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   //=======================================MANAGE USERS START=======================================
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "userId", headerName: "User ID", flex: 1, minWidth: 120 },
-    { field: "firstName", headerName: "First Name", flex: 1, minWidth: 120 },
-    { field: "lastName", headerName: "Last Name", flex: 1, minWidth: 120 },
-    { field: "companyName", headerName: "Company", flex: 1, minWidth: 120 },
-    { field: "userCreateDate", headerName: "Onboard Date", flex: 1, minWidth: 120 },
+    { field: "sn", headerName: "S.No", flex: 0, width: 60 },
+    { field: "userId", headerName: "User ID", flex: 0, minWidth: 160 },
+    { field: "firstName", headerName: "First Name", flex: 0, minWidth: 140 },
+    { field: "lastName", headerName: "Last Name", flex: 0, minWidth: 140 },
+    // { field: "role", headerName: "Role", flex: 1, minWidth: 120 },
+    { field: "companyName", headerName: "Company", flex: 1, minWidth: 160 },
+    {
+      field: "userCreateDate",
+      headerName: "Onboard Date",
+      flex: 1,
+      minWidth: 200,
+    },
     // { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
     {
       field: "status",
@@ -1898,20 +2054,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       minWidth: 120,
       renderCell: (params) => {
         const isActive = params.value === 1;
+        const isLoading = loadingRowId === params.row.srno;
+
         return (
           <CustomTooltip placement="top" title="Click to update status" arrow>
-            {/* <button
-              className="flex items-center justify-center gap-2 px-3 rounded-full cursor-pointer"
-              onClick={() => {
-                handleUpdateUserStatus(params.row);
-              }}
-            >
-              <span
-                className={`w-2.5 h-2.5 rounded-full ${isActive ? "bg-green-500" : "bg-red-500"
-                  }`}
-              ></span>
-              <span>{isActive ? "Active" : "Inactive"}</span>
-            </button> */}
             <button
               className="flex items-center justify-center gap-2 px-3 rounded-full cursor-pointer h-full"
               onClick={() => {
@@ -1924,10 +2070,18 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               ></span>
               <span>{isActive ? "Active" : "Inactive"}</span> */}
               <div
-                className={`text-white text-xs w-20 px-2 py-1.5 border rounded-2xl text-center ${isActive ? "bg-green-500" : "bg-red-500"
+                className={`text-white text-xs min-w-20 w-max px-2 py-1.5 border rounded-2xl text-center ${isActive ? "bg-green-500" : "bg-red-500"
                   }`}
               >
-                {isActive ? "Active" : "Inactive"}
+                {/* {isActive ? "Active" : "Inactive"} */}
+                {isLoading ? (
+                  <>
+                    <LoopIcon className="text-[16px] animate-spin" sx={{ fontSize: "16px", marginRight: "2px" }} />
+                    {isActive ? "Deactivating..." : "Activating..."}
+                  </>
+                ) : (
+                  isActive ? "Active" : "Inactive"
+                )}
               </div>
             </button>
           </CustomTooltip>
@@ -2054,6 +2208,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       id: i + 1,
       sn: i + 1,
       ...item,
+      role: item.role === "Reseller User" ? "User" : item.role,
     }))
     : [];
 
@@ -2353,6 +2508,14 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   //=======================================PETM CHAIN END=======================================
 
+  const baseBadgeClass =
+    "mb-2 shadow w-max px-2 py-1 text-sm tracking-wider font-medium rounded-2xl";
+
+  const badgeClasses = {
+    enabled: `${baseBadgeClass} text-green-500 bg-green-100`,
+    disabled: `${baseBadgeClass} text-red-500 bg-red-100`,
+  };
+
   return (
     <>
       {/* User Table Start */}
@@ -2573,6 +2736,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               onChange={(e) =>
                 setUpdateDetails({ ...updateDetails, city: e.target.value })
               }
+              disabled={true}
             />
             <InputField
               label="State"
@@ -2583,7 +2747,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               onChange={(e) =>
                 setUpdateDetails({ ...updateDetails, state: e.target.value })
               }
-              required
+              disabled={true}
             />
             <InputField
               label="Country"
@@ -2594,6 +2758,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               onChange={(e) =>
                 setUpdateDetails({ ...updateDetails, country: e.target.value })
               }
+              disabled={true}
             />
             <InputField
               label="Pincode"
@@ -2601,9 +2766,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               name="Pincode"
               placeholder="Enter your Pincode"
               value={updateDetails.pinCode}
-              onChange={(e) =>
-                setUpdateDetails({ ...updateDetails, pinCode: e.target.value })
-              }
+              onChange={(e) => {
+                setUpdateDetails({ ...updateDetails, pinCode: e.target.value });
+                handleGetPincodeData(e.target.value);
+              }}
             />
             <InputField
               label="Agent Limit"
@@ -2618,6 +2784,37 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 })
               }
             />
+            {/* <div className="md:w-56 w-full">
+              <AnimatedDropdown
+                label="Account Manager"
+                id="accountManager"
+                name="accountManager"
+                options={accountManager}
+                value={updateDetails.accountManager}
+                onChange={(e) => {
+                  setUpdateDetails({
+                    ...updateDetails,
+                    accountManager: e,
+                  });
+                }}
+              />
+            </div> */}
+            {/* <AnimatedDropdown
+              label="User Type"
+              id="userType"
+              name="userType"
+              options={[
+                { value: "1", label: "Reseller" },
+                { value: "3", label: "User" },
+              ]}
+              value={updateDetails.userType}
+              onChange={(e) => {
+                setUpdateDetails({
+                  ...updateDetails,
+                  userType: e,
+                });
+              }}
+            /> */}
           </div>
           <div className="flex justify-center mt-3">
             <UniversalButton
@@ -3211,9 +3408,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
             <div>
               <>
                 {enableServices.find((s) => s.name == "WHATSAPP")?.enable ? (
-                  <p className="mb-2 text-green-500">Service is enabled</p>
+                  <div className={badgeClasses.enabled}>Enabled</div>
                 ) : (
-                  <p className="mb-2 text-red-500">Service is disabled</p>
+                  <div className={badgeClasses.disabled}>Disabled</div>
                 )}
                 <div className="mb-2 flex gap-2 items-end justify-start">
                   <InputField
@@ -3428,9 +3625,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           <CustomTabPanel value={value} index={1}>
             <>
               {enableServices.find((s) => s.name == "RCS")?.enable ? (
-                <p className="mb-2 text-green-500">Service is enabled</p>
+                <p className={badgeClasses.enabled}>Enabled</p>
               ) : (
-                <p className="mb-2 text-red-500">Service is disabled</p>
+                <p className={badgeClasses.disabled}>Disabled</p>
               )}
               <div id="rcstable">
                 <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
@@ -3572,9 +3769,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           <CustomTabPanel value={value} index={2}>
             <>
               {enableServices.find((s) => s.name == "SMS")?.enable ? (
-                <p className="mb-2 text-green-500">Service is enabled</p>
+                <div className={badgeClasses.enabled}>Enabled</div>
               ) : (
-                <p className="mb-2 text-red-500">Service is disabled</p>
+                <p className={badgeClasses.disabled}>Disabled</p>
               )}
               {/* <div className="space-y-2">
                 <p>Transaction Service</p>
@@ -3619,49 +3816,93 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   />
                 </div>
               </div> */}
+              <div className="space-y">
+                <div className="grid md:grid-cols-2 grid-cols-1 gap-5">
+                  <div className="w-full">
+                    <DropdownWithSearch
+                      id="transService"
+                      name="transService"
+                      options={transOptions}
+                      value={trans}
+                      label="Transactional Service"
+                      onChange={(e) => {
+                        setTrans(e);
+                      }}
+                    />
+                  </div>
 
-              <div className="flex gap-5 items-center justify-start mt-3">
-                <div className=" lg:w-100 md:w-100">
-                  <InputField
-                    id="translimit"
-                    name="translimit"
-                    label="Rate"
-                    placeholder="(INR / Credit)"
-                    value={smsrate}
-                    onChange={(e) => validateInput(e.target.value, setSmsRate)}
-                    type="number"
-                  />
+                  <div className="w-full">
+                    <DropdownWithSearch
+                      id="promoService"
+                      name="promoService"
+                      options={promoOption}
+                      value={promo}
+                      label="Promotional Service"
+                      onChange={(e) => {
+                        setPromo(e);
+                      }}
+                    />
+                  </div>
                 </div>
-                <div className=" lg:w-100 md:w-100">
-                  <InputField
-                    id="dltRate"
-                    name="dltRate"
-                    label="Dlt Rate"
-                    placeholder="(INR / Credit)"
-                    value={dltRate}
-                    onChange={(e) => validateInput(e.target.value, setDltRate)}
-                    type="number"
-                  />
+
+                <div className="grid md:grid-cols-3 grid-cols-1 items-end gap-5 mt-2">
+                  <div className="w-full">
+                    <DropdownWithSearch
+                      id="smsCountry"
+                      name="smsCountry"
+                      label="Select Country"
+                      options={countryOptions}
+                      value={99}
+                      onChange={(value) => { }}
+                      disabled={true}
+                    />
+                  </div>
+                  <div className="w-full">
+                    <InputField
+                      id="translimit"
+                      name="translimit"
+                      label="Rate"
+                      placeholder="(INR / Credit)"
+                      value={smsrate}
+                      onChange={(e) =>
+                        validateInput(e.target.value, setSmsRate)
+                      }
+                      type="number"
+                    />
+                  </div>
+                  <div className="w-full flex items-end gap-2">
+                    <InputField
+                      id="dltRate"
+                      name="dltRate"
+                      label="Dlt Rate"
+                      placeholder="(INR / Credit)"
+                      value={dltRate}
+                      onChange={(e) =>
+                        validateInput(e.target.value, setDltRate)
+                      }
+                      type="number"
+                    />
+                    <UniversalButton
+                      label="Save"
+                      id="smsSave"
+                      name="smsSave"
+                      onClick={handleSaveSmsPricing}
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="flex justify-center mt-3 gap-2">
-                <UniversalButton
-                  label="Save"
-                  id="smsSave"
-                  name="smsSave"
-                  onClick={handleSaveSmsPricing}
-                />
-                <UniversalButton
-                  label="Remove Pricing"
-                  id="Delete"
-                  name="Delete"
-                  variant="danger"
-                  onClick={() => {
-                    setSMSDeleteVisible(true);
-                  }}
+              <div className="mt-2">
+                <DataTable
+                  height={288}
+                  id="sms-rate-table"
+                  name="smsRateTable"
+                  col={smsCol}
+                  rows={smsRows}
                 />
               </div>
+
+
 
               <Dialog
                 header="Delete SMS Rate"
@@ -3699,9 +3940,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           <CustomTabPanel value={value} index={3}>
             <>
               {enableServices.find((s) => s.name == "OBD")?.enable ? (
-                <p className="mb-2 text-green-500">Service is enabled</p>
+                <p className={badgeClasses.enabled}>Enabled</p>
               ) : (
-                <p className="mb-2 text-red-500">Service is disabled</p>
+                <p className={badgeClasses.disabled}>Disabled</p>
               )}
               <div className=" lg:w-100 md:w-100">
                 <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
@@ -3886,13 +4127,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           <CustomTabPanel value={value} index={4}>
             <>
               {enableServices.find((s) => s.name == "Number Lookup")?.enable ? (
-                <p className="mb-2 text-green-500 md:ml-7 lg:ml-0">
-                  Service is enabled
-                </p>
+                <p className={badgeClasses.enabled}>Enabled</p>
               ) : (
-                <p className="mb-2 text-red-500 md:ml-7 lg:ml-0">
-                  Service is disabled
-                </p>
+                <p className={badgeClasses.disabled}>Disabled</p>
               )}
               <div className="flex  w-full gap-4 pb-5 align-middle lg:flex-nowrap p-6 md:m-3 lg:m-0">
                 <div className="flex flex-col md:flex-row items-start justify-center md:justify-start md:items-end gap-4">

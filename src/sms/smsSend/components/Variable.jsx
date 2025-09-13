@@ -3,9 +3,9 @@ import InputVariable from "@/whatsapp/whatsappLaunchCampaign/components/InputVar
 import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 
-export const Variable = ({ setInputDetails, inputDetails, headers }) => {
+export const Variable = ({ setInputDetails, inputDetails, headers, inputRef }) => {
   const [allHeaders, setAllHeaders] = useState([]);
-  const inputRef = useRef(null);
+  // const inputRef = useRef(null);
 
   useEffect(() => {
     const isHeaderAvailable = headers?.length;
@@ -65,7 +65,7 @@ export const Variable = ({ setInputDetails, inputDetails, headers }) => {
         />
       </div>
 
-      <div className="absolute top-6 -right-0 text-gray-400 cursor-pointer">
+      <div className="absolute top-7 -right-0 text-gray-400 cursor-pointer">
         <InputVariable
           onSelect={(e) => {
             handleAddVariable(e);

@@ -13,6 +13,7 @@ import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
 import InputField from "../../../whatsapp/components/InputField";
 import UniversalTextArea from "../../../whatsapp/components/UniversalTextArea";
 import UniversalButton from "../../../whatsapp/components/UniversalButton";
+import moment from "moment";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -74,7 +75,7 @@ const CustomPagination = ({
   );
 };
 
-const LookUpTable = ({ id, name, data = [] }) => {
+const LookUpTable = ({ id, name, data }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [lookUpedit, setLookUpEdit] = useState(false);
   const [LookUpDelete, setLookUpDelete] = useState(false);
@@ -93,74 +94,87 @@ const LookUpTable = ({ id, name, data = [] }) => {
     setLookUpDelete(true);
   };
 
-  // const rows = Array.from({ length: 50 }, (_, i) => ({
-  //   id: i + 1,
-  //   sn: i + 1,
-  //   templateName: "",
-  //   category: "",
-  //   status: "",
-  //   type: "",
-  //   health: "",
-  //   createdDate: "",
-  //   action: "",
-  // }));
-
-  const rows = data.map((row, idx) => ({
+  const rows = data?.map((row, idx) => ({
+    sn: idx + 1,
     id: row["Sr. No."] || idx,
-    srNo: row["Sr. No."],
-    mobileNo: row["Mobile No"],
-    status: row["Status"],
-    originalOperator: row["Original Operator"],
-    portedOperator: row["Ported Operator"],
-    lookupStatus: row["Lookup Status"],
+    insertTime: moment(row["Insert Time"]).format("YYYY-MM-DD hh:mm:ss"),
     lookupDescription: row["Lookup Description"],
-    insertTime: row["Insert Time"],
-    originalCircle: row["Original Circle"]
+    lookupStatus: row["Lookup Status"],
+    mobileNo: row["Mobile No"],
+    originalCircle: row["Original Circle"],
+    originalOperator: row["Original Operator"],
+    ported: row["Ported"],
+    portedCircle: row["Ported Circle"],
+    portedOperator: row["Ported Operator"],
+    status: row["Status"],
   }));
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "sn", headerName: "Sr. No.", flex: 0, width: 100 },
     {
-      field: "phoneNumber",
-      headerName: "Phone Number",
+      field: "insertTime",
+      headerName: "Insert Time",
       flex: 1,
-      minWidth: 130,
+      minWidth: 180,
+      // renderCell: (params) => (
+      //   <div
+      //     style={{
+      //       // whiteSpace: "normal",
+      //       // wordBreak: "break-word",
+      //       // lineHeight: "1.4",
+      //     }}
+      //   >
+      //     {params.value}
+      //   </div>
+      // ),
     },
-    { field: "insertTime", headerName: "Insert Time", flex: 1, minWidth: 110 },
     {
-      field: "originalOperator",
-      headerName: "Original Operator",
+      field: "lookupDescription",
+      headerName: "Lookup Description",
+      flex: 1,
+      minWidth: 160,
+      renderCell: (params) => (
+        <div
+          style={{
+            whiteSpace: "normal",
+            wordBreak: "break-word",
+            lineHeight: "1.4",
+            // fontSize: "14px"
+          }}
+        >
+          {params.value}
+        </div>
+      ),
+    },
+    {
+      field: "lookupStatus",
+      headerName: "Lookup Status",
       flex: 1,
       minWidth: 150,
     },
+    { field: "mobileNo", headerName: "Mobile No", flex: 1, minWidth: 150 },
     {
       field: "originalCircle",
       headerName: "Original Circle",
       flex: 1,
-      minWidth: 150,
-    },
-    {
-      field: "portedOperator",
-      headerName: "Ported Operator",
-      flex: 1,
       minWidth: 180,
     },
     {
-      field: "portedCircle",
-      headerName: "Ported Circle",
+      field: "originalOperator",
+      headerName: "Original Operator",
       flex: 1,
       minWidth: 160,
     },
     { field: "ported", headerName: "Ported", flex: 1, minWidth: 100 },
     {
-      field: "lookUpStatus",
-      headerName: "LookUp Status",
+      field: "portedCircle",
+      headerName: "Ported Circle",
       flex: 1,
       minWidth: 140,
     },
     {
-      field: "lookUpDescription",
-      headerName: "LookUp Description",
+      field: "portedOperator",
+      headerName: "Ported Operator",
       flex: 1,
       minWidth: 160,
     },
@@ -200,7 +214,7 @@ const LookUpTable = ({ id, name, data = [] }) => {
           )}
 
           <Typography variant="body2">
-            Total Records: <span className="font-semibold">{rows.length}</span>
+            Total Records: <span className="font-semibold">{rows?.length}</span>
           </Typography>
         </Box>
 
@@ -226,7 +240,7 @@ const LookUpTable = ({ id, name, data = [] }) => {
         <DataGrid
           id={id}
           name={name}
-          // rows={rows}
+          rows={rows}
           columns={columns}
           initialState={{ pagination: { paginationModel } }}
           pageSizeOptions={[10, 20, 50]}

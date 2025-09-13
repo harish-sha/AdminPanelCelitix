@@ -169,6 +169,10 @@ export default function WhatsappLiveChat() {
     setInititialChatState,
     agentInfo,
     setAgentInfo,
+    activeConvAgent,
+    inActiveConvAgent,
+    setActiveConvAgent,
+    setInActiveConvAgent,
   } = useWabaAgentContext();
 
   function handleNextCard() {
@@ -200,14 +204,20 @@ export default function WhatsappLiveChat() {
     wabaSrno: "",
   });
 
+  console.log("wabaState", wabaState);
+
   const [isSubscribe, setIsSubscribe] = useState(false);
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
 
   const [isSendingTemplate, setIsSendingTemplate] = useState(false);
 
   useEffect(() => {
-    setSelectedWaba(selectedContextWaba);
-  }, [selectedContextWaba]);
+    if (wabaState?.waba?.length === 1) {
+      setSelectedWaba(wabaState.selectedWaba);
+    } else {
+      setSelectedWaba(selectedContextWaba);
+    }
+  }, [wabaState?.selectedWaba, selectedContextWaba]);
 
   async function fetchWaba() {
     const res = await getWabaList();
@@ -215,8 +225,10 @@ export default function WhatsappLiveChat() {
     setWabaState((prev) => ({
       ...prev,
       waba: res,
+      selectedWaba: res.length === 1 ? res[0].mobileNo : prev.selectedWaba,
     }));
   }
+
   useEffect(() => {
     fetchWaba();
   }, []);
@@ -413,6 +425,39 @@ export default function WhatsappLiveChat() {
       command: () => setLocationPreview(true),
     },
   ];
+
+  useEffect(() => {
+    const fetchConversations = async () => {
+      // Optional checks:
+      // if (!wabaState?.waba?.[0]?.mobileNo) return;
+      // if (!btnOption) return;
+
+      try {
+        setIsFetching(true);
+
+        const data = {
+          mobileNo: wabaState?.waba?.[0]?.mobileNo || "",
+          srno: 0,
+          active: 1, // or 0 in the other effect
+          search: search || "",
+          agentSrno: selectedAgent || "",
+        };
+
+        console.log("data", data);
+        const res = await fetchAllConversations(data);
+        console.log("res", res);
+
+        setActiveConvAgent(res.conversationEntityList);
+      } catch (e) {
+        toast.error("Error fetching active conversations");
+        console.error(e);
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    fetchConversations();
+  }, []);
 
   useEffect(() => {
     const fetchConversations = async () => {

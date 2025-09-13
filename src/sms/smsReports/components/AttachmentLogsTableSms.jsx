@@ -89,69 +89,69 @@ const AttachmentLogsTableSms = ({ id, name, data }) => {
   const rows = data || []
 
   const columns = [
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 120 },
-        {
-          field: "campaign_name",
-          headerName: "Campaign Name",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "queTime",
-          headerName: "Date",
-          flex: 1,
-          minWidth: 120,
-          renderCell: (params) =>
-            moment(params.row.queTime).format("YYYY-MM-DD HH:mm"),
-        },
-        {
-          field: "count",
-          headerName: "Total clicks",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "action",
-          headerName: "Action",
-          flex: 1,
-          minWidth: 100,
-          renderCell: (params) => (
-            <>
-              <CustomTooltip title="Detailed Log" placement="top" arrow>
-                <IconButton
-                  className="no-xs"
-                  onClick={() =>
-                    navigate("/smsAttachmentdetaillog", {
-                      state: { id: params.row.campaign_srno },
-                    })
-                  }
-                >
-                  <DescriptionOutlinedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                      color: "green",
-                    }}
-                  />
-                </IconButton>
-              </CustomTooltip>
-              <CustomTooltip title="Download" placement="top" arrow>
-                <IconButton
-                  onClick={() => {
-                    // console.log(params.row);
-                  }}
-                >
-                  <DownloadForOfflineOutlinedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                      color: "gray",
-                    }}
-                  />
-                </IconButton>
-              </CustomTooltip>
-            </>
-          ),
-        },
-      ]
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 120 },
+    {
+      field: "campaign_name",
+      headerName: "Campaign Name",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "queTime",
+      headerName: "Date",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) =>
+        moment(params.row.queTime).format("YYYY-MM-DD HH:mm"),
+    },
+    {
+      field: "count",
+      headerName: "Total clicks",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params) => (
+        <>
+          <CustomTooltip title="Detailed Log" placement="top" arrow>
+            <IconButton
+              className="no-xs"
+              onClick={() =>
+                navigate("/smsAttachmentdetaillog", {
+                  state: { id: params.row.campaign_srno },
+                })
+              }
+            >
+              <DescriptionOutlinedIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "green",
+                }}
+              />
+            </IconButton>
+          </CustomTooltip>
+          <CustomTooltip title="Download" placement="top" arrow>
+            <IconButton
+              onClick={() => {
+                // console.log(params.row);
+              }}
+            >
+              <DownloadForOfflineOutlinedIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "gray",
+                }}
+              />
+            </IconButton>
+          </CustomTooltip>
+        </>
+      ),
+    },
+  ]
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
   const CustomFooter = () => {

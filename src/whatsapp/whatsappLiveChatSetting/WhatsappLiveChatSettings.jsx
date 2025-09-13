@@ -876,7 +876,11 @@ const tabs = [
   // },
   { key: "settings", label: "Chat Settings", icon: <BiCog size={20} /> },
   { key: "users", label: "Block User", icon: <BiUserCircle size={20} /> },
-  { key: "unsubscribe", label: "Unsubscribe Report", icon: <MdOutlineUnsubscribe size={20} /> },
+  {
+    key: "unsubscribe",
+    label: "Unsubscribe Report",
+    icon: <MdOutlineUnsubscribe size={20} />,
+  },
 ];
 
 const chatSubOptions = [
@@ -893,6 +897,11 @@ const WhatsappLiveChatSettings = () => {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [isBlocking, setIsBlocking] = useState(false);
+
+  const [fileData, setFileData] = useState({
+    url: "",
+    file: "",
+  });
 
   // useEffect(() => {
   //     // Only for demo: generate 50 dummy users if no real data
@@ -1132,7 +1141,6 @@ const WhatsappLiveChatSettings = () => {
   }
 
   function handleConfigure(type) {
-    console.log("type", type);
     if (!wabaState.selected) {
       return toast.error("Please select WABA");
     }
@@ -1140,6 +1148,34 @@ const WhatsappLiveChatSettings = () => {
       ...prev,
       type,
       open: true,
+    }));
+
+    const cardTypeDetails = cardDetails[type];
+    let tempId = null;
+    const parsedJson = JSON.parse(cardTypeDetails?.tempJson);
+    if (parsedJson?.templateName) {
+      const tempName = parsedJson?.templateName;
+      tempId = allTemplates?.find((item) => item.label === tempName)?.value;
+    }
+    let msgType = "1";
+    if (parsedJson?.templateName) {
+      msgType = "2";
+    }
+    // fileRef.current.value = cardTypeDetails?.mediaPath;
+
+    setFileData({
+      url: parsedJson?.mediaPath,
+      file: parsedJson?.mediaPath,
+    });
+    setBasicDetails((prev) => ({
+      sendMsgCheckbox: true,
+      msgType,
+      message: cardTypeDetails?.message,
+      filePath: cardTypeDetails?.filePath,
+      tempJson: cardTypeDetails?.tempJson,
+      mediaPath: parsedJson?.mediaPath,
+      timeout: cardTypeDetails?.timeout,
+      template: tempId,
     }));
   }
 
@@ -1207,6 +1243,7 @@ const WhatsappLiveChatSettings = () => {
     const wabaSrno = wabaState.waba.find(
       (waba) => waba.mobileNo === wabaState.selected
     )?.wabaSrno;
+    delete basicDetails?.template
     const data = {
       actionSenario: configureState?.type,
       wabaNumber: wabaState.selected,
@@ -1216,6 +1253,7 @@ const WhatsappLiveChatSettings = () => {
       message: message || specificTemplate.message,
       tempJson: JSON.stringify(specificTemplate),
       // assignAgentCheckbox: false
+      messageEntity: "0",
     };
 
     try {
@@ -1349,11 +1387,17 @@ const WhatsappLiveChatSettings = () => {
       type: "inactive_agent_timing",
       tooltip: (
         <>
-          <div><b>What it does:</b> Sends a one-time auto-reply to the user’s first message after business hours.</div>
+          <div>
+            <b>What it does:</b> Sends a one-time auto-reply to the user’s first
+            message after business hours.
+          </div>
 
-          <div><b>Example:</b> “Our team is unavailable now. We’ll reply during our shift, 10 AM–7 PM.”</div>
+          <div>
+            <b>Example:</b> “Our team is unavailable now. We’ll reply during our
+            shift, 10 AM–7 PM.”
+          </div>
         </>
-      )
+      ),
     },
     {
       id: 3,
@@ -1373,10 +1417,17 @@ const WhatsappLiveChatSettings = () => {
       type: "15_minutes_message",
       tooltip: (
         <>
-          <div><b>What it does:</b> Auto-replies when no agent is online based on shift time settings.</div>
+          <div>
+            <b>What it does:</b> Auto-replies when no agent is online based on
+            shift time settings.
+          </div>
 
-          <div><b>Example:</b> “No agents are online right now. We'll respond after 10 AM.”</div>
-        </>)
+          <div>
+            <b>Example:</b> “No agents are online right now. We'll respond after
+            10 AM.”
+          </div>
+        </>
+      ),
     },
     // { id: 4, name: "Agent-No-Response", button: ["Configure Text"], desc: "Automatically greet customers when they message you during off hours.", message: "", type: "agent_no_response" },
   ];
@@ -1407,7 +1458,7 @@ const WhatsappLiveChatSettings = () => {
       // }),
       tempJson: "",
       mediaPath: "",
-      messageEntity: "0",
+      messageEntity: cardDetails["15_minutes_message"]?.messageEntity || "0",
       timeout: Number(minutes) || 0,
     };
 
@@ -1498,11 +1549,11 @@ const WhatsappLiveChatSettings = () => {
               <div className="bg-white rounded-2xl shadow-lg flex flex-col items-center justify-center h-auto p-0 md:p-5 border-3 border-dashed border-indigo-200 ">
                 {wabaState.selected ? (
                   <div className=" flex flex-wrap justify-center items-center gap-5  mx-auto">
-                    {liveChatCards.map((card) => {
+                    {liveChatCards.map((card, index) => {
                       return (
                         <>
                           <div
-                            key={card.id}
+                            key={index}
                             className="relative flex w-90 flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md hover:shadow-xl transition-all duration-400 hover:-translate-y-1"
                           >
                             <div className=" mx-3 mt-3 h-30 overflow-hidden rounded-xl bg-blue-gray-500 bg-clip-border text-white  shadow-blue-gray-500/40 bg-gradient-to-r from-green-100 to-green-50">
@@ -1577,9 +1628,9 @@ const WhatsappLiveChatSettings = () => {
                             </div>
 
                             <div className="p-6 pt-0 flex flex-wrap justify-center items-center gap-2">
-                              {card.button.map((btnLabel) => (
+                              {card.button.map((btnLabel, index) => (
                                 <Tooltip
-                                  key={btnLabel}
+                                  key={index}
                                   title="Click to configure"
                                   arrow
                                 >
@@ -1694,9 +1745,9 @@ const WhatsappLiveChatSettings = () => {
                       </button>
                     </div>
                   ) : (
-                    Object.keys(workingHours).map((day) => (
+                    Object.keys(workingHours).map((day, index) => (
                       <div
-                        key={day}
+                        key={index}
                         className="flex items-center flex-wrap justify-between bg-white shadow-md gap-2 p-2 rounded-lg"
                       >
                         {/* Toggle Open/Closed */}
@@ -1793,6 +1844,8 @@ const WhatsappLiveChatSettings = () => {
                 fileRef={fileRef}
                 setSpecificTemplate={setSpecificTemplate}
                 handle15MinTime={handle15MinTime}
+                fileData={fileData}
+                setFileData={setFileData}
               />
             )}
           </>
@@ -1831,7 +1884,6 @@ const WhatsappLiveChatSettings = () => {
 
               <div className="bg-white rounded-2xl shadow-lg flex flex-col items-center justify-center h-auto p-5 border-3 border-dashed border-indigo-200">
                 <div className="flex flex-col items-center justify-center p-5 2xl:p-25">
-
                   {!selectedWaba ? (
                     <div className="flex flex-col items-center justify-center h-auto md:h-full">
                       <AnimatePresence>
@@ -1856,8 +1908,8 @@ const WhatsappLiveChatSettings = () => {
                             Please select a WABA account
                           </h3>
                           <p className="text-gray-500 text-center max-w-xs text-sm">
-                            Choose a WABA from the dropdown above to view blocked
-                            users.
+                            Choose a WABA from the dropdown above to view
+                            blocked users.
                           </p>
                         </motion.div>
                       </AnimatePresence>
@@ -1997,10 +2049,7 @@ const WhatsappLiveChatSettings = () => {
         </div>
       );
 
-    if (activeTab === "unsubscribe")
-      return (
-        <Unsubscribe />
-      )
+    if (activeTab === "unsubscribe") return <Unsubscribe />;
     return null;
   };
 
@@ -2015,8 +2064,8 @@ const WhatsappLiveChatSettings = () => {
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
                 className={`flex items-center w-full px-4 py-3 mb-1 text-sm font-medium rounded-lg transition-colors cursor-pointer hover:bg-gray-100 focus:outline-none ${activeTab === tab.key
-                  ? "bg-blue-100 text-blue-600"
-                  : "text-gray-700"
+                    ? "bg-blue-100 text-blue-600"
+                    : "text-gray-700"
                   }`}
               >
                 <span className="mr-2">{tab.icon}</span>
@@ -2031,8 +2080,8 @@ const WhatsappLiveChatSettings = () => {
                       type="button"
                       onClick={() => setActiveSub(opt.key)}
                       className={`flex items-center w-full px-3 py-2 text-sm rounded-md transition-colors hover:bg-blue-50 focus:outline-none ${activeSub === opt.key
-                        ? "bg-blue-50 text-blue-600 font-semibold"
-                        : "text-gray-600"
+                          ? "bg-blue-50 text-blue-600 font-semibold"
+                          : "text-gray-600"
                         }`}
                     >
                       <span className="mr-2">{opt.icon}</span>

@@ -12,6 +12,7 @@ export const Grid1 = ({
   setInputDetails,
   headers,
   allTemplates,
+  inputRef
 }) => {
   const [ai, setAi] = useState({
     isGenerating: false,
@@ -267,6 +268,7 @@ export const Grid1 = ({
             setInputDetails={setInputDetails}
             inputDetails={inputDetails?.message}
             headers={headers}
+            inputRef={inputRef}
           />
           {/* <GenerateAiContent
             ai={ai}

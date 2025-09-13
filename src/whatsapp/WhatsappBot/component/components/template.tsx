@@ -228,12 +228,24 @@ export const TemplateNode = ({
                 text: `${variables[i]}`,
               }));
 
+              // commit - maindummy merge
+              // const parameters = variables?.map((variable, index) => ({
+              //   text: `{{${variable}}}`,
+              //   type: "text",
+              // }));
+
               return {
                 ...component,
                 parameters: params,
+                // parameters, - commit - maindummy merge
               };
             }
             if (component.type === "button") {
+              // commit - maindummy merge
+              // const parameters = btnVar?.map((variable, index) => ({
+              //   text: `{{${variable}}}`,
+              //   type: "text",
+              // }));
               return {
                 ...component,
                 parameters: [
@@ -242,6 +254,7 @@ export const TemplateNode = ({
                     type: "text",
                   },
                 ],
+                // parameters, - commit - maindummy merge
               };
             }
             if (template.type === "image") {
@@ -491,7 +504,7 @@ export const TemplateNode = ({
             />
           </div>
         </div>
-        <div className="w-full">
+        <div className="w-full mb-3">
           <Preview
             specificTemplate={specificTemplate}
             variablesData={variablesData}

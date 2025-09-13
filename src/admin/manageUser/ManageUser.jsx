@@ -26,6 +26,10 @@ const ManageUser = () => {
     navigate("/manageadduser");
   };
 
+  const handleAddSalesPerson = () => {
+    navigate("/addsalesuser", { state: { isSalesPerson: true } });
+  };
+
   //fetchAllUsersDetails
   const fetchAllUsersDetails = async () => {
     const data = {
@@ -37,7 +41,11 @@ const ManageUser = () => {
     try {
       setIsFetching(true);
       const res = await fetchAllUsers(data);
-      setAllUsers(res.userMstPojoList);
+      // setAllUsers(res.userMstPojoList);
+      const filterData = res.userMstPojoList?.filter((item) =>
+        dataToFilter.role ? item.role == dataToFilter.role : true
+      );
+      setAllUsers(filterData);
     } catch (e) {
       // console.log(e);
       toast.error("Something went wrong! Please try again later.");
@@ -56,13 +64,19 @@ const ManageUser = () => {
         <h1>
           <span className="text-xl font-semibold text-gray-700">Manage Users</span>
         </h1>
-        <div className="w-max-content">
+        <div className="w-max-content flex gap-2">
           <UniversalButton
             id="manageadduserbtn"
             name="manageadduserbtn"
             label="Add User"
             onClick={handleAdduser}
           />
+          {/* <UniversalButton
+            id="manageadduserbtn"
+            name="manageadduserbtn"
+            label="Add Sales Person"
+            onClick={handleAddSalesPerson}
+          /> */}
         </div>
       </div>
 
@@ -137,6 +151,26 @@ const ManageUser = () => {
             }}
           />
         </div>
+
+        {/* <div className="w-full sm:w-48">
+          <AnimatedDropdown
+            label="Role"
+            placeholder="Role"
+            id="manageRole"
+            name="manageRole"
+            options={[
+              { value: "Reseller User", label: "User" },
+              { value: "Sales Person", label: "Sales Person" },
+            ]}
+            value={dataToFilter.role}
+            onChange={(e) => {
+              setDataToFilter({
+                ...dataToFilter,
+                role: e,
+              });
+            }}
+          />
+        </div> */}
 
         <div className="w-max-content">
           <UniversalButton

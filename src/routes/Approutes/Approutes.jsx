@@ -11,6 +11,7 @@ import Mainlayout from "@/mainlayout/Mainlayout";
 // dashboard
 import Dashboard from "@/dashboard/Dashboard";
 import ResellerDashboard from "@/dashboard/ResellerDashboard";
+import AgentDashboard from "@/dashboard/AgentDashboard";
 
 // Whatsapp
 import ManageTemplate from "@/whatsapp/managetemplate/Managetemplate";
@@ -56,6 +57,8 @@ import WhatsappCreateTemplate from "@/whatsapp/whatsappcreatetemplate/WhatsappCr
 
 // Admin
 import ManageUser from "@/admin/manageUser/ManageUser";
+import ManageSales from "@/admin/manageSales";
+
 import ManageDltTemplate from "@/admin/manageDltTemplate/ManageDltTemplate";
 import ManageVoiceClips from "@/admin/manageVoiceClips/ManageVoiceClips";
 import ManagePlan from "@/admin/managePlan/ManagePlan";
@@ -161,19 +164,37 @@ import Pointingup from "@/CombineLiveChats/components/Settings/Pointingup";
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
 
+import { useUser } from "@/context/auth";
+
+
 
 const Approutes = () => {
+  const { user } = useUser();
+
   return (
     <Routes>
       <Route path="/" element={<Mainlayout />}>
         {/* dashboard */}
         {/* <Route index element={<Dashboard />} /> */}
-        <Route index element={<ResellerDashboard />} />
+        {/* <Route index element={<ResellerDashboard />} /> */}
+        {/* dashboard */}
+        {user.role === "RESELLERUSER" ? (
+          <Route index element={<ResellerDashboard />} />
+        ) : user.role === "AGENT" ? (
+          <Route index element={<AgentDashboard />} />
+        ) : (
+          <Route index element={<ResellerDashboard />} />
+        )}
+
         {/* <Route path="resellerdash" element={<ResellerDashboard />} /> */}
 
         {/* admin */}
         <Route path="manageuser" element={<ManageUser />} />
         <Route path="manageadduser" element={<AddUser />} />
+        <Route path="managesalesperson" element={<ManageSales />} />
+        <Route path="addsalesuser" element={<AddUser />} />
+
+
         <Route path="managedlttemplate" element={<ManageDltTemplate />} />
         <Route path="managevoiceclips" element={<ManageVoiceClips />} />
         <Route path="manageplan" element={<ManagePlan />} />

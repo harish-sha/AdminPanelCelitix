@@ -64,18 +64,23 @@ function generateBotPayload(
     if (finalType === "image") {
       entry["imageUrl"] = nodeInput?.fileUrl;
       entry["imageCaption"] = nodeInput?.fileCaption.trim();
+      entry["selectedOption"] = nodeInput?.selectedOption || "";
+      entry["selectedOption"] = nodeInput?.selectedOption || "";
     }
     if (finalType === "video") {
       entry["videoUrl"] = nodeInput?.fileUrl;
       entry["videoCaption"] = nodeInput?.fileCaption.trim();
+      entry["selectedOption"] = nodeInput?.selectedOption || "";
     }
     if (finalType === "document") {
       entry["documentUrl"] = nodeInput?.fileUrl;
       entry["documentCaption"] = nodeInput?.fileCaption?.trim();
+      entry["selectedOption"] = nodeInput?.selectedOption || "";
     }
     if (finalType === "audio") {
       entry["audioUrl"] = nodeInput?.fileUrl;
       entry["audioCaption"] = nodeInput?.fileCaption?.trim();
+      entry["selectedOption"] = nodeInput?.selectedOption || "";
     }
     if (finalType === "button") {
       const options = {
@@ -94,6 +99,7 @@ function generateBotPayload(
       // entry["buttonTexts"] = nodeInput?.options;
       entry["nextNode"] = nextNodes;
       entry["buttonFooter"] = nodeInput?.buttonFooter?.trim();
+      entry["selectedOption"] = nodeInput?.selectedOption || "upload";
     }
 
     if (finalType === "list") {
@@ -145,7 +151,10 @@ function generateBotPayload(
         (entry["bodyText"] = nodeInput?.bodyText),
         (entry["buttonText"] = nodeInput?.buttonText),
         (entry["condition_reply"] = true);
-      entry["storeVariables"] = [];
+      entry["storeVariables"] = nodeInput?.storedVariable;
+    }
+    if (finalType === "goto") {
+      entry["gotoStep"] = nodeInput?.gotoStep;
     }
     if (finalType === "api") {
       generateApiPayload(entry, nodeInput);

@@ -157,3 +157,17 @@ export const saveCharges = async (data) => {
     }
   );
 };
+
+// getPincodeData
+export const getPincodeData = async (pincode) => {
+  return await fetchWithAuth(`/getPincodeData?pincode=${pincode}`, {
+    method: "GET",
+  });
+};
+
+// Sales person list
+export const getSalesPersonList = async (data) => {
+  return await fetchWithAuth("/getSalesPersonList", {
+    method: "POST",
+  });
+};

@@ -157,7 +157,6 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
       </div>
       {!isMobile ? (
         <div className="flex gap-3 ml-auto items-center">
-
           <div className="group relative">
             <div
               className="flex items-center gap-2 rounded-md border border-gray-200 bg-blue-50 px-2.5 py-1 text-[11px] leading-none text-gray-700

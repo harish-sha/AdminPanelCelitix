@@ -24,11 +24,13 @@ export const ConfigureDialog = ({
   setVariablesData,
   setSpecificTemplate,
   handle15MinTime,
+  setFileData,
+  fileData,
 }) => {
-  const [fileData, setFileData] = useState({
-    url: "",
-    file: "",
-  });
+  // const [fileData, setFileData] = useState({
+  //   url: "",
+  //   file: "",
+  // });
   const [agent, setallAgents] = useState([]);
 
   const [minuteInput, setMinuteInput] = useState("");

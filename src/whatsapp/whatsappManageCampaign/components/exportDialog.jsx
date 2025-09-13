@@ -800,7 +800,7 @@ export const ExportDialog = ({
         ? new Date(dataToExport.fromDate).toISOString().split("T")[0]
         : "",
       toDate: dataToExport.toDate
-        ? new Date(dataToExport.fromDate).toISOString().split("T")[0]
+        ? new Date(dataToExport.toDate).toISOString().split("T")[0]
         : "",
       type: dataToExport?.type === "campaign" ? 1 : 2,
       status: dataToExport.status || "",
@@ -820,7 +820,7 @@ export const ExportDialog = ({
         campaignType: 0,
         status: "",
         deliveryStatus: "",
-        source:"",
+        source: "",
         type: "campaign",
       });
       setVisibledialog(false);
@@ -891,7 +891,7 @@ export const ExportDialog = ({
                   campaignType: 0,
                   status: "",
                   deliveryStatus: "",
-                  source:""
+                  source: ""
                 }));
               }}
               checked={dataToExport.type === "campaign"}
@@ -924,7 +924,7 @@ export const ExportDialog = ({
                   campaignType: 0,
                   status: "",
                   deliveryStatus: "",
-                  source:"",
+                  source: "",
                 }));
                 // setDataToExport({
                 //   campaignName: "",
@@ -1037,6 +1037,8 @@ export const ExportDialog = ({
                   setDataToExport({ ...dataToExport, fromDate: e })
                 }
                 defaultValue={new Date()}
+                minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                maxDate={new Date()}
               />
               <UniversalDatePicker
                 label="To Date:"
@@ -1045,6 +1047,8 @@ export const ExportDialog = ({
                   setDataToExport({ ...dataToExport, toDate: e })
                 }
                 defaultValue={new Date()}
+                minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                maxDate={new Date()}
               />
             </div>
 
@@ -1105,7 +1109,7 @@ export const ExportDialog = ({
                     { value: "DELIVRD", label: "Delivered" },
                     { value: "UNDELIV", label: "Undelivered" },
                     { value: "failed", label: "Failed" },
-                    { value: "read", label: "Read"}
+                    { value: "read", label: "Read" }
                   ]}
                   value={dataToExport.deliveryStatus}
                   onChange={(e) =>

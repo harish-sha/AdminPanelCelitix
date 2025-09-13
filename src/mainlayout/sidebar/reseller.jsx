@@ -33,7 +33,10 @@ export const resellerItems = [
     icon: <IoWalletOutline />,
     label: "User Management",
     type: "dropdown",
-    links: [{ to: "/manageuser", label: "Manage User" }],
+    links: [
+      { to: "/manageuser", label: "Manage User" },
+      // { to: "/managesalesperson", label: "Manage Sales Person" },
+    ],
     roles: ["ADMIN"],
   },
   {

@@ -95,7 +95,7 @@ export const ExportDialog = ({
         campaignType: "",
         status: "",
         deliveryStatus: "",
-        source:"",
+        source: "",
         type: "campaign",
       }));
 
@@ -167,7 +167,7 @@ export const ExportDialog = ({
                   campaignType: "",
                   status: "",
                   deliveryStatus: "",
-                  source:""
+                  source: ""
                 }));
               }}
               checked={dataToExport.type === "campaign"}
@@ -200,7 +200,7 @@ export const ExportDialog = ({
                   campaignType: "",
                   status: "",
                   deliveryStatus: "",
-                  source:""
+                  source: ""
                 }));
                 // setDataToExport({
                 //   campaignName: "",
@@ -313,6 +313,8 @@ export const ExportDialog = ({
                   setDataToExport({ ...dataToExport, fromDate: e })
                 }
                 defaultValue={new Date()}
+                minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                maxDate={new Date()}
               />
               <UniversalDatePicker
                 label="To Date:"
@@ -321,6 +323,8 @@ export const ExportDialog = ({
                   setDataToExport({ ...dataToExport, toDate: e })
                 }
                 defaultValue={new Date()}
+                minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                maxDate={new Date()}
               />
             </div>
 
@@ -340,24 +344,24 @@ export const ExportDialog = ({
                   placeholder="Select Type"
                 />
               </div>
-              
+
               <div className="flex flex-col sm:justify-between sm:flex-row gap-5 my-4">
-              <div className="flex-1">
-                <AnimatedDropdown
-                  label="Select Status"
-                  options={[
-                    { value: "Sent", label: "Sent" },
-                    { value: "Failed", label: "Failed" },
-                    { value: "NDNC", label: "NDNC" },
-                    { value: "Blocked", label: "Blocked" },
-                  ]}
-                  value={dataToExport.status}
-                  onChange={(e) =>
-                    setDataToExport({ ...dataToExport, status: e })
-                  }
-                  placeholder="Select Status"
-                />
-              </div>
+                <div className="flex-1">
+                  <AnimatedDropdown
+                    label="Select Status"
+                    options={[
+                      { value: "Sent", label: "Sent" },
+                      { value: "Failed", label: "Failed" },
+                      { value: "NDNC", label: "NDNC" },
+                      { value: "Blocked", label: "Blocked" },
+                    ]}
+                    value={dataToExport.status}
+                    onChange={(e) =>
+                      setDataToExport({ ...dataToExport, status: e })
+                    }
+                    placeholder="Select Status"
+                  />
+                </div>
               </div>
             </div>
 

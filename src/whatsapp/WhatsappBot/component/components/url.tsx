@@ -7,6 +7,16 @@ import { AiOutlineEye } from "react-icons/ai";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import Lottie from "lottie-react";
+import files from "@/assets/animation/Files.json";
+import {
+  FormatBoldOutlined,
+  FormatItalicOutlined,
+  FormatStrikethroughOutlined,
+} from "@mui/icons-material";
+import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
+import { Tooltip } from "@mui/material";
+import { motion } from "framer-motion";
 
 export const Url = ({
   id,
@@ -17,13 +27,14 @@ export const Url = ({
   nodesInputData: any;
   setNodesInputData: React.Dispatch<React.SetStateAction<{}>>;
 }) => {
+  const inputRef = useRef(null);
   const fileRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
         ...prev[id],
-        type: nodesInputData[id]?.type,
+        selectedOption: nodesInputData[id]?.selectedOption,
         // variableId: nodesInputData[id]?.variableName,
       },
     }));
@@ -42,6 +53,85 @@ export const Url = ({
       },
     }));
   };
+
+  function addFormat(formatType: string) {
+    if (!inputRef.current) return;
+    const input = nodesInputData[id]?.bodyText || "";
+    if (input?.length >= 1024) return;
+
+    const inputEl = inputRef.current;
+    const { selectionStart, selectionEnd } = inputEl;
+    const selectedText = input?.substring(selectionStart, selectionEnd);
+    const data = {
+      bold: {
+        start: "*",
+        end: "*",
+      },
+      italic: {
+        start: "_",
+        end: "_",
+      },
+      strike: {
+        start: "~",
+        end: "~",
+      },
+    };
+    const { start, end } = data[formatType];
+    const newValue =
+      input.substring(0, selectionStart) +
+      start +
+      selectedText +
+      end +
+      input.substring(selectionEnd);
+
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        bodyText: newValue,
+      },
+    }));
+
+    requestAnimationFrame(() => {
+      const pos = selectionEnd + start.length + end.length;
+      inputEl.setSelectionRange(pos, pos);
+      inputEl.focus();
+    });
+  }
+
+  function insertEmoji(emoji: string) {
+    if (!inputRef.current) return;
+    const input = nodesInputData[id]?.bodyText || "";
+    if (input?.length >= 1024) return;
+
+    const inputEl = inputRef.current;
+
+    const start = inputEl.selectionStart;
+    const end = inputEl.selectionEnd;
+
+    const newText = input.substring(0, start) + emoji + input.substring(end);
+
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        bodyText: newText,
+      },
+    }));
+
+    requestAnimationFrame(() => {
+      inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
+      inputEl.focus();
+    });
+
+    //  inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
+    //  inputEl.focus();
+
+    // setTimeout(() => {
+    //   inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
+    //   inputEl.focus();
+    // }, 0);
+  }
 
   return (
     <div className="space-y-4">
@@ -65,6 +155,7 @@ export const Url = ({
                 [id]: {
                   ...prev[id],
                   urlbuttonType: e,
+                  fileUrl: "",
                 },
               }));
             }}
@@ -92,6 +183,7 @@ export const Url = ({
                       ...nodesInputData[id],
                       selectedOption: e,
                       text: "",
+                      fileUrl: "",
                     },
                   }));
                 }}
@@ -117,9 +209,9 @@ export const Url = ({
                     className="w-[250px]"
                   />
                 </div>
-                <button onClick={() => {}} className="cursor-pointer">
+                {/* <button onClick={() => {}} className="cursor-pointer">
                   <AiOutlineEye size={20} className="text-green-700" />
-                </button>
+                </button> */}
               </div>
             )}
 
@@ -130,20 +222,20 @@ export const Url = ({
                   name="text"
                   tooltipContent="Enter URL of media"
                   label={"URL"}
-                  value={nodesInputData[id]?.urlbuttonMediaUrl}
+                  value={nodesInputData[id]?.fileUrl}
                   onChange={(e: { target: { value: any } }) => {
                     setNodesInputData((prev) => ({
                       ...prev,
                       [id]: {
                         ...prev[id],
-                        urlbuttonMediaUrl: e.target.value,
+                        fileUrl: e.target.value,
                       },
                     }));
                   }}
                 />
-                <button onClick={() => {}} className="cursor-pointer">
+                {/* <button onClick={() => {}} className="cursor-pointer">
                   <AiOutlineEye size={20} className="text-green-700" />
-                </button>
+                </button> */}
               </div>
             )}
           </>
@@ -173,38 +265,136 @@ export const Url = ({
           </div>
         )} */}
       </div>
-
-      <div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium text-gray-900 mb-2 ml-2">
-            Body Text
-          </label>
-          <Textarea
-            id="body"
-            placeholder="Body Text"
-            value={nodesInputData[id]?.urlbuttonbody}
-            onChange={(e: { target: { value: any } }) => {
-              setNodesInputData((prev) => ({
-                ...prev,
-                [id]: {
-                  ...prev[id],
-                  urlbuttonbody: e.target.value,
-                },
-              }));
-            }}
-            className="resize-none"
-            maxLength={1024}
-          />
+          <div>
+            <label className="text-sm font-medium text-gray-900 mb-2 ml-2">
+              Body Text
+            </label>
+            <Textarea
+              id="body"
+              placeholder="Body Text"
+              value={nodesInputData[id]?.urlbuttonbody}
+              onChange={(e: { target: { value: any } }) => {
+                setNodesInputData((prev) => ({
+                  ...prev,
+                  [id]: {
+                    ...prev[id],
+                    urlbuttonbody: e.target.value,
+                  },
+                }));
+              }}
+              className="resize-none h-40 mt-2"
+              maxLength={1024}
+              ref={inputRef}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="flex items-center gap-2 mt-2 bg-white border border-slate-200 rounded-xl px-2 py-2 shadow w-max"
+            >
+              <Tooltip title="Bold" arrow>
+                <button
+                  onClick={() => addFormat("bold")}
+                  className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
+                >
+                  <FormatBoldOutlined fontSize="small" />
+                </button>
+              </Tooltip>
+              <Tooltip title="Italic" arrow>
+                <button
+                  onClick={() => addFormat("italic")}
+                  className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
+                >
+                  <FormatItalicOutlined fontSize="small" />
+                </button>
+              </Tooltip>
+              <Tooltip title="Strikethrough" arrow>
+                <button
+                  onClick={() => addFormat("strike")}
+                  className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
+                >
+                  <FormatStrikethroughOutlined fontSize="small" />
+                </button>
+              </Tooltip>
+              <div className="w-px h-5 bg-slate-300 mx-1"></div>
+              <Tooltip title="Emoji Picker" arrow>
+                <CustomEmojiPicker position="top" onSelect={insertEmoji} />
+              </Tooltip>
+            </motion.div>
+          </div>
+          <p className="text-xs mt-2">
+            {nodesInputData[id]?.urlbuttonbody?.length || 0}/1024
+          </p>
         </div>
-        <p className="text-xs mt-2">
-          {nodesInputData[id]?.urlbuttonbody?.length || 0}/1024
-        </p>
+        <div className="flex justify-center items-center h-60 rounded-lg p-2 ">
+          {(!nodesInputData[id]?.urlbuttonType ||
+            !nodesInputData[id]?.fileUrl) && (
+            <div className="w-full h-full flex items-center justify-center border border-gray-300 rounded-lg">
+              <Lottie
+                animationData={files}
+                loop
+                autoplay
+                className="w-24 h-24"
+              />
+            </div>
+          )}
+          {nodesInputData[id]?.urlbuttonType === "video" &&
+            nodesInputData[id]?.fileUrl && (
+              <video
+                src={
+                  nodesInputData[id]?.fileUrl
+                    ? /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(
+                        nodesInputData[id]?.fileUrl
+                      )
+                      ? nodesInputData[id]?.urlbuttonMediaUrl
+                      : URL.createObjectURL(nodesInputData[id]?.fileUrl)
+                    : ""
+                }
+                controls
+                className="h-full w-full object-cover border border-gray-300 rounded-lg"
+              />
+            )}
+          {nodesInputData[id]?.urlbuttonType === "image" &&
+            nodesInputData[id]?.fileUrl && (
+              <img
+                src={
+                  nodesInputData[id]?.fileUrl
+                    ? /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(
+                        nodesInputData[id]?.fileUrl
+                      )
+                      ? nodesInputData[id]?.urlbuttonMediaUrl
+                      : URL.createObjectURL(nodesInputData[id]?.fileUrl)
+                    : ""
+                }
+                alt="preview"
+                className="h-full w-full object-contain border border-gray-300 rounded-lg"
+              />
+            )}
+          {nodesInputData[id]?.urlbuttonType === "document" &&
+            nodesInputData[id]?.fileUrl && (
+              <iframe
+                src={
+                  nodesInputData[id]?.fileUrl
+                    ? /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(
+                        nodesInputData[id]?.fileUrl
+                      )
+                      ? nodesInputData[id]?.urlbuttonMediaUrl
+                      : URL.createObjectURL(nodesInputData[id]?.fileUrl)
+                    : ""
+                }
+                className="h-full w-full object-cover border border-gray-300 rounded-lg"
+              />
+            )}
+        </div>
       </div>
 
       <InputField
         id="text"
         name="text"
         tooltipContent="URL Button Text"
+        placeholder="Enter URL Button Text"
         label={"URL Button Text"}
         value={nodesInputData[id]?.urlbuttonText}
         onChange={(e: { target: { value: any } }) => {
@@ -223,6 +413,7 @@ export const Url = ({
         name="text"
         type="url"
         tooltipContent="Button URL"
+        placeholder="Enter Button URL"
         label={"Button URL"}
         value={nodesInputData[id]?.urlbuttonUrl}
         onChange={(e: { target: { value: any } }) => {
@@ -243,6 +434,7 @@ export const Url = ({
           name="text"
           tooltipContent="URL Footer Characters max 20 characters"
           label={"URL Footer"}
+          placeholder="Enter URL Footer"
           value={nodesInputData[id]?.urlbuttonFooter}
           onChange={(e: { target: { value: any } }) => {
             setNodesInputData((prev) => ({

@@ -39,6 +39,7 @@ const DropdownWithSearch = ({
             hover: 'none',
             cursor: 'pointer',
             height: '34px',
+            zIndex: 1,
         }),
         menu: (provided) => ({
             ...provided,
@@ -50,6 +51,10 @@ const DropdownWithSearch = ({
             backgroundColor: state.isSelected ? '#DDE7EE' : 'white',
             color: state.isSelected ? 'black' : 'black',
             cursor: 'pointer',
+        }),
+        menuPortal: (base) => ({
+            ...base,
+            zIndex: 9999,
         }),
     };
 
@@ -98,7 +103,11 @@ const DropdownWithSearch = ({
                 isDisabled={disabled}
                 styles={customStyles}
                 components={{ DropdownIndicator }}
-
+                // menuPortalTarget={document.body} //  Render dropdown outside dialog
+                menuPosition="fixed" //  Position menu fixed
+                menuShouldBlockScroll={true} //  Prevent scroll bleed
+                closeMenuOnScroll={true} //  Auto-close on scroll
+                closeMenuOnSelect={true} //  Close when selecting
             />
         </div>
     )

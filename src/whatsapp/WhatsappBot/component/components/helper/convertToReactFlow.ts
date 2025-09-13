@@ -101,6 +101,7 @@ export const transformNodesById = (parsedFlowData) => {
         node?.videoUrl ||
         node?.documentUrl ||
         node?.urlbuttonMediaUrl ||
+        node?.buttonUrl ||
         "",
       fileCaption:
         node?.imageCaption || node?.videoCaption || node?.documentCaption || "",
@@ -111,6 +112,10 @@ export const transformNodesById = (parsedFlowData) => {
         (Array.isArray(node?.apiResponse?.storedData)
           ? node.apiResponse.storedData[0]?.varName
           : "") || "",
+      storedVariables: node?.storeVariables,
+
+      // when merge maindummy ui
+      //  selectedOption: "url"
     };
   });
 

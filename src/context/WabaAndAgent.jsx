@@ -12,6 +12,8 @@ export const WabaAgentProvider = ({ children }) => {
   const [initialChatState, setInititialChatState] = useState(null);
   const [agentInfo, setAgentInfo] = useState(null);
   const [switchChat, setSwitchChat] = useState(null);
+  const [activeConvAgent, setActiveConvAgent] = useState(null);
+  const [inActiveConvAgent, setInActiveConvAgent] = useState(null);
 
   //other states
   const [chatData, setChatData] = useState(null);
@@ -42,7 +44,11 @@ export const WabaAgentProvider = ({ children }) => {
         agentInfo,
         setAgentInfo,
         switchChat,
-        setSwitchChat
+        setSwitchChat,
+        activeConvAgent,
+        inActiveConvAgent,
+        setActiveConvAgent,
+        setInActiveConvAgent
       }}
     >
       {children}

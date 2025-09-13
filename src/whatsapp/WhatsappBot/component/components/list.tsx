@@ -12,6 +12,14 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import CustomTooltip from "@/components/common/CustomTooltip";
+import {
+  FormatBoldOutlined,
+  FormatItalicOutlined,
+  FormatStrikethroughOutlined,
+} from "@mui/icons-material";
+import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
+import { Tooltip } from "@mui/material";
+import { motion } from "framer-motion";
 // import { Handle, Position } from "@xyflow/react";
 
 // import { Handle, Position } from "@xyflow/react";
@@ -29,6 +37,7 @@ export const List = ({
   allVariables: any[];
   addVariable: (data: String) => void;
 }) => {
+  const inputRef = useRef(null);
   const fileInputRef = useRef(null);
   const [options, setOptions] = useState([
     {
@@ -39,6 +48,7 @@ export const List = ({
 
   function handleOptionAdd() {
     if (options.length >= 10) {
+      toast.error("You can add a maximum of 10 options.");
       return;
     }
     setOptions((prev) => [
@@ -143,6 +153,85 @@ export const List = ({
     }));
   };
 
+  function addFormat(formatType: string) {
+    if (!inputRef.current) return;
+    const input = nodesInputData[id]?.message || "";
+    if (input?.length >= 4096) return;
+
+    const inputEl = inputRef.current;
+    const { selectionStart, selectionEnd } = inputEl;
+    const selectedText = input?.substring(selectionStart, selectionEnd);
+    const data = {
+      bold: {
+        start: "*",
+        end: "*",
+      },
+      italic: {
+        start: "_",
+        end: "_",
+      },
+      strike: {
+        start: "~",
+        end: "~",
+      },
+    };
+    const { start, end } = data[formatType];
+    const newValue =
+      input.substring(0, selectionStart) +
+      start +
+      selectedText +
+      end +
+      input.substring(selectionEnd);
+
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        message: newValue,
+      },
+    }));
+
+    requestAnimationFrame(() => {
+      const pos = selectionEnd + start.length + end.length;
+      inputEl.setSelectionRange(pos, pos);
+      inputEl.focus();
+    });
+  }
+
+  function insertEmoji(emoji: string) {
+    if (!inputRef.current) return;
+    const input = nodesInputData[id]?.message || "";
+    if (input?.length >= 4096) return;
+
+    const inputEl = inputRef.current;
+
+    const start = inputEl.selectionStart;
+    const end = inputEl.selectionEnd;
+
+    const newText = input.substring(0, start) + emoji + input.substring(end);
+
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        message: newText,
+      },
+    }));
+
+    requestAnimationFrame(() => {
+      inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
+      inputEl.focus();
+    });
+
+    //  inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
+    //  inputEl.focus();
+
+    // setTimeout(() => {
+    //   inputEl.setSelectionRange(start + emoji.length, start + emoji.length);
+    //   inputEl.focus();
+    // }, 0);
+  }
+
   return (
     <>
       <div className="flex gap-2">
@@ -151,6 +240,7 @@ export const List = ({
             id="text"
             name="text"
             tooltipContent="List Heading"
+            placeholder="Enter List Heading"
             maxLength="20"
             // label={nodesInputData[id]?.type === "text" ? "List Heading" : "URL"}
             label={"List Heading"}
@@ -271,8 +361,44 @@ export const List = ({
             }));
           }}
           maxLength={4096}
-          className="resize-none"
+          className="resize-none h-50"
+          ref={inputRef}
         />
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+          className="flex items-center gap-2 mt-2 bg-white border border-slate-200 rounded-xl px-2 py-2 shadow w-max"
+        >
+          <Tooltip title="Bold" arrow>
+            <button
+              onClick={() => addFormat("bold")}
+              className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
+            >
+              <FormatBoldOutlined fontSize="small" />
+            </button>
+          </Tooltip>
+          <Tooltip title="Italic" arrow>
+            <button
+              onClick={() => addFormat("italic")}
+              className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
+            >
+              <FormatItalicOutlined fontSize="small" />
+            </button>
+          </Tooltip>
+          <Tooltip title="Strikethrough" arrow>
+            <button
+              onClick={() => addFormat("strike")}
+              className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
+            >
+              <FormatStrikethroughOutlined fontSize="small" />
+            </button>
+          </Tooltip>
+          <div className="w-px h-5 bg-slate-300 mx-1"></div>
+          <Tooltip title="Emoji Picker" arrow>
+            <CustomEmojiPicker position="top" onSelect={insertEmoji} />
+          </Tooltip>
+        </motion.div>
       </div>
       <p className="text-xs">{nodesInputData[id]?.message?.length || 0}/4096</p>
 
@@ -299,6 +425,7 @@ export const List = ({
           tooltipContent="Give a footer for the list. Maximum 20 characters."
           maxLength="20"
           label={"List Footer"}
+          placeholder="Enter List Footer"
           value={nodesInputData[id]?.listFooter}
           onChange={(e: { target: { value: any } }) => {
             setNodesInputData((prev) => ({
@@ -321,11 +448,14 @@ export const List = ({
             <AddIcon />
           </button>
         </div> */}
-        <div className="flex items-center gap-2 mb-2">
-          <h1 className="text-lg font-semibold mb-2">List Items</h1>
-          <div className="flex justify-end">
-            <button onClick={handleOptionAdd}>
-              <AddIcon />
+        <div className="flex justify-end items-center gap-2 mb-2">
+          {/* <h1 className="text-lg font-semibold mb-2">List Items</h1> */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleOptionAdd}
+              className="flex items-center gap-2 px-2 py-1 rounded-full bg-black text-white text-xs font-medium shadow-md"
+            >
+              <AddIcon fontSize="small" />
             </button>
           </div>
           <div className="mb-1">
@@ -349,6 +479,7 @@ export const List = ({
                 id="option"
                 name="option"
                 label={`Row-Title-${index + 1}`}
+                placeholder="Enter Row Title"
                 value={options[index]?.option}
                 onChange={(e: { target: { value: any } }) => {
                   handleOptionInput(e.target.value, "option", index);
@@ -358,6 +489,7 @@ export const List = ({
                 id="value"
                 name="value"
                 label={`Row-Description-${index + 1}`}
+                placeholder="Enter Row Description"
                 value={options[index]?.value}
                 onChange={(e: { target: { value: any } }) => {
                   handleOptionInput(e.target.value, "value", index);
@@ -365,15 +497,15 @@ export const List = ({
               />
 
               {options.length > 1 && (
-                <Button
+                <span
                   id="deleteInput"
-                  name="deleteInput"
-                  variant="destructive"
+                  // name="deleteInput"
+                  // variant="destructive"
                   onClick={() => handleOptionDelete(index)}
-                  className="mt-7"
+                  className="mt-7 text-red-700 cursor-pointer hover:text-red-700 transition-colors duration-200 "
                 >
-                  <MdOutlineDeleteForever />
-                </Button>
+                  <MdOutlineDeleteForever fontSize={24} />
+                </span>
               )}
             </div>
           ))}

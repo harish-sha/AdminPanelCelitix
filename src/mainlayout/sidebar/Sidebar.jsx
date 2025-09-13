@@ -259,12 +259,25 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
             {/*Dropdown Content */}
             <motion.div
               initial={{ height: 0, opacity: 0 }}
-              animate={{
-                height:
-                  openDropdown === item.name
-                    ? dropdownRefs[item.name]?.scrollHeight
-                    : 0,
-                opacity: openDropdown === item.name ? 1 : 0,
+              // animate={{
+              //   height:
+              //     openDropdown === item.name
+              //       ? dropdownRefs[item.name]?.scrollHeight
+              //       : 0,
+              //   opacity: openDropdown === item.name ? 1 : 0,
+              // }}
+              animate={openDropdown === item.name ? "open" : "collapsed"}
+              variants={{
+                open: {
+                  height: "auto",
+                  opacity: 1,
+                  transition: { duration: 0.3 },
+                },
+                collapsed: {
+                  height: 0,
+                  opacity: 0,
+                  transition: { duration: 0.3 },
+                },
               }}
               transition={{ duration: 0.3 }}
               className="overflow-hidden"

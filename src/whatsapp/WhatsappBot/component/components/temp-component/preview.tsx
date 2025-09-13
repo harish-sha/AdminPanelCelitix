@@ -78,21 +78,21 @@ export const Preview = ({
   const MediaRenderer = ({ format, fileUrl, fallbackUrl }) => {
     if (format === "image") {
       return (
-        <div className="w-[10rem] m-auto">
+        <div className="w-full h-36">
           <img
             src={fileUrl || fallbackUrl}
             alt="Template"
-            className="object-contain"
+            className="object-cover w-full h-full"
           />
         </div>
       );
     }
     if (format === "video") {
       return (
-        <div className="w-[10rem] m-auto">
+        <div className="w-full h-36">
           <video
             src={fileUrl || fallbackUrl}
-            className="object-contain"
+            className="object-cover w-full h-full"
             controls={true}
           />
         </div>
@@ -100,8 +100,11 @@ export const Preview = ({
     }
     if (format === "document") {
       return (
-        <div className="w-full">
-          <iframe src={fileUrl || fallbackUrl} className="object-contain" />
+        <div className="w-full h-36">
+          <iframe
+            src={fileUrl || fallbackUrl}
+            className="object-cover w-full h-full"
+          />
         </div>
       );
     }
@@ -180,7 +183,7 @@ export const Preview = ({
           )}
 
           {specificTemplate?.message && (
-            <pre className="whitespace-pre-wrap">
+            <pre className="whitespace-pre-wrap text-sm text-gray-800 ">
               {specificTemplate.message}
             </pre>
           )}
