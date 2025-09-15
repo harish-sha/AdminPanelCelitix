@@ -56,6 +56,16 @@ export const Variables = ({
       input: updatedData,
     }));
   }
+  function handleVariableInsertBtn(variable, index) {
+    const updatedData = [...variablesData.btnInput];
+    const prevMessage = updatedData[index] || "";
+    const updatedMessage = prevMessage + `{{${variable}}}`;
+    updatedData[index] = updatedMessage;
+    setVariablesData((prev) => ({
+      ...prev,
+      btnInput: updatedData,
+    }));
+  }
   return (
     <>
       {(variablesData?.btn?.length > 0 || variablesData?.data?.length > 0) && (
@@ -89,14 +99,14 @@ export const Variables = ({
                         className="flex-1 w-full focus:outline-none"
                       />
 
-                      {/* <div className="absolute top-0 right-0">
+                      <div className="absolute top-0 right-0">
                         <InputVariable
                           variables={allVariables}
                           onSelect={(e) => {
                             handleVariableInsert(e, index);
                           }}
                         />
-                      </div> */}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -111,22 +121,32 @@ export const Variables = ({
                   <label htmlFor="templateMessage">
                     {`{{${variablesData?.btn[index]}}}`}
                   </label>
-                  <InputField
-                    label={""}
-                    placeholder="{{name}}"
-                    id="templateMessage"
-                    name="templateMessage"
-                    value={variablesData?.btnInput[index]}
-                    onChange={(e) => {
-                      const updatedData = [...variablesData.btnInput];
-                      updatedData[index] = e.target.value;
-                      setVariablesData((prev) => ({
-                        ...prev,
-                        btnInput: updatedData,
-                      }));
-                    }}
-                    className="flex-1 w-full focus:outline-none"
-                  />
+                  <div className="relative w-full">
+                    <InputField
+                      label={""}
+                      placeholder="{{name}}"
+                      id="templateMessage"
+                      name="templateMessage"
+                      value={variablesData?.btnInput[index]}
+                      onChange={(e) => {
+                        const updatedData = [...variablesData.btnInput];
+                        updatedData[index] = e.target.value;
+                        setVariablesData((prev) => ({
+                          ...prev,
+                          btnInput: updatedData,
+                        }));
+                      }}
+                      className="flex-1 w-full focus:outline-none"
+                    />
+                    <div className="absolute top-0 right-0">
+                      <InputVariable
+                        variables={allVariables}
+                        onSelect={(e) => {
+                          handleVariableInsertBtn(e, index);
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
