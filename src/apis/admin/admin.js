@@ -440,3 +440,10 @@ export const updateSmppStatus = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
+
+export const getDrAnalysisReport = async (id) => {
+  return await fetchWithAuth(`/drAnalysis?serviceId=${id}`, {
+    method: "GET",
+  });
+};

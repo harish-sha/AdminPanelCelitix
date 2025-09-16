@@ -72,6 +72,12 @@ export const resellerItems = [
         isHide: true,
         id: "3",
       },
+      {
+        to: "/drAnalysis",
+        label: "Delivery Report Analysis",
+        isHide: false,
+        id: "3",
+      },
     ],
     roles: ["ADMIN"],
   },

@@ -143,6 +143,7 @@ import { WorkflowCreate } from "@/workflow/create";
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
 import { AddNotification } from "@/admin/manageNotifications.jsx/pages/addNotification";
+import DrAnalysis from "@/drAnalysis";
 
 const Approutes = () => {
   return (
@@ -307,6 +308,7 @@ const Approutes = () => {
         {/* Workflow */}
         <Route path="/workflow" element={<WorkflowDetails />} />
         <Route path="/workflow/create" element={<WorkflowCreate />} />
+        <Route path="drAnalysis" element={<DrAnalysis />} />
       </Route>
 
       <Route path="dummy" element={<Dummy />} />
