@@ -68,8 +68,15 @@ export const ChatScreen = ({
     return () => clearTimeout(timeout);
   }, [chatState?.specificConversation]);
 
+  function getFileExtension(url) {
+    const pathname = new URL(url).pathname;
+    const lastSegment = pathname.split("/").pop();
+    const ext = lastSegment.includes(".") ? lastSegment.split(".").pop() : "";
+    return ext.toLowerCase();
+  }
+
   function mediaType(mime) {
-    const type = mime.split("/")[0];
+    const type = mime?.split("/")[0];
     if (type === "image") {
       return "Image";
     } else if (type === "video") {
@@ -79,8 +86,14 @@ export const ChatScreen = ({
     }
   }
 
-  function getFileType(extension) {
-    const type = extension.split("/")[1];
+  function getFileType(extension, extType) {
+    let type;
+
+    if (extType == "url") {
+      type = getFileExtension(extension);
+    } else {
+      type = extension?.split("/")[1];
+    }
     switch (type) {
       case "xlsx":
         return "xlsx";
@@ -94,8 +107,14 @@ export const ChatScreen = ({
         return "";
     }
   }
-  function getFileTypeIcon(extension) {
-    const type = extension.split("/")[1];
+  function getFileTypeIcon(extension, extType) {
+    let type;
+
+    if (extType == "url") {
+      type = getFileExtension(extension);
+    } else {
+      type = extension?.split("/")[1];
+    }
     switch (type) {
       case "xlsx":
         return <PiMicrosoftExcelLogo size={25} />;
@@ -188,16 +207,19 @@ export const ChatScreen = ({
                 {group.messages.map((msg, index) => {
                   const isSent = !msg.isReceived;
                   const isImage =
-                    msg.replyType === "Other" &&
-                    mediaType(msg?.mineType) === "Image";
+                    (msg.replyType === "Other" &&
+                      mediaType(msg?.mineType) === "Image") ||
+                    msg.replyType === "image";
 
                   const isVideo =
-                    msg.replyType === "Other" &&
-                    mediaType(msg?.mineType) === "Video";
+                    (msg.replyType === "Other" &&
+                      mediaType(msg?.mineType) === "Video") ||
+                    msg.replyType === "video";
 
                   const isDocument =
-                    msg.replyType === "Other" &&
-                    mediaType(msg?.mineType) === "Document";
+                    (msg.replyType === "Other" &&
+                      mediaType(msg?.mineType) === "Document") ||
+                    msg.replyType === "document";
 
                   const templateType = msg?.templateType;
                   const isBot = msg?.replyType === "interactive";
@@ -336,14 +358,33 @@ export const ChatScreen = ({
                                   >
                                     <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md max-w-xs flex items-center gap-3">
                                       <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
-                                        {getFileTypeIcon(msg?.mineType)}
+                                        {isSent
+                                          ? getFileTypeIcon(
+                                              msg?.mediaPath,
+                                              "url"
+                                            )
+                                          : getFileTypeIcon(
+                                              msg?.mineType,
+                                              "mine"
+                                            )}
+                                        {/* {getFileTypeIcon(msg?.mineType)} */}
                                       </div>
                                       <div className="flex flex-col">
                                         <div className="font-medium truncate max-w-[10rem">
                                           {msg.fileName || "Untitled Document"}
                                         </div>
-                                        <div className="text-xs text-gray-500 uppercase">
-                                          .{getFileType(msg?.mineType)}
+                                        <div className="text-xs text-gray-500">
+                                          .
+                                          {isSent
+                                            ? getFileType(msg?.mediaPath, "url")
+                                            : getFileType(
+                                                msg?.mineType,
+                                                "mine"
+                                              )}
+                                          {/* {getFileType(
+                                            (msg?.mineType, "mine") ||
+                                              (mediaUrl, "url")
+                                          )} */}
                                         </div>
                                       </div>
                                     </div>
