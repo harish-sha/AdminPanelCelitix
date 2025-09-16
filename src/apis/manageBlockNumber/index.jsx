@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { deleteBlockNumber, getBlockNumberList } from "../admin/admin";
+import {
+  addBlockNumber,
+  deleteBlockNumber,
+  getBlockNumberList,
+} from "../admin/admin";
 import { PaginationTable } from "@/components/layout/PaginationTable";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import { IconButton, Switch } from "@mui/material";
@@ -23,9 +27,30 @@ const BlockNumber = () => {
     userSrNo: null,
   });
 
+  const [addDataDialog, setAddDataDialog] = useState(false);
+
   const [mobileNo, setMobileNo] = React.useState("");
   const [currentPage, setCurrentPage] = React.useState(1);
   const [rows, setRows] = React.useState([]);
+
+  const [services, setServices] = useState([
+    {
+      name: "obd",
+      status: false,
+    },
+    { name: "c2c", status: false },
+    { name: "rcs", status: false },
+    { name: "ibd", status: false },
+    { name: "misscall", status: false },
+    { name: "whatsapp", status: false },
+  ]);
+
+  const [addData, setAddData] = useState({
+    userSrNo: -1,
+    mobileNo: "",
+    type: "single",
+    remark: "",
+  });
 
   async function handleFetchBlockNumberList() {
     try {
@@ -36,7 +61,7 @@ const BlockNumber = () => {
       const filterBlocked = (data) => {
         const keysWithZero = Object.keys(data)
           .filter((key) => data[key] === 0)
-          .map((key) => key.toUpperCase());
+          ?.map((key) => key.toUpperCase());
         return keysWithZero;
       };
       const formattedRow = Array.isArray(res?.data?.content)
@@ -80,6 +105,50 @@ const BlockNumber = () => {
         blockSrNo: null,
         userSrNo: null,
       });
+      handleFetchBlockNumberList();
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
+  }
+
+  async function handleAddBlockNumber() {
+    try {
+      const service = {};
+      services?.forEach((item, index) => {
+        service[item.name] = Number(item.status);
+      });
+
+      if (!addData?.mobileNo) return toast.error("Please enter mobile number");
+      const payload = {
+        ...addData,
+        ...service,
+      };
+
+      const res = await addBlockNumber(payload);
+      console.log("res", res);
+      if (!res?.success) {
+        return toast.error("Something went wrong");
+      }
+
+      toast.success("Block number added successfully");
+      setAddData({
+        userSrNo: -1,
+        mobileNo: "",
+        type: "single",
+        remark: "",
+      });
+
+      setServices([
+        {
+          name: "obd",
+          status: false,
+        },
+        { name: "c2c", status: false },
+        { name: "rcs", status: false },
+        { name: "ibd", status: false },
+        { name: "misscall", status: false },
+        { name: "whatsapp", status: false },
+      ]);
       handleFetchBlockNumberList();
     } catch (e) {
       toast.error("Something went wrong");
@@ -295,7 +364,17 @@ const BlockNumber = () => {
 
   return (
     <div>
-      <h1 className="text-lg font-medium text-gray-800">Manage Block Number</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-medium text-gray-800">
+          Manage Block Number
+        </h1>
+        <UniversalButton
+          label="Add Block Number"
+          id="addblocknumber"
+          name="addblocknumber"
+          onClick={() => setAddDataDialog(true)}
+        />
+      </div>
 
       <div className="flex gap-2 w-full mt-2">
         <div className="w-[350px]">
@@ -378,6 +457,66 @@ const BlockNumber = () => {
               />
             </div>
           </div>
+        </div>
+      </Dialog>
+
+      <Dialog
+        header="Add Mobile Number To Blacklist"
+        visible={addDataDialog}
+        onHide={() => {
+          setAddDataDialog(false);
+        }}
+        className="lg:w-[40rem] md:w-[30rem] w-[20rem]"
+        draggable={false}
+      >
+        <div className="space-y-2">
+          <div className="grid grid-cols-2">
+            {services?.map((item, index) => (
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name={item.name}
+                  id={item.name}
+                  checked={item.status}
+                  onChange={(e) => {
+                    const allServices = [...services];
+                    allServices[index].status = e.target.checked;
+                    setServices(allServices);
+                  }}
+                />
+                <label htmlFor={item.name}>{item.name.toUpperCase()}</label>
+              </div>
+            ))}
+          </div>
+          <div className="space-y-2">
+            <InputField
+              id="addMobile"
+              name="addMobile"
+              label="Mobile Number"
+              value={addData.mobileNo}
+              placeholder="Enter Mobile Number"
+              onChange={(e) =>
+                setAddData({ ...addData, mobileNo: e.target.value })
+              }
+            />
+            <InputField
+              id="addRemarks"
+              name="addRemarks"
+              label="Remarks"
+              value={addData.remark}
+              placeholder="Enter Remarks"
+              onChange={(e) =>
+                setAddData({ ...addData, remark: e.target.value })
+              }
+            />
+          </div>
+
+          <UniversalButton
+            id="save"
+            name="save"
+            label="Save"
+            onClick={handleAddBlockNumber}
+          />
         </div>
       </Dialog>
     </div>
