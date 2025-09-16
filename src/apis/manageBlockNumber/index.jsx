@@ -33,17 +33,26 @@ const BlockNumber = () => {
 
       const res = await getBlockNumberList(payload);
 
+      const filterBlocked = (data) => {
+        const keysWithZero = Object.keys(data)
+          .filter((key) => data[key] === 0)
+          .map((key) => key.toUpperCase());
+        return keysWithZero;
+      };
       const formattedRow = Array.isArray(res?.data?.content)
         ? res?.data?.content?.map((item, index) => ({
             ...item,
             id: index + 1,
             sn: index + 1,
+            blocked:
+              filterBlocked(item).length === 0 ? "-" : filterBlocked(item),
           }))
         : [];
 
       setRows(formattedRow);
       setTotalPage(res?.data?.totalElements);
     } catch (e) {
+      console.log(e);
       toast.error("Something went wrong");
     }
   }
@@ -73,7 +82,6 @@ const BlockNumber = () => {
       });
       handleFetchBlockNumberList();
     } catch (e) {
-      console.log("e", e);
       toast.error("Something went wrong");
     }
   }
@@ -81,167 +89,168 @@ const BlockNumber = () => {
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
     { field: "mobileNo", headerName: "Mobile No", flex: 1, minWidth: 180 },
     { field: "type", headerName: "Type", flex: 1, minWidth: 80 },
-    {
-      field: "whatsapp",
-      headerName: "Whatsapp",
-      flex: 1,
-      minWidth: 80,
-      renderCell: (params) => (
-        <CustomTooltip arrow placement="top" title="On/Off">
-          <Switch
-            checked={params.row.whatsapp}
-            onChange={() => {}}
-            sx={{
-              "& .MuiSwitch-switchBase.Mui-checked": {
-                color: "#34C759",
-              },
-              "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                {
-                  backgroundColor: "#34C759",
-                },
-            }}
-          />
-        </CustomTooltip>
-      ),
-    },
-    {
-      field: "sms",
-      headerName: "SMS",
-      flex: 1,
-      minWidth: 80,
-      renderCell: (params) => (
-        <CustomTooltip arrow placement="top" title="On/Off">
-          <Switch
-            checked={params.row.sms}
-            onChange={() => {}}
-            sx={{
-              "& .MuiSwitch-switchBase.Mui-checked": {
-                color: "#34C759",
-              },
-              "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                {
-                  backgroundColor: "#34C759",
-                },
-            }}
-          />
-        </CustomTooltip>
-      ),
-    },
-    {
-      field: "rcs",
-      headerName: "RCS",
-      flex: 1,
-      minWidth: 80,
-      renderCell: (params) => (
-        <CustomTooltip arrow placement="top" title="On/Off">
-          <Switch
-            checked={params.row.rcs}
-            onChange={() => {}}
-            sx={{
-              "& .MuiSwitch-switchBase.Mui-checked": {
-                color: "#34C759",
-              },
-              "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                {
-                  backgroundColor: "#34C759",
-                },
-            }}
-          />
-        </CustomTooltip>
-      ),
-    },
-    {
-      field: "ibd",
-      headerName: "IBD",
-      flex: 1,
-      minWidth: 80,
-      renderCell: (params) => (
-        <CustomTooltip arrow placement="top" title="On/Off">
-          <Switch
-            checked={params.row.ibd}
-            onChange={() => {}}
-            sx={{
-              "& .MuiSwitch-switchBase.Mui-checked": {
-                color: "#34C759",
-              },
-              "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                {
-                  backgroundColor: "#34C759",
-                },
-            }}
-          />
-        </CustomTooltip>
-      ),
-    },
-    {
-      field: "obd",
-      headerName: "OBD",
-      flex: 1,
-      minWidth: 80,
-      renderCell: (params) => (
-        <CustomTooltip arrow placement="top" title="On/Off">
-          <Switch
-            checked={params.row.obd}
-            onChange={() => {}}
-            sx={{
-              "& .MuiSwitch-switchBase.Mui-checked": {
-                color: "#34C759",
-              },
-              "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                {
-                  backgroundColor: "#34C759",
-                },
-            }}
-          />
-        </CustomTooltip>
-      ),
-    },
-    {
-      field: "misscall",
-      headerName: "Miss Call",
-      flex: 1,
-      minWidth: 80,
-      renderCell: (params) => (
-        <CustomTooltip arrow placement="top" title="On/Off">
-          <Switch
-            checked={params.row.misscall}
-            onChange={() => {}}
-            sx={{
-              "& .MuiSwitch-switchBase.Mui-checked": {
-                color: "#34C759",
-              },
-              "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                {
-                  backgroundColor: "#34C759",
-                },
-            }}
-          />
-        </CustomTooltip>
-      ),
-    },
-    {
-      field: "c2c",
-      headerName: "C2C",
-      flex: 1,
-      minWidth: 80,
-      renderCell: (params) => (
-        <CustomTooltip arrow placement="top" title="On/Off">
-          <Switch
-            checked={params.row.c2c}
-            onChange={() => {}}
-            sx={{
-              "& .MuiSwitch-switchBase.Mui-checked": {
-                color: "#34C759",
-              },
-              "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                {
-                  backgroundColor: "#34C759",
-                },
-            }}
-          />
-        </CustomTooltip>
-      ),
-    },
+    { field: "blocked", headerName: "Blocked Service", flex: 1, minWidth: 100 },
+    // {
+    //   field: "whatsapp",
+    //   headerName: "Whatsapp",
+    //   flex: 1,
+    //   minWidth: 80,
+    //   renderCell: (params) => (
+    //     <CustomTooltip arrow placement="top" title="On/Off">
+    //       <Switch
+    //         checked={params.row.whatsapp}
+    //         onChange={() => {}}
+    //         sx={{
+    //           "& .MuiSwitch-switchBase.Mui-checked": {
+    //             color: "#34C759",
+    //           },
+    //           "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+    //             {
+    //               backgroundColor: "#34C759",
+    //             },
+    //         }}
+    //       />
+    //     </CustomTooltip>
+    //   ),
+    // },
+    // {
+    //   field: "sms",
+    //   headerName: "SMS",
+    //   flex: 1,
+    //   minWidth: 80,
+    //   renderCell: (params) => (
+    //     <CustomTooltip arrow placement="top" title="On/Off">
+    //       <Switch
+    //         checked={params.row.sms}
+    //         onChange={() => {}}
+    //         sx={{
+    //           "& .MuiSwitch-switchBase.Mui-checked": {
+    //             color: "#34C759",
+    //           },
+    //           "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+    //             {
+    //               backgroundColor: "#34C759",
+    //             },
+    //         }}
+    //       />
+    //     </CustomTooltip>
+    //   ),
+    // },
+    // {
+    //   field: "rcs",
+    //   headerName: "RCS",
+    //   flex: 1,
+    //   minWidth: 80,
+    //   renderCell: (params) => (
+    //     <CustomTooltip arrow placement="top" title="On/Off">
+    //       <Switch
+    //         checked={params.row.rcs}
+    //         onChange={() => {}}
+    //         sx={{
+    //           "& .MuiSwitch-switchBase.Mui-checked": {
+    //             color: "#34C759",
+    //           },
+    //           "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+    //             {
+    //               backgroundColor: "#34C759",
+    //             },
+    //         }}
+    //       />
+    //     </CustomTooltip>
+    //   ),
+    // },
+    // {
+    //   field: "ibd",
+    //   headerName: "IBD",
+    //   flex: 1,
+    //   minWidth: 80,
+    //   renderCell: (params) => (
+    //     <CustomTooltip arrow placement="top" title="On/Off">
+    //       <Switch
+    //         checked={params.row.ibd}
+    //         onChange={() => {}}
+    //         sx={{
+    //           "& .MuiSwitch-switchBase.Mui-checked": {
+    //             color: "#34C759",
+    //           },
+    //           "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+    //             {
+    //               backgroundColor: "#34C759",
+    //             },
+    //         }}
+    //       />
+    //     </CustomTooltip>
+    //   ),
+    // },
+    // {
+    //   field: "obd",
+    //   headerName: "OBD",
+    //   flex: 1,
+    //   minWidth: 80,
+    //   renderCell: (params) => (
+    //     <CustomTooltip arrow placement="top" title="On/Off">
+    //       <Switch
+    //         checked={params.row.obd}
+    //         onChange={() => {}}
+    //         sx={{
+    //           "& .MuiSwitch-switchBase.Mui-checked": {
+    //             color: "#34C759",
+    //           },
+    //           "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+    //             {
+    //               backgroundColor: "#34C759",
+    //             },
+    //         }}
+    //       />
+    //     </CustomTooltip>
+    //   ),
+    // },
+    // {
+    //   field: "misscall",
+    //   headerName: "Miss Call",
+    //   flex: 1,
+    //   minWidth: 80,
+    //   renderCell: (params) => (
+    //     <CustomTooltip arrow placement="top" title="On/Off">
+    //       <Switch
+    //         checked={params.row.misscall}
+    //         onChange={() => {}}
+    //         sx={{
+    //           "& .MuiSwitch-switchBase.Mui-checked": {
+    //             color: "#34C759",
+    //           },
+    //           "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+    //             {
+    //               backgroundColor: "#34C759",
+    //             },
+    //         }}
+    //       />
+    //     </CustomTooltip>
+    //   ),
+    // },
+    // {
+    //   field: "c2c",
+    //   headerName: "C2C",
+    //   flex: 1,
+    //   minWidth: 80,
+    //   renderCell: (params) => (
+    //     <CustomTooltip arrow placement="top" title="On/Off">
+    //       <Switch
+    //         checked={params.row.c2c}
+    //         onChange={() => {}}
+    //         sx={{
+    //           "& .MuiSwitch-switchBase.Mui-checked": {
+    //             color: "#34C759",
+    //           },
+    //           "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+    //             {
+    //               backgroundColor: "#34C759",
+    //             },
+    //         }}
+    //       />
+    //     </CustomTooltip>
+    //   ),
+    // },
 
     { field: "remark", headerName: "Remarks", flex: 1, minWidth: 80 },
 
