@@ -13,6 +13,7 @@ import { HiOutlineCheck } from "react-icons/hi";
 import { VscCheckAll } from "react-icons/vsc";
 import ArrowRightAltOutlinedIcon from "@mui/icons-material/ArrowRightAltOutlined";
 import AccessAlarmOutlinedIcon from "@mui/icons-material/AccessAlarmOutlined";
+import { Dialog } from "primereact/dialog";
 // import { rcschatbg } from "@/assets/images/rcsbg.avif";
 
 export const ChatScreen = ({
@@ -36,6 +37,13 @@ export const ChatScreen = ({
   const [replyingMessageId, setReplyingMessageId] = useState(null);
   const messageRef = useRef(null);
   const endOfMessagesRef = useRef(null);
+
+  const [previewDialog, setPreviewDialog] = useState({
+    open: false,
+    type: "", // "image" | "video" | "document"
+    url: "",
+    caption: "",
+  });
 
   function formatTime(time) {
     return moment(time).format("HH:mm");
@@ -397,6 +405,13 @@ export const ChatScreen = ({
                                       <button
                                         className="absolute top-20 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1 shadow"
                                         onClick={() => {
+                                          let fileType = "";
+                                          isSent
+                                            ? (fileType = getFileExtension(
+                                                msg?.mediaPath
+                                              ))
+                                            : msg?.mineType;
+
                                           event.stopPropagation();
                                           setPreviewDialog({
                                             open: true,
@@ -586,6 +601,44 @@ export const ChatScreen = ({
           </motion.button>
         </motion.div>
       )}
+
+      <Dialog
+        header=""
+        visible={previewDialog.open}
+        onHide={() => setPreviewDialog({ ...previewDialog, open: false })}
+        className="w-[50rem]"
+        draggable={false}
+      >
+        <div className="flex flex-col items-center justify-center bg-gray-400 rounded-md p-1">
+          {previewDialog.type === "image" && (
+            <img
+              src={previewDialog.url}
+              alt="Preview"
+              className="max-h-[80vh] max-w-full rounded-lg"
+            />
+          )}
+          {previewDialog.type === "video" && (
+            <video
+              src={previewDialog.url}
+              controls
+              className="h-100 max-w-full rounded-lg"
+            />
+          )}
+          {previewDialog.type === "document" && (
+            <iframe
+              src={
+                previewDialog.fileType === "xlsx"
+                  ? `https://view.officeapps.live.com/op/embed.aspx?src=${previewDialog.url}`
+                  : previewDialog.url
+              }
+              className="h-100 w-full border border-gray-200 rounded-md bg-center bg-no-repeat"
+            />
+          )}
+          {previewDialog.caption && (
+            <div className="text-white mt-2">{previewDialog.caption}</div>
+          )}
+        </div>
+      </Dialog>
     </div>
   );
 };
