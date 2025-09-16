@@ -441,9 +441,38 @@ export const updateSmppStatus = async (data) => {
   });
 };
 
-
 export const getDrAnalysisReport = async (id) => {
   return await fetchWithAuth(`/drAnalysis?serviceId=${id}`, {
     method: "GET",
   });
+};
+export const getBlockNumberList = async (data) => {
+  return await fetchWithAuth(
+    `/blockmobile/list?pageIndex=${data.pageIndex}&pageSize=${data.pageSize}&mobileNo=${data.mobileNo}`,
+    {
+      method: "GET",
+    }
+  );
+};
+export const addBlockNumber = async (data) => {
+  return await fetchWithAuth("/blockmobile/add-update", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+export const getBlockNumberById = async (data) => {
+  return await fetchWithAuth(
+    `/blockmobile/get?blockSrNo=${data.blockSrNo}&userSrNo=${data.userSrNo}`,
+    {
+      method: "GET",
+    }
+  );
+};
+export const deleteBlockNumber = async (data) => {
+  return await fetchWithAuth(
+    `/blockmobile/delete?blockSrNo=${data.blockSrNo}&userSrNo=${data.userSrNo}`,
+    {
+      method: "GET",
+    }
+  );
 };
