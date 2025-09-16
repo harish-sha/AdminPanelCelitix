@@ -50,6 +50,8 @@ const RcsLiveChat = () => {
     all: [],
     selected: "",
   });
+
+  const [agentSelectedTemplate, setAgentSelectedTemplate] = useState([]);
   const [templateDetails, setTemplateDetails] = useState({});
   const [templateSendData, setTemplateSendData] = useState({});
 
@@ -225,6 +227,17 @@ const RcsLiveChat = () => {
         all: res?.Data,
         selected: "",
       });
+    } catch (e) {
+      toast.error("Error fetching templates");
+    }
+  }
+
+  async function handleFetchTemplateswithAgentId(id) {
+    try {
+      if (!id) return;
+      const res = await fetchAllTemplates(id);
+      if (res?.total === agentSelectedTemplate?.length) return;
+      setAgentSelectedTemplate(res?.Data);
     } catch (e) {
       toast.error("Error fetching templates");
     }
@@ -623,6 +636,8 @@ const RcsLiveChat = () => {
               setIsTemplateMessage={setIsTemplateMessage}
               selectedMedia={selectedMedia}
               setSelectedMedia={setSelectedMedia}
+              handleFetchTemplateswithAgentId={handleFetchTemplateswithAgentId}
+              agentSelectedTemplate={agentSelectedTemplate}
               // specificConversation={specificConversation}
             />
           </motion.div>

@@ -14,6 +14,8 @@ import { VscCheckAll } from "react-icons/vsc";
 import ArrowRightAltOutlinedIcon from "@mui/icons-material/ArrowRightAltOutlined";
 import AccessAlarmOutlinedIcon from "@mui/icons-material/AccessAlarmOutlined";
 import { Dialog } from "primereact/dialog";
+import { fetchAllTemplates } from "@/apis/rcs/rcs";
+import ChatTemplatePreview from "./chatTemplatePreview";
 // import { rcschatbg } from "@/assets/images/rcsbg.avif";
 
 export const ChatScreen = ({
@@ -33,6 +35,9 @@ export const ChatScreen = ({
   setChatState,
   selectedMedia,
   setSelectedMedia,
+
+  agentSelectedTemplate,
+  handleFetchTemplateswithAgentId,
 }) => {
   const [replyingMessageId, setReplyingMessageId] = useState(null);
   const messageRef = useRef(null);
@@ -229,12 +234,14 @@ export const ChatScreen = ({
                       mediaType(msg?.mineType) === "Document") ||
                     msg.replyType === "document";
 
-                  const templateType = msg?.templateType;
-                  const isBot = msg?.replyType === "interactive";
+                  // const templateType = msg?.templateType;
+                  // const isBot = msg?.replyType === "interactive";
                   const isText = ["text", "button"].includes(msg.replyType);
                   const isReply = msg?.isReply;
                   const commonMediaClass = "object-contain mb-2 select-none";
                   const mediaUrl = msg?.mediaPath;
+
+                  const isTemplate = msg?.replyType === "template";
 
                   return (
                     <motion.div
@@ -264,6 +271,16 @@ export const ChatScreen = ({
                         <div className="text-sm border-b-2 border-black">
                           {msg?.replyMessage}
                         </div>
+                      )}
+
+                      {isTemplate && (
+                        <ChatTemplatePreview
+                          msg={msg}
+                          handleFetchTemplateswithAgentId={
+                            handleFetchTemplateswithAgentId
+                          }
+                          agentSelectedTemplate={agentSelectedTemplate}
+                        />
                       )}
 
                       {(isImage || isVideo || isDocument) && (
@@ -527,10 +544,10 @@ export const ChatScreen = ({
                         </div>
                       )}
 
-                      {templateType && (
+                      {/* {templateType && (
                         <TemplateMessagePreview template={msg} />
-                      )}
-                      {isBot && <BotPreview template={msg} />}
+                      )} */}
+                      {/* {isBot && <BotPreview template={msg} />} */}
 
                       <div
                         className={`mt-1 text-[0.7rem] ${
