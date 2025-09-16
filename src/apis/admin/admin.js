@@ -448,7 +448,7 @@ export const getDrAnalysisReport = async (id) => {
 };
 export const getBlockNumberList = async (data) => {
   return await fetchWithAuth(
-    `/blockmobile/list?pageIndex=${data.pageIndex}&pageSize=${data.pageSize}&mobileNo=${data.mobileNo}`,
+    `/blockmobile/list?pageIndex=${data.pageIndex}&pageSize=10&mobileNo=${data.mobileNo}`,
     {
       method: "GET",
     }

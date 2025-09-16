@@ -144,6 +144,7 @@ import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
 import { AddNotification } from "@/admin/manageNotifications.jsx/pages/addNotification";
 import DrAnalysis from "@/drAnalysis";
+import BlockNumber from "@/apis/manageBlockNumber";
 
 const Approutes = () => {
   return (
@@ -309,6 +310,7 @@ const Approutes = () => {
         <Route path="/workflow" element={<WorkflowDetails />} />
         <Route path="/workflow/create" element={<WorkflowCreate />} />
         <Route path="drAnalysis" element={<DrAnalysis />} />
+        <Route path="blockNumber" element={<BlockNumber />} />
       </Route>
 
       <Route path="dummy" element={<Dummy />} />
