@@ -131,6 +131,7 @@ const BlockNumber = () => {
       }
 
       toast.success("Block number added successfully");
+      setAddDataDialog(false);
       setAddData({
         userSrNo: -1,
         mobileNo: "",
@@ -496,7 +497,10 @@ const BlockNumber = () => {
               value={addData.mobileNo}
               placeholder="Enter Mobile Number"
               onChange={(e) =>
-                setAddData({ ...addData, mobileNo: e.target.value })
+                setAddData((prev) => ({
+                  ...prev,
+                  mobileNo: e.target.value,
+                }))
               }
             />
             <InputField
@@ -506,7 +510,10 @@ const BlockNumber = () => {
               value={addData.remark}
               placeholder="Enter Remarks"
               onChange={(e) =>
-                setAddData({ ...addData, remark: e.target.value })
+                setAddData((prev) => ({
+                  ...prev,
+                  remark: e.target.value,
+                }))
               }
             />
           </div>
