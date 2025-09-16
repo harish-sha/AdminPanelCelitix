@@ -295,7 +295,7 @@ export const getSMPPDetailsById = async (id) => {
 
 export const deleteSMPP = async (id) => {
   return await fetchWithAuth(`/smpp/deleteSmpp?serviceId=${id}`, {
-    method: "POST",
+    method: "DELETE",
   });
 };
 

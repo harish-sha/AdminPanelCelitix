@@ -348,18 +348,19 @@ const ManageSMPPTable = ({ id, name, data, handleFetchSmppDetails }) => {
     }
   };
   const handleDelete = async () => {
-    if (!deleteData?.id)
-      try {
-        const res = await deleteSMPP(deleteData?.id);
-        console.log("res", res);
-        // await handleFetchSmppDetails();
-        // setEditDetails(res[0]);
-        // setVersionEditStatus(res[0]?.Version);
-        // setTpEditStatus(res[0]?.tps ? "enable" : "disable");
-        // setAddServiceedit(true);
-      } catch (e) {
-        toast.error("Error in fetching smpp details");
+    if (!deleteData?.id) return;
+    try {
+      const res = await deleteSMPP(deleteData?.id);
+      console.log("res", res);
+      if (!res?.success) {
+        return toast.error("Something went wrong");
       }
+      setDeleteData((prev) => ({ isOpen: false, id: "" }));
+      await handleFetchSmppDetails();
+    
+    } catch (e) {
+      toast.error("Error in fetching smpp details");
+    }
   };
 
   const handleUpdateSmpp = async () => {
