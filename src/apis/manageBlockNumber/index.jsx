@@ -1,11 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { getBlockNumberList } from "../admin/admin";
+import { deleteBlockNumber, getBlockNumberList } from "../admin/admin";
 import { PaginationTable } from "@/components/layout/PaginationTable";
 import CustomTooltip from "@/components/common/CustomTooltip";
-import { Switch } from "@mui/material";
+import { IconButton, Switch } from "@mui/material";
 import UniversalButton from "@/components/common/UniversalButton";
 import InputField from "@/whatsapp/components/InputField";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import { MdOutlineDeleteForever } from "react-icons/md";
+import { Dialog } from "primereact/dialog";
 
 const BlockNumber = () => {
   const [paginationModel, setPaginationModel] = React.useState({
@@ -13,6 +16,12 @@ const BlockNumber = () => {
     pageSize: 10,
   });
   const [totalPage, setTotalPage] = React.useState(0);
+
+  const [deleteData, setDeleteData] = useState({
+    isOpen: false,
+    blockSrNo: null,
+    userSrNo: null,
+  });
 
   const [mobileNo, setMobileNo] = React.useState("");
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -39,6 +48,35 @@ const BlockNumber = () => {
     }
   }
 
+  function handleDelete(row) {
+    if (!row?.blockSrNo || !row?.userSrNo)
+      return toast.error("Something went wrong");
+    setDeleteData({
+      isOpen: true,
+      blockSrNo: row.blockSrNo,
+      userSrNo: row.userSrNo,
+    });
+  }
+
+  async function handleBlockNumberDelete() {
+    try {
+      const res = await deleteBlockNumber(deleteData);
+
+      if (!res?.success) {
+        return toast.error("Something went wrong");
+      }
+      toast.success("Block number deleted successfully");
+      setDeleteData({
+        isOpen: false,
+        blockSrNo: null,
+        userSrNo: null,
+      });
+      handleFetchBlockNumberList();
+    } catch (e) {
+      console.log("e", e);
+      toast.error("Something went wrong");
+    }
+  }
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
     { field: "mobileNo", headerName: "Mobile No", flex: 1, minWidth: 180 },
@@ -206,6 +244,40 @@ const BlockNumber = () => {
     },
 
     { field: "remark", headerName: "Remarks", flex: 1, minWidth: 80 },
+
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params) => (
+        <>
+          <CustomTooltip title="Edit Account" placement="top" arrow>
+            <IconButton onClick={() => {}}>
+              <EditNoteIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "gray",
+                }}
+              />
+            </IconButton>
+          </CustomTooltip>
+          <CustomTooltip title="Delete Account" placement="top" arrow>
+            <IconButton
+              className="no-xs"
+              onClick={() => {
+                handleDelete(params.row);
+              }}
+            >
+              <MdOutlineDeleteForever
+                className="text-red-500 cursor-pointer hover:text-red-600"
+                size={20}
+              />
+            </IconButton>
+          </CustomTooltip>
+        </>
+      ),
+    },
   ];
 
   useEffect(() => {
@@ -249,6 +321,56 @@ const BlockNumber = () => {
           setPaginationModel={setPaginationModel}
         />
       </div>
+
+      <Dialog
+        header="Confirm Delete"
+        visible={deleteData.isOpen}
+        onHide={() => {
+          setDeleteData((prev) => ({
+            isOpen: false,
+            blockSrNo: any,
+            userSrNo: any,
+          }));
+        }}
+        className="lg:w-[40rem] md:w-[30rem] w-[20rem]"
+        draggable={false}
+      >
+        <div>
+          <div className="p-4 text-center">
+            <p className="text-[1.1rem] font-semibold text-gray-600">
+              Are you sure ?
+            </p>
+            <p>
+              Do you really want to delete this? This process cannot be undo.
+            </p>
+            <div className="flex justify-center gap-4 mt-2">
+              <UniversalButton
+                label="Cancel"
+                style={{
+                  backgroundColor: "#090909",
+                }}
+                onClick={() => {
+                  setDeleteData((prev) => ({
+                    isOpen: false,
+                    blockSrNo: any,
+                    userSrNo: any,
+                  }));
+                }}
+              />
+              <UniversalButton
+                label="Delete"
+                variant="danger"
+                style={
+                  {
+                    // backgroundColor: "red",
+                  }
+                }
+                onClick={handleBlockNumberDelete}
+              />
+            </div>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };

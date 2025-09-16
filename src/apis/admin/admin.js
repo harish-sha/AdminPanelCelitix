@@ -472,7 +472,7 @@ export const deleteBlockNumber = async (data) => {
   return await fetchWithAuth(
     `/blockmobile/delete?blockSrNo=${data.blockSrNo}&userSrNo=${data.userSrNo}`,
     {
-      method: "GET",
+      method: "DELETE",
     }
   );
 };
