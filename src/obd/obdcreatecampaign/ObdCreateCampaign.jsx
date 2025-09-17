@@ -136,10 +136,10 @@ const ObdCreateCampaign = () => {
     // // if (isHeaderAvailable) {
     // //   setAllHeaders(fileHeaders);
     // // } else {
-    // //   setAllHeaders(["firstName", "lastName", "mobile"]);
+    // //   setAllHeaders(setAllHeaders(["first_name", "last_name"]);", "lastName", "mobile"]);
     // // }
     if (selectedOption === "option1") {
-      setAllHeaders(["firstName", "lastName", "mobile"]);
+      setAllHeaders(["first_name", "last_name"]);
     } else {
       setAllHeaders(fileHeaders);
     }

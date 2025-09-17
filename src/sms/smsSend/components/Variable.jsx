@@ -3,7 +3,12 @@ import InputVariable from "@/whatsapp/whatsappLaunchCampaign/components/InputVar
 import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 
-export const Variable = ({ setInputDetails, inputDetails, headers, inputRef }) => {
+export const Variable = ({
+  setInputDetails,
+  inputDetails,
+  headers,
+  inputRef,
+}) => {
   const [allHeaders, setAllHeaders] = useState([]);
 
   useEffect(() => {
@@ -12,7 +17,7 @@ export const Variable = ({ setInputDetails, inputDetails, headers, inputRef }) =
     if (isHeaderAvailable) {
       setAllHeaders(headers);
     } else {
-      setAllHeaders(["firstName", "lastName", "mobile"]);
+      setAllHeaders(["first_name", "last_name"]);
     }
   }, [headers]);
 
