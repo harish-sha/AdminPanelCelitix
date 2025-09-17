@@ -456,19 +456,25 @@ const RcsLiveChat = () => {
     handleFetchAgents();
   }, []);
 
-  useEffect(() => {
-    handleFetchAllConvo();
-  }, [btnOption, agentState]);
+  // useEffect(() => {
+  //   handleFetchAllConvo();
+  // }, [btnOption, agentState]);
 
   useEffect(() => {
     handleFetchSpecificConvo();
+    let interval = null;
+    interval = setInterval(() => {
+      handleFetchSpecificConvo();
+    }, 6000);
+    return () => clearInterval(interval);
   }, [chatState?.active]);
 
   useEffect(() => {
-    let interval = null;
     handleFetchAllConvo();
-    // interval = setInterval(() => {
-    // }, 5000);
+    let interval = null;
+    interval = setInterval(() => {
+      handleFetchAllConvo();
+    }, 5000);
     return () => clearInterval(interval);
   }, [btnOption, agentState]);
 

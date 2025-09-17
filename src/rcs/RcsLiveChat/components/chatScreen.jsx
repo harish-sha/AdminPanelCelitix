@@ -16,6 +16,7 @@ import AccessAlarmOutlinedIcon from "@mui/icons-material/AccessAlarmOutlined";
 import { Dialog } from "primereact/dialog";
 import { fetchAllTemplates } from "@/apis/rcs/rcs";
 import ChatTemplatePreview from "./chatTemplatePreview";
+import toast from "react-hot-toast";
 // import { rcschatbg } from "@/assets/images/rcsbg.avif";
 
 export const ChatScreen = ({
@@ -164,6 +165,23 @@ export const ChatScreen = ({
         duration: 0.3,
       },
     },
+  };
+
+  const handleDownload = async (url, filename) => {
+    try {
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename || "file");
+      link.setAttribute("target", "_blank");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      toast.success("Download started!");
+    } catch (error) {
+      console.error("Download error:", error);
+      toast.error("Failed to download the file.");
+    }
   };
 
   return (
