@@ -80,7 +80,6 @@ export const VariableManager = ({
 
   const handleAddVariable = (e, index) => {
     const inputData = inputVariables[index] || "";
-    console.log("inputData", inputData);
     setInputVariables((prev) => ({
       ...prev,
       [index]: inputData + `{#${e}#}`,

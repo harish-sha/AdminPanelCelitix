@@ -275,6 +275,5 @@ export const convertPayload = (flowJson) => {
       return json;
     }) || [];
 
-  console.log("preData", flowJson);
   return preData;
 };

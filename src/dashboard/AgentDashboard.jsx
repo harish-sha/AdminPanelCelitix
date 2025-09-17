@@ -22,11 +22,9 @@ export default function Dashboard() {
     wabaSrno: "",
   });
 
-  console.log("userData", userData);
 
   async function fetchWaba() {
     const res = await getWabaList();
-    // console.log(res);
     setWabaState((prev) => ({
       ...prev,
       waba: res,
@@ -50,9 +48,7 @@ export default function Dashboard() {
           agentSrno: "",
         };
 
-        console.log("data", data);
         const res = await fetchAllConversations(data);
-        console.log("res", res);
 
         setActiveConvo(res.conversationEntityList);
         setActiveUnreadMsg(res.unreadCounts);

@@ -33,7 +33,7 @@ export const InputData = ({
 
   return (
     <motion.div
-      className="p-3 bg-white rounded-2xl shadow-md"
+      className="py-3 bg-white rounded-b-2xl rounded-tl-2xl shadow-md"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
@@ -86,10 +86,10 @@ export const InputData = ({
               value={contextAgentList?.id}
             />
           </div> */}
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-3 px-2">
             <div
               id="input"
-              className="flex items-center justify-center w-full px-3 py-1 border-gray-300 rounded-full border ml-4"
+              className="flex items-center justify-center w-full px-3 py-1 border-gray-300 rounded-full border text-sm focus-within:ring-1 focus-within:ring-blue-500"
             >
               <input
                 type="text"
@@ -112,8 +112,8 @@ export const InputData = ({
               </button>
             </div>
             <div className="flex items-center gap-2 mt-1">
-              <FaFilter />
-              <CiMenuKebab />
+              <FaFilter className="text-blue-800" />
+              {/* <CiMenuKebab /> */}
             </div>
           </div>
         </div>
@@ -124,12 +124,12 @@ export const InputData = ({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="relative flex justify-center p-1 mt-3 bg-gray-100 rounded-full w-full max-w-xs mx-auto"
+          className="relative flex justify-center p-1 mt-3 bg-blue-50 shadow-lg rounded-full w-full max-w-xs mx-auto border border-blue-400"
         >
           <motion.div
             layout
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="absolute top-1 left-1 w-1/2 h-9 bg-gradient-to-br from-[#22577E]  to-[#22577E] rounded-full z-0"
+            className="absolute top-1 left-1 w-1/2 h-9 bg-gradient-to-br from-[#bedff7] border border-blue-400  to-[#bedef5]  rounded-full z-0"
             style={{
               left: btnOption === "active" ? "4px" : "calc(50% - 4px)",
             }}
@@ -149,11 +149,12 @@ export const InputData = ({
                     srno: "",
                     replayTime: "",
                   },
-                }));
+                })
+                );
               }}
               className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "active"
-                ? "text-white font-semibold"
-                : "text-gray-700"
+                ? "text-blue-900 font-semibold"
+                : "text-gray-500"
                 }`}
             >
               Active
@@ -174,8 +175,8 @@ export const InputData = ({
                 }));
               }}
               className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "close"
-                ? "text-white font-semibold"
-                : "text-gray-700"
+                ? "text-gray-900 font-semibold"
+                : "text-gray-500"
                 }`}
             >
               Close

@@ -1,5 +1,4 @@
 // export const generatePayload = (data) => {
-//   console.log("data", data)
 //   const screens = {
 //     // dropdowns: {},
 //     checkboxGroups: {},
@@ -46,12 +45,10 @@
 //     dropDown: 0
 //   };
 
-//   console.log("data", data)
 //   data.forEach((item, index) => {
 
 //     payload.screens.layout.children.push(component);
 //     // payload.screenJson.flowJson = flowJson;
-//     console.log("item", item)
 //     item?.payload.forEach((pay, i) => {
 //       const type = pay.type;
 //       typeCounters[type] = (typeCounters[type] || 0) + 1;
@@ -75,8 +72,6 @@
 //         };
 //       }
 
-//       console.log("baseData", baseData)
-//       console.log("item", item)
 //       switch (pay.type) {
 //         case "heading":
 //           const headingItem = item.payload.find((p) => p.type === 'heading');
@@ -230,11 +225,9 @@
 //       }
 //     });
 
-//     // console.log("itemmmmmmmmmmmmmmmmmmmmmmmmmmmm", item);
 
 //     const footerItem = item.payload.find((p) => p.type === "footerbutton");
 
-//     console.log("footerItem", footerItem)
 
 //     const id = `footers_${index + 1}`;
 
@@ -260,14 +253,12 @@
 
 //   });
 
-//   // console.log(payload);
 //   return payload;
 // };
 
 // new generatepayload start here
 import { convertNodeToMarkdown } from "../components/Editor";
 export const generatePayload = (data) => {
-  console.log("data", data);
   const payload = {
     version: "7.0",
     screens: [],
@@ -333,14 +324,11 @@ export const generatePayload = (data) => {
       type: "SingleColumnLayout",
       children: [],
     };
-    console.log(screenData?.payload);
 
     screenData?.payload?.forEach((pay) => {
-      console.log("pay", pay);
       // const type = pay.type;
       // typeCounters[type] = (typeCounters[type] || 0) + 1;
       // const name = `${String(type)}_${String(typeCounters[type])}`;
-      // console.log(typeof name)
 
       const type = pay.type;
       typeCounters[type] = (typeCounters[type] || 0) + 1;
@@ -535,8 +523,6 @@ export const generatePayload = (data) => {
             10
           ),
         };
-        console.log(pay.label, "label");
-        console.log("Document component:", component);
       }
 
       if (type === "media") {
@@ -669,7 +655,6 @@ export const generatePayload = (data) => {
       }
 
       if (pay.type === "If") {
-        console.log("pay", pay);
 
         component = {
           type: "If",

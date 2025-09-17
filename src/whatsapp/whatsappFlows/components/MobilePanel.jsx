@@ -109,7 +109,6 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
-      // console.log("File uploaded:", selectedFile.name);
     } else {
       alert("Please select a file to upload.");
     }
@@ -119,7 +118,6 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
     const selectedPhoto = e.target.files[0];
     if (selectedPhoto) {
       setUploadPhoto(selectedPhoto);
-      // console.log("Photo uploaded:", selectedPhoto.name);
     } else {
       alert("Please choose a photo.");
     }
@@ -138,7 +136,6 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
       <h2 className="text-xl font-semibold text-center">{screenTitle}</h2>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px", p: 2 }}>
         {items.map((item, index) => {
-          // console.log("item", item);
           switch (item.type) {
             // Render Heading
             case "heading":

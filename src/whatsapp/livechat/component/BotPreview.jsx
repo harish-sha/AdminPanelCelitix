@@ -57,10 +57,26 @@ const BotPreview = ({ template }) => {
         }
     }
 
+    // Text - message body formatter
+    function formatMessageBody(text) {
+        if (!text) return "";
+
+        // Bold -> *text*
+        let formatted = text.replace(/\*(.*?)\*/g, "<strong>$1</strong>");
+
+        // Italic -> _text_
+        formatted = formatted.replace(/_(.*?)_/g, "<em>$1</em>");
+
+        // Strikethrough -> ~text~
+        formatted = formatted.replace(/~(.*?)~/g, "<del>$1</del>");
+
+        return formatted;
+    }
+
     function renderCTABtn() {
         return (
             <>
-                <div className="p-1.5 bg-[#22577E] rounded-lg relative w-fit">
+                <div className="p-1.5 bg-[#ece5dd] rounded-lg relative w-fit">
                     <div className="bg-white rounded-xl shadow-md w-[300px] overflow-hidden">
                         <div>
                             {botJson?.interactive?.header?.type === "image" && (
@@ -145,15 +161,21 @@ const BotPreview = ({ template }) => {
     function renderList() {
         return (
             <>
-                <div className=" bg-[#22577E] p-1.5 rounded-md w-fit relative">
+                <div className=" bg-[#ece5dd] p-1.5 rounded-md w-fit relative">
                     <div className="bg-white rounded-xl shadow-md p-4 w-[300px]">
                         {/* Header text */}
                         <p className="text-sm text-black font-semibold mb-1">
                             {botJson?.interactive?.header?.text}
                         </p>
                         {/* Body text */}
-                        <p className="text-sm break-words whitespace-pre-wrap text-wrap text-black mb-3 mt-4">
-                            {botJson?.interactive?.body?.text}
+                        <p className="text-sm break-words whitespace-pre-wrap text-wrap text-black mb-3 mt-4"
+
+                            dangerouslySetInnerHTML={{
+                                __html: formatMessageBody(botJson?.interactive?.body?.text),
+                            }}
+
+                        >
+                            {/* {botJson?.interactive?.body?.text} */}
                         </p>
                         {/* Footer */}
                         <div className="flex justify-between text-xs text-gray-600 relative">
@@ -186,7 +208,7 @@ const BotPreview = ({ template }) => {
                             transition={{ duration: 0.3 }}
                             onClick={() => setShowDrawer(false)}
                         >
-                            <div className=" bg-[#22577E] p-1.5 rounded-md w-full ">
+                            <div className=" bg-[#ece5dd] p-1.5 rounded-md w-full ">
                                 <div className="bg-white rounded-xl shadow-md p-4 ">
                                     <div className="flex flex-col justify-center items-center mb-3">
                                         <p className="text-sm text-black font-semibold mb-1">
@@ -305,7 +327,7 @@ const BotPreview = ({ template }) => {
     function renderText() {
         return (
             <div className="text-sm max-w-[250px]">
-                <p className="w-full whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm  bg-[#5584AC] text-white rounded-bl-none">
+                <p className="w-full whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm  bg-[#128c7e] text-white rounded-bl-none">
                     {template?.messageBody}
                 </p>
             </div>
@@ -349,7 +371,7 @@ const BotPreview = ({ template }) => {
     function renderBtn() {
         return (
             <>
-                <div className=" bg-[#22577E] p-1.5 rounded-md w-fit">
+                <div className=" bg-[#ece5dd] p-1.5 rounded-md w-fit">
                     <div className="bg-white rounded-xl shadow-md p-4 w-[300px] ">
                         {/* <div className="relative">
             {node?.type === "image" && (
@@ -394,8 +416,12 @@ const BotPreview = ({ template }) => {
                         </div>
 
                         <div className="">
-                            <p className="text-sm text-wrap break-words text-black">
-                                {botJson?.interactive?.body?.text}
+                            <p className="text-sm text-wrap break-words text-black"
+                                dangerouslySetInnerHTML={{
+                                    __html: formatMessageBody(botJson?.interactive?.body?.text),
+                                }}
+                            >
+                                {/* {botJson?.interactive?.body?.text} */}
                             </p>
                         </div>
 
@@ -405,13 +431,13 @@ const BotPreview = ({ template }) => {
                             </p>
                         </div>
                         {/* <div class=" text-right text-xs text-gray-500 mt-1">2:25PM </div> */}
-                        <div className="border-t border-gray-200 mt-1 w-full " />
+                        <div className="border-t border-gray-200 mt-1 w-full pt-2" />
                         <div className="flex flex-col justify-center items-center gap-4">
                             {botJson?.interactive?.action?.buttons?.map((button, index) => (
-                                <div key={index}>
-                                    <div className="">
-                                        <ReplyOutlinedIcon className="text-green-600" />{" "}
-                                        <span className="text-green-600 text-sm">
+                                <div key={index} className="w-full" >
+                                    <div className="w-full flex items-center justify-center gap-2 py-1 rounded-xl cursor-pointer hover:bg-gray-100 border-b-2 border-[#128c7e] shadow-sm px-2">
+                                        <ReplyOutlinedIcon className="text-green-600" />
+                                        <span className="text-green-600 text-xs">
                                             {button?.reply.title}
                                         </span>
                                     </div>

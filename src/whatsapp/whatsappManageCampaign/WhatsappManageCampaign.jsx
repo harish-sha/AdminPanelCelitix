@@ -473,13 +473,11 @@ const WhatsappManageCampaign = () => {
   //   }
 
   //   try {
-  //     // console.log("Canceling campaign with SRNO:", srno);
   //     const result = await cancelCampaign({
   //       srno: srno,
   //       selectedUserId: selectedUser || "0",
   //     });
   //     if (result) {
-  //       // console.log("Campaign cancelled successfully:", result);
   //       toast.success("Campaign Cancelled successfully");
 
   //       // Refresh the table by fetching the data again

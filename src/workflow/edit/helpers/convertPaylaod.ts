@@ -7,7 +7,6 @@ export const convertPaylaod = (data: string) => {
         return { nodes: [], edges: [], nodedata: {} };
     }
 
-    // console.log("data", parsedData);
 
     //     [
     //     {
@@ -115,7 +114,6 @@ export const convertPaylaod = (data: string) => {
                 });
             }
 
-            // console.log("condition", condition);
 
             const data = {
                 options: [{
@@ -127,7 +125,6 @@ export const convertPaylaod = (data: string) => {
                 }],
             };
 
-            // console.log("data", data)
 
             nodedata[index + 1] = {
                 ...nodedata[index + 1],

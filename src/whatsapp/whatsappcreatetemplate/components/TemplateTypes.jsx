@@ -181,7 +181,6 @@ const TemplateTypes = ({
   const handleFileUpload = async () => {
     try {
       const res = await uploadImageFile(file, 1);
-      // console.log(res?.handlerid);
       setFileUploadUrl(res?.handlerid);
     } catch (e) {
       // console.log(e);

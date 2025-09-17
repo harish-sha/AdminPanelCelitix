@@ -43,7 +43,6 @@ export const EditFlow = () => {
 
   const [flowJson, setFlowJson] = useState([]);
 
-  // console.log("canvasItems", canvasItems)
   //create new screen
   const [tabs, setTabs] = useState([
     { title: "Welcome", content: "Welcome", id: "WELCOME", payload: [] },
@@ -86,7 +85,6 @@ export const EditFlow = () => {
     altText: "",
   });
 
-  // console.log("labelValue", labelValue)
 
   const [randomNumber, setRandomNumber] = useState(
     Math.floor(Math.random() * 1000)
@@ -94,7 +92,6 @@ export const EditFlow = () => {
 
   // const handleAddItem = (item) => {
   //   const newTabs = [...tabs];
-  //   console.log("newTabs", newTabs);
 
   //   const nonDuplicateTabs = [
   //     "heading",
@@ -271,12 +268,9 @@ export const EditFlow = () => {
   };
 
   // useEffect(() => {
-  //   console.log("1454", tabs);
   // }, [tabs]);
 
   // const handleEdit = (index, item) => {
-  //   console.log("indexxxxxxxxxxxx", index)
-  //   console.log("itemmmmmmmmmmmmm", item)
   //   tabs[activeIndex].payload[index];
   //   setSelectedItem({ ...tabs[activeIndex].payload[index], index });
   // };
@@ -303,7 +297,6 @@ export const EditFlow = () => {
       const radioKeys = Object.keys(item.radioButton || {}).filter((key) =>
         key.startsWith("radioButton_")
       );
-      console.log("radioKeys", radioKeys);
       const key = radioKeys[0];
       const radioOptions =
         item?.radioButton?.radioButton_1?.["data-source"] || [];
@@ -353,14 +346,12 @@ export const EditFlow = () => {
           selectedOption: updatedData.selectedOption || "",
           ...updatedData,
         };
-        console.log("all tabs content when save within tabs", newTabs);
       } else {
         console.error("Invalid index in updatedData:", updatedData.index);
       }
       return newTabs;
     });
     setSelectedItem(null);
-    console.log("uploadedData", updatedData.footer.footer_1.label)
     if (
       updatedData.text ||
       updatedData.label ||
@@ -418,7 +409,6 @@ export const EditFlow = () => {
   };
 
   useEffect(() => {
-    console.log("tabs", tabs);
   }, [tabs]);
 
   const hasActiveFlows = Object.values(flowItems || {}).some(
@@ -458,10 +448,8 @@ export const EditFlow = () => {
       };
 
       setIsLoading(true);
-      console.log("Calling saveFlow with:", params, payload);
 
       const res = await saveFlow(params, payload);
-      console.log("Response from saveFlow final payload:", res);
 
       if (!res || (typeof res === "object" && Object.keys(res).length === 0)) {
         toast.error("Flow creation failed. Please try again.");
@@ -585,7 +573,6 @@ export const EditFlow = () => {
   }, [flowJson, processFlowJson]);
 
   useEffect(() => {
-    console.log("tabs", tabs);
   }, [tabs]);
   // ========================================Localsave and export end=====================
 

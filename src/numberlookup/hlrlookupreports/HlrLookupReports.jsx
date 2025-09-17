@@ -44,7 +44,6 @@ const HlrLookupReports = () => {
         try {
           setIsFetching(true);
           const res = await fetchUserSrno(data);
-          console.log("res", res);
           setAllUsers(res);
         } catch (e) {
           console.log("e", e);

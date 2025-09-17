@@ -293,8 +293,6 @@ const IfElseBlock = ({
   const [showNestedThen, setShowNestedThen] = useState(false);
   const [showNestedElse, setShowNestedElse] = useState(false);
 
-  console.log("selectedThenComponent", selectedThenComponent);
-  console.log("selectedElseComponent", selectedElseComponent);
 
   // Update the tree whenever selections change
   useEffect(() => {

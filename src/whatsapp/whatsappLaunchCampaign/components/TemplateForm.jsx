@@ -113,7 +113,7 @@ const TemplateForm = ({
 
   let variables = [];
   if (selectedOption === "option1") {
-    variables = ["firstname", "lastname", "mobileno"];
+    variables = ["first_name", "last_name"];
   } else if (selectedOption === "option2" && fileHeaders?.length > 0) {
     variables = fileHeaders;
   }
@@ -597,7 +597,6 @@ const TemplateForm = ({
               }}
             >
               {CardsData.map((card, index) => {
-                // console.log(card);
                 const handler = card.find(
                   (item) =>
                     item.type === "HEADER" &&
@@ -721,7 +720,7 @@ const TemplateForm = ({
           <InputField
             id="name"
             name="name"
-            label={"name"}
+            label={"Name"}
             onChange={(e) => {
               setLocationData((prev) => ({
                 ...prev,
@@ -735,7 +734,7 @@ const TemplateForm = ({
           <InputField
             id="address"
             name="address"
-            label={"address"}
+            label={"Address"}
             onChange={(e) => {
               setLocationData((prev) => ({
                 ...prev,

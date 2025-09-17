@@ -14,7 +14,6 @@ export const GoTo = ({
 }) => {
   const result = nodes.filter((node) => Number(node.id) < Number(id));
 
-  console.log(result);
   return (
     <div>
       <DropdownWithSearch

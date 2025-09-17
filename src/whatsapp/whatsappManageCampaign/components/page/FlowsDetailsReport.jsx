@@ -80,7 +80,6 @@ const CustomPagination = ({
 const FlowsDetailsReport = ({ id, name }) => {
   const location = useLocation();
   const { data } = location.state || { data: [] };
-  console.log("data", data);
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
@@ -88,7 +87,6 @@ const FlowsDetailsReport = ({ id, name }) => {
     pageSize: 10,
   });
 
-  // 🟢 Generate dynamic columns
   const columns = useMemo(() => {
     if (!data || data.length === 0) return [];
 

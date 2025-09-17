@@ -96,7 +96,6 @@ const WhatsappLaunchCampaign = () => {
   });
 
   useEffect(() => {
-    console.log(workflowState);
   }, [workflowState]);
 
   const [templateType, setTemplateType] = useState("");
@@ -259,7 +258,6 @@ const WhatsappLaunchCampaign = () => {
       (comp) => comp.type === "CAROUSEL"
     );
 
-    // console.log("isCarousal", isCarousal);
     const imgCards = [];
 
     let isError = false;
@@ -280,7 +278,6 @@ const WhatsappLaunchCampaign = () => {
       ?.map((variable) => {
         const key = `body${variable}`;
         const value = (formData[key] || "").trim();
-        console.log("value", value);
 
         if (!value) {
           isError = true;
@@ -340,7 +337,6 @@ const WhatsappLaunchCampaign = () => {
       (comp) => comp.type === "CAROUSEL"
     );
 
-    // console.log("isCarousal", isCarousal);
     const imgCards = [];
 
     let isError = false;
@@ -501,7 +497,6 @@ const WhatsappLaunchCampaign = () => {
       // requestData.workflowSrno = workflowState?.workflowSrno
     }
 
-    // console.log(requestData)
 
     try {
       const response = await sendWhatsappCampaign(requestData);

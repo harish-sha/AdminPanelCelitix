@@ -59,7 +59,6 @@ export const SMS = ({
       (template) => template.templateId === inputDetails?.templateId
     );
 
-    // console.log(data);
 
     setInputDetails({
       ...inputDetails,

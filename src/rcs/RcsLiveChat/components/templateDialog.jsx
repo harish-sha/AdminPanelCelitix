@@ -4,6 +4,7 @@ import React from "react";
 import { Preview } from "./templatePreview";
 import UniversalButton from "@/components/common/UniversalButton";
 import { VariableManager } from "./templateVariable";
+import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 
 export const TemplateDialog = ({
   isTemplateMessage,
@@ -44,7 +45,7 @@ export const TemplateDialog = ({
       <div className="w-full grid grid-cols-3 gap-2 h-full">
         <div className="col-span-2 w-full h-full">
           <div className="mb-4 flex flex-col items-center justify-between w-full">
-            <AnimatedDropdown
+            <DropdownWithSearch
               id="template"
               name="template"
               options={templateState.all.map((item, i) => ({

@@ -19,8 +19,15 @@
   }
 }
 
+.p-sidebar-header {
+  padding: 0rem !important;
+}
 .react-select__menu {
   z-index: 9999 !important;
+}
+
+.bg-darken-remove {
+  mix-blend-mode: darken !important;
 }
 
 @layer utilities {

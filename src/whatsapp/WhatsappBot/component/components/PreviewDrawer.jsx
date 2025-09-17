@@ -1,7 +1,5 @@
-
-
 // PreviewDrawer.jsx
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { PiShareFatFill } from "react-icons/pi";
@@ -36,7 +34,19 @@ export default function PreviewDrawer({
 }) {
   // List to manage drawer state
   const [showDrawer, setShowDrawer] = useState(false);
+
+
   const toggleDrawer = () => setShowDrawer((prev) => !prev);
+
+
+  const drawerRef = useRef(null);
+
+  // ESC to close
+  useEffect(() => {
+    const onKey = (e) => e.key === "Escape" && setShowDrawer(false);
+    if (showDrawer) document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [showDrawer]);
   // List to manage drawer state
 
   const name = details?.waba?.find(
@@ -199,71 +209,75 @@ export default function PreviewDrawer({
 
     return (
       <>
-        <div className=" bg-[#ece5dd] p-3 rounded-md w-fit relative">
-          <div className="bg-white rounded-xl shadow-md p-4 w-[300px]">
-            {/* Header text */}
-            <p className="text-sm text-black font-semibold mb-1">
-              {node?.text || "No Heading"}
-            </p>
-            {/* Body text */}
-            <p className="text-sm break-words whitespace-pre-wrap text-wrap text-black mb-3 mt-4"
-              dangerouslySetInnerHTML={{
-                __html: formatMessageBody(node?.message || ""),
-              }}
-            >
-              {/* {node?.message || "No Body"} */}
-            </p>
-            {/* Footer */}
-            <div className="flex justify-between text-xs text-gray-600 relative">
-              <span>{node?.listFooter || "No Footer"}</span>
-              <span className="text-[10px]">9:13 AM</span>
-            </div>
-            {/* Divider */}
-            <div className="border-t border-gray-200 my-3" />
-            {/* Button */}
-            <div
-              className="text-green-600 flex items-center justify-center space-x-1 cursor-pointer text-sm relative"
-              onClick={toggleDrawer}
-            >
-              <ListIcon size={14} />
-              <span className="hover:underline">{node?.text}</span>
+        <div className="relative">
+
+          <div className="  p-3 rounded-md w-fit relative">
+            <div className="bg-white rounded-xl shadow-md p-4 w-[300px]">
+              {/* Header text */}
+              <p className="text-sm text-black font-semibold mb-1 break-words whitespace-pre-wrap">
+                {node?.text || "No Heading"}
+              </p>
+              {/* Body text */}
+              <p
+                className="text-sm break-words whitespace-pre-wrap text-wrap text-black mb-3 mt-4"
+                dangerouslySetInnerHTML={{
+                  __html: formatMessageBody(node?.message || ""),
+                }}
+              >
+                {/* {node?.message || "No Body"} */}
+              </p>
+              {/* Footer */}
+              <div className=" justify-between text-xs text-gray-600 relative">
+                <span className="break-words whitespace-pre-wrap">{node?.listFooter || "No Footer"}</span>
+              </div>
+              <span className="flex justify-end w-full text-[10px]">9:13 AM</span>
+              {/* Divider */}
+              <div className="border-t border-gray-200 my-3" />
+              {/* Button */}
+              <div
+                className="text-green-600 text-center space-x-1 cursor-pointer text-sm relative w-full"
+                onClick={toggleDrawer}
+              >
+                <ListIcon size={14} />
+                <div className="hover:underline break-words whitespace-pre-wrap">{node?.text}</div>
+              </div>
             </div>
           </div>
-        </div>
+          <AnimatePresence>
+            {showDrawer && (
+              <motion.div
 
-        <AnimatePresence>
-          {showDrawer && (
-            <motion.div
-              className="absolute bottom-0 left-0 right-0 flex justify-center z-50 w-full"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className=" bg-[#ece5dd] p-3 rounded-md w-full ">
-                <div className="bg-white rounded-xl shadow-md p-4 ">
-                  <div className="flex flex-col justify-center items-center mb-6">
-                    <p className="text-sm text-black font-semibold mb-1">
-                      {node?.text}
-                    </p>
-                  </div>
-                  {node?.options?.map((section, index) => (
-                    <div className="relative">
-                      <div
-                        key={index}
-                        className="flex flex-col justify-start items-start border-t border-gray-200 mt-3 w-full"
-                      >
-                        <p className="text-sm text-black font-medium mt-2 break-words text-wrap w-full">
-                          {section?.option}{" "}
-                        </p>
-                        <span className="text-xs text-gray-500 font-medium break-words text-wrap w-full">
-                          {section?.value}{" "}
-                        </span>
-                      </div>
-                      <div className="absolute top-5 right-5 w-4 h-4 border border-gray-400 rounded-full"></div>
+                className="absolute bottom-0 left-0 right-0 flex justify-center z-50 w-full"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.3 }}
+                onClick={() => setShowDrawer(false)}
+              >
+                <div className="  p-3 rounded-md w-full ">
+                  <div className="bg-white rounded-xl shadow-md p-4 ">
+                    <div className="flex-col justify-center items-center mb-6">
+                      <p className="text-sm text-black break-words whitespace-pre-wrap font-semibold mb-1">
+                        {node?.text}
+                      </p>
                     </div>
-                  ))}
-                  {/* {node?.options?.map((section, index) => (
+                    {node?.options?.map((section, index) => (
+                      <div className="relative">
+                        <div
+                          key={index}
+                          className="flex flex-col justify-start items-start border-t border-gray-200 mt-3 w-full"
+                        >
+                          <p className="text-sm text-black font-medium mt-2 break-words text-wrap w-full">
+                            {section?.option}{" "}
+                          </p>
+                          <span className="text-xs text-gray-500 font-medium break-words text-wrap w-full">
+                            {section?.value}{" "}
+                          </span>
+                        </div>
+                        <div className="absolute top-5 right-5 w-4 h-4 border border-gray-400 rounded-full"></div>
+                      </div>
+                    ))}
+                    {/* {node?.options?.map((section, index) => (
                 <div key={index} >
                   <div className="flex gap-2">
                     <p>Title: {section?.option}</p>
@@ -272,17 +286,19 @@ export default function PreviewDrawer({
                 </div>
               ))} */}
 
-                  <div className="flex flex-col justify-center items-center border-t border-gray-200 mt-3">
-                    <button className="text-sm text-gray-500 font-medium mt-8">
-                      Tap an item to select it{" "}
-                    </button>
+                    <div className="flex flex-col justify-center items-center border-t border-gray-200 mt-3">
+                      <button className="text-sm text-gray-500 font-medium mt-8">
+                        Tap an item to select it{" "}
+                      </button>
+                      <div className="border-2 border-black w-20  rounded-md mt-4" />
+                    </div>
                   </div>
-                  <div className="border-2 border-black w-20 ml-26 rounded-md mt-4" />
                 </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
 
         {/* <div className="text-sm">
           <div className="border p-2 space-y-2 w-50">
@@ -336,7 +352,8 @@ export default function PreviewDrawer({
           }}
         />
         {/* Message bubble */}
-        <div className="relative z-10 whitespace-pre-wrap break-words px-4 py-3 rounded-2xl text-sm shadow-sm bg-white text-black rounded-tl-none"
+        <div
+          className="relative z-10 whitespace-pre-wrap break-words px-4 py-3 rounded-2xl text-sm shadow-sm bg-white text-black rounded-tl-none"
           dangerouslySetInnerHTML={{
             __html: formatMessageBody(node?.message || ""),
           }}
@@ -364,7 +381,7 @@ export default function PreviewDrawer({
     }
 
     return (
-      <div className=" bg-[#ece5dd] p-3 rounded-md w-fit">
+      <div className="  p-3 rounded-md w-fit">
         <div className="bg-white rounded-xl shadow-md p-4 w-[300px] ">
           {/* <div className='relative'>
             <p className="font-bold">
@@ -420,13 +437,14 @@ export default function PreviewDrawer({
           </div>
 
           <div className="">
-            <p className="text-sm text-wrap break-words text-black mt-2"
+            <pre
+              className="text-sm text-wrap break-words text-black mt-2"
               dangerouslySetInnerHTML={{
                 __html: formatMessageBody(node?.message || ""),
               }}
             >
               {/* {node?.message || "No Body"}{" "} */}
-            </p>
+            </pre>
           </div>
 
           <div className="">
@@ -493,7 +511,7 @@ export default function PreviewDrawer({
     let fileType = media?.split(".")?.pop()?.split(/\#|\?/)[0];
     return (
       <div className="">
-        <div className="p-2 bg-[#ece5dd] rounded-lg flex justify-center m-4 relative w-auto">
+        <div className="p-2  rounded-lg flex justify-center m-4 relative w-auto">
           <div className="bg-white rounded-xl shadow-md max-w-md w-full overflow-hidden mr-12">
             <div>
               {node?.urlbuttonType === "image" && (
@@ -530,9 +548,9 @@ export default function PreviewDrawer({
             </div>
 
             <div className="p-4">
-              <p className="text-gray-900 text-wrap break-words text-sm font-semibold">
+              <pre className="text-gray-900 text-wrap break-words text-sm font-semibold">
                 {node?.urlbuttonbody || "No Message"}
-              </p>
+              </pre>
               <div className="flex items-center justify-between text-wrap break-words mt-1 text-xs text-gray-500">
                 <span>{node?.urlbuttonFooter || "No Footer"}</span>
                 <span>12:37 PM</span>
@@ -590,8 +608,8 @@ export default function PreviewDrawer({
     return (
       <div className="rounded-md w-full">
         {/* Your Card Component */}
-        <div className="p-2 bg-[#ece5dd] rounded-lg flex justify-center m-4">
-          <div className="bg-white rounded-xl shadow-md max-w-md w-full overflow-hidden mr-22">
+        <div className="p-2 rounded-lg flex justify-center m-4">
+          <div className="bg-white rounded-xl shadow-md max-w-md w-full overflow-hidden mr-22 z-50">
             {/* Header Image */}
             <img
               src={mediaUrl}
@@ -602,13 +620,14 @@ export default function PreviewDrawer({
             {/* Body */}
             <div className="p-2">
               <div className="flex flex-col gap-2 text-xs text-gray-500">
-                <span className="text-black font-semibold"
+                <pre
+                  className="text-black font-semibold whitespace-pre-wrap text-wrap break-words"
                   dangerouslySetInnerHTML={{
                     __html: formatMessageBody(node?.fileCaption || ""),
                   }}
                 >
                   {/* {node?.fileCaption || ""} */}
-                </span>
+                </pre>
                 <span className="text-end">12:37 PM</span>
               </div>
             </div>
@@ -633,7 +652,7 @@ export default function PreviewDrawer({
     return (
       <div className="rounded-md w-full">
         {/* Your Card Component */}
-        <div className="p-2 bg-[#ece5dd] rounded-lg flex justify-center m-4">
+        <div className="p-2  rounded-lg flex justify-center m-4">
           <div className="bg-white rounded-xl shadow-md max-w-md w-full overflow-hidden mr-22">
             {/* Header Image */}
             <video
@@ -645,14 +664,14 @@ export default function PreviewDrawer({
             {/* Body */}
             <div className="p-2">
               <div className="flex flex-col gap-2 text-xs text-gray-500">
-                <span className="text-black font-semibold"
+                <pre
+                  className="text-black font-semibold whitespace-pre-wrap text-wrap break-words"
                   dangerouslySetInnerHTML={{
                     __html: formatMessageBody(node?.fileCaption || ""),
                   }}
-
                 >
                   {/* {node?.fileCaption || ""} */}
-                </span>
+                </pre>
                 <span className="text-end">12:37 PM</span>
               </div>
             </div>
@@ -661,6 +680,7 @@ export default function PreviewDrawer({
       </div>
     );
   }
+
   function renderDocument() {
     if (!data[id]) return;
     const node = data[id];
@@ -687,7 +707,7 @@ export default function PreviewDrawer({
     return (
       <div className="rounded-md w-full">
         {/* Your Card Component */}
-        <div className="p-2 bg-[#ece5dd] rounded-lg flex justify-center m-4">
+        <div className="p-2  rounded-lg flex justify-center m-4">
           <div className="bg-white rounded-xl shadow-md max-w-md w-full overflow-hidden mr-22">
             {/* Header Image */}
             {/* <iframe
@@ -708,7 +728,8 @@ export default function PreviewDrawer({
             {/* Body */}
             <div className="p-2">
               <div className="flex flex-col gap-2 text-xs text-gray-500">
-                <span className="text-black font-semibold"
+                <span
+                  className="text-black font-semibold whitespace-pre-wrap text-wrap break-words"
                   dangerouslySetInnerHTML={{
                     __html: formatMessageBody(node?.fileCaption || ""),
                   }}
@@ -740,7 +761,7 @@ export default function PreviewDrawer({
     return (
       <div className="rounded-md w-full">
         {/* Your Card Component */}
-        <div className="p-2 bg-[#ece5dd] rounded-lg flex justify-center m-4">
+        <div className="p-2  rounded-lg flex justify-center m-4">
           <div className="bg-white rounded-xl shadow-md max-w-md w-full overflow-hidden mr-22">
             {/* Header Image */}
             <audio
@@ -752,7 +773,8 @@ export default function PreviewDrawer({
             {/* Body */}
             <div className="p-2">
               <div className="flex flex-col gap-2 text-xs text-gray-500">
-                <span className="text-black font-semibold"
+                <span
+                  className="text-black font-semibold whitespace-pre-wrap text-wrap break-words"
                   dangerouslySetInnerHTML={{
                     __html: formatMessageBody(node?.fileCaption || ""),
                   }}
@@ -800,6 +822,7 @@ export default function PreviewDrawer({
       </div>
     );
   };
+
   const ButtonsGroup = ({ buttons }) => {
     return (
       <div className="flex flex-col gap-2 w-full max-w-[500px] mt-3">
@@ -823,15 +846,12 @@ export default function PreviewDrawer({
   //   if (!data[id]) return
   //   const node = data[id]
   //   const json = JSON.parse(node?.json)?.template
-  //   console.log("node", json)
 
-  //   console.log("allTemplates", allTemplates)
 
   //   // return json?.components?.map(
   //   //   ({ type, text, buttons, format, example }, index) => {
   //   //     if (type === "HEADER" && !example?.header_handle?.[0]) return null;
 
-  //   //     // console.log(buttons)
 
   //   //     return (
   //   //       <div key={index} className="flex flex-col w-full gap-3">
@@ -893,10 +913,17 @@ export default function PreviewDrawer({
             </div> */}
 
             {/* WhatsApp-like preview */}
-            <div className="p-3 overflow-auto flex-1">
-              <div className="h-full w-full flex flex-col bg-[#ECE5DD] rounded-md overflow-hidden border">
+            <div className=" overflow-auto flex-1">
+              <div className="h-full w-full flex flex-col bg-[#ECE5DD] rounded-md overflow-hidden border ">
+                <div
+                  className="absolute inset-0 opacity-50"
+                  style={{
+                    backgroundImage: "url('/src/assets/images/pattern.svg')",
+                    backgroundSize: " ",
+                  }}
+                />
                 {/* Top bar */}
-                <div className="flex items-center justify-between bg-[#075E54] text-white h-12 px-3">
+                <div className="flex items-center justify-between bg-[#075E54] text-white h-12 px-3 z-52">
                   <div className="flex items-center gap-2">
                     {/* avatar */}
                     <div className="w-5 h-5 rounded-full bg-white/90 flex items-center justify-center text-[10px] text-[#075E54]">
@@ -913,15 +940,14 @@ export default function PreviewDrawer({
                 </div>
 
                 {/* Chat area with WA background pattern */}
-                <div className="relative flex-1 overflow-auto">
-                  <div
-                    className="absolute inset-0 opacity-[0.18]"
+                <div className="relative flex-1 overflow-auto ">
+                  {/* <div
+                    className="absolute inset-0 opacity-50 "
                     style={{
-                      backgroundImage:
-                        "url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22 viewBox=%220 0 512 512%22 fill=%22none%22><g opacity=%220.3%22 stroke=%22%239C8F8F%22 stroke-width=%221%22><circle cx=%2280%22 cy=%2280%22 r=%2210%22/><rect x=%22260%22 y=%2270%22 width=%2236%22 height=%2222%22 rx=%225%22/><path d=%22M340 300h70%22/><circle cx=%22340%22 cy=%22240%22 r=%228%22/><path d=%22M90 240c20 0 20 30 40 30%22/></g></svg>')",
-                      backgroundSize: "280px 280px",
+                      backgroundImage: "url('/src/assets/images/pattern.svg')",
+                      backgroundSize: " ",
                     }}
-                  />
+                  /> */}
 
                   {type == "starting" && renderStartBtn()}
                   {type == "image" && renderImage()}

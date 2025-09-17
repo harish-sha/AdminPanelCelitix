@@ -28,10 +28,8 @@ export const WorkflowDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [publishingId, setPublishingId] = useState(null);
   const [flowList, setFlowList] = useState([]);
-  console.log("flowList", flowList);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  console.log("search", search);
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
   const dropdownButtonRefs = useRef({});
 
@@ -89,7 +87,6 @@ export const WorkflowDetails = () => {
   };
 
   async function handleDelete(row) {
-    console.log("row", row);
     if (!row.sr_no || !row.node_type) return;
     const srno = row.sr_no;
     const type = row.node_type;

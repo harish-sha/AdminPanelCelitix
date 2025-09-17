@@ -99,7 +99,6 @@ const ChannelTabSettings = () => {
   );
 
   const handleQuickActions = (action) => {
-    console.log("actionsssssssssssssssssssssss", action)
     if (action.label === "WhatsappChat") {
       navigate("/liveChatMain/wlivechat");
     } else if (action.label === "RcsChat") {

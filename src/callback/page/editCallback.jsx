@@ -78,7 +78,6 @@ export const EditCallback = () => {
         }));
 
         if (Number(authorizationType)) {
-            console.log("if tuns");
             setAuthorization("1");
         }
     }, [data]);

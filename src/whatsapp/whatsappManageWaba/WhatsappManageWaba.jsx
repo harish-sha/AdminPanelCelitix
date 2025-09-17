@@ -267,7 +267,6 @@ const WhatsappManageWaba = ({ id, name }) => {
     // });
 
     const data = await res.json();
-    console.log(data)
     if (!res.ok) {
       toast.error(data.message || "Something went wrong")
     } else {
@@ -279,15 +278,12 @@ const WhatsappManageWaba = ({ id, name }) => {
   const handleFacebookLogin = () => {
     window.FB.login(
       (response) => {
-        // console.log(response)
         if (response.authResponse) {
           const accessToken = response.authResponse.code;
-          // console.log('Access Token:', accessToken);
           onboardUser(accessToken)
           getWabaList()
         } else {
           toast.error("User cancelled login")
-          console.log('User cancelled login');
           setTimeout(() => {
             setWabaCreatebtn(false)
           }, [1500])
@@ -311,15 +307,12 @@ const WhatsappManageWaba = ({ id, name }) => {
   const handleFacebookLoginMMLite = () => {
     window.FB.login(
       (response) => {
-        // console.log(response)
         if (response.authResponse) {
           const accessToken = response.authResponse.code;
-          // console.log('Access Token:', accessToken);
           onboardUser(accessToken)
           getWabaList()
         } else {
           toast.error("User cancelled login")
-          console.log('User cancelled login');
           setTimeout(() => {
             setWabaCreateMMbtn(false)
           }, [1500])
@@ -359,7 +352,6 @@ const WhatsappManageWaba = ({ id, name }) => {
   const handleView = async (waba) => {
     setSelectedWaba(waba);
     const details = await getwabadetails(waba.wabaNumber);
-    // console.log(details)
     setwabadetails(details.data[0]);
     setView(true);
   };

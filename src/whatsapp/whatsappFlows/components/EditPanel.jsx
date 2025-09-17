@@ -191,7 +191,6 @@ const EditPanel = ({
   // };
 
   // const handleMaxChange = (e) => {
-  //   console.log("e", e.target.value);
 
   //   const val = e.target.value;
   //   if (/^\d*$/.test(val)) {
@@ -206,12 +205,10 @@ const EditPanel = ({
   // };
 
   // const handleMinChange = (e) => {
-  //   console.log("e", e.target.value);
   //   const val = e.target.value;
   //   if (/^\d*$/.test(val)) setMinValue(val);
   // };
 
-  // console.log("minVal", minValue);
   // const isNumberType = selectedOptionsType?.value === "number";
   // const maxNum = maxValue ? Number(maxValue) : "";
   // const minNum = minValue ? Number(minValue) : "";
@@ -254,7 +251,6 @@ const EditPanel = ({
   //     required: switchChecked,
   //   };
 
-  //   console.log("payload by input", payload);
 
   //   const updatedData = {
   //     ...selectedItem,
@@ -263,7 +259,6 @@ const EditPanel = ({
 
   //   onSave(updatedData);
   //   onClose();
-  //   console.log(updatedData);
   // };
 
   const allowed = ["heading", "subheading", "textbody", "textcaption"];
@@ -304,7 +299,6 @@ const EditPanel = ({
   //   const payload = {
   //     headings: {}
   //   };
-  //   console.log(payload)
   //   Object.entries(textElements).forEach(([key, text], index) => {
   //     const id = `${key}_${index + 1}`;
   //     payload.headings[id] = {
@@ -314,12 +308,10 @@ const EditPanel = ({
   //       text
   //     };
   //   });
-  //   console.log(payload);
   // }
 
   // EmbeddedLink
   const embeddedscreenName = useSelector((state) => state.flows.screenName);
-  // console.log("screenNameedtred:", screenName);
 
   const [text, setText] = useState("");
   const [onClickAction, setOnClickAction] = useState("complete");
@@ -366,7 +358,6 @@ const EditPanel = ({
       ...payload,
     };
 
-    // console.log("payloadlink:", payload);
 
     onSave(updatedData);
     onClose();
@@ -389,7 +380,6 @@ const EditPanel = ({
   const [optSelectedScreenName, setOptSelectedScreenName] = useState("");
 
   // useEffect(() => {
-  //   console.log("selectedItemooooppppttttiiinnn", selectedItem.screen);
   //   if (selectedItem) {
   //     setOptLabel(selectedItem.label || "");
   //     setOPTAction(selectedItem["on-click-action"]);
@@ -408,13 +398,11 @@ const EditPanel = ({
       setOPTAction(action);
       setOptSelectedScreenName(selectedItem.screen);
 
-      // console.log("selectedItem.screen", selectedItem.screen);
       setOptInRequired(selectedItem.required ?? true);
     }
   }, [selectedItem]);
 
   const allscreenName = useSelector((state) => state.flows.screenName) || {};
-  // console.log("allflowItems:", allscreenName);
 
   const optScreenNameOptions = Object.values(allscreenName).map(
     (screen, index) => ({
@@ -422,7 +410,6 @@ const EditPanel = ({
       value: screen.screenName || `Screen ${index + 1}`,
     })
   );
-  // console.log("optScreenNameOptions", optScreenNameOptions);
 
   // useEffect(() => {
   //   if (optAction !== "navigate") {
@@ -1074,7 +1061,6 @@ const EditPanel = ({
   //       event.target.value = '';
   //       return;
   //     }
-  //     console.log("Uploaded file:", file);
   //   }
 
   //   const uploadedFile = e.target.files[0];
@@ -1226,7 +1212,6 @@ const EditPanel = ({
       on_click_action: nextAction || "",
     };
 
-    console.log("Saving footer payload:", payload);
 
     // Assuming we want to merge it with selectedItem like in handleInputSave
     const updatedData = {
@@ -1236,7 +1221,6 @@ const EditPanel = ({
 
     onSave(updatedData);
     onClose();
-    console.log("Final footer data:", updatedData);
   };
 
 
@@ -1320,7 +1304,6 @@ const EditPanel = ({
     }
   }, [selectedItem]);
 
-  // console.log("selectedItem", selectedItem);
 
   useEffect(() => {
     if (selectedItem?.type === "checkBox") {
@@ -1362,7 +1345,6 @@ const EditPanel = ({
 
   const radioImageInputRef = useRef(null);
 
-  // console.log("radioImageInputRef", radioImageInputRef);
 
   const handleRadioImageChange = async (e) => {
     const file = e.target.files?.[0];
@@ -1551,7 +1533,6 @@ const EditPanel = ({
       metadata: opt.metadata?.trim() || "",
       image: opt.image || "",
     }));
-    // console.log("Filtered and processed radio button options:", payloadOptions);
 
     // 4) Final payload and merge
     const payload = {
@@ -1604,7 +1585,6 @@ const EditPanel = ({
   //     setMainLabelCheckbox(selectedItem.label || "");
 
   //     const draft = selectedItem.draftCheckbox || {};
-  //     console.log("draft", draft);
 
   //     setDraftCheckbox({
   //       title: selectedItem.draft?.title || "",
@@ -1821,7 +1801,6 @@ const EditPanel = ({
 
   // useEffect(() => {
   //   if (selectedItem) {
-  //     console.log("selectedItem", selectedItem)
   //     setMainLabelDropdown(selectedItem.label || "");
   //     setDraftTitle(selectedItem.title || "");
   //     setDraftDescription(selectedItem.description || "");
@@ -2577,7 +2556,6 @@ const EditPanel = ({
   };
 
   // useEffect(() => {
-  //   console.log("123", tabs);
   // }, [tabs]);
 
   // textArea
@@ -4422,7 +4400,6 @@ const EditPanel = ({
                 })}
                 {/* {imageCarouselImages.map((item, index) => {
                   // Prepare final image source
-                  console.log("item", item)
                   const imageSrcFile = item.src
                     ? `data:image/png;base64,${item.src}`
                     : "";

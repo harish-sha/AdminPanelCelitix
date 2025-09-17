@@ -242,7 +242,6 @@ const WhatsappFlows = () => {
   };
 
   const handleEdit = (flow) => {
-    console.log("flow", flow);
     navigate("/wflowedit", {
       state: {
         data: flow?.srNo,

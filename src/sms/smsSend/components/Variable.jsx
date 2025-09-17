@@ -13,7 +13,7 @@ export const Variable = ({ setInputDetails, inputDetails, headers, inputRef }) =
     if (isHeaderAvailable) {
       setAllHeaders(headers);
     } else {
-      setAllHeaders(["firstName", "lastName", "mobile"]);
+      setAllHeaders(["first_name", "last_name"]);
     }
   }, [headers]);
 

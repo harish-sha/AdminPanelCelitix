@@ -225,7 +225,6 @@ const ResellerDashboard = () => {
         setIsLoading(true);
         try {
             const res = await fetchBalance();
-            console.log("balance", res);
             setBalance(parseFloat(res.balance));
             setRechargableCredit(parseFloat(res.rechargableCredit));
             setRefreshKey((prevKey) => prevKey + 1);
@@ -244,7 +243,6 @@ const ResellerDashboard = () => {
         setIsLoading(true);
         try {
             const response = await getCreditLimit();
-            console.log("response", response);
             const limit = parseFloat(response.creditLimit);
             setCreditLimit(isNaN(limit) ? 0 : limit);
             setRefreshKey((prevKey) => prevKey + 1);

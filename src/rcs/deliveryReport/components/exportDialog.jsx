@@ -606,7 +606,6 @@ export const ExportDialog = ({
       toast.error("Please select custom columns");
       return;
     }
-    // console.log("dataToExport", dataToExport);
     // delete dataToExport.type
 
     const payload = {

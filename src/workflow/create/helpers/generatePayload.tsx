@@ -108,7 +108,6 @@ export const generatePayload = (
     // entry[prevNode] = prevNode;
 
     payload.push(entry);
-    // console.log("nodeInput", nodeInput);
   });
   return payload;
 };

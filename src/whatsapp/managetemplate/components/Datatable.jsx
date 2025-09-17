@@ -218,7 +218,6 @@ const DataTable = ({
   // };
 
   const handleDelete = (event, row) => {
-    // console.log(row);
     setCurrentRow(row);
     setAnchorEl(event.currentTarget);
     setVisible(true);
@@ -535,7 +534,6 @@ const DataTable = ({
     try {
       setIsFetching(true);
       const res = await deleteTemplate(data);
-      // console.log(res);
       // if (res?.msg?.includes("successfully")) {
       //   toast.success("Template deleted successfully.");
       //   setVisible(false);

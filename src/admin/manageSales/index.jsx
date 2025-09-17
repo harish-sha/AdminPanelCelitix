@@ -50,7 +50,6 @@ const ManageSales = () => {
   }, []);
 
   function handleEdit(row) {
-    console.log("row", row)
     if (!row.SalesPersonName) return;
     setUpdateDetails({
       userId: row?.SalesPersonName,

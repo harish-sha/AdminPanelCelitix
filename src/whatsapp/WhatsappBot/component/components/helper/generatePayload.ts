@@ -112,8 +112,6 @@ function generateBotPayload(
 
       entry["type"] = finalType;
 
-      // console.log("nodeInput?.options",nodeInput?.options)
-      // console.log("nodeInput?.options",nodeInput?.options)
       if (Array.isArray(nodeInput?.options)) {
         entry["listItems"] = nodeInput.options.map((item: any) => [
           item?.option?.toString().trim() || "",
@@ -177,7 +175,6 @@ function generateBotPayload(
 }
 
 function generateApiPayload(entry, nodeInput) {
-  // console.log("nodeInput?.jsonVar", Object.keys(nodeInput?.jsonVar).length > 0);
   if (!entry.apiResponse) {
     entry.apiResponse = {};
   }

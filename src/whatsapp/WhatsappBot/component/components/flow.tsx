@@ -223,7 +223,7 @@ export const Flow = ({
     const newValue =
       input.substring(0, selectionStart) +
       start +
-      selectedText +
+      selectedText.trim() +
       end +
       input.substring(selectionEnd);
 

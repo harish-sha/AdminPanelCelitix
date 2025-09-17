@@ -65,7 +65,6 @@ export default function SwitchFlow({ selectedItem, onSave }) {
 
     if (onSave) onSave(updatedItem);
 
-    console.log("✅ Final Switch Payload", updatedItem);
   };
 
   const addCase = () => {

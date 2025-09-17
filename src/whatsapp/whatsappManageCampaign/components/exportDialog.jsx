@@ -64,7 +64,6 @@
 //       toast.error("Please select custom columns");
 //       return;
 //     }
-//     // console.log(dataToExport);
 
 //     const name = allCampaigns.find(
 //       (c) => c.srno === dataToExport?.srno

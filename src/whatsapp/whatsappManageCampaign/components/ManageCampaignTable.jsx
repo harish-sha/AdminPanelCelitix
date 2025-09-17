@@ -431,7 +431,6 @@ const ManageCampaignTable = ({
 
       const res = await downloadCtaTrackingReport(payload);
 
-      console.log("res", res)
 
       if (!res) {
         toast.error("Failed to download reply data");

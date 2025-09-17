@@ -242,7 +242,6 @@ const ResellerLogin = () => {
         : await requestOtp(payload);
 
       if (!res?.data?.status) {
-        console.log(res?.data?.msg)
         return toast.error(res?.data?.msg || "Unable to send OTP");
       }
       toast.success("OTP Sent to your mobile number");

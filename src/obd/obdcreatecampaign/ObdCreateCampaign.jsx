@@ -139,7 +139,7 @@ const ObdCreateCampaign = () => {
     // //   setAllHeaders(["firstName", "lastName", "mobile"]);
     // // }
     if (selectedOption === "option1") {
-      setAllHeaders(["firstName", "lastName", "mobile"]);
+      setAllHeaders(["first_name", "last_name"]);
     } else {
       setAllHeaders(fileHeaders);
     }

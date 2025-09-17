@@ -129,6 +129,7 @@ const Callback = () => {
       const payload = {
         ...formValues,
         page: "1",
+        selectedUserId: ""
       };
       const res = await getData(payload);
       const data = res?.data;

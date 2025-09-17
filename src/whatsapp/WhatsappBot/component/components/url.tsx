@@ -80,7 +80,7 @@ export const Url = ({
     const newValue =
       input.substring(0, selectionStart) +
       start +
-      selectedText +
+      selectedText.trim() +
       end +
       input.substring(selectionEnd);
 
@@ -284,54 +284,56 @@ export const Url = ({
                   },
                 }));
               }}
-              className="resize-none h-40 mt-2"
+              className="resize-none h-50 mt-2"
               maxLength={1024}
               ref={inputRef}
             />
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="flex items-center gap-2 mt-2 bg-white border border-slate-200 rounded-xl px-2 py-2 shadow w-max"
-            >
-              <Tooltip title="Bold" arrow>
-                <button
-                  onClick={() => addFormat("bold")}
-                  className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
-                >
-                  <FormatBoldOutlined fontSize="small" />
-                </button>
-              </Tooltip>
-              <Tooltip title="Italic" arrow>
-                <button
-                  onClick={() => addFormat("italic")}
-                  className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
-                >
-                  <FormatItalicOutlined fontSize="small" />
-                </button>
-              </Tooltip>
-              <Tooltip title="Strikethrough" arrow>
-                <button
-                  onClick={() => addFormat("strike")}
-                  className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
-                >
-                  <FormatStrikethroughOutlined fontSize="small" />
-                </button>
-              </Tooltip>
-              <div className="w-px h-5 bg-slate-300 mx-1"></div>
-              <Tooltip title="Emoji Picker" arrow>
-                <CustomEmojiPicker position="top" onSelect={insertEmoji} />
-              </Tooltip>
-            </motion.div>
+            <div className="flex justify-between">
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="flex items-center gap-2 mt-2 bg-white border border-slate-200 rounded-xl px-2 py-2 shadow w-max"
+              >
+                <Tooltip title="Bold" arrow>
+                  <button
+                    onClick={() => addFormat("bold")}
+                    className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
+                  >
+                    <FormatBoldOutlined fontSize="small" />
+                  </button>
+                </Tooltip>
+                <Tooltip title="Italic" arrow>
+                  <button
+                    onClick={() => addFormat("italic")}
+                    className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
+                  >
+                    <FormatItalicOutlined fontSize="small" />
+                  </button>
+                </Tooltip>
+                <Tooltip title="Strikethrough" arrow>
+                  <button
+                    onClick={() => addFormat("strike")}
+                    className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
+                  >
+                    <FormatStrikethroughOutlined fontSize="small" />
+                  </button>
+                </Tooltip>
+                <div className="w-px h-5 bg-slate-300 mx-1"></div>
+                <Tooltip title="Emoji Picker" arrow>
+                  <CustomEmojiPicker position="top" onSelect={insertEmoji} />
+                </Tooltip>
+              </motion.div>
+              <p className="text-xs mt-2">
+                {nodesInputData[id]?.urlbuttonbody?.length || 0}/1024
+              </p>
+            </div>
           </div>
-          <p className="text-xs mt-2">
-            {nodesInputData[id]?.urlbuttonbody?.length || 0}/1024
-          </p>
         </div>
-        <div className="flex justify-center items-center h-60 rounded-lg p-2 ">
+        <div className="flex justify-center items-center h-54 rounded-lg p-2 ">
           {(!nodesInputData[id]?.urlbuttonType ||
             !nodesInputData[id]?.fileUrl) && (
-            <div className="w-full h-full flex items-center justify-center border border-gray-300 rounded-lg">
+            <div className="w-full h-full flex items-center justify-center border border-gray-300 rounded-lg mt-0 md:mt-12">
               <Lottie
                 animationData={files}
                 loop
@@ -389,25 +391,29 @@ export const Url = ({
             )}
         </div>
       </div>
-
-      <InputField
-        id="text"
-        name="text"
-        tooltipContent="URL Button Text"
-        placeholder="Enter URL Button Text"
-        label={"URL Button Text"}
-        value={nodesInputData[id]?.urlbuttonText}
-        onChange={(e: { target: { value: any } }) => {
-          setNodesInputData((prev) => ({
-            ...prev,
-            [id]: {
-              ...prev[id],
-              urlbuttonText: e.target.value,
-            },
-          }));
-        }}
-        maxLength="20"
-      />
+      <div className="flex items-end w-full gap-2">
+        <InputField
+          id="text"
+          name="text"
+          tooltipContent="URL Button Text"
+          placeholder="Enter URL Button Text"
+          label={"URL Button Text"}
+          value={nodesInputData[id]?.urlbuttonText}
+          onChange={(e: { target: { value: any } }) => {
+            setNodesInputData((prev) => ({
+              ...prev,
+              [id]: {
+                ...prev[id],
+                urlbuttonText: e.target.value,
+              },
+            }));
+          }}
+          maxLength="20"
+        />
+        <p className="text-xs">
+          {nodesInputData[id]?.urlbuttonText?.length || 0}/20
+        </p>
+      </div>
       <InputField
         id="text"
         name="text"
@@ -445,10 +451,10 @@ export const Url = ({
               },
             }));
           }}
-          maxLength="20"
+          maxLength="60"
         />
         <p className="text-xs">
-          {nodesInputData[id]?.urlbuttonFooter?.length || 0}/20
+          {nodesInputData[id]?.urlbuttonFooter?.length || 0}/60
         </p>
       </div>
     </div>

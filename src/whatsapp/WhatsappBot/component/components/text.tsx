@@ -89,7 +89,7 @@ export const TextNodeContent = ({
     const newValue =
       input.substring(0, selectionStart) +
       start +
-      selectedText +
+      selectedText.trim() +
       end +
       input.substring(selectionEnd);
 
@@ -164,9 +164,12 @@ export const TextNodeContent = ({
             }));
           }}
           className="resize-none h-50"
-          maxLength={200}
+          maxLength={4096}
           ref={inputRef}
         />
+        <p className="text-xs mt-2">
+          {nodesInputData[id]?.message?.length || 0}/4096
+        </p>
 
         {/* <div className="items-center justify-start hidden gap-1 md:flex mt-2">
           <button

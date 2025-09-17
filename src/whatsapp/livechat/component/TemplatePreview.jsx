@@ -256,8 +256,8 @@ export const TemplatePreview = ({
                           <button
                             key={i}
                             title={`${btn.type === "PHONE_NUMBER"
-                                ? `Call: ${btn.phone_number}`
-                                : btn.url
+                              ? `Call: ${btn.phone_number}`
+                              : btn.url
                               }`}
                             className={`flex items-center justify-center px-4 py-2 text-sm rounded-md cursor-pointer ${getBtnCss(
                               btn.type

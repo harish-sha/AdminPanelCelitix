@@ -1131,7 +1131,6 @@ const CampaignDetailsReports = () => {
                 },
             }));
 
-            console.log("formattedData", formattedData);
 
             setRows(formattedData);
 

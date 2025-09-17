@@ -987,7 +987,6 @@ const CreateWhatsAppBot = () => {
         urlbuttonbody: "",
         urlbuttonText: "",
         urlbuttonUrl: "",
-        urlbuttonFooter: "",
       },
       template: {},
       api: {
@@ -1027,7 +1026,6 @@ const CreateWhatsAppBot = () => {
       "document",
       "video",
       "urlbutton",
-      "button",
     ];
 
     if (typeContainsFile.includes(type)) {
@@ -1047,6 +1045,35 @@ const CreateWhatsAppBot = () => {
         toast.error("Please enter a valid URL");
         return;
       }
+    }
+
+    if (
+      type === "button" &&
+      nodeData.type !== "text" &&
+      nodeData?.selectedOption === "upload" &&
+      !nodeData?.fileUrl
+    ) {
+      toast.error("Please select a file to upload");
+      return;
+    } else if (
+      type === "button" &&
+      nodeData.type !== "text" &&
+      nodeData?.selectedOption === "url" &&
+      !nodeData?.fileUrl
+    ) {
+      toast.error("Please enter a valid URL");
+      return;
+    } else if (
+      type === "button" &&
+      nodeData.type !== "text" &&
+      nodeData?.selectedOption === "url" &&
+      nodeData?.fileUrl &&
+      !/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi.test(
+        nodeData?.fileUrl
+      )
+    ) {
+      toast.error("Please enter a valid URL");
+      return;
     }
 
     if (type === "list" && nodeData.options.length === 0) {
@@ -1218,7 +1245,6 @@ const CreateWhatsAppBot = () => {
         urlbuttonbody: "",
         urlbuttonText: "",
         urlbuttonUrl: "",
-        urlbuttonFooter: "",
       },
       template: {},
       api: {
@@ -1253,7 +1279,6 @@ const CreateWhatsAppBot = () => {
         "document",
         "video",
         "urlbutton",
-        "button",
       ];
 
       if (typeContainsFile.includes(type)) {
@@ -1276,8 +1301,38 @@ const CreateWhatsAppBot = () => {
       }
 
       if (
+        type === "button" &&
+        nodeData.type !== "text" &&
+        nodeData?.selectedOption === "upload" &&
+        !nodeData?.fileUrl
+      ) {
+        toast.error("Please select a file to upload in node " + id);
+        return;
+      } else if (
+        type === "button" &&
+        nodeData.type !== "text" &&
+        nodeData?.selectedOption === "url" &&
+        !nodeData?.fileUrl
+      ) {
+        toast.error("Please enter a valid URL in node " + id);
+        return;
+      } else if (
+        type === "button" &&
+        nodeData.type !== "text" &&
+        nodeData?.selectedOption === "url" &&
         nodeData?.fileUrl &&
-        !["http", "https"].includes(nodeData?.fileUrl.slice(0, 4))
+        !/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi.test(
+          nodeData?.fileUrl
+        )
+      ) {
+        toast.error("Please enter a valid URL in node " + id);
+        return;
+      }
+      if (
+        nodeData?.fileUrl &&
+        !/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi.test(
+          nodeData?.fileUrl
+        )
       ) {
         const res = await uploadImageFile(nodeData?.fileUrl);
         if (!res?.status) {
@@ -1414,7 +1469,6 @@ const CreateWhatsAppBot = () => {
       nodesInputData,
       botDetails
     );
-    // console.log("payt", payload);
     if (!payload) {
       return toast.error("Error Generating Payload");
     }
@@ -1423,7 +1477,7 @@ const CreateWhatsAppBot = () => {
       setIsFetching(true);
       const res = await saveOrEditBot(payload, state?.botSrno);
       if (!res?.status) {
-        return toast.error("Error Saving Bot");
+        return toast.error(res?.msg || "Error Saving Bot");
       }
 
       toast.success("Bot Save Successfully");
@@ -1440,7 +1494,6 @@ const CreateWhatsAppBot = () => {
         navigate("/wwhatsappbot");
       }
     } catch (e) {
-      // console.log(e);
       toast.error("Error Saving Bot");
     } finally {
       setIsFetching(false);

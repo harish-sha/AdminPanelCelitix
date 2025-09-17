@@ -210,7 +210,6 @@ const WhatsappBot = () => {
   async function handledeleteBot(id) {
     try {
       const res = await deleteBot(id);
-      // console.log(res);
       if (res?.status) {
         toast.success(res?.msg);
         setIsVisible(false);

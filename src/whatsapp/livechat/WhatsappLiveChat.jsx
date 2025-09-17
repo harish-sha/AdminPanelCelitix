@@ -204,8 +204,6 @@ export default function WhatsappLiveChat() {
     wabaSrno: "",
   });
 
-  console.log("wabaState", wabaState);
-
   const [isSubscribe, setIsSubscribe] = useState(false);
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
 
@@ -221,12 +219,17 @@ export default function WhatsappLiveChat() {
 
   async function fetchWaba() {
     const res = await getWabaList();
-    // console.log(res);
+    // // console.log(res);
     setWabaState((prev) => ({
       ...prev,
       waba: res,
-      selectedWaba: res.length === 1 ? res[0].mobileNo : prev.selectedWaba,
+      selectedWaba: res.length === 1 ? res[0].mobileNo : "",
+      wabaSrno: res.length === 1 ? res[0]?.wabaSrno : "",
     }));
+    // setWabaState((prev) => ({
+    //   ...prev,wabaSrno
+    //   waba: res,
+    // }));
   }
 
   useEffect(() => {
@@ -443,14 +446,11 @@ export default function WhatsappLiveChat() {
           agentSrno: selectedAgent || "",
         };
 
-        console.log("data", data);
-        const res = await fetchAllConversations(data);
-        console.log("res", res);
+        const res = await fetchAllConversations(data)
 
         setActiveConvAgent(res.conversationEntityList);
       } catch (e) {
         toast.error("Error fetching active conversations");
-        console.error(e);
       } finally {
         setIsFetching(false);
       }
@@ -748,6 +748,7 @@ export default function WhatsappLiveChat() {
   useEffect(() => {
     if (!wabaState?.selectedWaba) return;
 
+    // handleFetchAllConvoRepeat();
     const intervalId = setInterval(() => {
       handleFetchAllConvoRepeat();
     }, 4000);
@@ -876,7 +877,7 @@ export default function WhatsappLiveChat() {
                 conversionSrno: msg.srno,
               });
             } catch (err) {
-              console.error(`Failed to fetch media for srno ${msg.srno}`, err);
+              toast.error(`Failed to fetch media for srno ${msg.srno}`, err);
             }
           }
 
@@ -912,7 +913,6 @@ export default function WhatsappLiveChat() {
         specificConversation: groupedArray,
       }));
     } catch (e) {
-      console.error("Error in handleFetchSpecificConversation:", e);
       toast.error("Error fetching specific conversation");
     } finally {
       setChatLoading(false);
@@ -998,6 +998,7 @@ export default function WhatsappLiveChat() {
   }
 
   async function handlesendMessage() {
+    console.log("chatState?.active", chatState?.active);
     if (!chatState?.active) {
       return toast.error("Please select chat first");
     }
@@ -1017,7 +1018,7 @@ export default function WhatsappLiveChat() {
         contactName: chatState?.active?.contectName || "",
         replyType: "text",
         replyFrom: "user",
-        wabaSrNo: wabaState.wabaSrno,
+        wabaSrNo: wabaState?.wabaSrno,
       };
       func = sendMessageToUser;
     } else if (messageType === "template") {

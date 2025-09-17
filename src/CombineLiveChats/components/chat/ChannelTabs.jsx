@@ -891,8 +891,8 @@ const ChannelTabs = () => {
               setIsAgentOpen(false);
               setAgentSelected(false);
               setDisplayAgentName("");
-              setActiveRcsChat([]);
-              setCloseRcsChat([]);
+              // setActiveRcsChat([]);
+              // setCloseRcsChat([]);
               setAllChats({
                 unreadCounts: [],
                 conversationEntityList: [],
