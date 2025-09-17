@@ -94,10 +94,10 @@ const RcsLiveChat = () => {
     }
   }
 
-  async function handleFetchAllConvo() {
+  async function handleFetchAllConvo(isLoading = false) {
     if (!agentState?.id) return;
     try {
-      setIsLoading(true);
+      if(isLoading) setIsLoading(true);
       const userActive = btnOption == "active" ? 1 : 0;
       const payload = {
         agentId: agentState?.id,
@@ -470,7 +470,7 @@ const RcsLiveChat = () => {
   }, [chatState?.active]);
 
   useEffect(() => {
-    handleFetchAllConvo();
+    handleFetchAllConvo(true);
     let interval = null;
     interval = setInterval(() => {
       handleFetchAllConvo();
@@ -581,7 +581,6 @@ const RcsLiveChat = () => {
                   loop
                   mode="normal"
                   src="/animation/wabalivechatanimation.json"
-                  s
                   style={{ width: "100%", height: "100%" }}
                 ></lottie-player>
               </div>
