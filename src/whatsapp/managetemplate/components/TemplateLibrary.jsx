@@ -40,19 +40,13 @@ const TemplateLibrary = () => {
   const navigate = useNavigate();
   // Library start
   const [selectedValue, setSelectedValue] = useState("");
-  console.log("selectedValue", selectedValue);
   const [selectedLang, setSelectedLang] = useState("en_GB");
-  console.log("selectedLang", selectedLang);
   const [selectedOptionTopic, setSelectedOptionTopic] = useState("");
-  console.log("selectedOptionTopic", selectedOptionTopic);
   const [selectedTopic, setSelectedTopic] = useState("");
-  console.log("selectedTopiccccccccccc", selectedTopic);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewTemplate, setViewTemplate] = useState(false);
   const [templateDetails, setTemplateDetails] = useState([]);
   const [selectedOptionIndustry, setSelectedOptionIndustry] = useState();
-  console.log("selectedOptionIndustry", selectedOptionIndustry);
-  console.log("templateDetails", templateDetails);
 
   const [LibraryTemplates, setLibraryTemplates] = useState([]);
   const [LibraryFilteredTemplates, setLibraryFilteredTemplates] = useState([]);
@@ -63,13 +57,9 @@ const TemplateLibrary = () => {
   const [extraOptions, setExtraOption] = useState(false);
   const [templateName, setTemplateName] = useState("");
   const [buttons, setButtons] = useState([]);
-  console.log("buttons", buttons);
   const [wabaList, setWabaList] = useState(null);
-  console.log("wabaList", wabaList);
   const [selectedWaba, setSelectedWaba] = useState("");
-  console.log("selectedWaba", selectedWaba);
   const [selectedWabaSno, setSelectedWabaSno] = useState("");
-  console.log("selectedWabaSno", selectedWabaSno);
   const [isLoading, setIsLoading] = useState(false);
 
   // Library End
@@ -408,7 +398,6 @@ const TemplateLibrary = () => {
       );
     })();
 
-    console.log("filtered", filtered);
 
     // Do something with `filtered`, for example update state
     setLibraryFilteredTemplates(filtered);
@@ -442,7 +431,6 @@ const TemplateLibrary = () => {
   }, []);
 
   const handleSubmitTemplate = (data) => {
-    console.log("data received:", data);
 
     setExtraOption(true);
     setTemplateName(data?.name || "");
@@ -465,7 +453,6 @@ const TemplateLibrary = () => {
   }, [viewTemplate]);
 
   const handleFinalSubmitTemplate = async (data) => {
-    console.log("data received:", data);
 
     if (!selectedWaba && !selectedWabaSno) {
       toast.error("Please select WABA");
@@ -515,11 +502,9 @@ const TemplateLibrary = () => {
       });
     }
 
-    console.log("tempData", tempData);
 
     try {
       const response = await sendTemplatetoApi(tempData);
-      console.log("API response:", response);
 
       const message = response?.msg;
 

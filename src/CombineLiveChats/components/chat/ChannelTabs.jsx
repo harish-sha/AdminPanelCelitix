@@ -79,6 +79,7 @@ const ChannelTabs = () => {
     activeConvo,
   } = useWabaAgentContext();
 
+
   const {
     contextAgentList,
     setContextAgentList,
@@ -89,7 +90,7 @@ const ChannelTabs = () => {
     allChats,
     setAllChats,
   } = useRcsContext();
-
+  
   const [isOpen, setIsOpen] = useState(false);
   const [isAgentOpen, setIsAgentOpen] = useState(false);
   const [displayWabaName, setDisplayWabaName] = useState("");
@@ -891,8 +892,8 @@ const ChannelTabs = () => {
               setIsAgentOpen(false);
               setAgentSelected(false);
               setDisplayAgentName("");
-              setActiveRcsChat([]);
-              setCloseRcsChat([]);
+              // setActiveRcsChat([]);
+              // setCloseRcsChat([]);
               setAllChats({
                 unreadCounts: [],
                 conversationEntityList: [],

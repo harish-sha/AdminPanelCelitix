@@ -96,7 +96,7 @@ const WhatsappLaunchCampaign = () => {
   });
 
   useEffect(() => {
-    console.log(workflowState);
+    // console.log(workflowState);
   }, [workflowState]);
 
   const [templateType, setTemplateType] = useState("");
@@ -280,7 +280,6 @@ const WhatsappLaunchCampaign = () => {
       ?.map((variable) => {
         const key = `body${variable}`;
         const value = (formData[key] || "").trim();
-        console.log("value", value);
 
         if (!value) {
           isError = true;

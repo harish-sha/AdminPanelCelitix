@@ -320,7 +320,6 @@ const ManageContacts = () => {
     try {
       // Call the API
       const response = await addContact(payload);
-      console.log("add contact resposne", response);
 
       if (response.flag == true) {
         // Success

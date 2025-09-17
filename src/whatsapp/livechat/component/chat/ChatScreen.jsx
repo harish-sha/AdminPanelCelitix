@@ -9,6 +9,7 @@ import { FiSend } from "react-icons/fi";
 import { SpeedDial } from "primereact/speeddial";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
+import { BsFillReplyAllFill } from "react-icons/bs";
 import {
   BoltRounded,
   FormatBoldOutlined,
@@ -33,6 +34,24 @@ import {
 import CircularProgress from "@mui/material/CircularProgress";
 import { LuHistory } from "react-icons/lu";
 
+import {
+  PersonOutline,
+  Groups2Outlined,
+  CheckCircleOutline,
+  AccessTime,
+  WhatsApp,
+  LocationOnOutlined,
+  EmailOutlined,
+  WorkOutline,
+  NoteAltOutlined,
+  Close,
+  Add,
+  DoneAll,
+  MessageOutlined,
+  CampaignOutlined,
+} from "@mui/icons-material";
+
+
 import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import { Dialog } from "primereact/dialog";
@@ -54,6 +73,8 @@ import { useUser } from "@/context/auth";
 import WhatsAppVoiceMessage from "./AudioPreview";
 import { IoLocationOutline } from "react-icons/io5";
 import { getChatDateLabel } from "@/utils/getChatDateLabel";
+import { FaRegClock, FaWhatsapp, FaUser, FaCheckCircle, FaHeadset, FaRegPaperPlane } from "react-icons/fa";
+import ChatTimeline from "../ChatTimeline";
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -96,6 +117,26 @@ export const ChatScreen = ({
   // Function to scroll down
   const chatContainerRef = useRef(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
+
+  // ===========================profile sidebar start=========================================================
+
+  const [tags, setTags] = useState(["VIP", "High Priority"]);
+  const [newTag, setNewTag] = useState("");
+
+  const addTag = () => {
+    if (newTag.trim() && !tags.includes(newTag)) {
+      setTags([...tags, newTag]);
+      setNewTag("");
+    }
+  };
+
+  const removeTag = (tag) => {
+    setTags(tags.filter((t) => t !== tag));
+  };
+  const [expanded, setExpanded] = useState(false);
+
+  // ========================profile sidebar End=========================================================
+
 
   // const scrollToBottom = () => {
   //   if (chatContainerRef.current) {
@@ -177,9 +218,8 @@ export const ChatScreen = ({
   const mediaRender = (isSent) => {
     return (
       <div
-        className={`flex items-center gap-2 w-full ${
-          isSent ? "flex-row-reverse" : ""
-        }`}
+        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+          }`}
       >
         <div className={`p-2 ${msg?.caption ? " rounded-md" : ""}`}></div>
       </div>
@@ -421,21 +461,28 @@ export const ChatScreen = ({
     return formatted;
   }
 
+  // const ChatDateSeparator = ({ date }) => {
+  //   return (
+  //     <div className="flex items-center w-full my-4">
+  //       <div className="border-b border-gray-300 flex-grow"></div>
+  //       <span className="mx-3 bg-gray-200 text-gray-700 text-xs font-semibold px-3 py-1 rounded-full shadow-sm">
+  //         {getChatDateLabel(date)}
+  //       </span>
+  //       <div className="border-b border-gray-300 flex-grow"></div>
+  //     </div>
+  //   );
+  // };
   const ChatDateSeparator = ({ date }) => {
     return (
-      <div className="flex items-center w-full my-4">
-        <div className="border-b border-gray-300 flex-grow"></div>
-        <span className="mx-3 bg-gray-200 text-gray-700 text-xs font-semibold px-3 py-1 rounded-full shadow-sm">
-          {getChatDateLabel(date)}
-        </span>
-        <div className="border-b border-gray-300 flex-grow"></div>
-      </div>
+      <>
+        {getChatDateLabel(date)}
+      </>
     );
   };
 
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
-      <div className="mt-0 md:mt-0 z-1 flex items-center bg-gray-100 justify-between w-full h-15 px-2 border rounded-tr-lg">
+      <div className="mt-0 md:mt-0 z-1 flex items-center bg-gray-50 justify-between w-full h-15 px-2 border rounded-tr-lg">
         <div className="flex items-center gap-2 h-auto">
           <IoArrowBack
             className="text-xl cursor-pointer md:hidden"
@@ -463,17 +510,17 @@ export const ChatScreen = ({
               className="w-8 h-8 rounded-full border-2 border-gray-900"
             />
           ) : (
-            <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-[#22577E] border-2 border-[#22577E] font-semibold text-sm">
+            <div className="w-8 h-8 rounded-full bg-[#ece5dd] flex items-center justify-center text-[#128c7e] border-2 border-[#128c7e] font-semibold text-sm">
               {chatState.active.contectName?.charAt(0)?.toUpperCase() || "?"}
             </div>
           )}
 
-          <h3 className="text-md font-semibold text-[#22577E]">
+          <h3 className="text-md font-semibold text-[#128c7e]">
             {chatState.active.contectName || chatState.active.mobileNo}
           </h3>
           <InfoOutlinedIcon
             onClick={() => setVisibleRight(true)}
-            sx={{ fontSize: "1.2rem", color: "green" }}
+            sx={{ fontSize: "1.2rem", color: "#128c7e" }}
           />
         </div>
         <div className="flex items-center gap-2 justify-between">
@@ -510,11 +557,10 @@ export const ChatScreen = ({
                     );
                   }}
                   disabled={isBlocking}
-                  className={`px-3 py-1 rounded-md text-xs transition cursor-pointer ${
-                    isBlocking
-                      ? "bg-red-300 text-white"
-                      : "bg-red-500 text-white hover:bg-red-600"
-                  }`}
+                  className={`px-3 py-1 rounded-md text-xs transition cursor-pointer ${isBlocking
+                    ? "bg-red-300 text-white"
+                    : "bg-red-500 text-white hover:bg-red-600"
+                    }`}
                 >
                   {isBlocking ? "Blocking..." : "Block"}
                 </button>
@@ -553,16 +599,14 @@ export const ChatScreen = ({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: i * 0.08 }}
-                  className={`flex ${
-                    i % 2 === 0 ? "justify-start" : "justify-end"
-                  }`}
+                  className={`flex ${i % 2 === 0 ? "justify-start" : "justify-end"
+                    }`}
                 >
                   <div
-                    className={`rounded-2xl px-4 py-3 animate-pulse ${
-                      i % 2 === 0
-                        ? "bg-gray-400/60 dark:bg-gray-700/40"
-                        : "bg-blue-400/60 dark:bg-blue-900/30"
-                    }`}
+                    className={`rounded-2xl px-4 py-3 animate-pulse ${i % 2 === 0
+                      ? "bg-[#ece5dd] dark:bg-gray-700/40"
+                      : "bg-[#ece5dd] dark:bg-blue-900/30"
+                      }`}
                     style={{
                       width: `${120 + (i % 3) * 40}px`,
                       height: `${35 + (i % 2) * 15}px`,
@@ -581,7 +625,7 @@ export const ChatScreen = ({
                 transition={{ duration: 0.1 }}
                 exit={{ opacity: 0, y: 10 }}
                 onClick={scrollToBottom}
-                className="fixed bottom-24 right-[50%] px-2 py-1 bg-gray-400 hover:bg-gray-500 text-white rounded-full shadow-md cursor-pointer transition-all hover:scale-110"
+                className="fixed bottom-24 right-[50%] px-2 py-1 bg-gray-300 hover:bg-[#ece5dd] text-gray-600 hover:text-gray-900 rounded-full shadow-md cursor-pointer transition-all hover:scale-110"
               >
                 <KeyboardDoubleArrowDownIcon fontSize="small" />
               </motion.div>
@@ -590,7 +634,7 @@ export const ChatScreen = ({
             {chatState?.specificConversation?.length !== 0 && (
               <div className="flex items-center justify-center mt-2">
                 <button
-                  className="text-[#22577E] border-2 border-[#22577E] px-4 py-2 rounded-md flex gap-2 items-center ml-auto mr-auto mt-2 cursor-pointer text-xs tracking-wider font-medium transition-all hover:bg-[#22577E] hover:text-white hover:border-white"
+                  className="text-[#075e54] border-2 border-[#128c7e] px-4 py-2 rounded-md flex gap-2 items-center ml-auto mr-auto mt-2 cursor-pointer text-xs tracking-wider font-medium transition-all hover:bg-[#128c7e] hover:text-white hover:border-white"
                   onClick={() => {
                     setChatIndex((prev) => prev + 1);
                     // handleFetchSpecificConversation(true);
@@ -624,7 +668,7 @@ export const ChatScreen = ({
               <div key={groupIndex} className="mb-5">
                 <div className="flex items-center w-full">
                   <div className="border-b-1 w-full border-dashed border-gray-400"></div>
-                  <div className="my-4 text-xs text-center text-gray-700 font-semibold tracking-wide text-nowrap mx-2">
+                  <div className="my-4 text-xs text-center bg-[#ece5dd] px-3 py-1 rounded-full  text-[#075e54] font-semibold tracking-wide text-nowrap mx-3 shadow-sm">
                     {/* {group?.date} */}
                     <ChatDateSeparator date={group?.date} />
                   </div>
@@ -706,14 +750,13 @@ export const ChatScreen = ({
                           stiffness: 300,
                           damping: 20,
                         }}
-                        className={`p-2 rounded-lg max-w-[90%] my-1 ${
-                          isSent ? "self-end" : "self-start"
-                        }`}
+                        className={`p-2 rounded-lg max-w-[90%] my-1 ${isSent ? "self-end" : "self-start"
+                          }`}
                       >
                         {isReply && (
-                          <div className="bg-gray-100 border-l-4 border-green-500 p-2 rounded-sm mb-0">
-                            <p className="text-xs text-gray-500 mb-1">you</p>
-                            <p className="text-sm text-gray-800 break-words">
+                          <div className="bg-[#ece5dd] border-l-4 border-green-500 p-2 rounded-sm mb-0">
+                            <p className="text-xs text-gray-800 mb-1">you</p>
+                            <p className="text-sm text-gray-100 break-words ">
                               {msg?.replyMessage}
                             </p>
                           </div>
@@ -721,37 +764,37 @@ export const ChatScreen = ({
                         {/* {isReply && <div className="text-sm border-b-2 bg-blue-300 px-3 py-2 rounded-t-md border-gray-700">{msg?.replyMessage}</div>} */}
                         {(isImage || isVideo || isDocument || isAudio) && (
                           <div
-                            className={`flex items-center gap-2 w-full ${
-                              isSent ? "flex-row-reverse" : ""
-                            }`}
+                            className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+                              }`}
                           >
                             <div
-                              className={`${
-                                msg?.caption ? "p-2 rounded-md" : ""
-                              }`}
+                              className={`${msg?.caption ? "p-2 rounded-md" : ""
+                                }`}
                             >
                               {msg?.mediaPath ? (
                                 <>
                                   {isImage && (
                                     <div
-                                      className={`relative group w-full h-full ${
-                                        msg?.caption
-                                          ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E]"
-                                          : ""
-                                      }`}
+                                      className={`relative group w-full h-full ${msg?.caption
+                                        ? "border border-gray-200 p-1 rounded-md rounded-br-none max-w-[200px] bg-[#ece5dd] shadow-md"
+                                        : ""
+                                        }`}
                                     >
                                       <img
                                         src={mediaUrl}
                                         alt="Image"
-                                        className={`mb-1 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${
-                                          msg?.caption
-                                            ? "rounded-t-lg"
-                                            : "rounded-md"
-                                        }`}
+                                        className={`mb-1 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${msg?.caption
+                                          ? "rounded-t-lg"
+                                          : "rounded-md"
+                                          }`}
                                       />
                                       {msg?.caption && (
-                                        <div className="text-sm text-white mb-1 ml-2 whitespace-pre-wrap break-words">
-                                          {msg?.caption}
+                                        <div className="text-sm text-gray-900 mb-1 ml-2 whitespace-pre-wrap break-words"
+                                          dangerouslySetInnerHTML={{
+                                            __html: formatMessageBody(msg?.caption),
+                                          }}
+                                        >
+                                          {/* {msg?.caption} */}
                                         </div>
                                       )}
                                       <div className="flex items-center justify-center">
@@ -774,21 +817,25 @@ export const ChatScreen = ({
                                   )}
                                   {isVideo && (
                                     <div
-                                      className={`${
-                                        msg?.caption
-                                          ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E] relative group"
-                                          : "relative group"
-                                      }`}
+                                      className={`${msg?.caption
+                                        ? "border border-gray-200 p-1 rounded-md rounded-br-none max-w-[200px] bg-[#ece5dd] relative group"
+                                        : "relative group"
+                                        }`}
                                     >
                                       <video
                                         src={mediaUrl}
                                         controls
                                         autoPlay={false}
-                                        className={`mb-1 h-50 border border-gray-200 rounded-md bg-center bg-no-repeat w-[300px] object-cover`}
+                                        className={`mb-1 h-50 border border-gray-200 rounded-md  bg-center bg-no-repeat w-[300px] object-cover`}
                                       />
                                       {msg?.caption && (
-                                        <div className="text-sm text-white mb-1 ml-2 whitespace-pre-wrap break-words">
-                                          {msg?.caption}
+                                        <div className="text-sm text-gray-900 mb-1 ml-2 whitespace-pre-wrap break-words"
+                                          dangerouslySetInnerHTML={{
+                                            __html: formatMessageBody(msg?.caption),
+                                          }}
+
+                                        >
+                                          {/* {msg?.caption} */}
                                         </div>
                                       )}
                                       <div className="flex items-center justify-center">
@@ -811,11 +858,10 @@ export const ChatScreen = ({
                                   )}
                                   {isAudio && (
                                     <div
-                                      className={`${
-                                        msg?.caption
-                                          ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#22577E] relative group"
-                                          : "relative group"
-                                      }`}
+                                      className={`${msg?.caption
+                                        ? "border border-gray-200 p-1 rounded-md max-w-[200px] bg-[#ece5dd] relative group"
+                                        : "relative group"
+                                        }`}
                                     >
                                       <WhatsAppVoiceMessage
                                         src={mediaUrl}
@@ -848,11 +894,10 @@ export const ChatScreen = ({
                                   )}
                                   {isDocument && (
                                     <div
-                                      className={`${
-                                        msg?.caption
-                                          ? "border border-gray-200 mb-1 rounded-md max-w-[200px] bg-[#22577E] p-1 relative group"
-                                          : "relative group"
-                                      }`}
+                                      className={`${msg?.caption
+                                        ? "border border-gray-200 mb-1 rounded-md max-w-[200px] bg-[#ece5dd] p-1 relative group"
+                                        : "relative group"
+                                        }`}
                                     >
                                       {/* <iframe
                                     src={mediaUrl}
@@ -860,7 +905,7 @@ export const ChatScreen = ({
                                     allow="encrypted-media;"
                                     allowFullScreen
                                   /> */}
-                                      <div className="bg-[#e1f3fb] text-black p-4 rounded-sm shadow-md max-w-xs flex items-center gap-3 mb-1">
+                                      <div className="bg-white text-black p-4 rounded-sm shadow-md max-w-xs flex items-center gap-3 mb-1">
                                         <div className="bg-white p-1 rounded-full shadow-inner text-blue-500">
                                           {/* <InsertDriveFileIcon
                                         sx={{ fontSize: 25 }}
@@ -881,7 +926,7 @@ export const ChatScreen = ({
                                         </div>
                                       </div>
                                       {msg?.caption && (
-                                        <div className="text-sm text-white mb-1 ml-2 whitespace-pre-wrap break-words">
+                                        <div className="text-sm text-gray-900 mb-1 ml-2 whitespace-pre-wrap break-words">
                                           {msg?.caption}
                                         </div>
                                       )}
@@ -944,7 +989,7 @@ export const ChatScreen = ({
                             {btnOption === "active" && (
                               <div className="flex gap-2">
                                 <button
-                                  className="hover:bg-gray-300 transition-all duration-200 rounded-full p-1 px-2 cursor-pointer"
+                                  className="hover:bg-[#ece5dd] transition-all duration-200 rounded-full p-1 px-2 cursor-pointer"
                                   onClick={() => {
                                     setChatState((prev) => ({
                                       ...prev,
@@ -957,7 +1002,7 @@ export const ChatScreen = ({
                                     }));
                                   }}
                                 >
-                                  <FaReply className=" size-3" />
+                                  <FaReply className="size-3" />
                                 </button>
                                 {/* <a
                               onClick={() => {
@@ -973,7 +1018,7 @@ export const ChatScreen = ({
                               <FileDownloadOutlinedIcon className="size-2" />
                             </a> */}
                                 <button
-                                  className="hover:bg-gray-300 transition-all duration-200 rounded-full p-0.5 cursor-pointer"
+                                  className="hover:bg-[#ece5dd] transition-all duration-200 rounded-full p-0.5 cursor-pointer"
                                   // onClick={() => {
                                   //   // toast.success("Download started");
                                   //   const url = isSent
@@ -998,17 +1043,15 @@ export const ChatScreen = ({
 
                         {isText && (
                           <div
-                            className={`flex items-center gap-2 max-w-[200px]  ${
-                              isSent ? "flex-row-reverse" : ""
-                            }`}
+                            className={`flex items-center gap-2 max-w-[200px]  ${isSent ? "flex-row-reverse" : ""
+                              }`}
                           >
                             <div className="max-w-[250px]">
                               <p
-                                className={`whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${
-                                  isSent
-                                    ? "bg-[#22577E] text-white rounded-br-none"
-                                    : "bg-[#5584AC] text-white rounded-bl-none"
-                                }`}
+                                className={`whitespace-pre-wrap break-words p-2.5 rounded-2xl text-[0.8rem] tracking-wide shadow-sm ${isSent
+                                  ? "bg-[#075e54] text-white rounded-br-none"
+                                  : "bg-[#128c7e] text-white rounded-bl-none"
+                                  }`}
                                 dangerouslySetInnerHTML={{
                                   __html: formatMessageBody(msg.messageBody),
                                 }}
@@ -1034,7 +1077,7 @@ export const ChatScreen = ({
                         )}
 
                         {isLocation && (
-                          <div className="flex flex-col items-start max-w-xs bg-[#22577E] shadow-md rounded-t-2xl rounded-bl-2xl overflow-hidden">
+                          <div className="flex flex-col items-start max-w-xs bg-[#ece5dd] shadow-md rounded-t-2xl rounded-bl-2xl overflow-hidden">
                             <div className="bg-white m-2 rounded-t-2xl rounded-bl-2xl p-2">
                               {/* Message text */}
                               <p className="text-sm text-black py-2 text-center">
@@ -1048,7 +1091,7 @@ export const ChatScreen = ({
 
                               <button
                                 // onClick={onSendLocation}
-                                className="flex items-center justify-center cursor-pointer gap-2 border-t-2 border-[#22587e74] text-green-500 font-medium py-2 w-full"
+                                className="flex items-center justify-center cursor-pointer gap-2 border-t-2 border-gray-300 text-[#075e54] font-semibold py-2 w-full"
                               >
                                 <IoLocationOutline className="w-4 h-4" />
                                 <span>Send Location</span>
@@ -1080,17 +1123,16 @@ export const ChatScreen = ({
                             templateJsonData={templateJsonData}
                           />
                         )}
+
                         {isBot && <BotPreview template={msg} />}
 
                         <div
-                          className={`mt-1 text-[0.7rem] ${
-                            isSent ? "text-end" : "text-start"
-                          }`}
+                          className={`mt-1 text-[0.7rem] ${isSent ? "text-end" : "text-start"
+                            }`}
                         >
                           <div
-                            className={`flex gap-1 items-center ${
-                              isSent ? "justify-end" : "justify-start"
-                            }`}
+                            className={`flex gap-1 items-center ${isSent ? "justify-end" : "justify-start"
+                              }`}
                           >
                             {!isSent && (
                               <>
@@ -1124,10 +1166,10 @@ export const ChatScreen = ({
                 </div>
               </div>
             ))}
-            {/* bg-[#22577E] */}
+
             {chatIndex > 1 && (
               <button
-                className=" text-[#22577E] border-2 border-[#22577E] px-4 py-2 rounded-md flex gap-2 items-center ml-auto mr-auto mt-2 cursor-pointer text-xs tracking-wider font-medium transition-all hover:bg-[#22577E] hover:text-white hover:border-white"
+                className="text-[#075e54] border-2 border-[#128c7e] px-4 py-2 rounded-md flex gap-2 items-center ml-auto mr-auto mt-2 cursor-pointer text-xs tracking-wider font-medium transition-all hover:bg-[#128c7e] hover:text-white hover:border-white"
                 onClick={() => {
                   setChatIndex((prev) => prev - 1);
                   // handleFetchSpecificConversation(true);
@@ -1148,13 +1190,6 @@ export const ChatScreen = ({
                 className="fixed left-0 bottom-20 w-full bg-gray-50 border-1 border-gray-300 rounded-md shadow-md px-4 py-2 mb-1"
               >
                 <div className="relative">
-                  {/* <button className="flex items-center gap-1">
-              <img
-                src={URL.createObjectURL(selectedImage)}
-                alt=""
-                className="object-cover w-20 h-20"
-              />
-            </button> */}
                   {selectedImage?.type === "image" && (
                     <button className="flex items-center gap-1">
                       <img
@@ -1503,7 +1538,7 @@ export const ChatScreen = ({
       </div>
 
       {/* Sidebar */}
-      <Sidebar
+      {/* <Sidebar
         visible={visibleRight}
         position="right"
         onHide={() => setVisibleRight(false)}
@@ -1548,6 +1583,220 @@ export const ChatScreen = ({
               <p className="text-right">{value}</p>
             </div>
           ))}
+        </div>
+      </Sidebar> */}
+
+      <Sidebar
+        visible={visibleRight}
+        position="right"
+        onHide={() => {
+          setVisibleRight(false);
+          setExpanded(false);
+        }}
+        style={{
+          width: expanded ? "48rem" : "24rem",
+          maxWidth: "95vw",
+          overflow: "hidden",
+        }}
+      >
+        <div className={`flex h-full transition-all duration-300 ${expanded ? "gap-4" : ""}`}>
+          <div className="flex-1 flex flex-col border-r pr-2">
+            <div className="flex flex-col items-center rounded-t-2xl border-b pb-3 bg-gradient-to-r from-[#25D366]/10 to-[#075E54]/10">
+              <img
+                src={chatState?.active.image || "/default-avatar.jpg"}
+                alt="User"
+                className="w-12 h-12 rounded-full shadow-md border-2 border-white mt-4"
+              />
+              <h1 className="mt-3 text-lg font-semibold text-gray-900">
+                {chatState?.active.contectName || "Jane Doe"}
+              </h1>
+              <p className="text-xs text-gray-600">
+                {chatState?.active.mobileNo || "+91 9876543210"}
+              </p>
+              <span className="mt-1 px-2 py-0.5 text-[11px] font-medium bg-green-100 text-green-700 rounded-full">
+                Active
+              </span>
+            </div>
+
+            {/* <div className="grid grid-cols-2 gap-3 py-2">
+              {[
+                { label: "Conversations", value: "42" },
+                { label: "Avg Response", value: "2m" },
+                { label: "Resolution", value: "89%" },
+                { label: "Satisfaction", value: "4.6/5" },
+              ].map(({ label, value }, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 bg-gray-50 rounded-md flex flex-col items-center border border-gray-100"
+                >
+                  <span className="text-base font-semibold text-[#075E54]">
+                    {value}
+                  </span>
+                  <span className="text-[11px] text-gray-500">{label}</span>
+                </div>
+              ))}
+            </div> */}
+
+            <div className="py-4 space-y-2 text-sm">
+              {[
+                {
+                  label: "Agent",
+                  value: chatState?.agentName?.agentName || "John Doe",
+                  icon: <PersonOutline fontSize="small" />,
+                },
+                {
+                  label: "Group",
+                  value: chatState?.agentName?.groupName || "Support Team",
+                  icon: <Groups2Outlined fontSize="small" />,
+                },
+                {
+                  label: "Status",
+                  value: "Active",
+                  icon: <CheckCircleOutline fontSize="small" />,
+                },
+                // {
+                //   label: "Last Active",
+                //   value: "Mon, 3:45 PM",
+                //   icon: <AccessTime fontSize="small" />,
+                // },
+                // {
+                //   label: "Source",
+                //   value: "WhatsApp",
+                //   icon: <WhatsApp fontSize="small" className="text-[#25D366]" />,
+                // },
+                // {
+                //   label: "Location",
+                //   value: "New Delhi, IN",
+                //   icon: <LocationOnOutlined fontSize="small" />,
+                // },
+                // {
+                //   label: "Email",
+                //   value: "janedoe@email.com",
+                //   icon: <EmailOutlined fontSize="small" />,
+                // },
+                // {
+                //   label: "Role",
+                //   value: "Premium Customer",
+                //   icon: <WorkOutline fontSize="small" />,
+                // },
+              ].map(({ label, value, icon }, idx) => (
+                <div
+                  key={idx}
+                  className="flex justify-between items-center p-2 rounded-md hover:bg-gray-50"
+                >
+                  <span className="flex items-center gap-2 text-gray-600">
+                    {icon} {label}
+                  </span>
+                  <span className="font-medium text-gray-800 text-sm">{value}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* <div className="p-2 border-t flex justify-center">
+              <button
+                onClick={() => setExpanded(!expanded)}
+                className="text-xs py-2 px-2 rounded-md bg-[#128c7e] text-white hover:bg-[#128C7E] transition"
+              >
+                {expanded ? "← Collapse Journey" : "View Conversation Journey →"}
+              </button>
+            </div> */}
+
+            {/* <div className="">
+              <p className="text-xs text-center font-semibold text-gray-500 mb-2">Tags</p>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {tags.map((tag, idx) => (
+                  <span
+                    key={idx}
+                    className="flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-[#25D366]/10 text-[#075E54] font-medium border border-[#25D366]/20"
+                  >
+                    {tag}
+                    <Close
+                      fontSize="inherit"
+                      className="cursor-pointer hover:text-red-500"
+                      onClick={() => removeTag(tag)}
+                    />
+                  </span>
+                ))}
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={newTag}
+                  onChange={(e) => setNewTag(e.target.value)}
+                  placeholder="Add tag"
+                  className="flex-1 border rounded-md px-2 py-1 text-xs focus:ring focus:ring-[#25D366]/20"
+                />
+                <button
+                  onClick={addTag}
+                  className="text-[#25D366] hover:text-[#075E54]"
+                >
+                  <Add fontSize="small" />
+                </button>
+              </div>
+            </div> */}
+
+            <div className="py-4">
+              <p className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1">
+                <NoteAltOutlined fontSize="small" /> Notes
+              </p>
+              <div className="p-3 bg-gray-50 border rounded-md text-xs text-gray-700">
+                Customer prefers evening calls. Interested in bulk WhatsApp campaigns.
+              </div>
+            </div>
+
+            {/* <div className="p-4 border-t mt-auto flex gap-2">
+              <button className="flex-1 text-sm py-2 rounded-md bg-[#25D366] text-white hover:bg-[#128C7E] transition">
+                Message
+              </button>
+              <button className="flex-1 text-sm py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
+                Block
+              </button>
+              <button className="flex-1 text-sm py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition">
+                <DoneAll fontSize="inherit" /> Close
+              </button>
+            </div> */}
+          </div>
+          {expanded && (
+            <div className="flex-1 flex flex-col overflow-auto p-4">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Conversation Journey
+              </h2>
+              <ChatTimeline
+                timelineData={[
+                  {
+                    title: "Message Sent",
+                    description: "Template: Welcome Message",
+                    time: "05 Sep 2025, 10:32 AM",
+                    icon: <FaWhatsapp className="text-white text-sm" />,
+                  },
+                  {
+                    title: "User Replied",
+                    description: "Triggered keyword: 'Support'",
+                    time: "05 Sep 2025, 10:35 AM",
+                    icon: <FaUser className="text-white text-sm" />,
+                  },
+                  {
+                    title: "Agent Joined",
+                    description: "John Doe entered the chat",
+                    time: "05 Sep 2025, 10:40 AM",
+                    icon: <FaHeadset className="text-white text-sm" />,
+                  },
+                  {
+                    title: "Template Sent",
+                    description: "Order Confirmation",
+                    time: "05 Sep 2025, 10:50 AM",
+                    icon: <FaRegPaperPlane className="text-white text-sm" />,
+                  },
+                  {
+                    title: "Conversation Closed",
+                    description: "Resolved by John Doe",
+                    time: "05 Sep 2025, 11:00 AM",
+                    icon: <FaCheckCircle className="text-white text-sm" />,
+                  },
+                ]}
+              />
+            </div>
+          )}
         </div>
       </Sidebar>
     </div>

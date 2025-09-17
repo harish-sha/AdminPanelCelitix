@@ -187,7 +187,7 @@ export const ButtonNodeContent = ({
     const newValue =
       input.substring(0, selectionStart) +
       start +
-      selectedText +
+      selectedText.trim() +
       end +
       input.substring(selectionEnd);
 
@@ -400,49 +400,51 @@ export const ButtonNodeContent = ({
                     },
                   }));
                 }}
-                className="resize-none h-30 mt-2"
+                className="resize-none h-55 mt-2"
                 maxLength={1024}
                 ref={inputRef}
               />
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
-                className="flex items-center gap-2 mt-2 bg-white border border-slate-200 rounded-xl px-2 py-2 shadow w-max"
-              >
-                <Tooltip title="Bold" arrow>
-                  <button
-                    onClick={() => addFormat("bold")}
-                    className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
-                  >
-                    <FormatBoldOutlined fontSize="small" />
-                  </button>
-                </Tooltip>
-                <Tooltip title="Italic" arrow>
-                  <button
-                    onClick={() => addFormat("italic")}
-                    className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
-                  >
-                    <FormatItalicOutlined fontSize="small" />
-                  </button>
-                </Tooltip>
-                <Tooltip title="Strikethrough" arrow>
-                  <button
-                    onClick={() => addFormat("strike")}
-                    className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
-                  >
-                    <FormatStrikethroughOutlined fontSize="small" />
-                  </button>
-                </Tooltip>
-                <div className="w-px h-5 bg-slate-300 mx-1"></div>
-                <Tooltip title="Emoji Picker" arrow>
-                  <CustomEmojiPicker position="top" onSelect={insertEmoji} />
-                </Tooltip>
-              </motion.div>
+              <div className="flex justify-between">
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="flex items-center gap-2 mt-2 bg-white border border-slate-200 rounded-xl px-2 py-2 shadow w-max"
+                >
+                  <Tooltip title="Bold" arrow>
+                    <button
+                      onClick={() => addFormat("bold")}
+                      className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
+                    >
+                      <FormatBoldOutlined fontSize="small" />
+                    </button>
+                  </Tooltip>
+                  <Tooltip title="Italic" arrow>
+                    <button
+                      onClick={() => addFormat("italic")}
+                      className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
+                    >
+                      <FormatItalicOutlined fontSize="small" />
+                    </button>
+                  </Tooltip>
+                  <Tooltip title="Strikethrough" arrow>
+                    <button
+                      onClick={() => addFormat("strike")}
+                      className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
+                    >
+                      <FormatStrikethroughOutlined fontSize="small" />
+                    </button>
+                  </Tooltip>
+                  <div className="w-px h-5 bg-slate-300 mx-1"></div>
+                  <Tooltip title="Emoji Picker" arrow>
+                    <CustomEmojiPicker position="top" onSelect={insertEmoji} />
+                  </Tooltip>
+                </motion.div>
+                <p className="text-xs mt-2">
+                  {nodesInputData[id]?.message?.length || 0}/1024
+                </p>
+              </div>
             </div>
-            <p className="text-xs mt-2">
-              {nodesInputData[id]?.message?.length || 0}/1024
-            </p>
           </div>
 
           <div className="mt-2">
@@ -558,19 +560,24 @@ export const ButtonNodeContent = ({
 
         <div className="space-y-2">
           {options?.map((option, index) => (
-            <div className="flex gap-2 justify-center items-center" key={index}>
-              <InputField
-                id="buttonText"
-                name="buttonText"
-                label={`Button-Label-${index + 1}`}
-                value={options[index]}
-                onChange={(e: { target: { value: any } }) => {
-                  handleOptionInput(e.target.value, index);
-                }}
-                placeholder="Enter Button Text"
-                maxLength="20"
-              />
-
+            <div
+              className="flex gap-2 justify-center items-start w-full"
+              key={index}
+            >
+              <div className="w-full">
+                <InputField
+                  id="buttonText"
+                  name="buttonText"
+                  label={`Button-Label-${index + 1}`}
+                  value={options[index]}
+                  onChange={(e: { target: { value: any } }) => {
+                    handleOptionInput(e.target.value, index);
+                  }}
+                  placeholder="Enter Button Text"
+                  maxLength="20"
+                />
+                <p className="text-xs mt-2">{option?.length || 0}/20</p>
+              </div>
               {options.length > 1 && (
                 <span
                   id="deleteInput"

@@ -149,7 +149,6 @@ const ObdCampaignTable = ({
     };
 
     const handleDetailLogs = (row) => {
-        console.log("rows", row)
         navigate("/obdCampaignDetailslog", {
             state: {
                 campaignSrNo: row.id,

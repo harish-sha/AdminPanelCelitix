@@ -29,7 +29,6 @@ export default function LeadTags() {
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [isLoading, setIsLoading] = useState(true);
 
-
   const filtered = tags.filter((t) =>
     (t.tagName || "").toLowerCase().includes((filter || "").toLowerCase())
   );
@@ -91,7 +90,7 @@ export default function LeadTags() {
   const [loading, setLoading] = useState(false);
   const [editingTag, setEditingTag] = useState(null);
   const [tagToDelete, setTagToDelete] = useState(null);
-
+  const [activeColor, setActiveColor] = useState(null);
 
   const openAddDialog = () => {
     setEditingTag(null);
@@ -225,16 +224,23 @@ export default function LeadTags() {
   };
 
   // Filtered list
-  // const filteredTags = (Array.isArray(tags) ? tags : []).filter(
-  //   (tag) =>
-  //     tag.tagName.toLowerCase().includes(filter.toLowerCase()) ||
-  //     tag.tagDetails.toLowerCase().includes(filter.toLowerCase())
-  // ).sort((a, b) => new Date(b.insertTime) - new Date(a.insertTime));
-  const filteredTags = (Array.isArray(tags) ? tags : []).filter(
-    (tag) =>
-      tag.tagName.toLowerCase().includes(filter.toLowerCase()) ||
-      tag.tagDetails.toLowerCase().includes(filter.toLowerCase())
-  );
+  // const filteredTags = (Array.isArray(tags) ? tags : [])
+  //   .filter(
+  //     (tag) =>
+  //       tag.tagName.toLowerCase().includes(filter.toLowerCase()) ||
+  //       tag.tagDetails.toLowerCase().includes(filter.toLowerCase())
+  //   )
+  //   .sort((a, b) => new Date(b.insertTime) - new Date(a.insertTime));
+
+  const filteredTags = (Array.isArray(tags) ? tags : [])
+    .filter((tag) => {
+      const matchesSearch =
+        tag.tagName.toLowerCase().includes(filter.toLowerCase()) ||
+        tag.tagDetails.toLowerCase().includes(filter.toLowerCase());
+      const matchesColor = activeColor ? tag.color === activeColor : true;
+      return matchesSearch && matchesColor;
+    })
+    .sort((a, b) => new Date(b.insertTime) - new Date(a.insertTime));
 
   function highlightMatch(text, query) {
     if (!query) return text;
@@ -286,7 +292,7 @@ export default function LeadTags() {
             t.srNo === tag.srNo ? { ...t, status: newStatus } : t
           )
         );
-        fetchTags();
+        // fetchTags();
       } else {
         toast.error(res?.message || "Failed to update tag status");
       }
@@ -343,7 +349,7 @@ export default function LeadTags() {
           </div>
 
           <div className="flex items-center gap-5 mt-3 sm:mt-0">
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               {Object.entries(
                 tags.reduce((acc, t) => {
                   acc[t.color] = (acc[t.color] || 0) + 1;
@@ -363,6 +369,54 @@ export default function LeadTags() {
                   )}
                 </div>
               ))}
+            </div> */}
+            <div className="flex items-center gap-2">
+              {Object.entries(
+                tags.reduce((acc, t) => {
+                  if (!acc[t.color]) acc[t.color] = { count: 0, names: [] };
+                  acc[t.color].count += 1;
+                  acc[t.color].names.push(t.tagName);
+                  return acc;
+                }, {})
+              ).map(([color, { count, names }]) => {
+                const isActive = activeColor === color;
+                return (
+                  // <CustomTooltip
+                  //   key={color}
+                  //   arrow
+                  //   placement="top"
+                  //   title={
+                  //     <div className="text-sm">
+                  //       <div className="font-medium mb-1">
+                  //         Tags with this color:
+                  //       </div>
+                  //       <ul className="list-disc ml-4 space-y-0.5">
+                  //         {names.map((n, i) => (
+                  //           <li key={i}>{n}</li>
+                  //         ))}
+                  //       </ul>
+                  //     </div>
+                  //   }
+                  // >
+                  <div
+                    onClick={() => setActiveColor(isActive ? null : color)}
+                    className={`relative flex items-center justify-center rounded-full shadow-sm border cursor-pointer hover:scale-120 transition-all duration-200 ${isActive ? "ring-2 ring-blue-500 scale-125" : ""
+                      }`}
+                    style={{
+                      backgroundColor: color,
+                      width: isActive ? "1.8rem" : "1.5rem", // bigger when active
+                      height: isActive ? "1.8rem" : "1.5rem",
+                    }}
+                  >
+                    {count > 1 && (
+                      <span className="absolute -bottom-2 text-[10px] font-semibold text-gray-700 bg-white rounded-full px-1 shadow">
+                        {count}
+                      </span>
+                    )}
+                  </div>
+                  // </CustomTooltip>
+                );
+              })}
             </div>
 
             <ShimmerButton icon={GrTag} onClick={openAddDialog}>
@@ -427,7 +481,8 @@ export default function LeadTags() {
                           sources. Create your first tag to get started!
                         </p>
                         <p className="mt-1 text-xs text-gray-400 italic">
-                          Example: “VIP Lead”, “Newsletter Signup”, “Career Fair”
+                          Example: “VIP Lead”, “Newsletter Signup”, “Career
+                          Fair”
                         </p>
                         <div className="mt-6">
                           <ShimmerButton
@@ -589,7 +644,12 @@ export default function LeadTags() {
 
         {/* Add Tag Dialog Start */}
         <Dialog
-          header={editingTag ? `Edit Tag${editingTag.tagName ? ` – ${editingTag.tagName}` : ""}` : "Add Tag"}
+          header={
+            editingTag
+              ? `Edit Tag${editingTag.tagName ? ` – ${editingTag.tagName}` : ""
+              }`
+              : "Add Tag"
+          }
           visible={addTagDialogVisible}
           className="w-[35rem]"
           modal
@@ -643,8 +703,8 @@ export default function LeadTags() {
                       type="button"
                       onClick={() => handleChange("color", c)}
                       className={`w-8 h-8 rounded-full border-2 ${form.color === c
-                        ? "border-gray-700"
-                        : "border-transparent"
+                          ? "border-gray-700"
+                          : "border-transparent"
                         }`}
                       style={{ backgroundColor: c }}
                     />
@@ -653,7 +713,7 @@ export default function LeadTags() {
                 <div className="relative flex flex-col items-center ml-10">
                   <div className="absolute -top-8 flex flex-col items-center animate-bounce w-max">
                     <span className="bg-gray-800 text-white text-xs px-2 py-1 rounded-md shadow-lg">
-                      Explore more colors
+                      Choose more colors
                     </span>
                     <span className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-800"></span>
                   </div>

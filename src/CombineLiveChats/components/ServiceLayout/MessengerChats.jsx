@@ -20,9 +20,7 @@ export default function MessengerChats() {
   const AUTH_URL = `https://www.instagram.com/oauth/authorize?force_reauth=true&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}/&response_type=code&scope=instagram_business_basic%2Cinstagram_business_manage_messages%2Cinstagram_business_manage_comments%2Cinstagram_business_content_publish%2Cinstagram_business_manage_insights`;
 
   const [authCode, setAuthCode] = useState(null);
-  console.log("authCode", authCode)
   const [error, setError] = useState(null);
-  console.log("error", error)
 
   const handleConnect = () => {
     const width = 600;
@@ -49,11 +47,8 @@ export default function MessengerChats() {
         // Check if the popup has redirected back to our redirect_uri
         if (authWindow.location.href.indexOf(REDIRECT_URI) !== -1) {
           const urlParams = new URL(authWindow.location.href).searchParams;
-          console.log("urlparams", urlParams)
           const code = urlParams.get("code");
-          console.log("insta code", code)
           const errorParam = urlParams.get("error");
-          console.log("insta error", errorParam)
 
           if (code) {
             setAuthCode(code);

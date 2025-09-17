@@ -89,7 +89,6 @@ const Login = () => {
             userId: inputDetails.userId,
             mobileNo: inputDetails.mobileNo,
           });
-          console.log(res);
 
           if (!res?.data.status) {
             return toast.error(res?.data?.msg || "Unable to send OTP");

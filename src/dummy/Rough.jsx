@@ -1,62 +1,31 @@
-{/* <div className="items-center justify-start hidden gap-1 md:flex mt-2">
-          <button
-            onClick={() => {
-              addFormat("bold");
-            }}
-            className="hover:bg-gray-200 rounded-full p-0.5 cursor-pointer"
-          >
-            <FormatBoldOutlined />
-          </button>
-          <button
-            onClick={() => {
-              addFormat("italic");
-            }}
-            className="hover:bg-gray-200 rounded-full p-0.5 cursor-pointer"
-          >
-            <FormatItalicOutlined />
-          </button>
-          <button
-            onClick={() => {
-              addFormat("strike");
-            }}
-            className="hover:bg-gray-200 rounded-full p-0.5 cursor-pointer"
-          >
-            <FormatStrikethroughOutlined />
-          </button>
+const containerRef = useRef(null);
 
-          <div className="mr-2">
-            <CustomEmojiPicker position="top" onSelect={insertEmoji} />
-          </div>
-        </div> */}
+return (
+  <div ref={containerRef} className="relative border-l-2 border-green-500 pl-6 space-y-6 overflow-y-auto">
+    {timelineData.map((event, idx) => (
+      <motion.div
+        key={idx}
+        initial={{ opacity: 0, x: -20 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, root: containerRef }}
+        transition={{ duration: 0.3 }}
+        className="relative"
+      >
+        {/* Dot */}
+        <span className="absolute -left-[14px] flex items-center justify-center w-6 h-6 bg-green-500 text-white rounded-full shadow-md">
+          {event.icon}
+        </span>
 
-
-async function fetchWaba() {
-  try {
-    const res = await getWabaList();
-    console.log("waba res", res);
-
-    if (res?.length > 0) {
-      const firstWaba = res[0];
-      setWabaState({
-        waba: res,
-        selectedWaba: firstWaba.mobileNo,
-        wabaSrno: firstWaba.wabaSrno,
-      });
-    } else {
-      setWabaState({ waba: [], selectedWaba: "", wabaSrno: null });
-    }
-  } catch (e) {
-    console.error("Failed to fetch WABA", e);
-  }
-}
-
-useEffect(() => {
-  fetchWaba();
-}, []);
-
-// keep your sync logic (if you really need `wabaData`)
-useEffect(() => {
-  if (wabaState) {
-    setWabaData(wabaState);
-  }
-}, [wabaState]);
+        {/* Content */}
+        <div className="bg-white rounded-lg shadow p-3 border border-gray-200">
+          <p className="text-sm font-semibold text-gray-800">{event.title}</p>
+          <p className="text-xs text-gray-500">{event.description}</p>
+          <span className="text-[11px] text-gray-400 flex items-center gap-1 mt-1">
+            <FaRegClock className="text-[12px]" />
+            {event.time}
+          </span>
+        </div>
+      </motion.div>
+    ))}
+  </div>
+);

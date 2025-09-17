@@ -73,7 +73,6 @@ const SendRcs = () => {
       let matchLength = 0;
       let matchBtnList = [];
       const content = data[0]?.content || "";
-      console.log("data", data[0].suggestions)
       const suggestionVar = data[0]?.suggestions?.map((item) => {
         if (item?.type === "website") {
           const match = item?.suggestionValue.match(/{#(.+?)#}/g) || [];
@@ -86,7 +85,6 @@ const SendRcs = () => {
 
       setBtnVarLength(matchLength);
       setBtnVarList(matchBtnList);
-      console.log("suggestionvar", suggestionVar)
       const matches = content.match(/{#(.+?)#}/g) || [];
 
       setVarLength(matches.length);
@@ -362,7 +360,7 @@ const SendRcs = () => {
 
   useEffect(() => {
     if (selectedOption === "group") {
-      setHeaders(["firstName", "lastName", "mobile"]);
+      setHeaders(["first_name", "last_name"]);
     } else {
       setHeaders(contactData?.fileHeaders || []);
     }

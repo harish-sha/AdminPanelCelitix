@@ -503,6 +503,7 @@
 // new changes start
 
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Grid } from "@mui/material";
 import {
@@ -598,7 +599,16 @@ import moment from "moment";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import PieChartIcon from "@mui/icons-material/PieChart";
-import SmsIcon from "@mui/icons-material/Sms";
+
+import WhatsappIcon from "@/assets/icons/whatsapp3d.png";
+import SmsIcon from "@/assets/icons/sms3d.jpg";
+import RcsIcon from "@/assets/icons/rcs3d.jpg";
+
+import { useRef } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import celitixLogo from "@/assets/images/celitix-cpaas-solution-logo.svg";
+import Search from "./components/Search";
+// import Search from "./components/Search.jsx";
 
 const bots = [
   {
@@ -631,8 +641,9 @@ const Dashboard = () => {
   const [userData, setUserData] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
+    salesPersonId: "Not Assigned",
   });
-  const [search, setSearch] = useState("");
+
   const [balance, setBalance] = useState(0);
   const [rechargableCredit, setRechargableCredit] = useState(0);
   const [showRefresh, setShowRefresh] = useState(false);
@@ -642,6 +653,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
 
   const [activeTab, setActiveTab] = useState("Whatsapp");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -654,6 +666,7 @@ const Dashboard = () => {
         setUserData(user);
         setFormData({
           firstName: user.firstName || "",
+          salesPersonId: user.salesPersonId || "Not Assigned",
         });
       } else {
         console.error("Failed to load user details.");
@@ -664,6 +677,10 @@ const Dashboard = () => {
 
     fetchUserDetails();
   }, []);
+
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
 
   const { user } = useUser();
 
@@ -714,6 +731,30 @@ const Dashboard = () => {
       title: "Client Rating",
       value: "4.8/5",
       bgColor: "bg-teal-100/60",
+      textColor: "text-gray-900",
+      showRefreshIcon: false,
+      // iconColor: "text-gray-600",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className={`w-4 h-4 `}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M7 17l10-10m0 0H9m8 0v8"
+          />
+        </svg>
+      ),
+    },
+    {
+      title: "Sales Manager",
+      value: formData.salesPersonId,
+      bgColor: "bg-indigo-100/60",
       textColor: "text-gray-900",
       showRefreshIcon: false,
       // iconColor: "text-gray-600",
@@ -948,32 +989,6 @@ const Dashboard = () => {
   };
 
   // *************************************************Daily service usages START***********************************
-  const serviceTabs = [
-    {
-      title: "Whatsapp",
-    },
-    {
-      title: "SMS",
-    },
-    {
-      title: "RCS",
-    },
-    {
-      title: "OBD",
-    },
-    {
-      title: "IBD",
-    },
-    {
-      title: "EMAIL",
-    },
-    {
-      title: "Authentication",
-    },
-    {
-      title: "TWO-WAY SMS",
-    },
-  ];
 
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
@@ -982,14 +997,16 @@ const Dashboard = () => {
 
   const FILTERS = ["Day", "Month"];
 
-  const icons = {
-    whatsapp: <FaWhatsapp className="text-green-500 text-2xl" />,
-    voice: <FaPhone className="text-blue-500 text-2xl" />,
-    rcs: <FaRegCommentDots className="text-indigo-500 text-2xl" />,
-    sms: <FaSms className="text-yellow-500 text-2xl" />,
-  };
-
   const COLORS = ["#9FE0DF", "#BD94D6", "#DCCE89", "#7C80E0"];
+
+  const formatDate = (date) => {
+    if (!date) return "--";
+    return date.toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
 
   const [filter, setFilter] = useState("Day");
   const [usageData, setUsageData] = useState(null);
@@ -1005,7 +1022,6 @@ const Dashboard = () => {
     setIsLoading(true);
     try {
       const data = await dailySeriveUsage(payload);
-      console.log("daily service usage", data);
 
       if (data && Object.keys(data).length > 0) {
         setUsageData(data);
@@ -1020,27 +1036,83 @@ const Dashboard = () => {
     }
   };
 
-  const servicesDailyUsage = ["whatsapp", "voice", "rcs", "sms"];
+  const servicesDailyUsage = [
+    {
+      name: "Whatsapp",
+      bgColor: "bg-green-200",
+      textColor: "text-black",
+      icon: WhatsappIcon,
+    },
+    {
+      name: "Voice",
+      bgColor: "bg-indigo-400",
+      textColor: "text-black",
+      icon: SmsIcon,
+    },
+    {
+      name: "RCS",
+      bgColor: "bg-purple-200",
+      textColor: "text-black",
+      icon: RcsIcon,
+    },
+    {
+      name: "SMS",
+      bgColor: "bg-yellow-200",
+      textColor: "text-black",
+      icon: SmsIcon,
+    },
+    {
+      name: "IBD",
+      bgColor: "bg-green-200",
+      textColor: "text-black",
+      icon: SmsIcon,
+    },
+    {
+      name: "Email",
+      bgColor: "bg-indigo-400",
+      textColor: "text-black",
+      icon: SmsIcon,
+    },
+    {
+      name: "Authentication",
+      bgColor: "bg-purple-200",
+      textColor: "text-black",
+      icon: SmsIcon,
+    },
+    {
+      name: "Two-Way SMS",
+      bgColor: "bg-yellow-200",
+      textColor: "text-black",
+      icon: SmsIcon,
+    },
+  ];
 
   const chartData = servicesDailyUsage.map((s) => {
-    const item = usageData?.[s]?.[0] || {};
+    const key = s.name.toLowerCase();
+    const item = usageData?.[key]?.[0] || {};
     return {
-      service: s,
-      name: s.toUpperCase(),
+      service: s.name,
+      name: s.name.toUpperCase(),
       sent: item.totalSent || 0,
       cost: item.totalCharge || 0,
-      icon: icons[s],
+      icon: s.icon,
     };
   });
-  console.log("chartData:", chartData);
 
-  const [selectedServices, setSelectedServices] = useState(servicesDailyUsage);
-  const [chartType, setChartType] = useState("bar");
-  const toggleService = (service) => {
+
+  const [showBar, setShowBar] = useState(true);
+  const [showLine, setShowLine] = useState(true);
+  const [showPie, setShowPie] = useState(true);
+
+  const [selectedServices, setSelectedServices] = useState(
+    servicesDailyUsage.map((s) => s.name)
+  );
+
+  const toggleService = (serviceName) => {
     setSelectedServices((prev) =>
-      prev.includes(service)
-        ? prev.filter((s) => s !== service)
-        : [...prev, service]
+      prev.includes(serviceName)
+        ? prev.filter((s) => s !== serviceName)
+        : [...prev, serviceName]
     );
   };
 
@@ -1083,11 +1155,48 @@ const Dashboard = () => {
   const [oldApiKey, setOldApiKey] = useState("");
   const [visible, setVisible] = useState(false);
 
+  const scrollRef = useRef(null);
+
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const scrollAmount = 200;
+      scrollRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const serviceUsage = Array.isArray(usageData)
+    ? usageData[0] || {}
+    : usageData || {};
+
+  const dailyTotals = Object.keys(serviceUsage).flatMap((serviceKey) => {
+    const normalizedKey = serviceKey.toLowerCase();
+    const selectedNormalized = selectedServices.map((s) => s.toLowerCase());
+
+    if (!selectedNormalized.includes(normalizedKey)) return [];
+
+    const serviceData = serviceUsage[serviceKey] || [];
+
+    return serviceData.map((d) => ({
+      date: moment(d.date).format("DD MMM"),
+      totalSent: Number(d.totalSent) || 0,
+      totalCharged: Number(d.totalCharge) || 0,
+      service: serviceKey,
+    }));
+  });
+  const totalSentSum = dailyTotals.reduce((acc, d) => acc + d.totalSent, 0);
+  const totalChargedSum = dailyTotals.reduce(
+    (acc, d) => acc + d.totalCharged,
+    0
+  );
+
   const integrationUrl = `https://int.celitix.com/?user_id=${oldApiKey}&api_key=AIzaSyBqlfMk-_yK_3ICUUYej_nVUDXz0cP327Y`;
 
   // *************************************************Daily service usages START***********************************
 
-  const rings = [60, 110, 160];
+  const rings = [80, 130, 180];
 
   const ringsicons = [
     { src: slack, ring: 1, angle: 90 },
@@ -1102,11 +1211,11 @@ const Dashboard = () => {
     { src: facebookmessenger, ring: 0, angle: 0 },
   ];
 
-  const size = 400;
+  const size = 500;
   const center = size / 2;
 
   return (
-    <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-[calc(100vh-6rem)]">
+    <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-[calc(100vh-6rem)] overflow-hidden">
       {/* Logged In User Card */}
       {/* <motion.div
         className="rounded-2xl shadow-md p-6 flex items-center justify-between flex-wrap gap-6 bg-gradient-to-br from-blue-50 to-blue-100"
@@ -1174,37 +1283,13 @@ const Dashboard = () => {
         <div className="flex flex-col justify-center items-center  md:flex-row md:justify-between mt-5 gap-4 ">
           {/* Brand Name */}
           <div className="z-10 ml-6 order-1 md:order-1 ">
-            <h2 className="md:text-xl text-6xl lg:text-4xl font-semibold text-grat-700">
-              Celitix
-            </h2>
+            <img src={celitixLogo} width={120} height={80} alt="Celitix Logo" />
           </div>
 
           {/* Search Bar */}
-          <div className="  z-10 order-3 md:order-2 ">
-            <button className="bg-gray-50   px-3 sm:px-5 py-2 rounded-full shadow-lg border border-gray-200 hover:shadow-xl transition flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 flex-grow sm:flex-grow-0">
-                <SearchIcon className="text-gray-700" />
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search here"
-                  className="bg-transparent outline-none text-gray-400 placeholder-gray-400 w-full sm:w-auto"
-                />
-              </div>
-              <div className="hidden sm:flex items-center gap-1">
-                <span className="text-xs sm:text-sm text-gray-800 font-semibold">
-                  ⌘
-                </span>
-                <span className="text-xs sm:text-sm text-gray-800 font-medium">
-                  +
-                </span>
-                <span className="text-xs sm:text-sm text-gray-800 font-medium">
-                  K
-                </span>
-              </div>
-            </button>
-          </div>
+         
+          <Search />
+          
 
           <div className="flex justify-center items-center md:gap-3 gap-4 z-10 mr-6 order-2 md:order-3">
             {/* Notification */}
@@ -1230,7 +1315,10 @@ const Dashboard = () => {
 
             {/* Profile  */}
             <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-white shadow-md">
-              <span className="absolute inset-0 flex items-center justify-center text-sm sm:text-md text-white bg-black/40">
+              <span
+                className="absolute inset-0 flex items-center justify-center text-sm sm:text-md text-white bg-black/40"
+                onClick={handleProfileClick}
+              >
                 {(formData.firstName || "U").charAt(0).toUpperCase()}
               </span>
             </div>
@@ -1280,7 +1368,7 @@ const Dashboard = () => {
       </div>
 
       {/* service cards */}
-      <div className="relative overflow-y-scroll md:overflow-hidden h-[40vh] bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 border border-gray-200 rounded-2xl shadow-md backdrop-blur-2xl text-gray-800">
+      <div className="relative overflow-y-scroll xl:overflow-hidden h-[45vh] bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 border border-gray-200 rounded-2xl shadow-md backdrop-blur-2xl text-gray-800">
         <div className="mt-5 ml-10">
           <h2 className="text-2xl font-bold  gradient-animate">
             Services Cards
@@ -1320,7 +1408,7 @@ const Dashboard = () => {
           />
         </svg>
 
-        <div className="relative grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6  items-end gap-4 p-4 md:p-6 mt-0 md:mt-5 ">
+        <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6  items-end gap-4 p-4 md:p-6 mt-0 md:mt-5 ">
           {services.map((s, idx) => (
             <div
               key={idx}
@@ -1388,10 +1476,11 @@ const Dashboard = () => {
       {/* intigration section */}
       <div className="space-y-4 w-full mt-10 flex flex-col sm:flex-row gap-4">
         {/* Left Wallet Chart */}
-        <div className="flex-1 bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 p-6 rounded-2xl shadow-lg relative flex flex-col">
+
+        <div className="flex-1 bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 p-6 rounded-2xl shadow-lg relative flex flex-col w-full md:w-[50%]">
           <div>
             <h3 className="text-xl font-semibold">Wallet Balance Table</h3>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8 justify-end">
               {isOpen ? (
                 <FilterAltOffIcon
                   onClick={handleClick}
@@ -1405,99 +1494,82 @@ const Dashboard = () => {
               )}
 
               {isOpen && (
-                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                  <UniversalDatePicker
-                    label="From Date"
-                    className="w-full sm:w-auto"
-                  />
-                  <UniversalDatePicker
-                    label="To Date"
-                    className="w-full sm:w-auto"
-                  />
+                <div className="absolute top-4 right-5 z-50 bg-white shadow-lg rounded-xl border border-gray-200 p-4 flex  gap-3 w-[60%]">
+                  <div className="flex gap-2">
+                    <UniversalDatePicker
+                      label="From Date"
+                      className="w-full md:w-66"
+                    />
+                    <UniversalDatePicker
+                      label="To Date"
+                      className="w-full md:w-66"
+                    />
+                  </div>
+
+                  <button
+                    className="text-gray-500 hover:text-gray-700 text-lg absolute right-2 top-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {" "}
+                    X{" "}
+                  </button>
                 </div>
               )}
             </div>
           </div>
+          <p className="text-center mb-5 font-medium text-gray-800 mt-7">
+            Showing result from: Mon Sep 08 2025 to: Sun Sep 14 2025
+          </p>
 
-          {/* Chart Section */}
-          <div className="h-56 sm:h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={walletData}
-                barSize={window.innerWidth < 640 ? 20 : 38}
-                margin={{ top: 15, right: 10, left: -10, bottom: 10 }}
-              >
-                <defs>
-                  <linearGradient
-                    id="walletGradient"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.9} />
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0.6} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#e5e7eb"
-                />
-                <XAxis
-                  dataKey="date"
-                  tick={{ fill: "#6b7280", fontSize: 10, fontWeight: 500 }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <YAxis
-                  tick={{ fill: "#6b7280", fontSize: 10, fontWeight: 500 }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <Tooltip
-                  cursor={{ fill: "rgba(99, 102, 241, 0.1)" }}
-                  contentStyle={{
-                    backgroundColor: "#fff",
-                    borderRadius: "10px",
-                    border: "1px solid #e5e7eb",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                  }}
-                  formatter={(value) => [`₹${value.toLocaleString()}`, "Spend"]}
-                />
-                <Bar
-                  dataKey="usage"
-                  fill="url(#walletGradient)"
-                  radius={[8, 8, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Total Spend */}
-          <div className="mt-4 flex justify-between items-center border-t border-gray-200 pt-3 px-2 sm:px-4">
-            <span className="font-semibold text-gray-700">Total Spend</span>
-            <span className="font-bold text-gray-900">₹4350.00</span>
+          {/* Table Section */}
+          <div className="overflow-x-hidden rounded-lg border border-gray-200 ">
+            <table className="min-w-full divide-y divide-gray-200 text-sm">
+              <thead className="">
+                <tr>
+                  <th className="px-4 py-2 text-left font-semibold text-gray-700">
+                    S.No.
+                  </th>
+                  <th className="px-4 py-2 text-left font-semibold text-gray-700">
+                    Date
+                  </th>
+                  <th className="px-4 py-2 text-left font-semibold text-gray-700">
+                    Closing Balance
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {walletData.map((item, index) => (
+                  <tr key={index}>
+                    <td className="px-4 py-2">{index + 1}</td>
+                    <td className="px-4 py-2">{item.date}</td>
+                    <td className="px-4 py-2">₹ {item.usage}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {/* Total Spend */}
+            <div className=" flex justify-between items-center border-t border-gray-200 pt-3 px-2 sm:px-4">
+              <span className="font-semibold text-gray-700">Total Spend</span>
+              <span className="font-bold text-gray-900">₹4350.00</span>
+            </div>
           </div>
         </div>
 
         {/* Right SVG  Circles */}
-        <div className="flex-1 relative bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 rounded-xl ">
-          <div className="mb-0">
-            <h2 className="text-xl font-extrabold text-gray-800 mt-5 text-center">
+        <div className="flex-1 relative bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 rounded-2xl shadow-lg  p-6 w-full md:w-[50%]">
+          <div className="">
+            <h2 className="text-2xl font-extrabold text-gray-800 mt-3 text-center">
               Add Integrations
             </h2>
-            {/* <p className="text-gray-500 text-center text-sm mt-2">
+            <p className="text-gray-500 text-center text-sm mt-2">
               Connect Freshdesk, Zoho, Shopify, and more from a single
               dashboard.
-            </p> */}
+            </p>
           </div>
 
           <div className="flex items-center justify-center  ">
             <div className="relative" style={{ width: size, height: size }}>
-              {/* orbiting layer */}
               <div className="absolute inset-0 animate-spin-slow">
-                {/* rings */}
                 {rings.map((r, i) => (
                   <div
                     key={i}
@@ -1511,7 +1583,6 @@ const Dashboard = () => {
                   />
                 ))}
 
-                {/* orbiting icons */}
                 {ringsicons.map((icon, i) => {
                   const r = rings[icon.ring];
                   const rad = (icon.angle * Math.PI) / 180;
@@ -1520,20 +1591,19 @@ const Dashboard = () => {
                   return (
                     <div
                       key={i}
-                      className="absolute animate-spin-slower" // <-- spin each icon itself
+                      className="absolute animate-spin-slower"
                       style={{ left: x, top: y }}
                     >
                       <img
                         src={icon.src}
                         alt="icon"
-                        className="w-10 h-10 rounded-full bg-white shadow-md p-1"
+                        className="w-12 h-12 rounded-full bg-white shadow-md p-1"
                       />
                     </div>
                   );
                 })}
               </div>
 
-              {/* center circle (static) */}
               <div
                 className="absolute rounded-full bg-white shadow-md"
                 style={{
@@ -1549,358 +1619,447 @@ const Dashboard = () => {
       </div>
 
       {/* Daily Service Usages */}
-      <div className="bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 p-3 flex flex-wrap justify-center items-center  gap-4 rounded-lg">
-        <div className="flex flex-wrap  gap-4 ">
-          {servicesDailyUsage.map((s) => (
-            <div
-              key={s}
-              onClick={() => toggleService(s)}
-              className={`flex items-center gap-2 rounded-lg p-2 cursor-pointer hover:shadow transition ${
-                selectedServices.includes(s)
-                  ? "bg-gradient-to-r from-indigo-200 to-purple-200"
-                  : "bg-gray-200 opacity-50"
-              }`}
-            >
-              {icons[s]}
-              <span className="font-medium text-gray-800">
-                {s.toUpperCase()}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+      <div className="bg-white shadow-lg border p-4 flex flex-col justify-center items-center gap-6 w-full  mt-24 rounded-3xl">
+        <div className="relative w-full flex justify-center">
+          {/* Left Scroll Button */}
+          <button
+            onClick={() => scroll("left")}
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10 xl:hidden"
+          >
+            <ChevronLeft className="w-5 h-5 md:w-10 md:h-10 text-gray-700" />
+          </button>
 
-      {/*Service UsagesContent */}
-      <div className="bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 rounded-xl shadow-lg p-6 h-[30%] mt-10">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
-          <h2 className="font-semibold text-gray-700 text-base sm:text-lg">
-            Service Usage Overview
-          </h2>
-          <div className="flex gap-2">
-            <div className="flex gap-2">
-              {FILTERS.map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className={`px-3 py-1 rounded-full border text-sm font-medium transition-all duration-200
-                        ${
-                          filter === f
-                            ? "bg-blue-500 text-white border-blue-500 shadow-md"
-                            : "bg-blue-100 text-gray-900 border-gray-300 hover:bg-blue-500 hover:text-white hover:border-blue-500"
-                        }`}
-                >
-                  {f.toUpperCase()}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Summary Row */}
-        <div className="flex flex-wrap gap-3 mb-7">
-          {chartData
-            .filter((item) =>
-              selectedServices.includes(item.name.toLowerCase())
-            )
-            .map((item, index) => (
-              <div className="">
-                <div
-                  key={index}
-                  className="flex flex-wrap items-center justify-between  p-3  bg-white rounded-2xl  w-50  md:w-70  h-20 shadow-md 
-               border-1 border-blue-200   bg-gradient-to-br from-indigo-200 via-purple-100 to-blue-100 relative overflow-hidden "
-                >
-                  <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.15),rgba(255,255,255,0.15)_12px,transparent_12px,transparent_24px)] rounded-2xl pointer-events-none" />
-
-                  {/* Content */}
-                  <div className="flex flex-wrap  justify-center   items-center  gap-4  relative z-10 ">
-                    <div className="flex  justify-center items-center gap-2">
-                      {item.icon}
-                      <p className="text-sm font-medium">{item.name}</p>
-                    </div>
-
-                    <p className="text-xs font-semibold text-gray-800">
-                      Sent: {item.sent}
-                    </p>
-                    <p className="text-sm sm:text-base font-bold   ">
-                      ₹{item.cost}
-                    </p>
-                  </div>
-                </div>
+          {/* Service Toggle Row */}
+          <div
+            ref={scrollRef}
+            className="flex flex-nowrap  shadow-md rounded-full px-4 py-3 bg-white gap-3 absolute -top-14 md:-top-16 sm:-top-18 lg:-top-12 w-[92%]  border border-gray-200 
+               justify-start md:justify-center overflow-hidden"
+          >
+            {servicesDailyUsage.map((s, idx) => (
+              <div
+                key={idx}
+                onClick={() => toggleService(s.name)}
+                className={`flex items-center gap-2 rounded-full px-3 py-2 cursor-pointer transition text-sm font-medium
+              ${selectedServices.includes(s.name)
+                    ? `${s.bgColor} ${s.textColor} opacity-90 hover:opacity-100`
+                    : "shadow-md bg-blue-50 text-gray-700 hover:bg-blue-100"
+                  }`}
+              >
+                {/* <img
+                  src={s.icon}
+                  alt={s.name}
+                  className="w-7 h-7 object-contain rounded-full"
+                /> */}
+                <span>{s.name}</span>
               </div>
             ))}
+          </div>
+
+          {/* Right Scroll Button */}
+          <button
+            onClick={() => scroll("right")}
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10 xl:hidden"
+          >
+            <ChevronRight className="w-5 h-5 md:w-10 md:h-10 text-gray-700" />
+          </button>
         </div>
 
-        <div className=" h-72 md:h-80 mt-6">
-          {/* BarChart */}
-          {chartType === "bar" && (
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart
-                data={filteredChartData}
-                margin={{ top: 20, right: 20, left: 0, bottom: 20 }}
-              >
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip formatter={(value, name) => [`${value} msgs`, name]} />
-                <Legend />
+        {/* Service Usages Content */}
+        <div className="mb-8 w-full p-4 mt-12">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <h2 className="font-semibold text-gray-800 text-lg">
+              Service Usage Overview
+            </h2>
+            <div className="flex flex-col ">
+              <div className="flex gap-2 flex-wrap justify-end mb-4">
+                {FILTERS.map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setFilter(f)}
+                    className={`px-3 py-1 rounded-full border text-sm font-medium transition
+              ${filter === f
+                        ? "bg-blue-600 text-white border-blue-600 shadow"
+                        : "bg-blue-100 text-gray-900 border-gray-300 hover:bg-blue-500 hover:text-white hover:border-blue-500"
+                      }`}
+                  >
+                    {f.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+              <div>
+                <div className="flex flex-col font-semibold text-gray-900">
+                  <span className="text-sm font-medium text-gray-700">
+                    Total Campaign: {totalSentSum} msgs
+                  </span>
+                  <span className="text-sm font-medium text-gray-700">
+                    Total Charge: {totalChargedSum}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                <Bar dataKey="sent" name="Sent Messages">
-                  {filteredChartData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          )}
+          {/* Date Range */}
+          <div className="flex flex-col sm:flex-row items-center gap-4 mb-6 text-sm text-gray-700">
+            <div>
+              <span className="font-semibold">From:</span>
+              {formatDate(startDate)}
+            </div>
+            <div>
+              <span className="font-semibold">To:</span> {formatDate(endDate)}
+            </div>
+          </div>
 
-          {/* LineChart */}
-          {chartType === "line" && (
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart
-                data={filteredChartData}
-                margin={{ top: 20, right: 20, left: 0, bottom: 20 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="service" />
-                <YAxis />
-                <Tooltip formatter={(value) => `${value} msgs`} />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="sent"
-                  stroke="#8884d8"
-                  strokeWidth={2}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          )}
-
-          {/* Pie Chart */}
-          {chartType === "pie" && (
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={filteredChartData}
-                  dataKey="sent"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius="70%"
-                  label={({ name, sent }) => `${name} ${sent}`}
+          {/* Summary Row */}
+          <div className="flex flex-wrap gap-4 mb-8">
+            {chartData
+              .filter((item) => selectedServices.includes(item.service))
+              .map((item, index) => (
+                <div
+                  key={index}
+                  className="w-full sm:w-1/2 md:w-1/3 lg:w-1/5 transition hover:scale-[1.02]"
                 >
-                  {filteredChartData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
+                  <div className="flex flex-col items-center justify-center px-3 py-4 rounded-2xl shadow-md border border-blue-200 bg-gradient-to-r from-blue-50 to-purple-50 text-gray-900 h-full">
+                    <p className="text-sm font-medium mb-2">{item.name}</p>
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-2 text-xs font-semibold text-gray-700 text-center">
+                      <p>Campaign: {item.sent}</p>
+                      <p>Charged: ₹{item.cost}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
 
-                <Tooltip
-                  formatter={(value, name) => [
-                    `${value} msgs (${value / totalSent})`,
-                    name,
-                  ]}
-                />
-                <Legend
-                  verticalAlign="bottom"
-                  align="center"
-                  wrapperStyle={{ marginTop: 10 }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          )}
+          {/* Charts */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-center">
+            {/* Bar Chart */}
+            <div className="flex flex-col items-center gap-3 w-full">
+              {showBar ? (
+                <>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart
+                      data={filteredChartData}
+                      margin={{ top: 20, right: 20, left: 0, bottom: 20 }}
+                    >
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip
+                        formatter={(value, name) => [`${value} msgs`, name]}
+                      />
+                      <Legend />
+                      <Bar dataKey="sent" name="Sent Messages">
+                        {filteredChartData.map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={COLORS[index % COLORS.length]}
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <button
+                    className="w-24 rounded-lg py-1 font-medium bg-red-500 text-white hover:bg-red-600 transition"
+                    onClick={() => setShowBar(false)}
+                  >
+                    Hide
+                  </button>
+                </>
+              ) : (
+                <button
+                  className="w-30 rounded-lg py-1 font-medium bg-gray-100 text-blue-700 hover:bg-blue-600 hover:text-white transition flex items-center justify-center gap-2"
+                  onClick={() => setShowBar(true)}
+                >
+                  <ShowChartIcon /> Show Bar
+                </button>
+              )}
+            </div>
+
+            {/* Line Chart */}
+            <div className="flex flex-col items-center gap-3 w-full">
+              {showLine ? (
+                <>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart
+                      data={filteredChartData}
+                      margin={{ top: 20, right: 20, left: 0, bottom: 20 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="service" />
+                      <YAxis />
+                      <Tooltip formatter={(value) => `${value} msgs`} />
+                      <Legend />
+                      <Line
+                        type="monotone"
+                        dataKey="sent"
+                        stroke="#8884d8"
+                        strokeWidth={2}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                  <button
+                    className="w-24 rounded-lg py-1 font-medium bg-red-500 text-white hover:bg-red-600 transition"
+                    onClick={() => setShowLine(false)}
+                  >
+                    Hide
+                  </button>
+                </>
+              ) : (
+                <button
+                  className="w-30 rounded-lg py-1 font-medium bg-gray-100 text-blue-700 hover:bg-blue-600 hover:text-white transition flex items-center justify-center gap-2"
+                  onClick={() => setShowLine(true)}
+                >
+                  <BarChartIcon /> Show Line
+                </button>
+              )}
+            </div>
+
+            {/* Pie Chart */}
+            <div className="flex flex-col items-center gap-3 w-full">
+              {showPie ? (
+                <>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={filteredChartData}
+                        dataKey="sent"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius="70%"
+                        label={({ name, sent }) => `${name} ${sent}`}
+                      >
+                        {filteredChartData.map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={COLORS[index % COLORS.length]}
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        formatter={(value, name) => {
+                          const safeTotal = totalSent || 1;
+                          return [
+                            `${value} msgs (${(
+                              (value / safeTotal) *
+                              100
+                            ).toFixed(1)}%)`,
+                            name,
+                          ];
+                        }}
+                      />
+                      <Legend verticalAlign="bottom" align="center" />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <button
+                    className="w-24 rounded-lg py-1 font-medium bg-red-500 text-white hover:bg-red-600 transition"
+                    onClick={() => setShowPie(false)}
+                  >
+                    Hide
+                  </button>
+                </>
+              ) : (
+                <button
+                  className="w-28 rounded-lg py-1 font-medium bg-gray-100 text-blue-700 hover:bg-blue-600 hover:text-white transition flex items-center justify-center gap-2"
+                  onClick={() => setShowPie(true)}
+                >
+                  <PieChartIcon /> Show Pie
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
       {/* BOTTOM CARDS */}
-      <div className="flex  flex-wrap  gap-4">
-        <div className="relative bg-white w-80 h-40 p-6 md:p-4 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex items-center justify-between">
-          <div className="absolute bottom-0 left-0 w-full h-40">
-            <svg
-              className="w-full h-full"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="none"
-              viewBox="0 0 400 150"
-            >
-              <path
-                d="M0,100 C150,200 250,0 400,100 L400,150 L0,150 Z"
-                fill="#a78bfa"
-                opacity="0.3"
-              />
-              <path
-                d="M0,120 C180,200 220,20 400,120 L400,150 L0,150 Z"
-                fill="#6366f1"
-                opacity="0.2"
-              />
-            </svg>
+      <div className=" p-6 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-3">
+          <div className="relative bg-white border-t-1 border-purple-200 p-6 md:py-8 px-4 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex items-center justify-between">
+            <div className="absolute bottom-0 left-0 w-full h-40">
+              <svg
+                className="w-full h-full"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="none"
+                viewBox="0 0 400 150"
+              >
+                <path
+                  d="M0,100 C150,200 250,0 400,100 L400,150 L0,150 Z"
+                  fill="#a78bfa"
+                  opacity="0.3"
+                />
+                <path
+                  d="M0,120 C180,200 220,20 400,120 L400,150 L0,150 Z"
+                  fill="#6366f1"
+                  opacity="0.2"
+                />
+              </svg>
+            </div>
+
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-semibold text-gray-500">Total Bots</p>
+              <span className="text-lg text-red-700 font-bold">11</span>
+              <p className="text-xs text-gray-500">
+                <span className="text-red-700 font-bold">+2%</span> Bots
+                deployed
+              </p>
+            </div>
+          </div>
+          <div className="relative bg-white border-t-1 border-purple-200 p-6 md:py-8 px-4 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex items-center justify-between">
+            <div className="absolute bottom-0 left-0 w-full h-40">
+              <svg
+                className="w-full h-full"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="none"
+                viewBox="0 0 400 150"
+              >
+                <path
+                  d="M0,100 C150,200 250,0 400,100 L400,150 L0,150 Z"
+                  fill="#a78bfa"
+                  opacity="0.3"
+                />
+                <path
+                  d="M0,120 C180,200 220,20 400,120 L400,150 L0,150 Z"
+                  fill="#6366f1"
+                  opacity="0.2"
+                />
+              </svg>
+            </div>
+
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-semibold text-gray-500">Total Flows</p>
+              <span className="text-lg text-red-700 font-bold">54</span>
+              <p className="text-xs text-gray-500">
+                <span className="text-red-700 font-bold">+5%</span> Flows
+                deployed
+              </p>
+            </div>
+          </div>
+          <div className="relative bg-white border-t-1 border-purple-200 p-6 md:py-8 px-4 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex items-center justify-between">
+            <div className="absolute bottom-0 left-0 w-full h-40">
+              <svg
+                className="w-full h-full"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="none"
+                viewBox="0 0 400 150"
+              >
+                <path
+                  d="M0,100 C150,200 250,0 400,100 L400,150 L0,150 Z"
+                  fill="#a78bfa"
+                  opacity="0.3"
+                />
+                <path
+                  d="M0,120 C180,200 220,20 400,120 L400,150 L0,150 Z"
+                  fill="#6366f1"
+                  opacity="0.2"
+                />
+              </svg>
+            </div>
+
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-semibold text-gray-500">Draft Flows</p>
+              <span className="text-lg text-red-700 font-bold">29</span>
+              <p className="text-xs text-gray-500">
+                <span className="text-red-700 font-bold">-</span> in draft
+              </p>
+            </div>
           </div>
 
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-semibold text-gray-500">
-              Ended Projects
-            </p>
-            <span className="text-lg text-red-700 font-bold">10</span>
-            <p className="text-xs text-gray-500">
-              <span className="text-red-700 font-bold">+5%</span> Flows deployed
-            </p>
-          </div>
-        </div>
-        <div className="relative bg-white w-80 h-40 p-6 md:p-4 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex items-center justify-between">
-          <div className="absolute bottom-0 left-0 w-full h-40">
-            <svg
-              className="w-full h-full"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="none"
-              viewBox="0 0 400 150"
-            >
-              <path
-                d="M0,100 C150,200 250,0 400,100 L400,150 L0,150 Z"
-                fill="#a78bfa"
-                opacity="0.3"
-              />
-              <path
-                d="M0,120 C180,200 220,20 400,120 L400,150 L0,150 Z"
-                fill="#6366f1"
-                opacity="0.2"
-              />
-            </svg>
+          <div className="relative bg-white border-t-1 border-purple-200 p-6 md:py-8 px-4 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex items-center justify-between">
+            <div className="absolute bottom-0 left-0 w-full h-40">
+              <svg
+                className="w-full h-full"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="none"
+                viewBox="0 0 400 150"
+              >
+                <path
+                  d="M0,100 C150,200 250,0 400,100 L400,150 L0,150 Z"
+                  fill="#a78bfa"
+                  opacity="0.3"
+                />
+                <path
+                  d="M0,120 C180,200 220,20 400,120 L400,150 L0,150 Z"
+                  fill="#6366f1"
+                  opacity="0.2"
+                />
+              </svg>
+            </div>
+
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-semibold text-gray-500">
+                Published Flows
+              </p>
+              <span className="text-lg text-red-700 font-bold">25</span>
+              <p className="text-xs text-gray-500">
+                <span className="text-red-700 font-bold">-</span> live
+              </p>
+            </div>
           </div>
 
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-semibold text-gray-500">
-              Ended Projects
-            </p>
-            <span className="text-lg text-red-700 font-bold">10</span>
-            <p className="text-xs text-gray-500">
-              <span className="text-red-700 font-bold">+5%</span> Flows deployed
-            </p>
-          </div>
-        </div>
-        <div className="relative bg-white w-80 h-40 p-6 md:p-4 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex items-center justify-between">
-          <div className="absolute bottom-0 left-0 w-full h-40">
-            <svg
-              className="w-full h-full"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="none"
-              viewBox="0 0 400 150"
-            >
-              <path
-                d="M0,100 C150,200 250,0 400,100 L400,150 L0,150 Z"
-                fill="#a78bfa"
-                opacity="0.3"
-              />
-              <path
-                d="M0,120 C180,200 220,20 400,120 L400,150 L0,150 Z"
-                fill="#6366f1"
-                opacity="0.2"
-              />
-            </svg>
+          <div className="relative bg-white border-t-1 border-purple-200 p-6 md:py-8 px-4 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex items-center justify-between">
+            <div className="absolute bottom-0 left-0 w-full h-40">
+              <svg
+                className="w-full h-full"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="none"
+                viewBox="0 0 400 150"
+              >
+                <path
+                  d="M0,100 C150,200 250,0 400,100 L400,150 L0,150 Z"
+                  fill="#a78bfa"
+                  opacity="0.3"
+                />
+                <path
+                  d="M0,120 C180,200 220,20 400,120 L400,150 L0,150 Z"
+                  fill="#6366f1"
+                  opacity="0.2"
+                />
+              </svg>
+            </div>
+
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-semibold text-gray-500">
+                Total Projects
+              </p>
+              <span className="text-lg text-red-700 font-bold">24</span>
+              <p className="text-xs text-gray-500">
+                <span className="text-red-700 font-bold">+5%</span> Since last
+                month
+              </p>
+            </div>
           </div>
 
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-semibold text-gray-500">
-              Ended Projects
-            </p>
-            <span className="text-lg text-red-700 font-bold">10</span>
-            <p className="text-xs text-gray-500">
-              <span className="text-red-700 font-bold">+5%</span> Flows deployed
-            </p>
-          </div>
-        </div>
-        <div className="relative bg-white w-80 h-40 p-6 md:p-4 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex items-center justify-between">
-          <div className="absolute bottom-0 left-0 w-full h-40">
-            <svg
-              className="w-full h-full"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="none"
-              viewBox="0 0 400 150"
-            >
-              <path
-                d="M0,100 C150,200 250,0 400,100 L400,150 L0,150 Z"
-                fill="#a78bfa"
-                opacity="0.3"
-              />
-              <path
-                d="M0,120 C180,200 220,20 400,120 L400,150 L0,150 Z"
-                fill="#6366f1"
-                opacity="0.2"
-              />
-            </svg>
-          </div>
+          <div className="relative bg-white border-t-1 border-purple-200 p-6 md:py-8 px-4 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex items-center justify-between">
+            <div className="absolute bottom-0 left-0 w-full h-40">
+              <svg
+                className="w-full h-full"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="none"
+                viewBox="0 0 400 150"
+              >
+                <path
+                  d="M0,100 C150,200 250,0 400,100 L400,150 L0,150 Z"
+                  fill="#a78bfa"
+                  opacity="0.3"
+                />
+                <path
+                  d="M0,120 C180,200 220,20 400,120 L400,150 L0,150 Z"
+                  fill="#6366f1"
+                  opacity="0.2"
+                />
+              </svg>
+            </div>
 
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-semibold text-gray-500">
-              Ended Projects
-            </p>
-            <span className="text-lg text-red-700 font-bold">10</span>
-            <p className="text-xs text-gray-500">
-              <span className="text-red-700 font-bold">+5%</span> Flows deployed
-            </p>
-          </div>
-        </div>{" "}
-        <div className="relative bg-white w-80 h-40 p-6 md:p-4 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex items-center justify-between">
-          <div className="absolute bottom-0 left-0 w-full h-40">
-            <svg
-              className="w-full h-full"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="none"
-              viewBox="0 0 400 150"
-            >
-              <path
-                d="M0,100 C150,200 250,0 400,100 L400,150 L0,150 Z"
-                fill="#a78bfa"
-                opacity="0.3"
-              />
-              <path
-                d="M0,120 C180,200 220,20 400,120 L400,150 L0,150 Z"
-                fill="#6366f1"
-                opacity="0.2"
-              />
-            </svg>
-          </div>
-
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-semibold text-gray-500">
-              Ended Projects
-            </p>
-            <span className="text-lg text-red-700 font-bold">10</span>
-            <p className="text-xs text-gray-500">
-              <span className="text-red-700 font-bold">+5%</span> Flows deployed
-            </p>
-          </div>
-        </div>{" "}
-        <div className="relative bg-white w-80 h-40 p-6 md:p-4 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex items-center justify-between">
-          <div className="absolute bottom-0 left-0 w-full h-40">
-            <svg
-              className="w-full h-full"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="none"
-              viewBox="0 0 400 150"
-            >
-              <path
-                d="M0,100 C150,200 250,0 400,100 L400,150 L0,150 Z"
-                fill="#a78bfa"
-                opacity="0.3"
-              />
-              <path
-                d="M0,120 C180,200 220,20 400,120 L400,150 L0,150 Z"
-                fill="#6366f1"
-                opacity="0.2"
-              />
-            </svg>
-          </div>
-
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-semibold text-gray-500">
-              Ended Projects
-            </p>
-            <span className="text-lg text-red-700 font-bold">10</span>
-            <p className="text-xs text-gray-500">
-              <span className="text-red-700 font-bold">+5%</span> Flows deployed
-            </p>
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-semibold text-gray-500">
+                Ended Projects
+              </p>
+              <span className="text-lg text-red-700 font-bold">10</span>
+              <p className="text-xs text-gray-500">
+                <span className="text-red-700 font-bold">+5%</span> Flows
+                deployed
+              </p>
+            </div>
           </div>
         </div>
       </div>

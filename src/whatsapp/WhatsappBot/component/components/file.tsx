@@ -255,7 +255,7 @@ export const FileNodeContent = ({
   function addFormat(formatType: string) {
     if (!inputRef.current) return;
     const input = nodesInputData[id]?.fileCaption || "";
-    if (input?.length >= 20) return;
+    if (input?.length >= 1024) return;
 
     const inputEl = inputRef.current;
     const { selectionStart, selectionEnd } = inputEl;
@@ -278,9 +278,10 @@ export const FileNodeContent = ({
     const newValue =
       input.substring(0, selectionStart) +
       start +
-      selectedText +
+      selectedText.trim() +
       end +
       input.substring(selectionEnd);
+
 
     setNodesInputData((prev) => ({
       ...prev,
@@ -300,7 +301,7 @@ export const FileNodeContent = ({
   function insertEmoji(emoji: string) {
     if (!inputRef.current) return;
     const input = nodesInputData[id]?.fileCaption || "";
-    if (input?.length >= 20) return;
+    if (input?.length >= 1024) return;
 
     const inputEl = inputRef.current;
 
@@ -432,7 +433,7 @@ export const FileNodeContent = ({
           </label>
           <textarea
             // label="Caption text"
-            className="w-full p-1.5 border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm h-30"
+            className="w-full p-1.5 border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm h-50"
             id="captionText"
             name="captionText"
             placeholder="Enter Caption Text"
@@ -447,8 +448,10 @@ export const FileNodeContent = ({
               }));
             }}
             ref={inputRef}
-            maxLength="20"
+            maxLength="1024"
           />
+          <div className="flex justify-between">
+
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -484,6 +487,10 @@ export const FileNodeContent = ({
               <CustomEmojiPicker position="top" onSelect={insertEmoji} />
             </Tooltip>
           </motion.div>
+          <p className="text-xs mt-2">
+            {nodesInputData[id]?.fileCaption?.length || 0}/1024
+          </p>
+          </div>
           <AnimatedDropdown
             id="selectVaribleDropdown"
             name="selectVaribleDropdown"
@@ -499,7 +506,7 @@ export const FileNodeContent = ({
           />
         </div>
 
-        <div className="flex items-center justify-center rounded-lg border w-full h-56 mt-2">
+        <div className="flex items-center justify-center rounded-lg border w-full h-50 mt-7">
           {nodesInputData[id]?.fileUrl &&
             (accept === "image" ? (
               <img

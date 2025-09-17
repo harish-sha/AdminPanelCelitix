@@ -36,7 +36,7 @@ pass: QZ@5x4bC
 8.add flows bot update from arihant branch
 9.pending - 06-09-2025 merge hlrlookup page with reseller
 10.automatic all cpaas channels - 
-11. whatsapp managetemplate - add template with ai genererated content with all languages and prefill button to prefill body,footer and chatscreen
+11. whatsapp managetemplate - add template with ai genererated content with all languages and prefill button to prefill body,footer and chatscreen and add body format (bold,italic,strikethrough)
 
 
 

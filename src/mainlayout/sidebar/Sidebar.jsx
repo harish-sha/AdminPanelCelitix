@@ -383,18 +383,18 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     //   to: "/unsubscribe",
     //   roles: ["ADMIN", "DIRECTUSER"],
     // },
-    // {
-    //   id: "",
-    //   name: "Leadmanagement",
-    //   icon: <LeaderboardOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
-    //   label: "Lead Management",
-    //   type: "single",
-    //   to: "/leadmanagement/leaddash",
-    //   // links: [
-    //   //   to: "/leadmanagement/leaddash"
-    //   // ]
-    //   roles: ["ADMIN"],
-    // },
+    {
+      id: "",
+      name: "Leadmanagement",
+      icon: <LeaderboardOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
+      label: "Lead Management",
+      type: "single",
+      to: "/leadmanagement/leaddash",
+      // links: [
+      //   to: "/leadmanagement/leaddash"
+      // ]
+      roles: ["ADMIN"],
+    },
     // {
     //   id: "",
     //   name: "Aiconfiguration",
@@ -562,7 +562,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         ${isCollapsed ? "items-center " : "space-y-0"}`}
       style={{ maxHeight: "calc(100vh - 4rem)" }}
     >
-      {filteredItems.map((item) =>
+      {menuItems.map((item) =>
         item.type === "dropdown" ? (
           <Tooltip
             key={item.name}

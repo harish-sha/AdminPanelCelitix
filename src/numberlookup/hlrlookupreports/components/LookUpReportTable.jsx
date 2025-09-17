@@ -85,12 +85,10 @@ const LookUpTable = ({ id, name, data }) => {
   });
 
   const handleLookUpEdit = (value) => {
-    console.log(value);
     setLookUpEdit(true);
   };
 
   const handleLookUpDelete = (value) => {
-    console.log(value);
     setLookUpDelete(true);
   };
 

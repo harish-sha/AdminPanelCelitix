@@ -50,6 +50,8 @@ const RcsLiveChat = () => {
     // replyData: "",
     // isReply: false,
   });
+
+  console.log("chatState", chatState);
   const [input, setInput] = useState("");
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -62,6 +64,7 @@ const RcsLiveChat = () => {
     all: [],
     selected: "",
   });
+  const [agentSelectedTemplate, setAgentSelectedTemplate] = useState([]);
   const [templateDetails, setTemplateDetails] = useState({});
   const [templateSendData, setTemplateSendData] = useState({});
 
@@ -95,21 +98,17 @@ const RcsLiveChat = () => {
   const { agentData, setAgentData, selectedContextWaba, agentSelected } =
     useWabaAgentContext();
 
-
-
   // useEffect(() => {
   //   if (btnOption === "active") {
   //     setActiveRcsChat(chatState?.allConversations || []);
   //   }
   // }, [btnOption, chatState?.allConversations]);
 
-
   // useEffect(() => {
   //   if (btnOption === "close") {
   //     setCloseRcsChat(chatState?.allConversations);
   //   }
   // }, [btnOption, chatState?.allConversations]);
-
 
   async function handleFetchAgents() {
     try {
@@ -122,6 +121,20 @@ const RcsLiveChat = () => {
       toast.error("Error fetching conversations");
     }
   }
+
+  useEffect(() => {
+    setChatState((prev) => ({
+      ...prev,
+      active: null,
+      input: "",
+      allConversations: [],
+      specificConversation: [],
+      latestMessage: {
+        srno: "",
+        replayTime: "",
+      },
+    }));
+  }, [contextAgentList]);
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -137,7 +150,6 @@ const RcsLiveChat = () => {
 
         const res = await fetchAllConvo(payload);
         setActiveRcsChat(res);
-
       } catch (e) {
         toast.error("Error fetching conversations");
       } finally {
@@ -162,7 +174,6 @@ const RcsLiveChat = () => {
 
         const res = await fetchAllConvo(payload);
         setCloseRcsChat(res);
-
       } catch (e) {
         toast.error("Error fetching conversations");
       } finally {
@@ -173,11 +184,10 @@ const RcsLiveChat = () => {
     fetchConversations();
   }, [contextAgentList?.id]);
 
-
-  async function handleFetchAllConvo() {
+  async function handleFetchAllConvo(sLoading = false) {
     if (!contextAgentList?.id) return;
     try {
-      setIsLoading(true);
+      if (isLoading) setIsLoading(true);
       const userActive = btnOption == "active" ? 1 : 0;
       const payload = {
         agentId: contextAgentList?.id,
@@ -314,6 +324,17 @@ const RcsLiveChat = () => {
     }
   }
 
+  async function handleFetchTemplateswithAgentId(id) {
+    try {
+      if (!id) return;
+      const res = await fetchAllTemplates(id);
+      if (res?.total === agentSelectedTemplate?.length) return;
+      setAgentSelectedTemplate(res?.Data);
+    } catch (e) {
+      toast.error("Error fetching templates");
+    }
+  }
+
   async function handleFetchTemplateDetails() {
     if (!templateState.selected) return;
     try {
@@ -333,7 +354,7 @@ const RcsLiveChat = () => {
     let fileType = files.type.split("/")[1];
 
     if (fileType.includes("sheet")) {
-      fileType = "xlsx"
+      fileType = "xlsx";
     }
 
     const fileurl = await uploadImageFile(files);
@@ -528,16 +549,25 @@ const RcsLiveChat = () => {
   }, []);
 
   useEffect(() => {
-    let interval = null;
-    interval = setInterval(() => {
-      handleFetchAllConvo();
-    }, 5000);
-    return () => clearInterval(interval);
+    handleFetchAllConvo();
   }, [btnOption, contextAgentList]);
 
   useEffect(() => {
-    handleFetchAllConvo();
+    handleFetchAllConvo(true);
+    let interval = null;
+    interval = setInterval(() => {
+      handleFetchAllConvo();
+    }, 3000);
+    return () => clearInterval(interval);
   }, [btnOption, contextAgentList]);
+
+  // useEffect(() => {
+  //   let interval = null;
+  //   interval = setInterval(() => {
+  //     handleFetchSpecificConvo();
+  //   }, 3000);
+  //   return () => clearInterval(interval);
+  // }, [chatState?.active]);
 
   useEffect(() => {
     handleFetchSpecificConvo();
@@ -595,7 +625,7 @@ const RcsLiveChat = () => {
         />
       </div>
 
-      <AnimatePresence mode="wait" >
+      <AnimatePresence mode="wait">
         {!chatState.active && !isSmallScreen && (
           <motion.div
             key="empty-chat"
@@ -705,6 +735,8 @@ const RcsLiveChat = () => {
               // specificConversation={specificConversation}
               selectedMedia={selectedMedia}
               setSelectedMedia={setSelectedMedia}
+              handleFetchTemplateswithAgentId={handleFetchTemplateswithAgentId}
+              agentSelectedTemplate={agentSelectedTemplate}
             />
           </motion.div>
         )}

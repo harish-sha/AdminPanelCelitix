@@ -267,7 +267,6 @@
 // new generatepayload start here
 import { convertNodeToMarkdown } from "../components/Editor";
 export const generatePayload = (data) => {
-  console.log("data", data);
   const payload = {
     version: "7.0",
     screens: [],
@@ -333,10 +332,8 @@ export const generatePayload = (data) => {
       type: "SingleColumnLayout",
       children: [],
     };
-    console.log(screenData?.payload);
 
     screenData?.payload?.forEach((pay) => {
-      console.log("pay", pay);
       // const type = pay.type;
       // typeCounters[type] = (typeCounters[type] || 0) + 1;
       // const name = `${String(type)}_${String(typeCounters[type])}`;
@@ -535,8 +532,6 @@ export const generatePayload = (data) => {
             10
           ),
         };
-        console.log(pay.label, "label");
-        console.log("Document component:", component);
       }
 
       if (type === "media") {

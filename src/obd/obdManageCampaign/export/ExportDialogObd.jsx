@@ -34,7 +34,6 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
   });
 
 
-  console.log("dataToExport", dataToExport)
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
     campaignName: false,
     mobileNo: false,

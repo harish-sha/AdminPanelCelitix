@@ -110,7 +110,6 @@ const WhatsappConversationTable = ({
 
 
   function handleView(row) {
-    console.log(row);
 
     if (!row.mediaPath || !row.replyType) return;
     const type = row.replyType.toLowerCase();

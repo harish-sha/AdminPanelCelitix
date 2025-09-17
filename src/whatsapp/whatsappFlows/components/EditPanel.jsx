@@ -1226,7 +1226,6 @@ const EditPanel = ({
       on_click_action: nextAction || "",
     };
 
-    console.log("Saving footer payload:", payload);
 
     // Assuming we want to merge it with selectedItem like in handleInputSave
     const updatedData = {
@@ -1236,7 +1235,6 @@ const EditPanel = ({
 
     onSave(updatedData);
     onClose();
-    console.log("Final footer data:", updatedData);
   };
 
 
@@ -4422,7 +4420,6 @@ const EditPanel = ({
                 })}
                 {/* {imageCarouselImages.map((item, index) => {
                   // Prepare final image source
-                  console.log("item", item)
                   const imageSrcFile = item.src
                     ? `data:image/png;base64,${item.src}`
                     : "";

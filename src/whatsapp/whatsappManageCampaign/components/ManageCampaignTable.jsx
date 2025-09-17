@@ -404,7 +404,6 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
   const [campaignInfoMap, setCampaignInfoMap] = useState({});
   const [campaignCTAMap, setCampaignCTAMap] = useState({});
   const [campaignCTAMapLoading, setCampaignCTAMapLoading] = useState(false);
-  console.log("campaignCTAMap", campaignCTAMap);
   const dropdownButtonRefs = useRef({});
   const [isOpen, setIsOpen] = useState(false);
   const [replySrno, setReplySrno] = useState("");
@@ -424,7 +423,6 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
 
       const res = await downloadCtaTrackingReport(payload);
 
-      console.log("res", res);
 
       if (!res) {
         toast.error("Failed to download reply data");

@@ -28,10 +28,8 @@ export const WorkflowDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [publishingId, setPublishingId] = useState(null);
   const [flowList, setFlowList] = useState([]);
-  console.log("flowList", flowList);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  console.log("search", search);
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
   const dropdownButtonRefs = useRef({});
 

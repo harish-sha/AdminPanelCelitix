@@ -113,53 +113,53 @@ export const TemplatePreview = ({
   );
 
   const renderedComponents = useMemo(() => {
-  if (!tempDetails?.components) return null;
+    if (!tempDetails?.components) return null;
 
-  return tempDetails.components
-    .slice()
-    .map(({ type, text, buttons, format, example }, index) => {
-      // Skip media header without example
-      if (type === "HEADER" && tempTypes.includes(format) && !example?.header_handle?.[0]) {
-        return null;
-      }
+    return tempDetails.components
+      .slice()
+      .map(({ type, text, buttons, format, example }, index) => {
+        // Skip media header without example
+        if (type === "HEADER" && tempTypes.includes(format) && !example?.header_handle?.[0]) {
+          return null;
+        }
 
-      return (
-        <div key={index} className="flex flex-col w-full gap-3">
-          {type === "HEADER" && !tempTypes.includes(format) && (
-            <div>
-              <h2 className="text-sm font-bold">{text}</h2>
-            </div>
-          )}
+        return (
+          <div key={index} className="flex flex-col w-full gap-3">
+            {type === "HEADER" && !tempTypes.includes(format) && (
+              <div>
+                <h2 className="text-sm font-bold">{text}</h2>
+              </div>
+            )}
 
-          {type === "HEADER" && tempTypes.includes(format) && (
-            <MediaRenderer
-              format={format}
-              fileUrl={selectedImage?.fileUrl}
-              fallbackUrl={example?.header_handle?.[0]}
-            />
-          )}
+            {type === "HEADER" && tempTypes.includes(format) && (
+              <MediaRenderer
+                format={format}
+                fileUrl={selectedImage?.fileUrl}
+                fallbackUrl={example?.header_handle?.[0]}
+              />
+            )}
 
-          {type === "BODY" && (
-            <div className="text-sm text-gray-800">{text}</div>
-          )}
+            {type === "BODY" && (
+              <div className="text-sm text-gray-800">{text}</div>
+            )}
 
-          {type === "BUTTONS" && buttons?.length > 0 && (
-            <ButtonsGroup buttons={buttons} />
-          )}
+            {type === "BUTTONS" && buttons?.length > 0 && (
+              <ButtonsGroup buttons={buttons} />
+            )}
 
-          {type === "FOOTER" && (
-            <div className="text-sm text-gray-800">{text}</div>
-          )}
-        </div>
-      );
-    });
-}, [tempDetails?.components, selectedImage]);
+            {type === "FOOTER" && (
+              <div className="text-sm text-gray-800">{text}</div>
+            )}
+          </div>
+        );
+      });
+  }, [tempDetails?.components, selectedImage]);
 
 
   const CardsData = useMemo(() => {
     return isCarousal
       ? tempDetails?.components?.find((comp) => comp.type === "CAROUSEL")
-          ?.cards || []
+        ?.cards || []
       : [];
   }, [tempDetails, isCarousal]);
 
@@ -255,11 +255,10 @@ export const TemplatePreview = ({
                         {buttons.map((btn, i) => (
                           <button
                             key={i}
-                            title={`${
-                              btn.type === "PHONE_NUMBER"
+                            title={`${btn.type === "PHONE_NUMBER"
                                 ? `Call: ${btn.phone_number}`
                                 : btn.url
-                            }`}
+                              }`}
                             className={`flex items-center justify-center px-4 py-2 text-sm rounded-md cursor-pointer ${getBtnCss(
                               btn.type
                             )}`}

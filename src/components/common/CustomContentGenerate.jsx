@@ -75,7 +75,6 @@ Write the message as a short marketing template message with a clear CTA if appl
             );
 
             const text = response.data.choices?.[0]?.message?.content || "";
-            // console.log(text);
 
             const totalLength = messageContent.length + text.length;
             const finalText =

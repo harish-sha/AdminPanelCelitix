@@ -173,8 +173,8 @@ const Approutes = () => {
     <Routes>
       <Route path="/" element={<Mainlayout />}>
         {/* dashboard */}
-        {/* <Route index element={<Dashboard />} /> 
-        <Route index element={<ResellerDashboard />} /> */}
+        {/* <Route index element={<Dashboard />} /> */}
+        {/* // <Route index element={<Dashboard />} /> */}
 
         {user.role === "DIRECTUSER" ? (
           <Route index element={<ResellerDashboard />} />

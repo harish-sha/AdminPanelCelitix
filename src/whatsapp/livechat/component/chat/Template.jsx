@@ -96,14 +96,24 @@ export const TemplateMessagePreview = ({ template, templateJsonData }) => {
     }
   };
 
+  // const getBtnCss = (type) => {
+  //   switch (type) {
+  //     case "PHONE_NUMBER":
+  //       return "bg-blue-500 text-white";
+  //     case "QUICK_REPLY":
+  //       return "text-gray-800 bg-gray-200";
+  //     default:
+  //       return "bg-green-500 text-white";
+  //   }
+  // };
   const getBtnCss = (type) => {
     switch (type) {
       case "PHONE_NUMBER":
-        return "bg-blue-500 text-white";
+        return "bg-white text-[#128c7e]";
       case "QUICK_REPLY":
-        return "text-gray-800 bg-gray-200";
+        return "bg-white text-[#128c7e]";
       default:
-        return "bg-green-500 text-white";
+        return "bg-white text-[#128c7e]";
     }
   };
 
@@ -134,7 +144,7 @@ export const TemplateMessagePreview = ({ template, templateJsonData }) => {
           <button
             key={btnIndex}
             title={url || phone_number}
-            className={`flex items-center justify-center px-4 py-2 text-sm cursor-pointer rounded-md w-full sm:w-auto ${getBtnCss(
+            className={`flex items-center justify-center border-b-2 border-[#128c7e] px-4 py-2 text-xs shadow-sm cursor-pointer rounded-xl w-full sm:w-auto ${getBtnCss(
               type
             )}`}
           >
@@ -172,14 +182,14 @@ export const TemplateMessagePreview = ({ template, templateJsonData }) => {
     //     ></iframe>
     //   )}
     // </div>
-    <div className="border border-gray-200 rounded-md w-90 p-5 bg-[#E1F3FB]">
+    <div className="border border-gray-200 rounded-md w-90 p-5 bg-[#ece5dd]">
       <p className="text-sm">(TemplateMessage)</p>
       <h1>Loading...</h1>
     </div>
   ) : (
     <>
       {tempDetails && (
-        <div className="border border-gray-200 rounded-md w-90 p-3 bg-[#E1F3FB]">
+        <div className="border border-gray-200 rounded-2xl w-90 p-3 bg-[#ece5dd]">
           {tempDetails?.map((item, index) => {
             if (item?.type === "HEADER" && item?.format === "IMAGE") {
               return (
@@ -223,7 +233,7 @@ export const TemplateMessagePreview = ({ template, templateJsonData }) => {
 
             if (item?.type === "BODY") {
               return (
-                <pre className="text-sm text-wrap font-medium" key={index}>
+                <pre className="text-sm text-wrap font-medium mt-2" key={index}>
                   {/* {item?.text} */}
                   {replacePlaceholders(item?.text, values)}
                 </pre>
@@ -236,7 +246,7 @@ export const TemplateMessagePreview = ({ template, templateJsonData }) => {
             if (item?.type === "FOOTER") {
               return (
                 <pre
-                  className="text-[0.8rem] text-gray-600 text-wrap font-normal"
+                  className="text-[0.8rem] text-gray-600 text-wrap font-normal mt-2"
                   key={index}
                 >
                   {item?.text}

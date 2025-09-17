@@ -125,7 +125,6 @@ const GuidesManager = ({ openGuide, setOpenGuide }) => {
     ];
 
     const GuideRenderer = ({ value }) => {
-        console.log("value", value)
         switch (value) {
             case "quick start":
                 return (

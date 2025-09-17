@@ -22,7 +22,6 @@ const RequestComponent = ({ requestData = [], curlBase = "" }) => {
   const [selectedLang, setSelectedLang] = useState("cURL");
   const [expanded, setExpanded] = useState(false);
 
-  console.log("requestData", requestData)
 
   // ----- data: safe JSON parse for the pretty viewer + code templates -----
   const raw = requestData[0]?.requestPrefix || "{}";
@@ -44,7 +43,6 @@ const RequestComponent = ({ requestData = [], curlBase = "" }) => {
 
   // ----- code templates by language -----
   const renderCodeBlock = () => {
-    console.log("IIIIIIIIIIIIIIIIIIIIII")
     switch (selectedLang) {
       case "cURL":
         // Uses provided curlBase + body
@@ -119,7 +117,6 @@ echo $code . "\\n" . $resp;`;
   };
 
   const renderWithoutDataCodeBlock = () => {
-    console.log("I am rendered")
     switch (selectedLang) {
       case "cURL":
         return `${curlBase}`;
@@ -195,10 +192,6 @@ echo $code . "\\n" . $resp;`;
   //   });
   // };
 
-  console.log("Object.keys(raw).length", Object.keys(raw).length)
-  console.log("Object.keys(raw)", Object.keys(raw))
-  console.log("raw === '{}' ? ",raw === "{}" )
-  console.log("raw", raw)
 
 
   const handleCopyCode = () => {

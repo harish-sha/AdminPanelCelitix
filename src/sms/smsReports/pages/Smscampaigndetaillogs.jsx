@@ -18,7 +18,6 @@ const Smscampaigndetaillogs = () => {
 
   const [mobileNo, setMobileNo] = useState("");
   const [smsDetailedData, setSmsDetailedData] = useState([])
-  console.log("smsDetailedData", smsDetailedData)
 
   if (!state.id) {
     navigate("/smsreports");

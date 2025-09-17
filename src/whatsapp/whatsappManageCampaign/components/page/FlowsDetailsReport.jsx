@@ -80,7 +80,6 @@ const CustomPagination = ({
 const FlowsDetailsReport = ({ id, name }) => {
   const location = useLocation();
   const { data } = location.state || { data: [] };
-  console.log("data", data);
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({

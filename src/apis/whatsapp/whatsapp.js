@@ -9,7 +9,6 @@ export const getWabaList = async () => {
 
 // get whatsapp template details
 export const getWhatsAppTemplateDetails = async (data) => {
-  console.log("data", data);
   const url =
     `/wrapper/waba/WATemplateLibraryList?` +
     `search=${data.searchTerm}` +
@@ -751,7 +750,7 @@ export const saveCannedMessage = async (data) => {
 
 // Get all canned messages
 export const getAllCannedMessages = async () => {
-  return await fetchWithAuth(`/canned/all-messages`);
+  return await fetchWithAuth(``);
 };
 
 // Get canned message by SrNo

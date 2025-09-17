@@ -60,7 +60,6 @@ export const RCS = ({
       let matchLength = 0;
       let matchBtnList = [];
       const content = data[0]?.content || "";
-      console.log("data", data[0].suggestions);
       const suggestionVar = data[0]?.suggestions?.map((item) => {
         if (item?.type === "website") {
           const match = item?.suggestionValue.match(/{#(.+?)#}/g) || [];
@@ -73,7 +72,6 @@ export const RCS = ({
 
       setBtnVarLength(matchLength);
       setBtnVarList(matchBtnList);
-      console.log("suggestionvar", suggestionVar);
       const matches = content.match(/{#(.+?)#}/g) || [];
 
       setVarLength(matches.length);
@@ -174,9 +172,6 @@ export const RCS = ({
       btnVar.push(btninputVariables[key]);
     });
 
-
-    console.log("btnvarList",btnvarList)
-    console.log("btnVar.length",btninputVariables)
 
     if (btnvarList.length !== btnVar.length) {
       return toast.error("Please fill all the button variables");

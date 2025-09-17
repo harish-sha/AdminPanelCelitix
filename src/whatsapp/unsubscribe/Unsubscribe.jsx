@@ -52,7 +52,6 @@ const Unsubscribe = () => {
       };
 
       const response = await unsubscribeReport(payload);
-      console.log("response data", response);
       if (response.success) {
         setSubData(response.data.subData || []);
         setTotalPages(response.data.totalPages || 1);

@@ -93,7 +93,8 @@ export const List = ({
       [id]: {
         ...prev[id],
         variable,
-        text: nodeData?.listHeading,
+        type:"text",
+        text: nodeData?.text || nodeData?.listHeading,
       },
     }));
     const listItems = [];
@@ -110,7 +111,7 @@ export const List = ({
     listItems.length > 0
       ? setOptions(listItems)
       : setOptions([{ option: "", value: "" }]);
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     setNodesInputData((prev) => ({
@@ -130,8 +131,8 @@ export const List = ({
         variable: e,
       },
     }));
-    const newTag = `{{${e}}}`;
     if (!e) return;
+    const newTag = `{{${e}}}`;
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
@@ -179,7 +180,7 @@ export const List = ({
     const newValue =
       input.substring(0, selectionStart) +
       start +
-      selectedText +
+      selectedText.trim() +
       end +
       input.substring(selectionEnd);
 
@@ -241,7 +242,7 @@ export const List = ({
             name="text"
             tooltipContent="List Heading"
             placeholder="Enter List Heading"
-            maxLength="20"
+            maxLength="60"
             // label={nodesInputData[id]?.type === "text" ? "List Heading" : "URL"}
             label={"List Heading"}
             value={nodesInputData[id]?.text}
@@ -257,7 +258,7 @@ export const List = ({
             }}
           />
           <p className="text-xs mt-2">
-            {nodesInputData[id]?.text?.length || 0}/20
+            {nodesInputData[id]?.text?.length || 0}/60
           </p>
         </div>
         {/* <AnimatedDropdown
@@ -364,43 +365,48 @@ export const List = ({
           className="resize-none h-50"
           ref={inputRef}
         />
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
-          className="flex items-center gap-2 mt-2 bg-white border border-slate-200 rounded-xl px-2 py-2 shadow w-max"
-        >
-          <Tooltip title="Bold" arrow>
-            <button
-              onClick={() => addFormat("bold")}
-              className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
-            >
-              <FormatBoldOutlined fontSize="small" />
-            </button>
-          </Tooltip>
-          <Tooltip title="Italic" arrow>
-            <button
-              onClick={() => addFormat("italic")}
-              className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
-            >
-              <FormatItalicOutlined fontSize="small" />
-            </button>
-          </Tooltip>
-          <Tooltip title="Strikethrough" arrow>
-            <button
-              onClick={() => addFormat("strike")}
-              className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
-            >
-              <FormatStrikethroughOutlined fontSize="small" />
-            </button>
-          </Tooltip>
-          <div className="w-px h-5 bg-slate-300 mx-1"></div>
-          <Tooltip title="Emoji Picker" arrow>
-            <CustomEmojiPicker position="top" onSelect={insertEmoji} />
-          </Tooltip>
-        </motion.div>
+        <div className="flex justify-between">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="flex items-center gap-2 mt-2 bg-white border border-slate-200 rounded-xl px-2 py-2 shadow w-max"
+          >
+            <Tooltip title="Bold" arrow>
+              <button
+                onClick={() => addFormat("bold")}
+                className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
+              >
+                <FormatBoldOutlined fontSize="small" />
+              </button>
+            </Tooltip>
+            <Tooltip title="Italic" arrow>
+              <button
+                onClick={() => addFormat("italic")}
+                className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
+              >
+                <FormatItalicOutlined fontSize="small" />
+              </button>
+            </Tooltip>
+            <Tooltip title="Strikethrough" arrow>
+              <button
+                onClick={() => addFormat("strike")}
+                className="hover:bg-indigo-100 text-indigo-500 rounded-md p-1 transition cursor-pointer"
+              >
+                <FormatStrikethroughOutlined fontSize="small" />
+              </button>
+            </Tooltip>
+            <div className="w-px h-5 bg-slate-300 mx-1"></div>
+            <Tooltip title="Emoji Picker" arrow>
+              <CustomEmojiPicker position="top" onSelect={insertEmoji} />
+            </Tooltip>
+          </motion.div>
+
+          <p className="text-xs mt-2">
+            {nodesInputData[id]?.message?.length || 0}/4096
+          </p>
+        </div>
       </div>
-      <p className="text-xs">{nodesInputData[id]?.message?.length || 0}/4096</p>
 
       <div>
         <AnimatedDropdown
@@ -422,8 +428,8 @@ export const List = ({
         <InputField
           id="text"
           name="text"
-          tooltipContent="Give a footer for the list. Maximum 20 characters."
-          maxLength="20"
+          tooltipContent="Give a footer for the list. Maximum 60 characters."
+          maxLength="60"
           label={"List Footer"}
           placeholder="Enter List Footer"
           value={nodesInputData[id]?.listFooter}
@@ -438,7 +444,7 @@ export const List = ({
           }}
         />
         <p className="text-xs mt-2">
-          {nodesInputData[id]?.listFooter?.length || 0}/20
+          {nodesInputData[id]?.listFooter?.length || 0}/60
         </p>
       </div>
 
@@ -474,27 +480,42 @@ export const List = ({
         </div>
         <div className="space-y-2 ">
           {options?.map((option, index) => (
-            <div className="flex gap-2 justify-center items-center" key={index}>
-              <InputField
-                id="option"
-                name="option"
-                label={`Row-Title-${index + 1}`}
-                placeholder="Enter Row Title"
-                value={options[index]?.option}
-                onChange={(e: { target: { value: any } }) => {
-                  handleOptionInput(e.target.value, "option", index);
-                }}
-              />
-              <InputField
-                id="value"
-                name="value"
-                label={`Row-Description-${index + 1}`}
-                placeholder="Enter Row Description"
-                value={options[index]?.value}
-                onChange={(e: { target: { value: any } }) => {
-                  handleOptionInput(e.target.value, "value", index);
-                }}
-              />
+            <div
+              className="flex gap-2 justify-center items-start w-full"
+              key={index}
+            >
+              <div className="w-full">
+                <InputField
+                  id="option"
+                  name="option"
+                  label={`Row-Title-${index + 1}`}
+                  placeholder="Enter Row Title"
+                  value={options[index]?.option}
+                  onChange={(e: { target: { value: any } }) => {
+                    handleOptionInput(e.target.value, "option", index);
+                  }}
+                  maxLength="24"
+                />
+                <p className="text-xs mt-2">
+                  {nodesInputData[id]?.options[index]?.option?.length || 0}/24
+                </p>
+              </div>
+              <div className="w-full">
+                <InputField
+                  id="value"
+                  name="value"
+                  label={`Row-Description-${index + 1}`}
+                  placeholder="Enter Row Description"
+                  value={options[index]?.value}
+                  onChange={(e: { target: { value: any } }) => {
+                    handleOptionInput(e.target.value, "value", index);
+                  }}
+                  maxLength="72"
+                />
+                <p className="text-xs mt-2">
+                  {nodesInputData[id]?.options[index]?.value?.length || 0}/72
+                </p>
+              </div>
 
               {options.length > 1 && (
                 <span
