@@ -26,6 +26,9 @@ const BlockNumber = () => {
     blockSrNo: null,
     userSrNo: null,
   });
+  const [editData, setEditData] = useState({
+    isOpen: false,
+  });
 
   const [addDataDialog, setAddDataDialog] = useState(false);
 
@@ -77,7 +80,6 @@ const BlockNumber = () => {
       setRows(formattedRow);
       setTotalPage(res?.data?.totalElements);
     } catch (e) {
-      console.log(e);
       toast.error("Something went wrong");
     }
   }
@@ -125,7 +127,7 @@ const BlockNumber = () => {
       };
 
       const res = await addBlockNumber(payload);
-      console.log("res", res);
+
       if (!res?.success) {
         return toast.error("Something went wrong");
       }
@@ -158,8 +160,8 @@ const BlockNumber = () => {
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
     { field: "mobileNo", headerName: "Mobile No", flex: 1, minWidth: 180 },
-    { field: "type", headerName: "Type", flex: 1, minWidth: 80 },
-    { field: "blocked", headerName: "Blocked Service", flex: 1, minWidth: 100 },
+    { field: "type", headerName: "Type", flex: 0, minWidth: 0 },
+    { field: "blocked", headerName: "Blocked Service", flex: 1, minWidth: 200 },
     // {
     //   field: "whatsapp",
     //   headerName: "Whatsapp",
@@ -332,7 +334,11 @@ const BlockNumber = () => {
       renderCell: (params) => (
         <>
           <CustomTooltip title="Edit Account" placement="top" arrow>
-            <IconButton onClick={() => {}}>
+            <IconButton
+              onClick={() => {
+                handleEdit(params.row);
+              }}
+            >
               <EditNoteIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -359,6 +365,67 @@ const BlockNumber = () => {
     },
   ];
 
+  function handleEdit(row) {
+    if (!row?.blockSrNo || !row?.userSrNo) return;
+
+    const allServices = [...services];
+    allServices.forEach((item) => {
+      if (row.hasOwnProperty(item.name)) {
+        item.status = Boolean(row[item.name]);
+      }
+    });
+
+    setServices(allServices);
+    setEditData({
+      isOpen: true,
+      ...row,
+    });
+  }
+  async function handleEditBlockRecord() {
+    try {
+      const service = {};
+      services?.forEach((item, index) => {
+        service[item.name] = Number(item.status);
+      });
+      if (!editData?.mobileNo) return toast.error("Please enter mobile number");
+
+      delete editData.blocked;
+      delete editData.sn;
+      delete editData.isOpen;
+      delete editData.id;
+      const payload = {
+        ...editData,
+        ...service,
+      };
+
+      const res = await addBlockNumber(payload);
+
+      if (!res?.success) {
+        return toast.error("Something went wrong");
+      }
+
+      toast.success("Block number updated successfully");
+      // setEditData(false);
+      setEditData({
+        isOpen: false,
+      });
+
+      setServices([
+        {
+          name: "obd",
+          status: false,
+        },
+        { name: "c2c", status: false },
+        { name: "rcs", status: false },
+        { name: "ibd", status: false },
+        { name: "misscall", status: false },
+        { name: "whatsapp", status: false },
+      ]);
+      handleFetchBlockNumberList();
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
+  }
   useEffect(() => {
     handleFetchBlockNumberList();
   }, [currentPage]);
@@ -461,6 +528,7 @@ const BlockNumber = () => {
         </div>
       </Dialog>
 
+      {/* Add Mobile Dialoag */}
       <Dialog
         header="Add Mobile Number To Blacklist"
         visible={addDataDialog}
@@ -473,7 +541,7 @@ const BlockNumber = () => {
         <div className="space-y-2">
           <div className="grid grid-cols-2">
             {services?.map((item, index) => (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2" key={item.name}>
                 <input
                   type="checkbox"
                   name={item.name}
@@ -523,6 +591,75 @@ const BlockNumber = () => {
             name="save"
             label="Save"
             onClick={handleAddBlockNumber}
+          />
+        </div>
+      </Dialog>
+
+      {/* Edit Mobile Dialoag */}
+      <Dialog
+        header="Edit Blacklist Mobile Number"
+        visible={editData.isOpen}
+        onHide={() => {
+          setEditData((prev) => ({
+            isOpen: false,
+          }));
+        }}
+        className="lg:w-[40rem] md:w-[30rem] w-[20rem]"
+        draggable={false}
+      >
+        <div className="space-y-2">
+          <div className="grid grid-cols-2">
+            {services?.map((item, index) => (
+              <div className="flex items-center gap-2" key={item.name}>
+                <input
+                  type="checkbox"
+                  name={item.name}
+                  id={item.name}
+                  checked={item.status}
+                  onChange={(e) => {
+                    const allServices = [...services];
+                    allServices[index].status = e.target.checked;
+                    setServices(allServices);
+                  }}
+                />
+                <label htmlFor={item.name}>{item.name.toUpperCase()}</label>
+              </div>
+            ))}
+          </div>
+          <div className="space-y-2">
+            <InputField
+              id="addMobile"
+              name="addMobile"
+              label="Mobile Number"
+              value={editData.mobileNo}
+              placeholder="Enter Mobile Number"
+              onChange={(e) =>
+                setEditData((prev) => ({
+                  ...prev,
+                  mobileNo: e.target.value,
+                }))
+              }
+            />
+            <InputField
+              id="addRemarks"
+              name="addRemarks"
+              label="Remarks"
+              value={editData.remark}
+              placeholder="Enter Remarks"
+              onChange={(e) =>
+                setEditData((prev) => ({
+                  ...prev,
+                  remark: e.target.value,
+                }))
+              }
+            />
+          </div>
+
+          <UniversalButton
+            id="update"
+            name="update"
+            label="Update"
+            onClick={handleEditBlockRecord}
           />
         </div>
       </Dialog>
