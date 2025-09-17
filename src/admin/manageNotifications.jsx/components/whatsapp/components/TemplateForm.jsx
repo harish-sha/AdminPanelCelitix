@@ -112,7 +112,7 @@ const TemplateForm = ({
 
   let variables = [];
   if (selectedOption === "option1") {
-    variables = ["firstname", "lastname", "mobileno"];
+    variables = ["first_name", "last_name"];
   } else if (selectedOption === "option2" && fileHeaders?.length > 0) {
     variables = fileHeaders;
   }

@@ -352,7 +352,7 @@ const SendRcs = () => {
 
   useEffect(() => {
     if (selectedOption === "group") {
-      setHeaders(["firstName", "lastName", "mobile"]);
+      setHeaders(["first_name", "last_name"]);
     } else {
       setHeaders(contactData?.fileHeaders || []);
     }
