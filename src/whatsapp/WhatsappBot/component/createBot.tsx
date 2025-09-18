@@ -1121,18 +1121,18 @@ const CreateWhatsAppBot = () => {
       nodeData?.apiResponse?.actionType !== "createNewNode" &&
       !nodeData?.varName
     ) {
-      toast.error("Please add variable name in response api node");
-      return;
+      // toast.error("Please add variable name in response api node");
+      // return;
     } else if (
       nodeData?.apiResponse?.responseType === "text" &&
       nodeData?.apiResponse?.actionType !== "createNewNode" &&
       nodeData?.jsonVar &&
       !nodeData?.jsonVar?.length
     ) {
-      toast.error(
-        "Please add atleast one json params and variable in response api node"
-      );
-      return;
+      // toast.error(
+      //   "Please add atleast one json params and variable in response api node"
+      // );
+      // return;
     }
 
     if (type === "list") {

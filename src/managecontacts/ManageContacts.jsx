@@ -466,9 +466,9 @@ const ManageContacts = () => {
                       color: "#34C759",
                     },
                     "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                      {
-                        backgroundColor: "#34C759",
-                      },
+                    {
+                      backgroundColor: "#34C759",
+                    },
                   }}
                 />
               </CustomTooltip>
@@ -661,12 +661,13 @@ const ManageContacts = () => {
       //
       activeStatus: updateContactDetails.status,
       // key should check
-      birthDate:
-        moment(updateContactDetails.birthDate).format("YYYY-MM-DD") ||
-        "1800-01-01",
-      anniversaryDate:
-        moment(updateContactDetails.mariageDate).format("YYYY-MM-DD") ||
-        "1800-01-01",
+      birthDate: updateContactDetails.birthDate
+        ? moment(updateContactDetails.birthDate).format("YYYY-MM-DD")
+        : "1900-01-01",
+
+      anniversaryDate: updateContactDetails.mariageDate
+        ? moment(updateContactDetails.mariageDate).format("YYYY-MM-DD")
+        : "1900-01-01",
       // allowishes: updatedContactDetails.allowishes || "",
       allowishes: updateContactDetails.allowishes,
     };
@@ -954,10 +955,10 @@ const ManageContacts = () => {
 
   const rows = Array.isArray(grpList)
     ? grpList.map((grp, index) => ({
-        id: grp.groupCode,
-        sn: index + 1,
-        groupName: grp.groupName,
-      }))
+      id: grp.groupCode,
+      sn: index + 1,
+      groupName: grp.groupName,
+    }))
     : [];
 
   const filteredRows = selectedmanageGroups?.value
@@ -1411,7 +1412,7 @@ const ManageContacts = () => {
                   birthDate: e,
                 })
               }
-              // required={true}
+            // required={true}
             />
             <UniversalDatePicker
               label="Anniversary Date"
@@ -1639,9 +1640,8 @@ const ManageContacts = () => {
                     <button
                       onClick={handleFileUpload}
                       disabled={isUploading}
-                      className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
-                        isUploading ? "disabled" : ""
-                      }`}
+                      className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
+                        }`}
                     >
                       <FileUploadOutlinedIcon
                         sx={{ color: "white", fontSize: "23px" }}
@@ -1931,7 +1931,7 @@ const ManageContacts = () => {
             }}
             onClick={() => setDeleteDialogVisible(false)}
           />}
-          
+
           <UniversalButton
             label={deleteLoading ? "Deleting" : "Delete"}
             style={

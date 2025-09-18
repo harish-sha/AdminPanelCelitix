@@ -52,7 +52,7 @@ import {
 } from "@mui/icons-material";
 
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import { Dialog } from "primereact/dialog";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
@@ -75,6 +75,7 @@ import { IoLocationOutline } from "react-icons/io5";
 import { getChatDateLabel } from "@/utils/getChatDateLabel";
 import { FaRegClock, FaWhatsapp, FaUser, FaCheckCircle, FaHeadset, FaRegPaperPlane } from "react-icons/fa";
 import ChatTimeline from "../ChatTimeline";
+import { ChatDateSeparator } from "@/utils/ChatDateSeparator";
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -461,25 +462,6 @@ export const ChatScreen = ({
     return formatted;
   }
 
-  // const ChatDateSeparator = ({ date }) => {
-  //   return (
-  //     <div className="flex items-center w-full my-4">
-  //       <div className="border-b border-gray-300 flex-grow"></div>
-  //       <span className="mx-3 bg-gray-200 text-gray-700 text-xs font-semibold px-3 py-1 rounded-full shadow-sm">
-  //         {getChatDateLabel(date)}
-  //       </span>
-  //       <div className="border-b border-gray-300 flex-grow"></div>
-  //     </div>
-  //   );
-  // };
-  const ChatDateSeparator = ({ date }) => {
-    return (
-      <>
-        {getChatDateLabel(date)}
-      </>
-    );
-  };
-
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
       <div className="mt-0 md:mt-0 z-1 flex items-center bg-gray-50 justify-between w-full h-15 px-2 border rounded-tr-lg">
@@ -588,7 +570,7 @@ export const ChatScreen = ({
 
       <div
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col mb-35 md:mb-18 md:-mt-5 bg-[url(/WB.png)]"
+        className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col mb-0 md:mb-18 md:-mt-5 bg-[url(/WB.png)]"
       >
         {chatLoading ? (
           <div className="w-full flex gap-2 items-cenetr justify-center">
@@ -616,7 +598,8 @@ export const ChatScreen = ({
               ))}
             </div>
           </div>
-        ) : (
+        ) : 
+        (
           <>
             {showScrollButton && (
               <motion.div
@@ -1366,7 +1349,7 @@ export const ChatScreen = ({
       {/* media full screen preview */}
 
       {/* Input Area */}
-      <div className="absolute bottom-16 md:bottom-0 w-full">
+      <div className="md:block absolute bottom-0 md:bottom-0 w-full">
         {/* Reply Preview */}
         {chatState.isReply && btnOption === "active" && (
           <motion.div
@@ -1531,9 +1514,11 @@ export const ChatScreen = ({
             requestLocationData={requestLocationData}
           />
         ) : (
-          <ClosedChat
-            setSendMessageDialogVisible={setSendMessageDialogVisible}
-          />
+          <div className="">
+            <ClosedChat
+              setSendMessageDialogVisible={setSendMessageDialogVisible}
+            />
+          </div>
         )}
       </div>
 

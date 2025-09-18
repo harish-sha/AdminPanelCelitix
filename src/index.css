@@ -665,3 +665,39 @@ a {
   margin-left: 0px !important;
   margin-right: -20px !important;
 }
+
+/* resellerdashboard */
+.gradient-animate {
+  background: linear-gradient(
+    90deg,
+    #93c5fd,
+    /* blue-800 */ #2e29b2,
+    /* purple-800 */ #6e3c7b,
+    /* indigo-800 */ #4dbab4
+  );
+  background-size: 200% 100%; /* make it twice as wide for animation */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s linear infinite;
+}
+
+@keyframes shine {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 0%;
+  }
+}
+
+@keyframes moveDiagonal {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-40px, 40px);
+  }
+}
+.animate-diagonal {
+  animation: moveDiagonal 8s linear infinite;
+}

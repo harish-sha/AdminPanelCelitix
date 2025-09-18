@@ -524,7 +524,7 @@ import {
   Feedback,
 } from "@mui/icons-material";
 import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
-import whatsappAnime from "../assets/animation/whatsappanimation.json";
+import whatsappAnime from "@/assets/animation/whatsappanimation.json";
 import whatsappAnime2 from "../assets/animation/whatsappanimation2.json";
 import smsAnime from "../assets/animation/smsanime.json";
 import rcs from "../assets/animation/rcs.json";
@@ -535,7 +535,7 @@ import email2 from "../assets/animation/email2.json";
 import Animationsms from "../assets/animation/Animation-sms.json";
 import Animationrcs from "../assets/animation/Animation-rcs.json";
 import Animationibd from "../assets/animation/Animation-ibd.json";
-import Animationobd from "../assets/animation/Animation-obd.json";
+import Animationobd from "@/assets/animation/Animation-obd.json";
 import Animationwhatsapp2 from "../assets/animation/Animation-whatsapp2.json";
 import Lottie from "lottie-react";
 import { getUserDetails } from "@/apis/user/user";
@@ -608,21 +608,22 @@ import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import celitixLogo from "@/assets/images/celitix-cpaas-solution-logo.svg";
 import Search from "./components/Search";
-// import Search from "./components/Search.jsx";
+import { Dialog } from "primereact/dialog";
+import WalletUsage from "./components/walletUsage";
 
-const bots = [
-  {
-    name: "Support Bot",
-    desc: "Handles common queries 24/7",
-    icon: SupportAgent,
-  },
-  {
-    name: "Onboarding Bot",
-    desc: "Welcomes and guides new users",
-    icon: SmartToy,
-  },
-  { name: "Feedback Bot", desc: "Collects customer feedback", icon: Feedback },
-];
+// const bots = [
+//   {
+//     name: "Support Bot",
+//     desc: "Handles common queries 24/7",
+//     icon: SupportAgent,
+//   },
+//   {
+//     name: "Onboarding Bot",
+//     desc: "Welcomes and guides new users",
+//     icon: SmartToy,
+//   },
+//   { name: "Feedback Bot", desc: "Collects customer feedback", icon: Feedback },
+// ];
 
 const integrations = [
   zohoicon,
@@ -649,6 +650,7 @@ const Dashboard = () => {
   const [showRefresh, setShowRefresh] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [allowedServices, setAllowServices] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -668,6 +670,8 @@ const Dashboard = () => {
           firstName: user.firstName || "",
           salesPersonId: user.salesPersonId || "Not Assigned",
         });
+        setAllowServices(user.allowedServices || []);
+        console.log("allowedServices:", user.allowedServices);
       } else {
         console.error("Failed to load user details.");
         toast.error("Failed to load user details!");
@@ -798,6 +802,7 @@ const Dashboard = () => {
   const services = [
     {
       title: "Whatsapp",
+      service_type_id: 2,
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -814,12 +819,14 @@ const Dashboard = () => {
           />
         </svg>
       ),
+      animation: Animationwhatsapp2,
       desc: "Send real-time notifications",
       bgColor: "bg-indigo-90/50",
       textColor: "text-gray-900",
     },
     {
       title: "SMS",
+      service_type_id: 1,
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -836,12 +843,14 @@ const Dashboard = () => {
           />
         </svg>
       ),
+      animation: smsAnime,
       desc: "Send and receive SMS",
       bgColor: "bg-green-100/60",
       textColor: "text-gray-900",
     },
     {
       title: "RCS",
+      service_type_id: 3,
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -858,12 +867,14 @@ const Dashboard = () => {
           />
         </svg>
       ),
+      animation: rcs,
       desc: "Interactive messaging solution",
       bgColor: "bg-teal-100/60",
       textColor: "text-gray-900",
     },
     {
       title: "OBD",
+      service_type_id: 7,
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -880,12 +891,14 @@ const Dashboard = () => {
           />
         </svg>
       ),
+      animation: Animationobd,
       desc: "Automated outbound dialer",
       bgColor: "bg-indigo-100/60",
       textColor: "text-gray-900",
     },
     {
       title: "IBD",
+      service_type_id: 10,
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -902,12 +915,15 @@ const Dashboard = () => {
           />
         </svg>
       ),
+
+      animation: Animationibd,
       desc: "Track inbound communications",
       bgColor: "bg-green-100/60",
       textColor: "text-gray-900",
     },
     {
       title: "EMAIL",
+      service_type_id: 4,
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -924,12 +940,14 @@ const Dashboard = () => {
           />
         </svg>
       ),
+      animation: email,
       desc: "Campaign and transactional email",
       bgColor: "bg-teal-100/60",
       textColor: "text-gray-900",
     },
     {
       title: "Authentication",
+      service_type_id: 5,
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -946,12 +964,14 @@ const Dashboard = () => {
           />
         </svg>
       ),
+      animation: auth,
       desc: "Secure 2FA login solutions",
       bgColor: "bg-indigo-100/60",
       textColor: "text-gray-900",
     },
     {
       title: "TWO-WAY SMS",
+      service_type_id: 8,
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -968,8 +988,58 @@ const Dashboard = () => {
           />
         </svg>
       ),
+      animation: Animationsms,
       desc: "Bi-directional messaging",
       bgColor: "bg-green-100/60",
+      textColor: "text-gray-900",
+    },
+    {
+      title: "Number LookUp",
+      service_type_id: 6,
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className={`w-4 h-4 `}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M7 17l10-10m0 0H9m8 0v8"
+          />
+        </svg>
+      ),
+      animation: email2,
+      desc: "Interactive messaging solution",
+      bgColor: "bg-teal-100/60",
+      textColor: "text-gray-900",
+    },
+    {
+      title: "Missed Call",
+      service_type_id: 9,
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className={`w-4 h-4 `}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M7 17l10-10m0 0H9m8 0v8"
+          />
+        </svg>
+      ),
+
+      animation: Animationibd,
+      desc: "Automated outbound dialer",
+      bgColor: "bg-indigo-100/60",
       textColor: "text-gray-900",
     },
   ];
@@ -1099,7 +1169,6 @@ const Dashboard = () => {
     };
   });
 
-
   const [showBar, setShowBar] = useState(true);
   const [showLine, setShowLine] = useState(true);
   const [showPie, setShowPie] = useState(true);
@@ -1154,8 +1223,27 @@ const Dashboard = () => {
 
   const [oldApiKey, setOldApiKey] = useState("");
   const [visible, setVisible] = useState(false);
+  const openDialog = () => setVisible(true);
+  const closeDialog = () => setVisible(false);
 
   const scrollRef = useRef(null);
+
+  useEffect(() => {
+    const handlegetOldApiKey = async () => {
+      try {
+        const res = await getOldApiKey();
+        if (res.status === 200) {
+          setOldApiKey(res.oldkey);
+        } else {
+          toast.error("Error fetching old API Key else");
+        }
+      } catch (e) {
+        // console.log(e);
+        toast.error("Error fetching old API Key");
+      }
+    };
+    handlegetOldApiKey();
+  }, []);
 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -1216,69 +1304,16 @@ const Dashboard = () => {
 
   return (
     <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-[calc(100vh-6rem)] overflow-hidden">
-      {/* Logged In User Card */}
-      {/* <motion.div
-        className="rounded-2xl shadow-md p-6 flex items-center justify-between flex-wrap gap-6 bg-gradient-to-br from-blue-50 to-blue-100"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="flex items-center flex-wrap justify-center gap-4">
-          <div className="bg-blue-200 border-2 border-blue-400 h-20 w-20 flex items-center justify-center rounded-full shadow-2xl">
-            <Person
-              className="text-blue-600"
-              sx={{
-                fontSize: 30,
-              }}
-            />
-          </div>
-          <div>
-            <h2 className="text-xl font-semibold">
-              Welcome back, {formData.firstName || "User"}{" "}
-            </h2>
-            <p className="text-sm opacity-80">
-              You're doing great. Here's a quick overview of your dashboard.
-            </p>
-          </div>
-        </div>
-        <div className="grid lg:grid-cols-3 gap-4 grid-cols-1  items-center">
-          {quickStats.map((stat, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-xl shadow p-3 px-5 flex flex-col items-start justify-center"
-            >
-              <div className="text-2xl">{stat.icon}</div>
-              <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
-              <div className="font-semibold text-lg">{stat.value}</div>
-            </div>
-          ))}
-        </div>
-      </motion.div> */}
-
       <div className="relative h-auto  overflow-hidden bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 text-gray-800 rounded-xl">
-        <svg
-          className="absolute bottom-0 left-0 w-full h-[69%] z-0"
-          viewBox="0 0 1440 320"
-          preserveAspectRatio="none"
-        >
-          <path
-            fill="#0099ff"
-            fillOpacity="0.2"
-            d="M0,256L40,240C80,224,160,192,240,176C320,160,400,160,480,165.3C560,171,640,181,720,192C800,203,880,213,960,218.7C1040,224,1120,224,1200,202.7C1280,181,1360,139,1400,117.3L1440,96L1440,320L0,320Z"
-          >
-            <animate
-              attributeName="d"
-              dur="10s"
-              repeatCount="indefinite"
-              values="
-          M0,256L40,240C80,224,160,192,240,176C320,160,400,160,480,165.3C560,171,640,181,720,192C800,203,880,213,960,218.7C1040,224,1120,224,1200,202.7C1280,181,1360,139,1400,117.3L1440,96L1440,320L0,320Z;
-
-          M0,224L40,208C80,192,160,160,240,144C320,128,400,128,480,144C560,160,640,192,720,202.7C800,213,880,203,960,186.7C1040,171,1120,149,1200,144C1280,139,1360,149,1400,154.7L1440,160L1440,320L0,320Z;
-
-          M0,256L40,240C80,224,160,192,240,176C320,160,400,160,480,165.3C560,171,640,181,720,192C800,203,880,213,960,218.7C1040,224,1120,224,1200,202.7C1280,181,1360,139,1400,117.3L1440,96L1440,320L0,320Z"
-            />
-          </path>
-        </svg>
+        <div className="absolute inset-0 ">
+          <img
+            src="https://t4.ftcdn.net/jpg/16/70/74/05/240_F_1670740500_Rzcl2FWPcL27vm0LjskhXHJbF0jKttmj.jpg"
+            className="w-full h-full object-cover "
+            alt="Background"
+          />
+         
+          <div className="absolute inset-0 bg-white/30  "></div>
+        </div>
 
         <div className="flex flex-col justify-center items-center  md:flex-row md:justify-between mt-5 gap-4 ">
           {/* Brand Name */}
@@ -1287,9 +1322,7 @@ const Dashboard = () => {
           </div>
 
           {/* Search Bar */}
-         
           <Search />
-          
 
           <div className="flex justify-center items-center md:gap-3 gap-4 z-10 mr-6 order-2 md:order-3">
             {/* Notification */}
@@ -1371,7 +1404,7 @@ const Dashboard = () => {
       <div className="relative overflow-y-scroll xl:overflow-hidden h-[45vh] bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 border border-gray-200 rounded-2xl shadow-md backdrop-blur-2xl text-gray-800">
         <div className="mt-5 ml-10">
           <h2 className="text-2xl font-bold  gradient-animate">
-            Services Cards
+            Discover Our Expertise
           </h2>
         </div>
 
@@ -1409,68 +1442,60 @@ const Dashboard = () => {
         </svg>
 
         <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6  items-end gap-4 p-4 md:p-6 mt-0 md:mt-5 ">
-          {services.map((s, idx) => (
-            <div
-              key={idx}
-              className={`relative flex flex-col justify-between 
-                    p-4 sm:p-5 w-full sm:w-56 h-28 sm:h-32 
+          {services.map((s, idx) => {
+            const IconComponent = s.icon;
+            const isActive = allowedServices.some(
+              (service) => service.service_type_id === s.service_type_id
+            );
+            return (
+              <div
+                key={s.service_type_id}
+                className={`relative flex flex-col justify-between 
+                    p-4 sm:p-5 w-full sm:w-58 h-30 sm:h-34 
                     rounded-2xl shadow-sm ${s.bgColor} 
                     backdrop-blur-sm`}
-            >
-              <div className="flex items-center justify-between">
-                <div
-                  className={`flex items-center gap-2 font-medium ${s.textColor}`}
-                >
-                  <span className="text-md ">{s.title}</span>
-                </div>
-                <div className="absolute top-4 right-4 w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-white shadow-md flex items-center justify-center cursor-pointer hover:bg-gray-100">
-                  {s.icon}
-                </div>
-              </div>
-              <div className={`text-xs  font-semibold ${s.textColor}`}>
-                {s.desc}
-              </div>
-            </div>
-          ))}
-        </div>
+              >
+                <div className="flex items-center justify-between">
+                  <div
+                    className={`flex items-center gap-2 font-medium ${s.textColor}`}
+                  >
+                    <span className="text-md ">{s.title}</span>
+                  </div>
 
-        {/* TailwindCSS keyframes animation */}
-        <style jsx>{`
-          .gradient-animate {
-            background: linear-gradient(
-              90deg,
-              #93c5fd,
-              /* blue-800 */ #2e29b2,
-              /* purple-800 */ #6e3c7b,
-              /* indigo-800 */ #4dbab4
+                  <button
+                    className={`absolute top-2 right-2 text-xs  font-semibold px-3 py-1 rounded-full shadow transition
+                    ${
+                      isActive
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {isActive ? "Active" : "Inactive"}
+                  </button>
+                </div>
+                <motion.div className="flex items-center justify-end z-10">
+                  <div className="flex justify-end ">
+                    {s.animation ? (
+                      <div className="w-full  h-auto text-left">
+                        <Lottie
+                          animationData={s.animation}
+                          loop
+                          autoplay
+                          className=" w-8 h-8 md:w-13 md:h-13 opacity-60"
+                        />
+                      </div>
+                    ) : (
+                      <IconComponent className="text-gray-700 group-hover:rotate-6 transition-transform duration-300" />
+                    )}
+                  </div>
+                </motion.div>
+                <div className={`text-xs  font-semibold ${s.textColor}`}>
+                  {s.desc}
+                </div>
+              </div>
             );
-            background-size: 200% 100%; /* make it twice as wide for animation */
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shine 3s linear infinite;
-          }
-
-          @keyframes shine {
-            0% {
-              background-position: 0% 0%;
-            }
-            100% {
-              background-position: 200% 0%;
-            }
-          }
-
-          @keyframes moveDiagonal {
-            0% {
-              transform: translate(0, 0);
-            }
-            100% {
-              transform: translate(-40px, 40px);
-            }
-          }
-          .animate-diagonal {
-            animation: moveDiagonal 8s linear infinite;
-          }
-        `}</style>
+          })}
+        </div>
       </div>
 
       {/* intigration section */}
@@ -1478,7 +1503,10 @@ const Dashboard = () => {
         {/* Left Wallet Chart */}
 
         <div className="flex-1 bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 p-6 rounded-2xl shadow-lg relative flex flex-col w-full md:w-[50%]">
-          <div>
+          <WalletUsage />
+          {/* <div>
+
+
             <h3 className="text-xl font-semibold">Wallet Balance Table</h3>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8 justify-end">
               {isOpen ? (
@@ -1521,7 +1549,6 @@ const Dashboard = () => {
             Showing result from: Mon Sep 08 2025 to: Sun Sep 14 2025
           </p>
 
-          {/* Table Section */}
           <div className="overflow-x-hidden rounded-lg border border-gray-200 ">
             <table className="min-w-full divide-y divide-gray-200 text-sm">
               <thead className="">
@@ -1547,12 +1574,11 @@ const Dashboard = () => {
                 ))}
               </tbody>
             </table>
-            {/* Total Spend */}
             <div className=" flex justify-between items-center border-t border-gray-200 pt-3 px-2 sm:px-4">
               <span className="font-semibold text-gray-700">Total Spend</span>
               <span className="font-bold text-gray-900">₹4350.00</span>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Right SVG  Circles */}
@@ -1569,7 +1595,10 @@ const Dashboard = () => {
 
           <div className="flex items-center justify-center  ">
             <div className="relative" style={{ width: size, height: size }}>
-              <div className="absolute inset-0 animate-spin-slow">
+              <div
+                className="absolute inset-0 animate-spin-slow"
+                onClick={() => setVisible(true)}
+              >
                 {rings.map((r, i) => (
                   <div
                     key={i}
@@ -1640,10 +1669,11 @@ const Dashboard = () => {
                 key={idx}
                 onClick={() => toggleService(s.name)}
                 className={`flex items-center gap-2 rounded-full px-3 py-2 cursor-pointer transition text-sm font-medium
-              ${selectedServices.includes(s.name)
-                    ? `${s.bgColor} ${s.textColor} opacity-90 hover:opacity-100`
-                    : "shadow-md bg-blue-50 text-gray-700 hover:bg-blue-100"
-                  }`}
+              ${
+                selectedServices.includes(s.name)
+                  ? `${s.bgColor} ${s.textColor} opacity-90 hover:opacity-100`
+                  : "shadow-md bg-blue-50 text-gray-700 hover:bg-blue-100"
+              }`}
               >
                 {/* <img
                   src={s.icon}
@@ -1678,10 +1708,11 @@ const Dashboard = () => {
                     key={f}
                     onClick={() => setFilter(f)}
                     className={`px-3 py-1 rounded-full border text-sm font-medium transition
-              ${filter === f
-                        ? "bg-blue-600 text-white border-blue-600 shadow"
-                        : "bg-blue-100 text-gray-900 border-gray-300 hover:bg-blue-500 hover:text-white hover:border-blue-500"
-                      }`}
+              ${
+                filter === f
+                  ? "bg-blue-600 text-white border-blue-600 shadow"
+                  : "bg-blue-100 text-gray-900 border-gray-300 hover:bg-blue-500 hover:text-white hover:border-blue-500"
+              }`}
                   >
                     {f.toUpperCase()}
                   </button>
@@ -2064,106 +2095,26 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Service Cards */}
-      {/* <Grid container spacing={3}>
-        {services.map((service, index) => {
-          const IconComponent = service.icon;
-          return (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                className={`rounded-xl bg-gradient-to-br ${service.color} p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300`}
-              >
-                <div className="font-semibold text-lg text-gray-800">
-                  {service.name}
-                </div>
-                <motion.div className="flex items-center justify-end z-10">
-                  <div className="flex justify-end">
-                    {service.animation ? (
-                      <div className="w-full  h-auto text-left">
-                        <Lottie
-                          animationData={service.animation}
-                          loop
-                          autoplay
-                          className="w-22 h-auto "
-                        />
-                      </div>
-                    ) : (
-                      <IconComponent className="text-gray-700 group-hover:rotate-6 transition-transform duration-300" />
-                    )}
-                  </div>
-                </motion.div>
-                <p className="text-sm opacity-70 mt-3">{service.desc}</p>
-              </motion.div>
-            </Grid>
-          );
-        })}
-      </Grid> */}
-
-      {/* Bot Section */}
-      {/* <motion.div
-        className="mt-4 bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-2xl shadow-md p-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+      {/* Integration DialogBox */}
+      <Dialog
+        header="CPaaS Integrations Panel"
+        visible={visible}
+        style={{ width: "70vw", maxWidth: "75vw", height: "70vh" }}
+        onHide={() => setVisible(false)}
+        draggable={false}
+        maximizable
       >
-        <div className="flex items-center gap-4 mb-4">
-          <SmartToy className="text-purple-600 text-3xl" />
-          <h2 className="text-xl font-semibold">Your Bots</h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {bots.map((bot, index) => {
-            const BotIcon = bot.icon;
-            return (
-              <motion.div
-                key={index}
-                whileHover={{ scale: 1.03 }}
-                className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition"
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <BotIcon className="text-xl text-purple-600" />
-                  <h3 className="font-bold text-base">{bot.name}</h3>
-                </div>
-                <p className="text-sm text-gray-600">{bot.desc}</p>
-              </motion.div>
-            );
-          })}
-        </div>
-      </motion.div>
-
-      {/* Modern Insight Box Section */}
-      {/* <motion.div
-        className="mt-4 bg-gradient-to-r from-blue-100 to-white border border-blue-200 rounded-2xl shadow-md p-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="flex items-center gap-4 mb-4">
-          <Insights className="text-blue-500 text-3xl" />
-          <h2 className="text-xl font-semibold">Platform Highlights</h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition">
-            <h3 className="font-bold text-base mb-1">Boosted Deliverability</h3>
-            <p className="text-sm text-gray-600">
-              New engine improves message delivery by 22%.
-            </p>
-          </div>
-          <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition">
-            <h3 className="font-bold text-base mb-1">Real-Time Flow Testing</h3>
-            <p className="text-sm text-gray-600">
-              Test WhatsApp & RCS flows in seconds.
-            </p>
-          </div>
-          <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition">
-            <h3 className="font-bold text-base mb-1">Multi-Channel Sync</h3>
-            <p className="text-sm text-gray-600">
-              Unified dashboard now supports all channels together.
-            </p>
-          </div>
-        </div>
-      </motion.div>  */}
+        {/* <div>
+          <button onClick={() => window.open(integrationUrl, "_blank")}>Open</button>
+        </div> */}
+        <iframe
+          src={integrationUrl}
+          width="100%"
+          height="100%"
+          frameBorder="0"
+          className="rounded-md"
+        ></iframe>
+      </Dialog>
     </div>
   );
 };

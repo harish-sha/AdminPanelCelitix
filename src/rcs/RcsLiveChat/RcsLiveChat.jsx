@@ -51,7 +51,6 @@ const RcsLiveChat = () => {
     // isReply: false,
   });
 
-  console.log("chatState", chatState);
   const [input, setInput] = useState("");
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -78,6 +77,8 @@ const RcsLiveChat = () => {
   const [btnvarLength, setBtnVarLength] = useState(0);
   const [btnvarList, setBtnVarList] = useState([]);
   const [btninputVariables, setBtnInputVariables] = useState([]);
+
+  const [chatLoading, setChatLoading] = useState(false);
 
   const [carVar, setCarVar] = useState({
     length: 0,
@@ -237,6 +238,7 @@ const RcsLiveChat = () => {
 
   async function handleFetchSpecificConvo() {
     if (!chatState.active) return;
+    setChatLoading(true);
     try {
       const payload = {
         agentId: chatState.active.agentId,
@@ -308,6 +310,8 @@ const RcsLiveChat = () => {
       }));
     } catch (e) {
       toast.error("Error fetching conversation");
+    }finally {
+      setChatLoading(false);
     }
   }
 
@@ -737,6 +741,7 @@ const RcsLiveChat = () => {
               setSelectedMedia={setSelectedMedia}
               handleFetchTemplateswithAgentId={handleFetchTemplateswithAgentId}
               agentSelectedTemplate={agentSelectedTemplate}
+              chatLoading={chatLoading}
             />
           </motion.div>
         )}

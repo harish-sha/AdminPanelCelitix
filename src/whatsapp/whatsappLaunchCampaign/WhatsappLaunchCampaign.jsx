@@ -116,9 +116,9 @@ const WhatsappLaunchCampaign = () => {
 
       const mappedData = Array.isArray(res)
         ? res?.map((item) => ({
-          value: item.sr_no,
-          label: item.workflow_name,
-        }))
+            value: item.sr_no,
+            label: item.workflow_name,
+          }))
         : [];
       setAllWorkflows(res);
     } catch (e) {
@@ -455,7 +455,7 @@ const WhatsappLaunchCampaign = () => {
       templateCategory: selectedTemplateData?.category || "",
       templateType: selectedTemplateData?.type || "",
       // isMarketingMessage: marketingType || "",
-      ...(marketingType === 1 && { isMarketingMessage: 1 }),
+      // ...(marketingType === 1 && { isMarketingMessage: 1 }),
       url: "",
       variables: [],
       xlsxpath: xlsxPath,
@@ -500,7 +500,12 @@ const WhatsappLaunchCampaign = () => {
       // requestData.workflowSrno = workflowState?.workflowSrno
     }
 
-    // console.log(requestData)
+    if (templateDataNew?.category === "MARKETING") {
+      requestData = {
+        ...requestData,
+        ...(marketingType === 1 && { isMarketingMessage: 1 }),
+      };
+    }
 
     try {
       const response = await sendWhatsappCampaign(requestData);
@@ -565,7 +570,7 @@ const WhatsappLaunchCampaign = () => {
 
   // Change radio button (cloud API & MMLITE)
   useEffect(() => {
-    const onboarded = wabaList?.some(item => item.apiStatus === "ONBOARDED");
+    const onboarded = wabaList?.some((item) => item.apiStatus === "ONBOARDED");
     if (onboarded) {
       setMarketingType(1);
     }
@@ -791,7 +796,9 @@ const WhatsappLaunchCampaign = () => {
                               inputId="radioOptionSend1"
                               name="radioGroupSend"
                               value="2"
-                              onChange={(e) => setMarketingType(parseInt(e.target.value))}
+                              onChange={(e) =>
+                                setMarketingType(parseInt(e.target.value))
+                              }
                               checked={marketingType === 2}
                             />
                             <label
@@ -810,7 +817,9 @@ const WhatsappLaunchCampaign = () => {
                               inputId="radioOptionSend2"
                               name="radioGroupSend"
                               value="1"
-                              onChange={(e) => setMarketingType(parseInt(e.target.value))}
+                              onChange={(e) =>
+                                setMarketingType(parseInt(e.target.value))
+                              }
                               checked={marketingType === 1}
                             />
                             <label
@@ -969,7 +978,10 @@ const WhatsappLaunchCampaign = () => {
                     ?.name || "N/A"}
                 </p>
                 <span className="font-semibold font-m">Template Name : </span>
-                <p className=""> {selectedTemplateData?.templateName || "N/A"}</p>
+                <p className="">
+                  {" "}
+                  {selectedTemplateData?.templateName || "N/A"}
+                </p>
                 <span className="font-semibold font-m">Template Type : </span>
                 <p className="">{selectedTemplateData?.type || "N/A"}</p>
                 <span className="font-semibold font-m">
