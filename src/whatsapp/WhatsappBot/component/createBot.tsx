@@ -1121,18 +1121,18 @@ const CreateWhatsAppBot = () => {
       nodeData?.apiResponse?.actionType !== "createNewNode" &&
       !nodeData?.varName
     ) {
-      toast.error("Please add variable name in response api node");
-      return;
+      // toast.error("Please add variable name in response api node");
+      // return;
     } else if (
       nodeData?.apiResponse?.responseType === "text" &&
       nodeData?.apiResponse?.actionType !== "createNewNode" &&
       nodeData?.jsonVar &&
       !nodeData?.jsonVar?.length
     ) {
-      toast.error(
-        "Please add atleast one json params and variable in response api node"
-      );
-      return;
+      // toast.error(
+      //   "Please add atleast one json params and variable in response api node"
+      // );
+      // return;
     }
 
     if (type === "list") {
@@ -1469,6 +1469,7 @@ const CreateWhatsAppBot = () => {
       nodesInputData,
       botDetails
     );
+    // console.log("payt", payload);
     if (!payload) {
       return toast.error("Error Generating Payload");
     }
@@ -1494,6 +1495,7 @@ const CreateWhatsAppBot = () => {
         navigate("/wwhatsappbot");
       }
     } catch (e) {
+      // console.log(e);
       toast.error("Error Saving Bot");
     } finally {
       setIsFetching(false);
@@ -1558,7 +1560,7 @@ const CreateWhatsAppBot = () => {
 
               {/* Export button */}
               <CustomTooltip
-                title="Export the flow in JSON format. Ensure all configuration errors are resolved before exporting. [Save flow first!]"
+                title="Open the comprehensive WhatsApp Bot Guide explaining each node type and how it works. Ensure your flow is correctly configured before export"
                 placement="top"
                 arrow
               >

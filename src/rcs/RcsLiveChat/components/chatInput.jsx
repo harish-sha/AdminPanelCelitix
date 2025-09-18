@@ -13,6 +13,7 @@ import { FaFileWord, FaPlus } from "react-icons/fa";
 import CannedMessageDropdown from "@/cannedmessage/components/CannedMessageDropdown";
 import { PiFilePdf, PiMicrosoftExcelLogo } from "react-icons/pi";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import CustomTooltip from "@/components/common/CustomTooltip";
 
 export const ChatInput = ({
   input,
@@ -46,20 +47,20 @@ export const ChatInput = ({
         documentInputRef.current.click();
       },
     },
-    {
-      label: "Photos & Videos",
-      icon: <ImageOutlinedIcon style={{ color: "#FF9800" }} />, // Orange
-      command: () => {
-        fileInputRef.current.click();
-      },
-    },
-    {
-      label: "Template",
-      icon: <BsJournalArrowDown style={{ color: "#3F51B5" }} />,
-      command: () => {
-        setIsTemplateMessage(true);
-      },
-    },
+    // {
+    //   label: "Photos & Videos",
+    //   icon: <ImageOutlinedIcon style={{ color: "#FF9800" }} />, // Orange
+    //   command: () => {
+    //     fileInputRef.current.click();
+    //   },
+    // },
+    // {
+    //   label: "Template",
+    //   icon: <BsJournalArrowDown style={{ color: "#3F51B5" }} />,
+    //   command: () => {
+    //     setIsTemplateMessage(true);
+    //   },
+    // },
     {
       label: "Excel",
       icon: <TableChartOutlinedIcon style={{ color: "#009688" }} />, // Teal
@@ -287,7 +288,28 @@ export const ChatInput = ({
           /> */}
         </div>
 
-        <div className="relative ml-4">
+        <div className="relative flex items-center gap-2 ml-2">
+          <CustomTooltip
+            title="Template"
+            placement="top"
+            arrow
+          >
+            <div onClick={() => setIsTemplateMessage(true)} className="cursor-pointer p-1.5 rounded-full hover:bg-gray-200 hover:text-blue-400 text-blue-900 transition-all duration-200">
+              <BsJournalArrowDown fontSize="18px" />
+            </div>
+          </CustomTooltip>
+          <CustomTooltip
+            title="Photos & Videos"
+            placement="top"
+            arrow
+          >
+            <div onClick={() => fileInputRef.current.click()} className="cursor-pointer p-1.5 rounded-full hover:bg-gray-200 hover:text-orange-800 text-[#FF9800] transition-all duration-200">
+              <ImageOutlinedIcon sx={{
+                fontSize: 23
+              }} />
+            </div>
+          </CustomTooltip>
+
           <button
             onClick={() => setIsSpeedDialOpen(!isSpeedDialOpen)}
             className={`flex items-center justify-center w-8 h-8 cursor-pointer bg-[#22577E] text-white rounded-full shadow-md transition-transform ${isSpeedDialOpen ? "rotate-45" : ""

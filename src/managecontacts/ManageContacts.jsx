@@ -320,7 +320,6 @@ const ManageContacts = () => {
     try {
       // Call the API
       const response = await addContact(payload);
-      console.log("add contact resposne", response);
 
       if (response.flag == true) {
         // Success
@@ -662,12 +661,13 @@ const ManageContacts = () => {
       //
       activeStatus: updateContactDetails.status,
       // key should check
-      birthDate:
-        moment(updateContactDetails.birthDate).format("YYYY-MM-DD") ||
-        "1800-01-01",
-      anniversaryDate:
-        moment(updateContactDetails.mariageDate).format("YYYY-MM-DD") ||
-        "1800-01-01",
+      birthDate: updateContactDetails.birthDate
+        ? moment(updateContactDetails.birthDate).format("YYYY-MM-DD")
+        : "1900-01-01",
+
+      anniversaryDate: updateContactDetails.mariageDate
+        ? moment(updateContactDetails.mariageDate).format("YYYY-MM-DD")
+        : "1900-01-01",
       // allowishes: updatedContactDetails.allowishes || "",
       allowishes: updateContactDetails.allowishes,
     };

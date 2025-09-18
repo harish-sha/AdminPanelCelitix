@@ -1429,7 +1429,7 @@ export default function WhatsappLiveChat() {
   }
 
   return (
-    <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border">
+    <div className="flex h-full bg-gray-50 rounded-2xl overflow-hidden border">
       <div
         className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${chatState?.active ? "hidden md:block" : "block"
           }`}

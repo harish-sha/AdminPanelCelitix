@@ -414,7 +414,7 @@ const AddUser = () => {
               />
             </div> */}
 
-            <div className="md:w-56 w-full">
+            {/* <div className="md:w-56 w-full">
               <AnimatedDropdown
                 label="Account Manager"
                 id="accountManager"
@@ -425,7 +425,7 @@ const AddUser = () => {
                   setSelectedAccountManager(selected);
                 }}
               />
-            </div>
+            </div> */}
           </>
         )}
         <div className="md:w-50 w-full">

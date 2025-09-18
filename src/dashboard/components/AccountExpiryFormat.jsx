@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import moment from "moment";
-import { FiAlertCircle, FiMessageSquare, FiSmartphone, FiSend } from "react-icons/fi";
+import { FiAlertCircle, FiMessageSquare, FiSmartphone, FiSend, FiLogOut } from "react-icons/fi";
 import { Dialog } from "primereact/dialog";
 import { SiWhatsapp } from "react-icons/si";
 import { motion } from "framer-motion";
 import { getaccountInfo } from '@/apis/user/user';
+import toast from 'react-hot-toast';
 
 
 const AccountExpiryFormat = () => {
@@ -12,6 +13,26 @@ const AccountExpiryFormat = () => {
     const [showExpiryAlert, setShowExpiryAlert] = useState(false);
     const [isAccountExpired, setIsAccountExpired] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
+
+    const handleLogout = useCallback(() => {
+        sessionStorage.removeItem("token");
+        toast.success("Logged out successfully!");
+        window.location.href = "/login";
+        setTimeout(() => authLogout(), 1000);
+        // authLogout();
+        // setTimeout(() => (window.location.href = "/login"), 1000);
+    }, []);
+
+    useEffect(() => {
+        if (isAccountExpired) {
+            // Block route access forcefully
+            window.history.pushState(null, "", window.location.href);
+            window.onpopstate = () => {
+                window.history.go(1);
+            };
+        }
+    }, [isAccountExpired]);
+
 
     useEffect(() => {
         const fetchAccountInfo = async () => {
@@ -21,7 +42,7 @@ const AccountExpiryFormat = () => {
                 const data = await getaccountInfo();
                 // const data =
                 // {
-                //     "expiryDate": "2025-07-03",
+                //     "expiryDate": "2022-08-02",
                 // };
                 const expiry = new Date(data.expiryDate);
                 setExpiryDate(expiry);
@@ -121,6 +142,22 @@ const AccountExpiryFormat = () => {
                                     until reactivation is completed by your organization. Message queues, logs, analytics, and
                                     configuration are preserved according to your data retention policy.
                                 </div>
+
+                                <div className='flex items-center justify-center'>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="relative mt-6 inline-flex items-center gap-2 px-5 py-2.5 
+                                    rounded-lg bg-gradient-to-r from-red-500 to-red-600 
+                                    text-white font-medium shadow-md hover:shadow-lg
+                                    hover:from-red-600 hover:to-red-700 transition-all duration-300
+                                    overflow-hidden group cursor-pointer"
+                                    >
+                                        <span className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition duration-300"></span>
+                                        <FiLogOut className="text-lg" />
+                                        Logout
+                                    </button>
+                                </div>
+
                             </div>
                         </div>
                     </motion.div>

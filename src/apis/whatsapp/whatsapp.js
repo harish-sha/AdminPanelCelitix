@@ -725,12 +725,16 @@ export const saveCannedMessage = async (data) => {
 
 // Get all canned messages
 export const getAllCannedMessages = async () => {
-  return await fetchWithAuth(`/canned/all-messages`);
+  return await fetchWithAuth(`/canned/all-messages`, {
+    method: "GET",
+  });
 };
 
 // Get canned message by SrNo
 export const getCannedMessageBySrNo = async (srNo) => {
-  return await fetchWithAuth(`/canned/getbySrno?srNo=${srNo}`);
+  return await fetchWithAuth(`/canned/getbySrno?srNo=${srNo}`, {
+    method: "GET",
+  });
 };
 
 // Delete canned message by SrNo
