@@ -495,3 +495,35 @@ export const deleteBlockContent = async (id) => {
     method: "POST",
   });
 };
+export const getBlockHeader = async (id) => {
+  return await fetchWithAuth(`/getBlockHeaderDetailed`, {
+    method: "POST",
+  });
+};
+export const addBlockHeader = async (id) => {
+  return await fetchWithAuth("/addBlockHeader", {
+    method: "POST",
+  });
+};
+export const deleteBlockHeader = async (id) => {
+  return await fetchWithAuth(`/deleteBlockHeader?blockId=${id}`, {
+    method: "POST",
+  });
+};
+
+export const getBlockSeries = async (id) => {
+  return await fetchWithAuth("/getBlockSeriesDetailed", {
+    method: "POST",
+  });
+};
+
+export const addBlockSeries = async (id) => {
+  return await fetchWithAuth("/addBlockSeries", {
+    method: "POST",
+  });
+};
+export const deleteBlockHeader = async (id) => {
+  return await fetchWithAuth(`/deleteBlockSeries?seriesId=${id}`, {
+    method: "POST",
+  });
+};
