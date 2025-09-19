@@ -141,6 +141,8 @@ export const resellerItems = [
       { to: "/managenotifications", label: "Manage Notifications" },
       { to: "/managevoiceclips", label: "Manage Voice Clips" },
       { to: "/blockContent", label: "Manage Block Content" },
+      { to: "/manageblockheader", label: "Manage Block Header" },
+      { to: "/manageblockseries", label: "Manage Block Series" },
     ],
     roles: ["ADMIN"],
   },

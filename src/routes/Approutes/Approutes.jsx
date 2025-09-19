@@ -146,6 +146,7 @@ import { AddNotification } from "@/admin/manageNotifications.jsx/pages/addNotifi
 import DrAnalysis from "@/drAnalysis";
 import BlockNumber from "@/apis/manageBlockNumber";
 import BlockContent from "@/admin/manageBlockContent";
+import ManageBlockHeader from "@/admin/manageBlockHeader";
 
 const Approutes = () => {
   return (
@@ -313,6 +314,8 @@ const Approutes = () => {
         <Route path="drAnalysis" element={<DrAnalysis />} />
         <Route path="blockNumber" element={<BlockNumber />} />
         <Route path="blockContent" element={<BlockContent />} />
+        <Route path="manageblockheader" element={<ManageBlockHeader />} />
+        {/* <Route path="manageblockseries" element={<ManageBlockHeader />} /> */}
       </Route>
 
       <Route path="dummy" element={<Dummy />} />
