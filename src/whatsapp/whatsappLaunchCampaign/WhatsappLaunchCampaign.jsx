@@ -61,7 +61,7 @@ const WhatsappLaunchCampaign = () => {
     isOpen: false,
     data: null,
   });
-
+  const [fileName, setFileName] = useState(null);
   const [groups, setGroups] = useState([]);
 
   const [xlsxPath, setXlsxPath] = useState("");
@@ -116,9 +116,9 @@ const WhatsappLaunchCampaign = () => {
 
       const mappedData = Array.isArray(res)
         ? res?.map((item) => ({
-            value: item.sr_no,
-            label: item.workflow_name,
-          }))
+          value: item.sr_no,
+          label: item.workflow_name,
+        }))
         : [];
       setAllWorkflows(res);
     } catch (e) {
@@ -498,6 +498,13 @@ const WhatsappLaunchCampaign = () => {
       // requestData.workflowSrno = workflowState?.workflowSrno;
       // requestData.workflowFlag = workflowState?.workflowFlag;
       // requestData.workflowSrno = workflowState?.workflowSrno
+    }
+
+    if (selectedTemplateData?.type === "document") {
+      requestData = {
+        ...requestData,
+        fileName: fileName,
+      };
     }
 
     if (templateDataNew?.category === "MARKETING") {
@@ -898,6 +905,8 @@ const WhatsappLaunchCampaign = () => {
                           locationData={locationData}
                           selectedTemplate={selectedTemplate}
                           templateOptions={templateOptions}
+                          fileName={fileName}
+                          setFileName={setFileName}
                         />
                       )
                     )}

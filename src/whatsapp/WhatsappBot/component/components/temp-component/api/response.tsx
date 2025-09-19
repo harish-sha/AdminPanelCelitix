@@ -91,7 +91,10 @@ export const Response = ({
       { paramName: "", varName: "" },
     ];
 
-    const varName = nodesInputData[id]?.varName || "";
+    const varName =
+      nodesInputData[id]?.apiResponse?.varName ||
+      nodesInputData[id]?.varName ||
+      "";
 
     setNodesInputData((prev) => ({
       ...prev,

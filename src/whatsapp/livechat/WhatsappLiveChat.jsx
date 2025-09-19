@@ -805,10 +805,12 @@ export default function WhatsappLiveChat() {
     // const size = `${files?.size / 1024}MB`;
     // if (Number(files?.size) > 5)
     //   return toast.error("File size should be less than 5MB");
-    const size = `${(files.size / (1024 * 1024)).toFixed(2)} MB`; // show in MB with 2 decimals
+    const size = `${files?.size / 1024 / 1024}MB`;
 
-    if (files.size > 5 * 1024 * 1024) {
-      return toast.error("File size should be less than 5MB");
+    if (parseFloat(size) > 5) {
+      toast.error("File size should be less than 5MB");
+      fileInputRef.current.value = "";
+      return;
     }
     setSelectedImage({ files, type, fileName, size });
     // setSelectedImage(files);

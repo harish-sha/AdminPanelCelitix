@@ -75,6 +75,8 @@ const TemplateForm = ({
   locationData,
   selectedTemplate,
   templateOptions,
+  fileName,
+  setFileName,
 }) => {
   const [inputValues, setInputValues] = useState({});
 
@@ -205,6 +207,7 @@ const TemplateForm = ({
       uploading: false,
       uploadedUrl: null,
       validFileSelected: true,
+      fileName: file.name || "Unknown",
     });
   };
 
@@ -229,6 +232,7 @@ const TemplateForm = ({
           validFileSelected: false,
         }));
         onImageUpload(response.fileUrl);
+        setFileName(imageState.fileName);
       } else {
         toast.error(response.msg || "Media upload failed.");
       }

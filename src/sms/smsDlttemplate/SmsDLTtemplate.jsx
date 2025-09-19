@@ -223,13 +223,32 @@ const SmsDLTtemplate = () => {
   };
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, width: 70 },
-    { field: "userid", headerName: "USER ID", flex: 0, minWidth: 100 },
+    {
+      field: "sn", headerName: "S.No", flex: 0, width: 70,
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          {params.value}
+        </div>
+      ),
+    },
+    {
+      field: "userid", headerName: "USER ID", flex: 0, minWidth: 100,
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          {params.value}
+        </div>
+      ),
+    },
     {
       field: "templatename",
       headerName: "Template Name",
       flex: 1,
       minWidth: 120,
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          {params.value}
+        </div>
+      ),
     },
     // { field: "templateid", headerName: "Template ID", flex: 1, minWidth: 110 },
     // { field: "entityid", headerName: "Entity ID", flex: 1, minWidth: 80 },
@@ -241,15 +260,36 @@ const SmsDLTtemplate = () => {
         </div>
       )
     },
-    { field: "senderid", headerName: "Sender ID", flex: 1, minWidth: 130 },
-    { field: "smstype", headerName: "SMS Type", flex: 1, minWidth: 120 },
+    {
+      field: "senderid", headerName: "Sender ID", flex: 1, minWidth: 130,
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          {params.value}
+        </div>
+      ),
+    },
+    {
+      field: "smstype", headerName: "SMS Type", flex: 1, minWidth: 120,
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          {params.value}
+        </div>
+      ),
+    },
     // {
     //   field: "consenttype",
     //   headerName: "Consent type",
     //   flex: 1,
     //   minWidth: 120,
     // },
-    { field: "inserttime", headerName: "Insert Time", flex: 1, minWidth: 200 },
+    {
+      field: "inserttime", headerName: "Insert Time", flex: 1, minWidth: 200,
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          {params.value}
+        </div>
+      ),
+    },
     // { field: "status", headerName: "Status", flex: 1, minWidth: 80 },
     {
       field: "action",
@@ -257,7 +297,7 @@ const SmsDLTtemplate = () => {
       flex: 1,
       width: 120,
       renderCell: (params) => (
-        <>
+        <div className="flex items-center gap-1 h-full">
           <CustomTooltip title="more Info" placement="top" arrow>
             <IconButton
               className="text-xs relative"
@@ -323,7 +363,7 @@ const SmsDLTtemplate = () => {
               />
             </IconButton>
           </CustomTooltip>
-        </>
+        </div>
       ),
     },
   ];

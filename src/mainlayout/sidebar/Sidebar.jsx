@@ -376,6 +376,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     },
     // {
     //   id: "",
+    //   name: "blockNumber",
+    //   icon: <GroupOutlinedIcon fontSize="20" />,
+    //   label: "Block Number",
+    //   type: "single",
+    //   to: "/blockNumber",
+    //   roles: ["ADMIN", "DIRECTUSER"],
+    // },
+    // {
+    //   id: "",
     //   name: "Unsubscribe",
     //   icon: <UnsubscribeOutlinedIcon fontSize="20" />,
     //   label: "Unsubscribe",

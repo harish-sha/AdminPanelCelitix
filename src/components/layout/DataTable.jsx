@@ -155,6 +155,7 @@ export const DataTable = ({
         onPaginationModelChange={setPaginationModel}
         checkboxSelection={checkboxSelection}
         rowHeight={45}
+        getRowHeight={() => 'auto'}
         slots={{ footer: CustomFooter, noRowsOverlay: CustomNoRowsOverlay }}
         slotProps={{ footer: { totalRecords: rows.length } }}
         onRowSelectionModelChange={(ids) => setSelectedRows(ids)}

@@ -666,38 +666,23 @@ a {
   margin-right: -20px !important;
 }
 
-/* resellerdashboard */
-.gradient-animate {
+/* Dashboard CSS */
+
+.glass {
+  transform-style: preserve-3d;
+  position: absolute;
+  inset: 8px;
+  border-radius: 55px;
+  border-top-right-radius: 100%;
   background: linear-gradient(
-    90deg,
-    #93c5fd,
-    /* blue-800 */ #2e29b2,
-    /* purple-800 */ #6e3c7b,
-    /* indigo-800 */ #4dbab4
+    0deg,
+    rgba(255, 300, 355, 0.349) 0%,
+    rgba(255, 300, 255, 0.815) 100%
   );
-  background-size: 200% 100%; /* make it twice as wide for animation */
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shine 3s linear infinite;
-}
-
-@keyframes shine {
-  0% {
-    background-position: 0% 0%;
-  }
-  100% {
-    background-position: 200% 0%;
-  }
-}
-
-@keyframes moveDiagonal {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(-40px, 40px);
-  }
-}
-.animate-diagonal {
-  animation: moveDiagonal 8s linear infinite;
+  /* -webkit-backdrop-filter: blur(5px);
+   backdrop-filter: blur(5px); */
+  transform: translate3d(0px, 0px, 25px);
+  border-left: 1px solid white;
+  border-bottom: 1px solid white;
+  transition: all 0.5s ease-in-out;
 }

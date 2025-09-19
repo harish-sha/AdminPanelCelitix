@@ -9,6 +9,7 @@ import { getCountryList } from "@/apis/common/common";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import UniversalButton from "@/components/common/UniversalButton";
 import OneTimeDropdown from "./components/OneTimeDropdown";
+import { FcApproval } from "react-icons/fc";
 
 const HlrLookup = () => {
   const [selectedOption, setSelectedOption] = useState("Copy-Paste");
@@ -138,179 +139,14 @@ const HlrLookup = () => {
   const invalidCount = results.filter((r) => !r.valid).length;
   const totalCount = results.length;
   return (
-    // <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 ">
-    //   {/* Left Panel */}
-    //   <div className="w-full bg-gray-100 rounded-lg shadow p-3">
-    //     <div className="flex items-center mb-6">
-    //       {/* Country Code */}
-    //       <select
-    //         name="countrycode"
-    //         id="countrycode"
-    //         value={countryCode}
-    //         onChange={(e) => setCountryCode(e.target.value)}
-    //         className="h-11 px-3 text-sm border border-gray-300 rounded-l-full bg-gray-200 focus:border-blue-500 focus:ring focus:ring-blue-500/30 transition"
-    //       >
-    //         <option value="91">🇮🇳 +91</option>
-    //         <option value="1">🇺🇸 +1</option>
-    //         <option value="44">🇬🇧 +44</option>
-    //       </select>
-
-    //       {/* Mobile Input */}
-    //       <input
-    //         type="text"
-    //         placeholder="Enter Number..."
-    //         value={mobileNo}
-    //         onChange={handleNumberChange}
-    //         maxLength={15}
-    //         inputMode="numeric"
-    //         className="flex-1 h-11 px-4 text-sm placeholder-gray-400 bg-gray-300  border-t border-b border-gray-300 focus:outline-none focus:ring focus:ring-blue-500/30 focus:border-blue-500 transition"
-    //       />
-
-    //       {/* Lookup Button */}
-    //       <button
-    //         className={`h-11 px-5 text-white text-sm md:text-md font-semibold rounded-r-full shadow transition
-    //           ${isValid && !isFetching
-    //             ? "bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:ring focus:ring-blue-500/40"
-    //             : "bg-gray-400 cursor-not-allowed"
-    //           }`}
-    //         onClick={handleNumberLookup}
-    //         disabled={!isValid || isFetching}
-    //         aria-busy={isFetching}
-    //       >
-    //         {isFetching ? "Checking..." : " Lookup"}
-    //       </button>
-    //     </div>
-
-    //     {/* Table */}
-    //     <div className="overflow-hidden rounded-md border border-gray-200">
-    //       <table className="w-full text-sm text-left border-collapse">
-    //         <tbody>
-    //           <tr className="odd:bg-gray-50">
-    //             <td className="w-50 border border-gray-200 p-3 font-medium text-gray-700">
-    //               Mobile No
-    //             </td>
-    //             <td className="border border-gray-200 p-3 text-gray-600">
-    //               {result?.mobile || "-"}
-    //             </td>
-    //           </tr>
-    //           <tr className="odd:bg-gray-50">
-    //             <td className="w-50 border border-gray-200 p-3 font-medium text-gray-700">
-    //               Lookup Status
-    //             </td>
-    //             <td className="border border-gray-200 p-3 text-green-600 font-semibold">
-    //               {result?.lookupStatus || "-"}
-    //             </td>
-    //           </tr>
-    //           <tr className="odd:bg-gray-50">
-    //             <td className="w-50 border border-gray-200 p-3 font-medium text-gray-700">
-    //               Lookup Description
-    //             </td>
-    //             <td className="border border-gray-200 p-3 text-gray-600">
-    //               {result?.lookupDescription || "-"}
-    //             </td>
-    //           </tr>
-    //           <tr className="odd:bg-gray-50">
-    //             <td className="w-50 border border-gray-200 p-3 font-medium text-gray-700">
-    //               Original Operator
-    //             </td>
-    //             <td className="border border-gray-200 p-3 text-gray-600">
-    //               {result?.originalOperator || "-"}
-    //             </td>
-    //           </tr>
-    //           <tr className="odd:bg-gray-50">
-    //             <td className="w-50 border border-gray-200 p-3 font-medium text-gray-700">
-    //               Original Circle
-    //             </td>
-    //             <td className="border border-gray-200 p-3 text-gray-600">
-    //               {result?.originalCircle || "-"}
-    //             </td>
-    //           </tr>
-    //           <tr className="odd:bg-gray-50">
-    //             <td className="w-50 border border-gray-200 p-3 font-medium text-gray-700">
-    //               Ported
-    //             </td>
-    //             <td className="border border-gray-200 p-3 text-gray-600">
-    //               {result?.ported
-    //                 ? "Yes"
-    //                 : result?.ported === false
-    //                   ? "No"
-    //                   : "-"}
-    //             </td>
-    //           </tr>
-    //           <tr className="odd:bg-gray-50">
-    //             <td className="w-50 border border-gray-200 p-3 font-medium text-gray-700">
-    //               Ported Operator
-    //             </td>
-    //             <td className="border border-gray-200 p-3 text-gray-600">
-    //               {result?.portedOperator || "-"}
-    //             </td>
-    //           </tr>
-    //           <tr className="odd:bg-gray-50">
-    //             <td className="w-50 border border-gray-200 p-3 font-medium text-gray-700">
-    //               Ported Circle
-    //             </td>
-    //             <td className="border border-gray-200 p-3 text-gray-600">
-    //               {result?.portedCircle || "-"}
-    //             </td>
-    //           </tr>
-    //         </tbody>
-    //       </table>
-    //     </div>
-    //   </div>
-
-    //   {/* Right Panel */}
-    //   <div className="w-full bg-gray-100 rounded-lg shadow p-3">
-    //     <div className=" flex flex-col md:flex-row  gap-4">
-    //       <label className="bg-white shadom rounded-md px-2 py-0.5 ">
-    //         <input
-    //           type="radio"
-    //           name="Copy-Paste"
-    //           value="Copy-Paste"
-    //           checked={selectedOption === "Copy-Paste"}
-    //           onChange={handleChange}
-    //           className="mr-1 text-blue-800"
-    //         />
-    //         <span className="text-blue-700 font-medium text-sm">
-    //           {" "}
-    //           Copy-Paste{" "}
-    //         </span>
-    //       </label>
-
-    //       <label className="bg-white shadom rounded-md px-2 py-0.5 ">
-    //         <input
-    //           type="radio"
-    //           name="import-copy"
-    //           value="Import-Copy"
-    //           checked={selectedOption === "Import-Copy"}
-    //           onChange={handleChange}
-    //           className="mr-1 text-blue-800"
-    //         />
-    //         <span className="text-blue-700 font-medium"> Import-Copy </span>
-    //       </label>
-    //     </div>
-
-    //     <div className="mt-4 flex flex-col">
-    //       <textarea
-    //         placeholder="Mobile Box- Comma or Enter Separated "
-    //         className="md:w-75 h-64  p-3 text-sm text-gray-600 bg-white border border-gray-200 rounded-md  "
-    //       />
-    //       <span className="mt-1">valid: +Invalid: = Total: </span>
-    //     </div>
-    //     <button className="mt-4 w-42 h-8 bg-blue-900 text-white font-semeibold rounded-md hover:bg-blue-800 transition">
-    //       {" "}
-    //       Remove Duplicate{" "}
-    //     </button>
-    //   </div>
-    // </div>
-
     <div className="bg-gradient-to-br from-slate-50 to-slate-100 md:p-4 p-0 rounded-2xl">
-      <div className="max-w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="max-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Left Panel */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className="bg-white rounded-2xl shadow-md p-2 md:p-6 border border-slate-100"
+          className="bg-white rounded-2xl shadow-md p-2 md:p-6 border border-slate-100 md:col-span-2"
         >
           <h2 className="text-xl font-semibold text-slate-800 mb-4 flex items-center justify-center md:justify-start gap-2">
             <Search className="text-indigo-500" /> Number Lookup
@@ -436,8 +272,97 @@ const HlrLookup = () => {
           </motion.div>
         </motion.div>
 
-        {/* Right Panel */}
         <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2, delay: 0.1, ease: "easeOut" }}
+          className="bg-white rounded-2xl shadow-md p-4 md:p-6 border border-slate-100 flex flex-col space-y-5 md:col-span-1"
+        >
+          {/* Title */}
+          <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+            📌 Helpful Notes
+          </h2>
+
+          {/* Key Tips */}
+          <ul className="text-sm text-slate-600 space-y-2 list-disc pl-4">
+            <li>
+              Country codes are mandatory for international number lookup.
+            </li>
+            <li>
+              Mobile numbers usually contain{" "}
+              <span className="font-medium text-blue-700">8–15 digits</span>.
+            </li>
+            <li>
+              Ported numbers may show different operator/circle information.
+            </li>
+            <li>
+              Lookup can help in fraud detection and user validation.
+            </li>
+          </ul>
+
+          {/* Example */}
+          <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-lg text-xs text-indigo-700">
+            <span className="font-medium">Example:</span> +91 9876543210 <br />
+            → India (Reliance Jio, Maharashtra)
+          </div>
+
+          {/* Mini Info Cards */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-3 bg-slate-50 border rounded-lg text-center">
+              <p className="text-xs text-slate-500">Most Common</p>
+              <p className="text-sm font-semibold text-slate-700">+91 (India)</p>
+            </div>
+            <div className="p-3 bg-slate-50 border rounded-lg text-center">
+              <p className="text-xs text-slate-500">Longest Number</p>
+              <p className="text-sm font-semibold text-slate-700">15 Digits</p>
+            </div>
+          </div>
+
+          {/* Do’s & Don’ts */}
+          <div>
+            <h3 className="text-sm font-semibold text-slate-700 mb-2">✅ Do’s & ❌ Don’ts</h3>
+            <ul className="text-xs text-slate-600 space-y-1">
+              <li>✅ Always include the <span className="font-medium">country code</span>.</li>
+              <li>✅ Double-check before bulk lookup.</li>
+              <li>❌ Don’t enter <span className="font-medium">special characters</span>.</li>
+              <li>❌ Avoid spaces between digits.</li>
+            </ul>
+          </div>
+
+          {/* Quick Reference Table */}
+          <div className="overflow-hidden rounded-lg border border-slate-200">
+            <table className="w-full text-xs text-slate-600">
+              <thead className="bg-slate-100 text-slate-700">
+                <tr>
+                  <th className="px-2 py-1 text-left">Country</th>
+                  <th className="px-2 py-1 text-left">Code</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ["India", "+91"],
+                  ["USA", "+1"],
+                  ["UK", "+44"],
+                  ["UAE", "+971"],
+                ].map(([country, code], i) => (
+                  <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
+                    <td className="px-2 py-1">{country}</td>
+                    <td className="px-2 py-1 font-medium">{code}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Callout Tip */}
+          <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-700">
+            💡 Tip: If a number is invalid, try removing leading zeros or re-checking
+            the country code.
+          </div>
+        </motion.div>
+
+        {/* Right Panel */}
+        {/* <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, delay: 0, ease: "easeOut" }}
@@ -447,7 +372,6 @@ const HlrLookup = () => {
             <CloudUpload className="text-blue-500" /> Bulk Lookup
           </h2>
 
-          {/* Radio Options */}
           <div className="flex flex-col md:flex-row gap-4 mb-4">
             <label
               className={`flex items-center gap-2 px-3 py-2 rounded-lg shadow-sm cursor-pointer transition ${selectedOption === "Copy-Paste"
@@ -488,7 +412,6 @@ const HlrLookup = () => {
             </label>
           </div>
 
-          {/* Textarea */}
           <textarea
             placeholder="Enter mobile numbers (comma or newline separated)"
             value={numbersInput}
@@ -546,7 +469,7 @@ const HlrLookup = () => {
               </div>
             </div>
           )}
-        </motion.div>
+        </motion.div> */}
       </div>
     </div>
   );

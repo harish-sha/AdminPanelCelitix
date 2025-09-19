@@ -610,6 +610,9 @@ import celitixLogo from "@/assets/images/celitix-cpaas-solution-logo.svg";
 import Search from "./components/Search";
 import { Dialog } from "primereact/dialog";
 import WalletUsage from "./components/walletUsage";
+import ServiceCard from "./components/ServiceCard";
+import StatsCard from "./components/StatsCard";
+import { DollarSign, Users } from "lucide-react";
 
 // const bots = [
 //   {
@@ -780,6 +783,29 @@ const Dashboard = () => {
       ),
     },
   ];
+  // const quickStats = [
+  //   {
+  //     title: "Revenue",
+  //     value: "$12,340",
+  //     description: "Last 30 days",
+  //     icon: <DollarSign />,
+  //     bgColor: "bg-yellow-500/60",
+  //   },
+  //   {
+  //     title: "Users",
+  //     value: "2,345",
+  //     description: "Active this week",
+  //     icon: <Users />,
+  //     bgColor: "bg-blue-500/60",
+  //   },
+  //   {
+  //     title: "Growth",
+  //     value: "12%",
+  //     description: "vs last month",
+  //     icon: <TrendingUp />,
+  //     bgColor: "bg-green-500/60",
+  //   },
+  // ];
 
   const getBalance = async () => {
     setIsLoading(true);
@@ -1311,7 +1337,7 @@ const Dashboard = () => {
             className="w-full h-full object-cover "
             alt="Background"
           />
-         
+
           <div className="absolute inset-0 bg-white/30  "></div>
         </div>
 
@@ -1359,49 +1385,13 @@ const Dashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className=" flex flex-col md:flex-row items-end gap-4 md:p-4 p-6 mt-0 md:mt-40">
-          {quickStats.map((stat, i) => (
-            <div
-              key={i}
-              className={`relative flex flex-col justify-between p-4 sm:p-5 w-full sm:w-56 h-28 sm:h-32 rounded-2xl shadow-sm ${stat.bgColor} backdrop-blur-sm`}
-            >
-              <div className="flex items-center justify-between">
-                <div
-                  className={`flex items-center gap-2 font-medium ${stat.textColor}`}
-                >
-                  <span className="text-sm sm:text-base">{stat.title}</span>
-                </div>
-                <button className="text-gray-400 hover:text-gray-600">⋮</button>
-              </div>
-              <div
-                className={`text-xl sm:text-2xl font-bold ${stat.textColor}`}
-              >
-                {stat.value}
-              </div>
-              <div className="absolute bottom-4 right-4 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white shadow-md flex items-center justify-center cursor-pointer hover:bg-gray-100">
-                {stat.showRefreshIcon ? (
-                  <CustomTooltip title="Refresh Balance" placement="top" arrow>
-                    <div className="cursor-pointer">
-                      {isLoading ? (
-                        <LoopIcon className="text-[16px] sm:text-[18px] animate-spin text-blue-400 cursor-pointer" />
-                      ) : (
-                        <button onClick={getBalance}>
-                          <LoopIcon className="text-blue-400 cursor-pointer" />
-                        </button>
-                      )}
-                    </div>
-                  </CustomTooltip>
-                ) : (
-                  stat.icon
-                )}
-              </div>
-            </div>
-          ))}
+        <div className="flex flex-col md:flex-row items-start md:items-end gap-4 md:p-4 p-6 mt-0 md:mt-40">
+          <StatsCard quickStats={quickStats} />
         </div>
       </div>
 
       {/* service cards */}
-      <div className="relative overflow-y-scroll xl:overflow-hidden h-[45vh] bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 border border-gray-200 rounded-2xl shadow-md backdrop-blur-2xl text-gray-800">
+      <div className="relative overflow-y-scroll xl:overflow-hidden h-[100%] bg-gradient-to-t from-[#CDC1FF]  to-[#F5EFFF] border border-gray-200 rounded-2xl shadow-md backdrop-blur-2xl text-gray-800">
         <div className="mt-5 ml-10">
           <h2 className="text-2xl font-bold  gradient-animate">
             Discover Our Expertise
@@ -1409,7 +1399,7 @@ const Dashboard = () => {
         </div>
 
         {/* Diagonal wave lines background */}
-        <svg
+        {/* <svg
           className="absolute inset-0 w-full h-full pointer-events-none"
           preserveAspectRatio="none"
         >
@@ -1432,17 +1422,16 @@ const Dashboard = () => {
             </pattern>
           </defs>
 
-          {/* Animated rect */}
           <rect
             width="100%"
             height="100%"
             fill="url(#diagonalLines)"
             className="animate-diagonal"
           />
-        </svg>
+        </svg> */}
 
-        <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6  items-end gap-4 p-4 md:p-6 mt-0 md:mt-5 ">
-          {services.map((s, idx) => {
+        <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 items-end gap-4 p-4 md:p-6 mt-0 md:mt-5 ">
+          {/* {services.map((s, idx) => {
             const IconComponent = s.icon;
             const isActive = allowedServices.some(
               (service) => service.service_type_id === s.service_type_id
@@ -1494,7 +1483,9 @@ const Dashboard = () => {
                 </div>
               </div>
             );
-          })}
+          })} */}
+          <ServiceCard services={services}
+            allowedServices={allowedServices} />
         </div>
       </div>
 
@@ -1669,11 +1660,10 @@ const Dashboard = () => {
                 key={idx}
                 onClick={() => toggleService(s.name)}
                 className={`flex items-center gap-2 rounded-full px-3 py-2 cursor-pointer transition text-sm font-medium
-              ${
-                selectedServices.includes(s.name)
-                  ? `${s.bgColor} ${s.textColor} opacity-90 hover:opacity-100`
-                  : "shadow-md bg-blue-50 text-gray-700 hover:bg-blue-100"
-              }`}
+              ${selectedServices.includes(s.name)
+                    ? `${s.bgColor} ${s.textColor} opacity-90 hover:opacity-100`
+                    : "shadow-md bg-blue-50 text-gray-700 hover:bg-blue-100"
+                  }`}
               >
                 {/* <img
                   src={s.icon}
@@ -1708,11 +1698,10 @@ const Dashboard = () => {
                     key={f}
                     onClick={() => setFilter(f)}
                     className={`px-3 py-1 rounded-full border text-sm font-medium transition
-              ${
-                filter === f
-                  ? "bg-blue-600 text-white border-blue-600 shadow"
-                  : "bg-blue-100 text-gray-900 border-gray-300 hover:bg-blue-500 hover:text-white hover:border-blue-500"
-              }`}
+              ${filter === f
+                        ? "bg-blue-600 text-white border-blue-600 shadow"
+                        : "bg-blue-100 text-gray-900 border-gray-300 hover:bg-blue-500 hover:text-white hover:border-blue-500"
+                      }`}
                   >
                     {f.toUpperCase()}
                   </button>

@@ -160,7 +160,10 @@ export const PermissionRoute = () => {
           "/selfrecharge",
           "/unsubscribe",
           "/salespersondashboard",
-          "/dummy"
+          "/dummy",
+          "/dummydash",
+          "/blockNumber",
+
         ],
         roles: ["ADMIN"],
       },

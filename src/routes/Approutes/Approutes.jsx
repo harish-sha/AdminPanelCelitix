@@ -164,6 +164,7 @@ import Arihant from "../../random/arihant";
 
 // User
 import { useUser } from "@/context/auth";
+import BlockNumber from "@/BlackList/manageBlockNumber";
 // import SalesPersonDashboard from "@/dashboard/SalesPersonDashboard";
 
 const Approutes = () => {
@@ -174,7 +175,6 @@ const Approutes = () => {
       <Route path="/" element={<Mainlayout />}>
         {/* dashboard */}
         {/* <Route index element={<Dashboard />} /> */}
-        {/* // <Route index element={<Dashboard />} /> */}
 
         {user.role === "DIRECTUSER" ? (
           <Route index element={<ResellerDashboard />} />
@@ -183,7 +183,10 @@ const Approutes = () => {
         )}
 
         {/* <Route path="salespersondashboard" element={<SalesPersonDashboard />} /> */}
+        <Route path="dummydash" element={<Dashboard />} />
 
+        {/* Blacklist - Block Number */}
+        <Route path="blockNumber" element={<BlockNumber />} />
 
         {/* SMS */}
         <Route path="sendsms" element={<SendSms />} />
