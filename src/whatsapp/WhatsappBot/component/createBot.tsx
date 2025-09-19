@@ -804,10 +804,11 @@ const CreateWhatsAppBot = () => {
       return;
     }
 
+
     if (
       nodeData?.apiResponse?.responseType === "text" &&
       nodeData?.apiResponse?.actionType !== "createNewNode" &&
-      !nodeData?.varName
+      !nodeData?.apiResponse?.varName
     ) {
       toast.error("Please add variable name in response api node");
       return;
@@ -1103,7 +1104,7 @@ const CreateWhatsAppBot = () => {
       if (
         nodeData?.apiResponse?.responseType === "text" &&
         nodeData?.apiResponse?.actionType !== "createNewNode" &&
-        !nodeData?.varName
+        !nodeData?.apiResponse?.varName
       ) {
         toast.error("Please add variable name in response api node");
         return;

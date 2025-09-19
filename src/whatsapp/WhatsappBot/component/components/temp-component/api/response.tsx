@@ -45,11 +45,6 @@ export const Response = ({
       },
     ]);
   }
-
-  useEffect(() => {
-    console.log("nodesInputData", nodesInputData[id]);
-  }, [nodesInputData]);
-
   function handleRemoveJsonVar(index) {
     if (jsonVar.length === 1) return;
     setJsonVar((prev) => prev.filter((_, i) => i !== index));
@@ -95,7 +90,10 @@ export const Response = ({
       { paramName: "", varName: "" },
     ];
 
-    const varName = nodesInputData[id]?.varName || "";
+    const varName =
+      nodesInputData[id]?.apiResponse?.varName ||
+      nodesInputData[id]?.varName ||
+      "";
 
     setNodesInputData((prev) => ({
       ...prev,
