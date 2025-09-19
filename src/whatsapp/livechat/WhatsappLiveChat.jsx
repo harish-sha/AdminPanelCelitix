@@ -513,10 +513,15 @@ export default function WhatsappLiveChat() {
 
     const files = e.target.files[0];
     const type = files?.type?.split("/")[0];
+
     const fileName = files?.name;
-    const size = `${files?.size / 1024}MB`;
-    if (Number(files?.size / 1024) > 5)
-      return toast.error("File size should be less than 5MB");
+    const size = `${files?.size / 1024 / 1024}MB`;
+
+    if (parseFloat(size) > 5) {
+      toast.error("File size should be less than 5MB");
+      fileInputRef.current.value = "";
+      return;
+    }
     setSelectedImage({ files, type, fileName, size });
     // setSelectedImage(files);
     setIsSpeedDialOpen(false);
