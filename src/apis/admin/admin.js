@@ -476,3 +476,22 @@ export const deleteBlockNumber = async (data) => {
     }
   );
 };
+export const getBlockContentByUserId = async (id) => {
+  return await fetchWithAuth(
+    `/condition/getBlockConditionDetailed?userSrno=${id}`,
+    {
+      method: "POST",
+    }
+  );
+};
+export const addBlockContent = async (data) => {
+  return await fetchWithAuth("/condition/addBlockCondition", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+export const deleteBlockContent = async (id) => {
+  return await fetchWithAuth(`/condition/deleteBlockCondition?blockId=${id}`, {
+    method: "POST",
+  });
+};
