@@ -61,7 +61,7 @@ const WhatsappLaunchCampaign = () => {
     isOpen: false,
     data: null,
   });
-
+  const [fileName, setFileName] = useState(null);
   const [groups, setGroups] = useState([]);
 
   const [xlsxPath, setXlsxPath] = useState("");
@@ -492,13 +492,18 @@ const WhatsappLaunchCampaign = () => {
         return toast.error("Please select workflow");
       }
 
-      console.log("workflowState", workflowState);
       requestData = {
         ...requestData,
         ...workflowState,
       };
     }
 
+    if (selectedTemplateData?.type === "document") {
+      requestData = {
+        ...requestData,
+        fileName: fileName,
+      };
+    }
     // console.log(requestData)
 
     try {
@@ -850,6 +855,8 @@ const WhatsappLaunchCampaign = () => {
                           locationData={locationData}
                           selectedTemplate={selectedTemplate}
                           templateOptions={templateOptions}
+                          fileName={fileName}
+                          setFileName={setFileName}
                         />
                       )
                     )}
