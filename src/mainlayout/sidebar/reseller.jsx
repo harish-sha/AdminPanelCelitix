@@ -140,6 +140,7 @@ export const resellerItems = [
       { to: "/blacklist", label: "Blacklist" },
       { to: "/managenotifications", label: "Manage Notifications" },
       { to: "/managevoiceclips", label: "Manage Voice Clips" },
+      { to: "/blockContent", label: "Manage Block Content" },
     ],
     roles: ["ADMIN"],
   },
