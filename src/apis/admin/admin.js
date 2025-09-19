@@ -500,9 +500,10 @@ export const getBlockHeader = async (id) => {
     method: "POST",
   });
 };
-export const addBlockHeader = async (id) => {
+export const addBlockHeader = async (data) => {
   return await fetchWithAuth("/addBlockHeader", {
     method: "POST",
+    body: JSON.stringify(data),
   });
 };
 export const deleteBlockHeader = async (id) => {
@@ -522,7 +523,7 @@ export const addBlockSeries = async (id) => {
     method: "POST",
   });
 };
-export const deleteBlockHeader = async (id) => {
+export const deleteBlockSeries = async (id) => {
   return await fetchWithAuth(`/deleteBlockSeries?seriesId=${id}`, {
     method: "POST",
   });
