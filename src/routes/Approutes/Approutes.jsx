@@ -147,6 +147,7 @@ import DrAnalysis from "@/drAnalysis";
 import BlockNumber from "@/apis/manageBlockNumber";
 import BlockContent from "@/admin/manageBlockContent";
 import ManageBlockHeader from "@/admin/manageBlockHeader";
+import ManageBlockSeries from "@/admin/manageBlockSeries";
 
 const Approutes = () => {
   return (
@@ -315,7 +316,7 @@ const Approutes = () => {
         <Route path="blockNumber" element={<BlockNumber />} />
         <Route path="blockContent" element={<BlockContent />} />
         <Route path="manageblockheader" element={<ManageBlockHeader />} />
-        {/* <Route path="manageblockseries" element={<ManageBlockHeader />} /> */}
+        <Route path="manageblockseries" element={<ManageBlockSeries />} />
       </Route>
 
       <Route path="dummy" element={<Dummy />} />

@@ -1,7 +1,7 @@
 import {
-  addBlockHeader,
-  deleteBlockHeader,
-  getBlockHeader,
+  addBlockSeries,
+  deleteBlockSeries,
+  getBlockSeries,
 } from "@/apis/admin/admin";
 import { DataTable } from "@/components/layout/DataTable";
 import React, { useEffect } from "react";
@@ -14,7 +14,7 @@ import { Dialog } from "primereact/dialog";
 import UniversalButton from "@/components/common/UniversalButton";
 import InputField from "@/whatsapp/components/InputField";
 
-const ManageBlockHeader = () => {
+const ManageBlockSeries = () => {
   const [row, setRow] = React.useState([]);
   const [deleteState, setDeleteState] = React.useState({
     isOpen: false,
@@ -23,12 +23,12 @@ const ManageBlockHeader = () => {
 
   const [addDataState, setAddDataState] = React.useState({
     isOpen: false,
-    blockcontain: "",
+    series: "",
   });
 
-  async function handleGetBlockHeader() {
+  async function handleGetBlockSeries() {
     try {
-      const res = await getBlockHeader();
+      const res = await getBlockSeries();
 
       const formattedRow = Array.isArray(res)
         ? res?.map((item, index) => ({
@@ -44,13 +44,13 @@ const ManageBlockHeader = () => {
   }
 
   useEffect(() => {
-    handleGetBlockHeader();
+    handleGetBlockSeries();
   }, []);
 
   async function handleDelete() {
     if (!deleteState.id) return;
     try {
-      const res = await deleteBlockHeader(deleteState?.id);
+      const res = await deleteBlockSeries(deleteState?.id);
 
       if (!res?.status) {
         return toast.error(res?.msg || "Something went wrong");
@@ -58,25 +58,25 @@ const ManageBlockHeader = () => {
 
       toast.success(res?.msg || "Deleted successfully");
       setDeleteState({ isOpen: false, id: "" });
-      await handleGetBlockHeader();
+      await handleGetBlockSeries();
     } catch (e) {
       toast.error("Something went wrong");
     }
   }
 
-  async function handleAddBlockHeader() {
-    if (!addDataState.blockcontain) return;
+  async function handleAddBlockSeries() {
+    if (!addDataState.series) return;
     try {
       delete addDataState.isOpen;
-      const res = await addBlockHeader(addDataState);
+      const res = await addBlockSeries(addDataState);
 
       if (!res?.status) {
         return toast.error(res?.msg || "Something went wrong");
       }
 
       toast.success(res?.msg || "Added successfully");
-      setAddDataState({ isOpen: false, blockcontain: "" });
-      await handleGetBlockHeader();
+      setAddDataState({ isOpen: false, series: "" });
+      await handleGetBlockSeries();
     } catch (e) {
       toast.error("Something went wrong");
     }
@@ -85,8 +85,8 @@ const ManageBlockHeader = () => {
   const col = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
     {
-      field: "blockContain",
-      headerName: "Block Contain",
+      field: "series",
+      headerName: "Block Series",
       flex: 1,
       minWidth: 130,
     },
@@ -113,7 +113,7 @@ const ManageBlockHeader = () => {
               onClick={() => {
                 setDeleteState({
                   isOpen: true,
-                  id: params.row.blockId,
+                  id: params.row.srNo,
                 });
               }}
             >
@@ -130,19 +130,19 @@ const ManageBlockHeader = () => {
 
   return (
     <div>
-      <h1 className="mb-2 text-2xl">Block Header List</h1>
+      <h1 className="mb-2 text-2xl">Block Header Series</h1>
 
       <div className="flex gap-2 justify-between">
         <UniversalButton
           label="Search"
           variant="primary"
-          onClick={handleGetBlockHeader}
+          onClick={handleGetBlockSeries}
         />
         <UniversalButton
-          label="Add Block Header"
+          label="Add Block Series"
           variant="primary"
           onClick={() => {
-            setAddDataState((prev) => ({ isOpen: true, blockcontain: "" }));
+            setAddDataState((prev) => ({ isOpen: true, series: "" }));
           }}
         />
       </div>
@@ -152,33 +152,33 @@ const ManageBlockHeader = () => {
       </div>
 
       <Dialog
-        header="Add Block Header"
+        header="Add Block Series"
         visible={addDataState.isOpen}
         onHide={() => {
-          setAddDataState((prev) => ({ isOpen: false, blockcontain: "" }));
+          setAddDataState((prev) => ({ isOpen: false, series: "" }));
         }}
         className="lg:w-[40rem] md:w-[30rem] w-[20rem]"
         draggable={false}
       >
         <div className="space-y-2">
           <InputField
-            id="blockcontain"
-            name="blockcontain"
-            label="Block Contain"
+            id="blockSeries"
+            name="blockSeries"
+            label="Block Series"
             type="text"
-            value={addDataState.blockcontain}
+            value={addDataState.series}
             onChange={(e) => {
               setAddDataState((prev) => ({
                 ...prev,
-                blockcontain: e.target.value,
+                series: e.target.value,
               }));
             }}
           />
 
           <UniversalButton
-            label="Add Block Header"
+            label="Add Block Series"
             variant="primary"
-            onClick={handleAddBlockHeader}
+            onClick={handleAddBlockSeries}
           />
         </div>
       </Dialog>
@@ -228,4 +228,4 @@ const ManageBlockHeader = () => {
   );
 };
 
-export default ManageBlockHeader;
+export default ManageBlockSeries;

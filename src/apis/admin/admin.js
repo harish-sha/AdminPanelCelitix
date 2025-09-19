@@ -518,9 +518,10 @@ export const getBlockSeries = async (id) => {
   });
 };
 
-export const addBlockSeries = async (id) => {
+export const addBlockSeries = async (data) => {
   return await fetchWithAuth("/addBlockSeries", {
     method: "POST",
+    body: JSON.stringify(data),
   });
 };
 export const deleteBlockSeries = async (id) => {
