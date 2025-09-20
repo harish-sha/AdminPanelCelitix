@@ -5,7 +5,7 @@ import Lottie from "lottie-react";
 
 const ServiceCard = ({ services = [], allowedServices = [] }) => {
   return (
-    <>
+    <div className="md:p-4 p-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 items-end gap-0">
       {services.map((s, idx) => {
         const IconComponent = s.icon;
         const isActive = allowedServices.some(
@@ -21,7 +21,7 @@ const ServiceCard = ({ services = [], allowedServices = [] }) => {
                   <span className="circle circle3" />
                   <span className="circle circle4" />
                   <span className="circle circle5"> */}
-                  <motion.div className="flex items-center justify-end z-10 mt-7 mr-7">
+                  <motion.div className="flex items-center justify-end z-10 mt-3 mr-2">
                     <div className="flex justify-end ">
                       {s.animation ? (
                         <div className="w-full h-auto text-left">
@@ -100,19 +100,22 @@ const ServiceCard = ({ services = [], allowedServices = [] }) => {
           </StyledWrapper >
         );
       })}
-    </>
+    </div>
   );
 };
 
 const StyledWrapper = styled.div`
   .parent {
-    width: 290px;
-    height: 300px;
+    width: 100%;
+    height: 280px;
     perspective: 1000px;
+    padding:5px;
+   
   }
 
   .card {
-    height: 100%;
+    width:100%;
+     height: 90%;
     border-radius: 50px;
     background: linear-gradient(
       135deg,
@@ -128,14 +131,14 @@ const StyledWrapper = styled.div`
 
 
   .content {
-    padding: 100px 60px 0px 30px;
+    padding: 50px 60px 0px 30px;
     transform: translate3d(0, 0, 26px);
   }
 
   .content .title {
     display: block;
     color: rgba(0, 78, 138, 0.7647058824);
-    font-weight: 900;
+    font-weight: 600;
     font-size: 20px;
   }
 
@@ -335,6 +338,28 @@ const StyledWrapper = styled.div`
   .parent:hover .card .logo .circle5 {
     transform: translate3d(0, 0, 120px);
   }
+
+
+
+   /* Small devices (up to 640px) */
+  @media (max-width: 640px) {
+    .parent {
+      width: 100%;
+      height: 200px;
+      padding: 2px;
+    }
+    .content {
+      padding: 40px 20px 0px 15px;
+    }
+    .content .title {
+      font-size: 16px;
+    }
+    .content .text {
+      font-size: 13px;
+    }
+  }
+
+ 
 `;
 
 export default ServiceCard;

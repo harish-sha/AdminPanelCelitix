@@ -518,9 +518,9 @@ const WalletUsage = () => {
   const defaultDate = new Date().toDateString();
 
   return (
-    <div className="relative  rounded-xl shadow-md p-2 sm:p-6 max-w-full w-full h-full border border-gray-100">
+    <div className="relative p-6 md:p-6 rounded-4xl shadow-lg w-full flex flex-col bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 h-full">
       <div className="w-full flex items-center justify-between mb-2 border-b pb-2">
-        <h2 className="text-[1.02rem] text-gray-800 font-semibold">
+        <h2 className="text-[1.02rem]  text-blue-400 font-semibold">
           Wallet Balance Table
         </h2>
         <div className="flex items-center gap-3">
@@ -544,7 +544,7 @@ const WalletUsage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
-          className="absolute right-0 top-0 bg-white p-4 rounded-md shadow-lg z-50 flex gap-2"
+          className="absolute right-0 top-0 bg-white p-6 sm:p-4 rounded-md shadow-lg z-50 flex gap-2"
         >
           <div className="w-54">
             <UniversalDatePicker
@@ -652,7 +652,7 @@ const WalletUsage = () => {
           ))}
         </div>
       </div>
-      <div className="flex items-end w-full border-t pt-2">
+      <div className="flex items-end w-full border-t pt-2 mt-8 md:mt-0">
         <div className="text-sm font-medium text-gray-600 text-nowrap">
           Total Records : {walletUsageData.length}
         </div>

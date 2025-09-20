@@ -588,6 +588,7 @@ import freshdesk from "../assets/icons/freshdesk.svg";
 import facebookmessenger from "../assets/icons/facebookmessenger.svg";
 
 import { FaWhatsapp, FaPhone, FaRegCommentDots, FaSms } from "react-icons/fa";
+import StarHalfOutlinedIcon from "@mui/icons-material/StarHalfOutlined";
 import {
   dailySeriveUsage,
   dailyWalletUsage,
@@ -613,6 +614,8 @@ import WalletUsage from "./components/walletUsage";
 import ServiceCard from "./components/ServiceCard";
 import StatsCard from "./components/StatsCard";
 import { DollarSign, Users } from "lucide-react";
+import Celitixfavicon from "@/assets/icons/Celitixfavicon.png";
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 
 // const bots = [
 //   {
@@ -648,11 +651,7 @@ const Dashboard = () => {
     salesPersonId: "Not Assigned",
   });
 
-  const [balance, setBalance] = useState(0);
-  const [rechargableCredit, setRechargableCredit] = useState(0);
-  const [showRefresh, setShowRefresh] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
   const [allowedServices, setAllowServices] = useState([]);
 
   const [loading, setLoading] = useState(false);
@@ -690,140 +689,6 @@ const Dashboard = () => {
   };
 
   const { user } = useUser();
-
-  const quickStats = [
-    {
-      title: "Current Balance",
-      value: (
-        <CountUp
-          start={0}
-          end={balance}
-          separator=","
-          decimals={2}
-          duration={1.5}
-          key={refreshKey}
-        />
-      ),
-      showRefreshIcon: true,
-      bgColor: "bg-indigo-100/60",
-      textColor: "text-gray-900",
-      // buttonColor: "text-gray-600",
-      icon: <AccountBalanceIcon className="text-green-900" />,
-    },
-    {
-      title: "Engagement Rate",
-      value: "78%",
-      bgColor: "bg-green-100/60",
-      textColor: "text-gray-900",
-      showRefreshIcon: false,
-      // iconColor: "text-gray-600",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className={`w-4 h-4 `}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M7 17l10-10m0 0H9m8 0v8"
-          />
-        </svg>
-      ),
-    },
-    {
-      title: "Client Rating",
-      value: "4.8/5",
-      bgColor: "bg-teal-100/60",
-      textColor: "text-gray-900",
-      showRefreshIcon: false,
-      // iconColor: "text-gray-600",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className={`w-4 h-4 `}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M7 17l10-10m0 0H9m8 0v8"
-          />
-        </svg>
-      ),
-    },
-    {
-      title: "Sales Manager",
-      value: formData.salesPersonId,
-      bgColor: "bg-indigo-100/60",
-      textColor: "text-gray-900",
-      showRefreshIcon: false,
-      // iconColor: "text-gray-600",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className={`w-4 h-4 `}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M7 17l10-10m0 0H9m8 0v8"
-          />
-        </svg>
-      ),
-    },
-  ];
-  // const quickStats = [
-  //   {
-  //     title: "Revenue",
-  //     value: "$12,340",
-  //     description: "Last 30 days",
-  //     icon: <DollarSign />,
-  //     bgColor: "bg-yellow-500/60",
-  //   },
-  //   {
-  //     title: "Users",
-  //     value: "2,345",
-  //     description: "Active this week",
-  //     icon: <Users />,
-  //     bgColor: "bg-blue-500/60",
-  //   },
-  //   {
-  //     title: "Growth",
-  //     value: "12%",
-  //     description: "vs last month",
-  //     icon: <TrendingUp />,
-  //     bgColor: "bg-green-500/60",
-  //   },
-  // ];
-
-  const getBalance = async () => {
-    setIsLoading(true);
-    try {
-      const res = await fetchBalance();
-      setBalance(parseFloat(res.balance));
-      setRechargableCredit(parseFloat(res.rechargableCredit));
-      setRefreshKey((prevKey) => prevKey + 1);
-    } catch (error) {
-      console.error("Error fetching balance:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getBalance();
-  }, []);
 
   const services = [
     {
@@ -1317,10 +1182,10 @@ const Dashboard = () => {
     { src: zohoicon, ring: 2, angle: 0 },
     { src: shopify, ring: 1, angle: 230 },
     { src: wordpress, ring: 2, angle: 60 },
-    { src: telegram, ring: 2, angle: 120 },
-    { src: zapier, ring: 2, angle: 210 },
-    { src: instagram, ring: 1, angle: 350 },
-    { src: woocommerce, ring: 2, angle: 280 },
+    { src: telegram, ring: 2, angle: 130 },
+    { src: zapier, ring: 2, angle: 190 },
+    { src: instagram, ring: 1, angle: 320 },
+    { src: woocommerce, ring: 2, angle: 270 },
     { src: freshdesk, ring: 0, angle: 180 },
     { src: facebookmessenger, ring: 0, angle: 0 },
   ];
@@ -1329,49 +1194,32 @@ const Dashboard = () => {
   const center = size / 2;
 
   return (
-    <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-[calc(100vh-6rem)] overflow-hidden">
-      <div className="relative h-auto  overflow-hidden bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 text-gray-800 rounded-xl">
-        <div className="absolute inset-0 ">
+    <div className="bg-white text-gray-900 rounded-4xl md:p-4 p-2 space-y-5 overflow-hidden">
+      <div className="relative w-full overflow-hidden bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 text-gray-800 rounded-4xl p-2 md:p-0 shadow-md">
+        {/* <div className="absolute inset-0">
           <img
             src="https://t4.ftcdn.net/jpg/16/70/74/05/240_F_1670740500_Rzcl2FWPcL27vm0LjskhXHJbF0jKttmj.jpg"
-            className="w-full h-full object-cover "
+            className="w-full h-full object-cover"
             alt="Background"
           />
+          <div className="absolute inset-0 bg-white/30"></div>
+        </div> */}
 
-          <div className="absolute inset-0 bg-white/30  "></div>
-        </div>
-
-        <div className="flex flex-col justify-center items-center  md:flex-row md:justify-between mt-5 gap-4 ">
+        <div className="flex flex-col justify-center items-center md:flex-row md:justify-between mt-5 gap-4 px-4">
           {/* Brand Name */}
-          <div className="z-10 ml-6 order-1 md:order-1 ">
+          <div className="z-10">
             <img src={celitixLogo} width={120} height={80} alt="Celitix Logo" />
           </div>
 
           {/* Search Bar */}
           <Search />
 
-          <div className="flex justify-center items-center md:gap-3 gap-4 z-10 mr-6 order-2 md:order-3">
-            {/* Notification */}
-            <button className="relative p-2 sm:p-3 rounded-full bg-white/40 backdrop-blur-md hover:bg-white/60 transition">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 sm:h-6 sm:w-6 text-gray-800"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 
-              6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C8.67 6.165 
-              8 7.388 8 8.75v5.408c0 .379-.214.725-.553.895L6 17h5"
-                />
-              </svg>
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
-
+          {/* Notification */}
+          <button className="relative p-2 sm:p-3 rounded-full bg-white/40 backdrop-blur-md hover:bg-white/60 transition">
+            < NotificationsNoneIcon />
+            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+          </button>
+          <div className="flex justify-center items-center md:gap-3 gap-4 z-10">
             {/* Profile  */}
             <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-white shadow-md">
               <span
@@ -1385,21 +1233,21 @@ const Dashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="flex flex-col md:flex-row items-start md:items-end gap-4 md:p-4 p-6 mt-0 md:mt-40">
-          <StatsCard quickStats={quickStats} />
+        <div className="mt-0 md:mt-40">
+          <StatsCard />
         </div>
       </div>
 
       {/* service cards */}
-      <div className="relative overflow-y-scroll xl:overflow-hidden h-[100%] bg-gradient-to-t from-[#CDC1FF]  to-[#F5EFFF] border border-gray-200 rounded-2xl shadow-md backdrop-blur-2xl text-gray-800">
-        <div className="mt-5 ml-10">
-          <h2 className="text-2xl font-bold  gradient-animate">
-            Discover Our Expertise
+      <div className="relative overflow-y-scroll xl:overflow-hidden bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 border border-gray-200 rounded-4xl shadow-md backdrop-blur-2xl text-gray-800">
+        <div className="mt-5 text-center">
+          <h2 className="text-2xl font-bold  gradient-animate text-blue-400 tracking-wide">
+            Discover Our Channels
           </h2>
         </div>
 
         {/* Diagonal wave lines background */}
-        {/* <svg
+        <svg
           className="absolute inset-0 w-full h-full pointer-events-none"
           preserveAspectRatio="none"
         >
@@ -1428,154 +1276,25 @@ const Dashboard = () => {
             fill="url(#diagonalLines)"
             className="animate-diagonal"
           />
-        </svg> */}
+        </svg>
 
-        <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 items-end gap-4 p-4 md:p-6 mt-0 md:mt-5 ">
-          {/* {services.map((s, idx) => {
-            const IconComponent = s.icon;
-            const isActive = allowedServices.some(
-              (service) => service.service_type_id === s.service_type_id
-            );
-            return (
-              <div
-                key={s.service_type_id}
-                className={`relative flex flex-col justify-between 
-                    p-4 sm:p-5 w-full sm:w-58 h-30 sm:h-34 
-                    rounded-2xl shadow-sm ${s.bgColor} 
-                    backdrop-blur-sm`}
-              >
-                <div className="flex items-center justify-between">
-                  <div
-                    className={`flex items-center gap-2 font-medium ${s.textColor}`}
-                  >
-                    <span className="text-md ">{s.title}</span>
-                  </div>
-
-                  <button
-                    className={`absolute top-2 right-2 text-xs  font-semibold px-3 py-1 rounded-full shadow transition
-                    ${
-                      isActive
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {isActive ? "Active" : "Inactive"}
-                  </button>
-                </div>
-                <motion.div className="flex items-center justify-end z-10">
-                  <div className="flex justify-end ">
-                    {s.animation ? (
-                      <div className="w-full  h-auto text-left">
-                        <Lottie
-                          animationData={s.animation}
-                          loop
-                          autoplay
-                          className=" w-8 h-8 md:w-13 md:h-13 opacity-60"
-                        />
-                      </div>
-                    ) : (
-                      <IconComponent className="text-gray-700 group-hover:rotate-6 transition-transform duration-300" />
-                    )}
-                  </div>
-                </motion.div>
-                <div className={`text-xs  font-semibold ${s.textColor}`}>
-                  {s.desc}
-                </div>
-              </div>
-            );
-          })} */}
-          <ServiceCard services={services}
-            allowedServices={allowedServices} />
+        <div className="mt-0 md:mt-5">
+          <ServiceCard services={services} allowedServices={allowedServices} />
         </div>
       </div>
 
       {/* intigration section */}
-      <div className="space-y-4 w-full mt-10 flex flex-col sm:flex-row gap-4">
+      <div className="space-y-4 flex flex-col sm:flex-row gap-4 items-stretch h-145">
         {/* Left Wallet Chart */}
 
-        <div className="flex-1 bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 p-6 rounded-2xl shadow-lg relative flex flex-col w-full md:w-[50%]">
+        <div className="flex-1 h-full">
           <WalletUsage />
-          {/* <div>
-
-
-            <h3 className="text-xl font-semibold">Wallet Balance Table</h3>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8 justify-end">
-              {isOpen ? (
-                <FilterAltOffIcon
-                  onClick={handleClick}
-                  className="cursor-pointer text-gray-500 hover:text-gray-700"
-                />
-              ) : (
-                <FilterAltIcon
-                  onClick={handleClick}
-                  className="cursor-pointer text-blue-500 hover:text-blue-700"
-                />
-              )}
-
-              {isOpen && (
-                <div className="absolute top-4 right-5 z-50 bg-white shadow-lg rounded-xl border border-gray-200 p-4 flex  gap-3 w-[60%]">
-                  <div className="flex gap-2">
-                    <UniversalDatePicker
-                      label="From Date"
-                      className="w-full md:w-66"
-                    />
-                    <UniversalDatePicker
-                      label="To Date"
-                      className="w-full md:w-66"
-                    />
-                  </div>
-
-                  <button
-                    className="text-gray-500 hover:text-gray-700 text-lg absolute right-2 top-2"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {" "}
-                    X{" "}
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-          <p className="text-center mb-5 font-medium text-gray-800 mt-7">
-            Showing result from: Mon Sep 08 2025 to: Sun Sep 14 2025
-          </p>
-
-          <div className="overflow-x-hidden rounded-lg border border-gray-200 ">
-            <table className="min-w-full divide-y divide-gray-200 text-sm">
-              <thead className="">
-                <tr>
-                  <th className="px-4 py-2 text-left font-semibold text-gray-700">
-                    S.No.
-                  </th>
-                  <th className="px-4 py-2 text-left font-semibold text-gray-700">
-                    Date
-                  </th>
-                  <th className="px-4 py-2 text-left font-semibold text-gray-700">
-                    Closing Balance
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {walletData.map((item, index) => (
-                  <tr key={index}>
-                    <td className="px-4 py-2">{index + 1}</td>
-                    <td className="px-4 py-2">{item.date}</td>
-                    <td className="px-4 py-2">₹ {item.usage}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className=" flex justify-between items-center border-t border-gray-200 pt-3 px-2 sm:px-4">
-              <span className="font-semibold text-gray-700">Total Spend</span>
-              <span className="font-bold text-gray-900">₹4350.00</span>
-            </div>
-          </div> */}
         </div>
 
         {/* Right SVG  Circles */}
-        <div className="flex-1 relative bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 rounded-2xl shadow-lg  p-6 w-full md:w-[50%]">
+        <div className="flex-1 relative bg-gradient-to-t from-indigo-100 via-purple-50 to-blue-100 rounded-4xl shadow-lg md:p-4 p-6 w-full">
           <div className="">
-            <h2 className="text-2xl font-extrabold text-gray-800 mt-3 text-center">
+            <h2 className="text-2xl font-extrabold text-blue-400 text-center">
               Add Integrations
             </h2>
             <p className="text-gray-500 text-center text-sm mt-2">
@@ -1584,7 +1303,7 @@ const Dashboard = () => {
             </p>
           </div>
 
-          <div className="flex items-center justify-center  ">
+          <div className="flex items-center justify-center">
             <div className="relative" style={{ width: size, height: size }}>
               <div
                 className="absolute inset-0 animate-spin-slow"
@@ -1617,7 +1336,7 @@ const Dashboard = () => {
                       <img
                         src={icon.src}
                         alt="icon"
-                        className="w-12 h-12 rounded-full bg-white shadow-md p-1"
+                        className="w-12 h-12 rounded-full bg-white shadow-md  object-contain p-1"
                       />
                     </div>
                   );
@@ -1625,21 +1344,26 @@ const Dashboard = () => {
               </div>
 
               <div
-                className="absolute rounded-full bg-white shadow-md"
+                className="absolute "
                 style={{
                   width: 60,
                   height: 60,
                   top: center - 30,
                   left: center - 30,
                 }}
-              />
+              >
+                <img
+                  src={Celitixfavicon}
+                  className="w-18 h-18 rounded-full object-contain"
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Daily Service Usages */}
-      <div className="bg-white shadow-lg border p-4 flex flex-col justify-center items-center gap-6 w-full  mt-24 rounded-3xl">
+      <div className="bg-white shadow-lg border p-4 flex flex-col justify-center items-center gap-6 w-full mt-15 rounded-3xl">
         <div className="relative w-full flex justify-center">
           {/* Left Scroll Button */}
           <button
@@ -1652,7 +1376,7 @@ const Dashboard = () => {
           {/* Service Toggle Row */}
           <div
             ref={scrollRef}
-            className="flex flex-nowrap  shadow-md rounded-full px-4 py-3 bg-white gap-3 absolute -top-14 md:-top-16 sm:-top-18 lg:-top-12 w-[92%]  border border-gray-200 
+            className="flex flex-nowrap shadow-md rounded-full px-4 py-3 bg-white gap-3 absolute -top-14 md:-top-16 sm:-top-18 lg:-top-12 w-[92%]  border border-gray-200 
                justify-start md:justify-center overflow-hidden"
           >
             {servicesDailyUsage.map((s, idx) => (
@@ -1688,7 +1412,7 @@ const Dashboard = () => {
         <div className="mb-8 w-full p-4 mt-12">
           {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <h2 className="font-semibold text-gray-800 text-lg">
+            <h2 className="font-semibold text-gray-800 md:text-lg ">
               Service Usage Overview
             </h2>
             <div className="flex flex-col ">
@@ -1892,7 +1616,7 @@ const Dashboard = () => {
       </div>
 
       {/* BOTTOM CARDS */}
-      <div className=" p-6 ">
+      <div className="p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-3">
           <div className="relative bg-white border-t-1 border-purple-200 p-6 md:py-8 px-4 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex items-center justify-between">
             <div className="absolute bottom-0 left-0 w-full h-40">

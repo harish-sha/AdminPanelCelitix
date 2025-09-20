@@ -1,73 +1,14 @@
-// // GlassCard.jsx
-// import React from "react";
-// import { motion } from "framer-motion";
-// import CountUp from "react-countup";
-// import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
-// import CustomTooltip from "@/components/common/CustomTooltip";
-// import { Loop as LoopIcon } from "@mui/icons-material";
-
-// const StatsCard = ({  quickStats = [],
-//   getBalance,
-//   isLoading,
-//   formData,
-//   balance,
-//   refreshKey,
-// }) => {
-//   return (
-//     <div className="flex items-center justify-center w-full p-6">
-//       <motion.div
-//         className="relative w-full max-w-4xl rounded-3xl"
-//         whileHover={{ scale: 1.02 }}
-//         transition={{ type: "spring", stiffness: 250, damping: 20 }}
-//       >
-//         <div className="relative z-10 rounded-3xl overflow-hidden border border-blue-400/20 bg-white/10 backdrop-blur-lg shadow-2xl p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-//           {quickStats.map((stat, i) => (
-//             <div
-//               key={i}
-//               className={`relative flex flex-col justify-between p-4 sm:p-5 w-full h-28 sm:h-32 rounded-2xl shadow-sm  backdrop-blur-sm`}
-//             >
-//               <div className="flex items-center justify-between">
-//                 <div className={`flex items-center gap-2 font-medium ${stat.textColor}`}>
-//                   <span className="text-sm sm:text-base">{stat.title}</span>
-//                 </div>
-//                 <button className="text-gray-400 hover:text-gray-600">⋮</button>
-//               </div>
-//               <div className={`text-xl sm:text-2xl font-bold ${stat.textColor}`}>
-//                 {stat.value}
-//               </div>
-//               <div className="absolute bottom-4 right-4 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white shadow-md flex items-center justify-center cursor-pointer hover:bg-gray-100">
-//                 {stat.showRefreshIcon ? (
-//                   <CustomTooltip title="Refresh Balance" placement="top" arrow>
-//                     <div className="cursor-pointer">
-//                       {isLoading ? (
-//                         <LoopIcon className="text-[16px] sm:text-[18px] animate-spin text-blue-400 cursor-pointer" />
-//                       ) : (
-//                         <button onClick={getBalance}>
-//                           <LoopIcon className="text-blue-400 cursor-pointer" />
-//                         </button>
-//                       )}
-//                     </div>
-//                   </CustomTooltip>
-//                 ) : (
-//                   stat.icon
-//                 )}
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       </motion.div>
-//     </div>
-//   );
-// }
-
-// export default StatsCard;
-
-import React, { useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import CountUp from "react-countup";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import { Loop as LoopIcon } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { Star } from "@mui/icons-material";
+import StarHalfOutlinedIcon from "@mui/icons-material/StarHalfOutlined";
+import { fetchBalance } from "@/apis/settings/setting";
+import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 
 export default function StatsCard({
   title = "Glass Card",
@@ -75,12 +16,6 @@ export default function StatsCard({
   image = null,
   children,
   className = "",
-  quickStats = [],
-  getBalance,
-  isLoading,
-  formData,
-  balance,
-  refreshKey,
 }) {
   const cardRef = useRef(null);
 
@@ -114,8 +49,131 @@ export default function StatsCard({
     y.set(0);
   };
 
+  const [userData, setUserData] = useState(null);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    salesPersonId: "Not Assigned",
+  });
+
+  const [balance, setBalance] = useState(0);
+  const [rechargableCredit, setRechargableCredit] = useState(0);
+  const [showRefresh, setShowRefresh] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [allowedServices, setAllowServices] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+
+  const [activeTab, setActiveTab] = useState("Whatsapp");
+  const navigate = useNavigate();
+
+  const quickStats = [
+    {
+      title: "Current Balance",
+      value: (
+        <div className="flex items-center gap-1">
+          <CurrencyRupeeIcon fontSize="small" className="text-gray-900" />
+          <CountUp
+            start={0}
+            end={balance}
+            separator=","
+            decimals={2}
+            duration={1.5}
+            key={refreshKey}
+          />
+        </div>
+      ),
+      showRefreshIcon: true,
+      bgColor: "bg-indigo-100/60",
+      textColor: "text-gray-900",
+      // buttonColor: "text-gray-600",
+      icon: <AccountBalanceIcon className="text-green-900" />,
+    },
+    {
+      title: "Engagement Rate",
+      value: "78%",
+      bgColor: "bg-green-100/60",
+      textColor: "text-gray-900",
+      showRefreshIcon: false,
+      // iconColor: "text-gray-600",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className={`w-4 h-4 `}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M7 17l10-10m0 0H9m8 0v8"
+          />
+        </svg>
+      ),
+    },
+    {
+      title: "Client Rating",
+      value: "4.8/5",
+      bgColor: "bg-teal-100/60",
+      textColor: "text-gray-900",
+      showRefreshIcon: false,
+      // iconColor: "text-gray-600",
+      icon: [
+        <Star className="text-yellow-500" />,
+        <Star className="text-yellow-500" />,
+        <Star className="text-yellow-500" />,
+        <Star className="text-yellow-500" />,
+        <StarHalfOutlinedIcon className="text-yellow-500" />,
+      ],
+    },
+    {
+      title: "Sales Manager",
+      value: formData.salesPersonId,
+      bgColor: "bg-indigo-100/60",
+      textColor: "text-gray-900",
+      showRefreshIcon: false,
+      // iconColor: "text-gray-600",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className={`w-4 h-4 `}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M7 17l10-10m0 0H9m8 0v8"
+          />
+        </svg>
+      ),
+    },
+  ];
+
+  const getBalance = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetchBalance();
+      setBalance(parseFloat(res.balance));
+      setRechargableCredit(parseFloat(res.rechargableCredit));
+      setRefreshKey((prevKey) => prevKey + 1);
+    } catch (error) {
+      console.error("Error fetching balance:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getBalance();
+  }, []);
+
   return (
-    <div className="flex flex-wrap items-end gap-4  mt-0 md:mt-40">
+    <div className="flex flex-wrap items-center justify-center md:items-end md:justify-start  gap-4 md:p-4 p-6">
       {quickStats.map((stat, i) => (
         <div
           key={i}
@@ -124,11 +182,11 @@ export default function StatsCard({
         >
           <motion.div
             //  ref={cardRef}
-            className="relative w-full max-w-md rounded-3xl"
+            className="relative w-50  md:w-full rounded-3xl"
             style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            whileHover={{ scale: 1.00 }}
+            whileHover={{ scale: 1.0 }}
             transition={{ type: "spring", stiffness: 200, damping: 5 }}
           >
             {/* animated gradient back glow */}
@@ -144,21 +202,21 @@ export default function StatsCard({
 
             {/* main glass card */}
             <div
-              className="relative z-10 rounded-3xl overflow-hidden border border-white/20 bg-white/10 backdrop-blur-xl shadow-2xl "
+              className="relative z-10 rounded-3xl overflow-hidden border border-white/40 bg-white/10 backdrop-blur-xl shadow-2xl "
               style={{
                 boxShadow:
-                  "0 15px 40px rgba(2,6,23,0.45), inset 0 1px 1px rgba(255,255,255,0.06)",
+                  "0 35px 80px rgba(2,6,23,0.2), inset 0 1px 1px rgba(255,255,255,0.06)",
                 WebkitBackdropFilter: "blur(12px)",
                 backdropFilter: "blur(12px)",
                 transformStyle: "preserve-3d",
               }}
             >
-              <div className="relative flex flex-col justify-between p-4 sm:p-5 w-80 h-28 sm:h-38 rounded-2xl shadow-sm backdrop-blur-sm">
+              <div className="relative flex flex-col justify-between p-4 md:p-5 w-80 h-28 sm:h-38 rounded-2xl shadow-sm backdrop-blur-sm">
                 <div className="flex items-center justify-between">
                   <div
-                    className={`flex items-center gap-2 font-medium ${stat.textColor}`}
+                    className={`flex items-center gap-2  ${stat.textColor}`}
                   >
-                    <span className="text-sm sm:text-base">{stat.title}</span>
+                    <span className="text-sm sm:text-xl font-semibold tracking-wide">{stat.title}</span>
                   </div>
                 </div>
                 <div
@@ -166,7 +224,7 @@ export default function StatsCard({
                 >
                   {stat.value}
                 </div>
-                <div className="absolute bottom-4 right-4 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white shadow-md flex items-center justify-center cursor-pointer hover:bg-gray-100">
+                <div className="absolute bottom-4 right-4  flex items-center justify-center cursor-pointer">
                   {stat.showRefreshIcon ? (
                     <CustomTooltip
                       title="Refresh Balance"
@@ -191,7 +249,7 @@ export default function StatsCard({
             </div>
 
             {/* glossy overlay highlight */}
-            <div
+            {/* <div
               className="absolute inset-0 rounded-3xl pointer-events-none"
               style={{
                 background:
@@ -201,7 +259,7 @@ export default function StatsCard({
                 transform: "translateZ(70px)",
                 border: "1px solid rgba(255,255,255,0.05)",
               }}
-            />
+            /> */}
           </motion.div>
         </div>
       ))}
